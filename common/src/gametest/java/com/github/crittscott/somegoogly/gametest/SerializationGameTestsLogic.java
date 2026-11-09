@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.gametest;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.command.MaybeFloatArgumentType;
 import com.github.crittscott.somegoogly.config.EyeConfigLimits;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.HeadConfig;
@@ -21,7 +22,6 @@ import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket;
 import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.github.crittscott.somegoogly.network.EyeSettingsPacket;
 import com.github.crittscott.somegoogly.network.EyeStatePacket;
-import com.github.crittscott.somegoogly.network.NetworkProtocol;
 import com.github.crittscott.somegoogly.network.Payload;
 import com.github.crittscott.somegoogly.network.PickerExportPacket;
 import com.github.crittscott.somegoogly.network.PickerFreezePacket;
@@ -54,6 +54,7 @@ import java.util.UUID;
 import java.util.function.Function;
 
 import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ADULT;
+import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_BABY;
 
 /**
  * Serialization contracts: the flat-JSON eye codecs round-trip by value, and all seven native
@@ -74,9 +75,9 @@ public final class SerializationGameTestsLogic {
         helper.assertTrue(Set.copyOf(typedPayloads).size() == typedPayloads.size(),
                 "every gameplay payload must have a unique channel id");
         List<ResourceLocation> established = List.of(
-                NetworkProtocol.id("eye_state"), NetworkProtocol.id("eye_config"), NetworkProtocol.id("eye_settings"),
-                NetworkProtocol.id("eye_behavior"), NetworkProtocol.id("eye_anger"),
-                NetworkProtocol.id("picker_freeze"), NetworkProtocol.id("picker_export"));
+                SomeGooglyCommon.id("eye_state"), SomeGooglyCommon.id("eye_config"), SomeGooglyCommon.id("eye_settings"),
+                SomeGooglyCommon.id("eye_behavior"), SomeGooglyCommon.id("eye_anger"),
+                SomeGooglyCommon.id("picker_freeze"), SomeGooglyCommon.id("picker_export"));
         helper.assertTrue(typedPayloads.equals(established),
                 "the native payload types must preserve every established wire id");
         helper.succeed();
@@ -164,13 +165,28 @@ public final class SerializationGameTestsLogic {
 
     /**
      * The behavior trigger survives the wire, and every behavior has its own wire id. No in-game form; guards
-     * that every client sees the expression the server started and refuses a number it doesn't know.
+     * that every client sees the expression the server started and refuses an unknown number or an elapsed
+     * time outside that expression's lifetime.
      */
     public static void behaviorTriggerPacketRoundTrips(GameTestHelper helper) {
         for (EyeBehavior behavior : EyeBehavior.values()) {
-            EyeBehaviorTriggerPacket decoded = roundTrip(helper, EyeBehaviorTriggerPacket::read,
-                    new EyeBehaviorTriggerPacket(7, behavior, 8, 12345L, 3), "EyeBehaviorTriggerPacket");
-            helper.assertTrue(decoded.behavior() == behavior, behavior + " should survive the round-trip");
+            for (int elapsed : new int[]{0, 3, behavior.defaultDuration()}) {
+                EyeBehaviorTriggerPacket decoded = roundTrip(helper, EyeBehaviorTriggerPacket::read,
+                        new EyeBehaviorTriggerPacket(7, behavior, 12345L, elapsed), "EyeBehaviorTriggerPacket");
+                helper.assertTrue(decoded.behavior() == behavior && decoded.elapsed() == elapsed
+                                && decoded.seed() == 12345L,
+                        behavior + " and its elapsed time should survive the round-trip");
+            }
+            for (int elapsed : new int[]{-1, behavior.defaultDuration() + 1}) {
+                FriendlyByteBuf invalid = buffer(helper);
+                try {
+                    new EyeBehaviorTriggerPacket(7, behavior, 12345L, elapsed).write(invalid);
+                    helper.assertTrue(throwsRuntime(() -> EyeBehaviorTriggerPacket.read(invalid)),
+                            behavior + " must reject elapsed time outside its default duration");
+                } finally {
+                    invalid.release();
+                }
+            }
         }
         FriendlyByteBuf unknown = buffer(helper);
         unknown.writeVarInt(7);
@@ -431,15 +447,27 @@ public final class SerializationGameTestsLogic {
     }
 
     /**
-     * The picker export request survives the wire, and a request with no definition is refused on decode. No
+     * The picker export request survives the wire; a request with no definition or an unsupported age is refused on decode. No
      * in-game form; guards that {@code /sg export} delivers exactly the definition the client authored.
      */
     public static void pickerExportPacketRoundTrips(GameTestHelper helper) {
         CompoundTag config = new CompoundTag();
         config.putBoolean("enabled", true);
-        roundTrip(helper, PickerExportPacket::read,
-                new PickerExportPacket(new ResourceLocation("minecraft", "cow"), AGE_ADULT, config),
-                "PickerExportPacket with a config");
+        for (String age : List.of(AGE_ADULT, AGE_BABY)) {
+            roundTrip(helper, PickerExportPacket::read,
+                    new PickerExportPacket(new ResourceLocation("minecraft", "cow"), age, config),
+                    "PickerExportPacket with a config");
+        }
+        for (String age : List.of("", "any", "Adult", "unknown")) {
+            FriendlyByteBuf invalidAge = buffer(helper);
+            try {
+                new PickerExportPacket(new ResourceLocation("minecraft", "cow"), age, config).write(invalidAge);
+                helper.assertTrue(throwsRuntime(() -> PickerExportPacket.read(invalidAge)),
+                        "picker export must reject unsupported ages on decode");
+            } finally {
+                invalidAge.release();
+            }
+        }
 
         FriendlyByteBuf noConfig = buffer(helper);
         noConfig.writeResourceLocation(new ResourceLocation("minecraft", "cow"));

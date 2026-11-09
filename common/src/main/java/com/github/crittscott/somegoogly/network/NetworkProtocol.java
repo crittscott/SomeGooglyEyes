@@ -1,23 +1,15 @@
 package com.github.crittscott.somegoogly.network;
 
-import com.github.crittscott.somegoogly.SomeGooglyCommon;
-import net.minecraft.resources.ResourceLocation;
-
 /**
- * The mod's network version and the namespace of its channel ids. Sends go straight through the loader bridges,
+ * The mod's network version. Sends go straight through the loader bridges,
  * {@link com.github.crittscott.somegoogly.platform.Networking} and
  * {@link com.github.crittscott.somegoogly.platform.ClientNetworking}.
  */
 public final class NetworkProtocol {
 
     /** Bumped whenever any payload becomes wire-incompatible. */
-    public static final String NETWORK_VERSION = "19";
+    public static final String NETWORK_VERSION = "20";
 
     private NetworkProtocol() {
-    }
-
-    /** A mod-namespaced channel id. */
-    public static ResourceLocation id(String path) {
-        return new ResourceLocation(SomeGooglyCommon.MOD_ID, path);
     }
 }

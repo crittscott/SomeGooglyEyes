@@ -11,7 +11,6 @@ import com.github.crittscott.somegoogly.recipe.SlimyEyeRecipe;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.item.CreativeModeTab;
@@ -67,7 +66,7 @@ public final class ModContent {
      */
     public static final ResourceKey<DamageType> SELF_SHEAR = ResourceKey.create(
             Registries.DAMAGE_TYPE,
-            new ResourceLocation(SomeGooglyCommon.MOD_ID, "self_shear"));
+            SomeGooglyCommon.id("self_shear"));
 
     /**
      * Items that harvest eyes as shears: vanilla shears plus the conventional {@code c:shears} and
@@ -75,7 +74,7 @@ public final class ModContent {
      */
     public static final TagKey<Item> SHEARS = TagKey.create(
             Registries.ITEM,
-            new ResourceLocation(SomeGooglyCommon.MOD_ID, "shears"));
+            SomeGooglyCommon.id("shears"));
 
     private ModContent() {
     }

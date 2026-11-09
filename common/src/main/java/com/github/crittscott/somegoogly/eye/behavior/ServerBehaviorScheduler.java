@@ -65,7 +65,6 @@ public final class ServerBehaviorScheduler {
     /** Per-mob schedule state. {@code busyUntil == 0} means idle. */
     private static final class MobState {
         EyeBehavior activeBehavior;   // the playing behavior (for mid-join catch-up)
-        int activeDuration;
         long activeSeed;
         boolean angry;                // the anger last sent to this mob's trackers
         int ambientCooldown;          // idle ticks remaining before the next ambient roll
@@ -78,7 +77,7 @@ public final class ServerBehaviorScheduler {
 
     /** {@code mob}'s playing behavior for a viewer joining it partway through. */
     private static EyeBehaviorTriggerPacket catchUpPacket(LivingEntity mob, MobState state) {
-        return new EyeBehaviorTriggerPacket(mob.getId(), state.activeBehavior, state.activeDuration, state.activeSeed,
+        return new EyeBehaviorTriggerPacket(mob.getId(), state.activeBehavior, state.activeSeed,
                 (int) (now - state.startedAt));
     }
 
@@ -170,7 +169,7 @@ public final class ServerBehaviorScheduler {
         }
         // Arm the cooldown only on an actual start: if the mob is busy the swirl is dropped
         // (non-interruptable), and the next heal once free can still react.
-        if (start(mob, state, EyeBehavior.SWIRL, EyeBehavior.SWIRL.defaultDuration(), RANDOM.nextLong())) {
+        if (start(mob, state, EyeBehavior.SWIRL, RANDOM.nextLong())) {
             state.healSwirlReadyAt = now + ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS.get();
         }
     }
@@ -272,7 +271,7 @@ public final class ServerBehaviorScheduler {
     private static void react(LivingEntity mob, EyeBehavior behavior) {
         MobState state = eventTarget(mob);
         if (state != null) {
-            start(mob, state, behavior, behavior.defaultDuration(), RANDOM.nextLong());
+            start(mob, state, behavior, RANDOM.nextLong());
         }
     }
 
@@ -291,7 +290,7 @@ public final class ServerBehaviorScheduler {
             return;
         }
         EyeBehavior behavior = pool.get(RANDOM.nextInt(pool.size()));
-        start(mob, state, behavior, behavior.defaultDuration(), RANDOM.nextLong());
+        start(mob, state, behavior, RANDOM.nextLong());
     }
 
     /**
@@ -374,21 +373,20 @@ public final class ServerBehaviorScheduler {
         return mob instanceof AbstractPiglin && mob.getBrain().hasMemoryValue(MemoryModuleType.ANGRY_AT);
     }
 
-    private static boolean start(LivingEntity mob, MobState state, EyeBehavior behavior, int duration, long seed) {
+    private static boolean start(LivingEntity mob, MobState state, EyeBehavior behavior, long seed) {
         // Already playing something, or asleep (the client holds a squint instead): drop the trigger.
         if (state.busyUntil != 0 || mob.isSleeping()) {
             return false;
         }
-        state.activeDuration = duration;
         state.activeBehavior = behavior;
         state.activeSeed = seed;
-        state.busyUntil = now + duration;
+        state.busyUntil = now + behavior.defaultDuration();
         state.startedAt = now;
         // A started behavior needs retiring at busyUntil regardless of eye state or tracking, which
         // matters for trigger() (the admin/debug path): it can start one on a mob ACTIVE never saw yet.
         ACTIVE.putIfAbsent(mob, state);
         Networking.sendTrackingAndSelf(mob,
-                new EyeBehaviorTriggerPacket(mob.getId(), behavior, duration, seed, 0));
+                new EyeBehaviorTriggerPacket(mob.getId(), behavior, seed, 0));
         return true;
     }
 
@@ -405,7 +403,7 @@ public final class ServerBehaviorScheduler {
      * dropped (returns {@code false}) if the mob is already mid-behavior or asleep. Works even for a mob with no
      * tracking state yet (creates one), so the debug command can drive any looked-at mob.
      */
-    public static boolean trigger(LivingEntity mob, EyeBehavior behavior, int duration, long seed) {
-        return start(mob, stateFor(mob), behavior, duration, seed);
+    public static boolean trigger(LivingEntity mob, EyeBehavior behavior, long seed) {
+        return start(mob, stateFor(mob), behavior, seed);
     }
 }

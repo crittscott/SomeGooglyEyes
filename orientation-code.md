@@ -20,15 +20,15 @@ Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, versi
 | `forge/src/main` | Forge bootstrap, events, native config, adapters, client integration, metadata |
 | `forge/src/gametest` | Forge wrappers, persistence proof, dev-mod entry point, discovery metadata |
 
-Server owns gameplay/authorization; client owns rendering/picker UI.
+Server owns gameplay; client owns rendering and picker UI.
 
 `ModContent` registers items, Optometrist, a creative tab, and recipe serializers through `Registration`. `SlimyEyeRecipe` copies eye NBT.
 
 ## Configuration and eye definitions
 
-`ServerConfig`/`ClientConfig` each declare a setting once, as a `ConfigValue` holding its section, key, comment, default, and limits; declaration order is file order, and both loaders build their file and schema from `settings()`. Forge applies native CLIENT/SERVER specs on load/reload and resets SERVER on unload. Fabric uses bundled NightConfig TOML at startup and `/reload`, resets on stop, reads declared tables, preserves raw values and comments during missing-key completion, and backs up rewrites. Malformed input preserves loaded values. `FabricMigration.quoteReleasedHeader` quotes released spaced headers, keeping the original as `.0.8.2.bak`. Sections retain 0.8.2's names. `ServerServices.onServerConfigApplied` and `ClientConfig.onApplied` log the deciding settings at startup and on change.
+`ServerConfig`/`ClientConfig` declare each setting once as a `ConfigValue` (section, key, comment, default, limits); both loaders derive their schema and file from `settings()`. Forge applies native CLIENT/SERVER specs on load/reload and resets SERVER on unload. Fabric uses bundled NightConfig TOML at startup and `/reload`, resets on stop, preserves raw values/comments during missing-key completion, and backs up rewrites. Malformed input preserves loaded values. `FabricMigration.quoteReleasedHeader` quotes released spaced headers and retains a `.0.8.2.bak`; sections retain released names. Config application logs effective settings.
 
-Eye definitions (`data/<namespace>/eyes/*.json`, `EyeConfigModel`) reload by rejecting files with decode errors, resolving one version per entity type, validating, and NBT-encoding the set; `ServerEyeConfigs` swaps only if the encoding differs, keeping the old set on failure; the installed set is its sync packet, built once. Sync GZIP-compresses that NBT, capped at 900 KiB transmitted, 2 MiB decoded, and 8,192 eyes, so `ClientEyeConfigs` never selects versions. Size and geometry limits stay aligned across reload, picker export, and network decode; `EyeColor` codecs reject out-of-range channels.
+Eye definitions (`data/<namespace>/eyes/*.json`, `EyeConfigModel`) reload through decoding, version selection, validation, and NBT encoding. `ServerEyeConfigs` swaps only on encoding changes, retaining the installed set on failure; that set owns its prebuilt sync packet. GZIP sync caps compressed/decoded size and total eyes before client install. Reload, picker export, and decoding share geometry limits; color codecs reject invalid channels.
 
 ## Entity and item state
 
@@ -46,7 +46,7 @@ Placed heads save a `Snapshot` under `somegoogly:data` only while eyed; load kee
 
 Eye items carry `AppearanceOverride` as the `EyeProperties` compound (`EyeItemProperties`), never geometry; harvesting copies the first eye's effective appearance, and the modifier recipe changes only that compound.
 
-`EyeItemService` owns authorization, mutation, drops, and durability for Slimy Eye use and both harvests, on mobs and heads. Adapters run use hooks after protection listeners (Forge `LOWEST`, Fabric a late phase); head use honors native item-use denial and checks `mayInteract`/`mayUseItemAt`. `markHeadDrop` stamps an eyed mob's own head among its death drops (Forge at `LOWEST`); head loot copies the state to the item (Forge `HeadEyesLootModifier`, data in Forge; Fabric `LootTableEvents.MODIFY`). Its use entry points refuse spectators. Shears are `#somegoogly:shears` (vanilla plus optional `#c:shears` and `#forge:shears`). `verdictFor` answers whether a target can have eyes on either side, for application, client prediction, and the inspect hint. Eyes go on or come off another player only where `canHarmPlayer` holds. Use counts in `ITEM_USED`; heads also fire `ITEM_USED_ON_BLOCK`. Plain-shears self-damage uses attacker-less `self_shear`, which PvP rules can't cancel.
+`EyeItemService` owns authorization, mutation, drops, and durability for mob/head application and harvest. Use hooks run after protection listeners (Forge `LOWEST`, Fabric a late phase); head use honors native denial and `mayInteract`/`mayUseItemAt`. Spectators are refused. `markHeadDrop` stamps eyed mobs' own heads; placed-head loot uses `SkullEyeState.headLootCopy` through Forge `HeadEyesLootModifier` or Fabric `LootTableEvents.MODIFY`. Shears use `#somegoogly:shears` (vanilla plus optional `#c:shears`/`#forge:shears`). `verdictFor` serves application, prediction, and inspect hints. Player eye interactions require `canHarmPlayer`. Use awards `ITEM_USED`, heads also `ITEM_USED_ON_BLOCK`. Attacker-less `self_shear` bypasses PvP damage cancellation.
 
 Application emits `ENTITY_INTERACT` (`BLOCK_CHANGE` on a head), harvest `SHEAR`, refusal nothing.
 
@@ -54,7 +54,7 @@ Application emits `ENTITY_INTERACT` (`BLOCK_CHANGE` on a head), harvest `SHEAR`,
 
 `ServerServices.onLivingEntityLoaded` owns natural eye initialization; later configuration changes never revisit an initialized entity.
 
-`EyeBehavior` catalogs expressions; `OngoingBehavior` catalogs ongoing states. `BehaviorInstance` carries id/duration/seed/elapsed. `ServerBehaviorScheduler` runs watched eyed mobs (a player watches their own) and event triggers; sleepers start nothing. `GooglyTracker` applies enabled ongoing states. `HeldEye` runs first-person idle/hurt/heal expressions. `PresentationEyes` caches ambient slots for items, placed heads, and boats. Placed heads seed by position; only paired layouts cross-eye. Slots fit the longest eligible expression or the synced mean interval. Anger syncs on change and to a new viewer while angry. `ClientEyeRuntime` keeps mob reports apart from simulations and ages expressions offscreen. Only recently drawn trackers simulate; idle ones expire. Heads cache by position, frames by entity, each checked when drawn. Level change or disconnect clears all. The master switch pauses mob scheduling; authoring triggers still work. Client behaviors wait for sync.
+`EyeBehavior` catalogs expressions; `OngoingBehavior` catalogs ongoing states. `BehaviorInstance` carries id/duration/seed/elapsed; server expressions use their behavior's default duration. `ServerBehaviorScheduler` runs watched eyed mobs (a player watches their own) and event triggers; sleepers start nothing. `GooglyTracker` applies enabled ongoing states. `HeldEye` runs first-person idle/hurt/heal expressions. `PresentationEyes` caches ambient slots for items, placed heads, and boats. Placed heads seed by position; only paired layouts cross-eye. Slots fit the longest eligible expression or the synced mean interval. Anger syncs on change and to a new viewer while angry. `ClientEyeRuntime` keeps mob reports apart from simulations and ages expressions offscreen. Only recently drawn trackers simulate; idle ones expire. Heads cache by position, frames by entity, each checked when drawn. Level change or disconnect clears all. The master switch pauses mob scheduling; authoring triggers still work. Client behaviors wait for sync.
 
 ## Rendering and attachment
 
@@ -62,7 +62,7 @@ Application emits `ENTITY_INTERACT` (`BLOCK_CHANGE` on a head), harvest `SHEAR`,
 
 Resolvers cache by model identity, clear on renderer/runtime reset, and replay `ThirdPartyModelWraps`; `Resolvers` selects the model family, with `ChildMapResolver` as its non-null fallback.
 
-The common `somegoogly.accesswidener` serves common and both loaders; Forge remaps it to an access transformer.
+`somegoogly.accesswidener` serves all modules; Forge remaps it to an access transformer.
 
 Optional GeckoLib: `client/compat/gecko` holds GeckoLib-typed code, reached through `GeckoCompat` only when GeckoLib is found.
 
@@ -70,15 +70,15 @@ Optional GeckoLib: `client/compat/gecko` holds GeckoLib-typed code, reached thro
 
 ## Networking
 
-Seven `Payload` classes: eye definitions, eye settings, entity eye state, behavior triggers, anger, picker freeze, and picker export. Each declares its id; both loaders register from `Payload.CLIENTBOUND`/`SERVERBOUND` (index, reader, handler); `NetworkProtocol` holds network version `19`; bump it on wire changes. Forge registers each on a `SimpleChannel` under its index, requiring that version; Fabric's `HANDSHAKE` login query refuses a client that doesn't understand it or replies with another version; its receivers decode off-thread.
+Seven `Payload` classes: eye definitions, eye settings, entity eye state, behavior triggers, anger, picker freeze, and picker export. Each declares its id; both loaders register from `Payload.CLIENTBOUND`/`SERVERBOUND` (index, reader, handler); `NetworkProtocol` holds network version `20`; bump it on wire changes. Forge registers each on a `SimpleChannel` under its index, requiring that version; Fabric's `HANDSHAKE` login query refuses a client that doesn't understand it or replies with another version; its loader-local `FabricPayload`/`PacketType` adapters decode shared bodies and dispatch handlers on the game thread. Broadcasts encode once through the identifier/buffer API.
 
 `EyeSettingsPacket` carries `googlyEyesEnabled` and `BehaviorSettings`. Joins always get it and the definitions, before the player's eye state. After each datapack reload or Forge server-config apply, `ServerServices.broadcastEyeSyncIfChanged` resends each only on a change; only new definitions reset client trackers.
 
-Sends go through `@ExpectPlatform` `Networking` and client-only `ClientNetworking`; clientbound handlers reach `ClientNetworkHandler` only inside lambdas, so servers never link it. Serverbound handlers re-check authorization; the client refuses a picker export over vanilla's serverbound cap. Eye-state, behavior, and anger packets reach trackers and the entity; eye state follows the entity's spawn packet, carrying only its id.
+Sends go through `@ExpectPlatform` `Networking` and client-only `ClientNetworking`; clientbound handlers reach `ClientNetworkHandler` only inside lambdas, so servers never link it. Behavior triggers carry id/seed/elapsed and derive duration from the behavior. Export age is checked on decode; server-dependent config validation stays in the service. Freeze/export handlers re-check authorization; releasing one's own mob is exempt; the client refuses a picker export over vanilla's serverbound cap. Eye-state, behavior, and anger packets reach trackers and the entity; eye state follows the entity's spawn packet, carrying only its id.
 
 ## Picker and commands
 
-Client owns picker drafts/previews; server owns freezing/spawning/movement/export. `ModelPartVocabulary` supplies one attachment grammar to editing and bulk export. `PickerState.DraftSession` keeps drafts by type and age, seeded once; both exports `ConfigFile.overlay` authored ages onto untouched ones (disabled buckets included), canonicalizing only copied base tokens. `EyeConfigLimits.Issue` gives translatable feedback and log diagnostics.
+Client owns picker drafts/previews; server owns freezing/spawning/movement/export. `EyeConfigModel` owns raw attachment syntax; resolvers normalize and suffix-match it, and `ModelPartVocabulary` canonicalizes editing and bulk export tokens. The HUD uses translated component rows, styled arguments, and font-derived spacing. `PickerState.DraftSession` keeps drafts by type and age, seeded once; both exports `ConfigFile.overlay` authored ages onto untouched ones (disabled buckets included), canonicalizing only copied base tokens. `EyeConfigLimits.Issue` gives translatable feedback and log diagnostics.
 
 `PickerFreezeService` restores prior `NoAI` on release, load, logout, or stop and permits one editor. `PickerGate` owns creative/operator authorization and throttles. `LookTarget` caps extended entity rays at blocking surfaces; inspection reads vanilla's crosshair target. `PickerSpawnService` finalizes through `MobSpawning`, checks each mob/passenger insertion result and rolls back partial additions on refusal, and applies planned terrain only after acceptance. Its `refusal` also filters suggestions. World export writes a datapack; bulk export writes under the game directory and logs disk failures. Both use `ConfigFile.exportVersion`/`overlay`, replacing authored ages, preserving untouched/disabled definitions, and canonicalizing copied tokens.
 
@@ -92,7 +92,7 @@ Forge registers from `@Mod`, keeping client bootstrap apart from the dedicated s
 
 ## Automated verification
 
-GameTest entry points: Fabric 194, Forge 198, including three that require Twilight Forest. Client checklists: `docs/*-eyes-testing.md`. Visuals, multiplayer, protection, commands, and real saves need manual checks.
+GameTests: Fabric 194, Forge 198 (three require Twilight Forest). Visuals, multiplayer, protection, commands, and real saves need manual checks; see `docs/picker-hud-testing.md` for picker/network scenarios.
 
 ## Operational boundaries
 

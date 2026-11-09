@@ -312,7 +312,8 @@ public final class SkullEyeGameTestsLogic {
     /**
      * Breaking an eyed head drops a head item carrying its eyes, and placing that item restores them. In game: give
      * a skeleton skull purple eyes, break it in survival, and hover the dropped skull; its tooltip lists googly eyes
-     * and the iris color. Place it again; it shows the same purple eyes in the same arrangement.
+     * and the iris color. Place it again; it shows the same purple eyes in the same arrangement. Remove the eyes
+     * and break it again; the plain dropped skull carries no eye compound and stacks with ordinary skulls.
      */
     public static void brokenHeadKeepsItsEyes(GameTestHelper helper, Player player) {
         SkullBlockEntity skull = placeHead(helper, Blocks.SKELETON_SKULL);
@@ -328,6 +329,17 @@ public final class SkullEyeGameTestsLogic {
         SkullBlockEntity placed = placeHead(helper, Blocks.SKELETON_SKULL);
         BlockItem.updateCustomBlockEntityTag(helper.getLevel(), player, helper.absolutePos(HEAD), item);
         helper.assertTrue(eyes.equals(SkullEyeState.snapshot(placed)), "placing the head restores its eyes");
+
+        heads.get(0).discard();
+        SkullEyeState.set(placed, Snapshot.NONE);
+        helper.getLevel().destroyBlock(helper.absolutePos(HEAD), true);
+        List<ItemEntity> plainHeads = drops(helper, HEAD, Items.SKELETON_SKULL);
+        helper.assertTrue(plainHeads.size() == 1, "a plain head still drops itself");
+        ItemStack plain = plainHeads.get(0).getItem();
+        helper.assertTrue(SkullEyeState.itemSnapshot(plain) == null, "the plain dropped head has no eyes");
+        CompoundTag blockData = plain.getTagElement(BlockItem.BLOCK_ENTITY_TAG);
+        helper.assertTrue(blockData == null || !blockData.contains(SkullEyeState.DATA_KEY),
+                "copying an absent eye compound must not create eye data on a plain drop");
         helper.succeed();
     }
 

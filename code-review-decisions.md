@@ -40,7 +40,7 @@ Settled review policy and accepted behavior for this project. Read this before r
 - Keep the working Fabric persistent-data representation. A typed-attachment rewrite is not requested.
 - Preserve saved keys and supported numeric color input forms. A reader accepting more in-range numeric types than its writer emits does not itself prove legacy support or a defect.
 - Head and self shearing may remove eyes and wear shears even if current definitions provide no eye to drop.
-- Use vanilla CopyNbtFunction for placed-head loot on both loaders, with one shared declaration of what to copy. Move shears-on-kill eye drops into the normal loot pipeline. These are implementation directions, not claims that the changes are complete.
+- Keep the shared vanilla CopyNbtFunction operation for placed-head loot on both loaders. Move shears-on-kill eye drops into the normal loot pipeline; that remains an implementation direction, not a claim that it is complete.
 - Do not add required dependencies, including Forge Config API Port.
 - Keep the shared packet-size reserve, including the extra framing byte on Fabric. A separate loader-specific limit is unnecessary.
 - Preserve the present requirement that both endpoints have the mod while multiplayer behavior is verified. Dedicated-server multiplayer testing has not yet happened; Fabric's JOIN-time channel check is unverified, not a proven bug.

@@ -67,6 +67,11 @@ public final class SkullEyeRenderer {
     /** Fitted placements by head model and eye attach token; empty where fitting failed. */
     private static final Map<Model, Map<String, Optional<Placement>>> PLACEMENTS =
             new IdentityHashMap<>();
+    /** Twilight Forest trophy identities and the model part each exposes as its face. */
+    private static final Map<String, String> TROPHY_HEAD_FIELDS = Map.of(
+            "twilightforest.client.model.tileentity.AlphaYetiTrophyModel", "main",
+            "twilightforest.client.model.tileentity.KnightPhantomTrophyModel", "helmet",
+            "twilightforest.client.model.tileentity.UrGhastTrophyModel", "body");
 
     private record DrawContext(@Nullable BlockEntity block, @Nullable ItemStack item, float partialTick) {}
 
@@ -190,12 +195,7 @@ public final class SkullEyeRenderer {
     private static Optional<Field> headField(Class<?> type) {
         for (Class<?> c = type; c != null && c != SkullModelBase.class; c = c.getSuperclass()) {
             try {
-                String fieldName = switch (c.getSimpleName()) {
-                    case "UrGhastTrophyModel" -> "body";
-                    case "AlphaYetiTrophyModel" -> "main";
-                    case "KnightPhantomTrophyModel" -> "helmet";
-                    default -> HEAD_FIELD;
-                };
+                String fieldName = TROPHY_HEAD_FIELDS.getOrDefault(c.getName(), HEAD_FIELD);
                 Field field = c.getDeclaredField(fieldName);
                 if (field.getType() == ModelPart.class) {
                     field.setAccessible(true);

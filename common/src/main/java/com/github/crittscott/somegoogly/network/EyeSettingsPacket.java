@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.network;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -11,7 +12,7 @@ import net.minecraft.resources.ResourceLocation;
  */
 public record EyeSettingsPacket(boolean googlyEyesEnabled, BehaviorSettings behaviors) implements Payload {
 
-    public static final ResourceLocation ID = NetworkProtocol.id("eye_settings");
+    public static final ResourceLocation ID = SomeGooglyCommon.id("eye_settings");
 
     /** Decode and validate a received payload. */
     public static EyeSettingsPacket read(FriendlyByteBuf buffer) {

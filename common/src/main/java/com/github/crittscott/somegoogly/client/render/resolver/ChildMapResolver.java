@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.client.render.resolver;
 
+import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.github.crittscott.somegoogly.client.compat.ClientIntegrationFailures;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
@@ -82,7 +83,7 @@ public class ChildMapResolver extends ModelPartTreeResolver {
         int i = 0;
         for (ModelPart part : ordered) {
             if (!descendants.contains(part)) {
-                roots.add(new NamedRoot("#" + (i++), part));
+                roots.add(new NamedRoot(EyeConfigModel.attachmentIndex(i++), part));
             }
         }
         return roots;

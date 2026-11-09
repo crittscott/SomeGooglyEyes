@@ -62,7 +62,7 @@ public final class ClientEyeRuntime {
     }
 
     /** Entity-lifetime expression timing, independent of any disposable render tracker. */
-    record ReceivedBehavior(EyeBehavior behavior, int duration, long seed, long startedAt) {
+    record ReceivedBehavior(EyeBehavior behavior, long seed, long startedAt) {
     }
 
     /** World-owned boat pupils, retained and simulated only while recently rendered. */
@@ -274,8 +274,8 @@ public final class ClientEyeRuntime {
     }
 
     /** Retain the latest server expression even before this known entity has rendered. */
-    public static void setBehavior(LivingEntity living, EyeBehavior behavior, int duration, long seed, int elapsed) {
-        BEHAVIORS.put(living, new ReceivedBehavior(behavior, duration, seed, simulationTicks - elapsed));
+    public static void setBehavior(LivingEntity living, EyeBehavior behavior, long seed, int elapsed) {
+        BEHAVIORS.put(living, new ReceivedBehavior(behavior, seed, simulationTicks - elapsed));
         GooglyTracker tracker = TRACKERS.get(living);
         if (tracker != null) {
             synchronizeBehavior(living, tracker);
@@ -338,14 +338,14 @@ public final class ClientEyeRuntime {
             return;
         }
         long elapsed = simulationTicks - received.startedAt();
-        if (elapsed >= received.duration()) {
+        if (elapsed >= received.behavior().defaultDuration()) {
             BEHAVIORS.remove(living);
             tracker.active = null;
             tracker.receivedBehavior = null;
             return;
         }
         if (tracker.receivedBehavior != received) {
-            tracker.install(received.behavior(), received.duration(), received.seed(), (int) elapsed);
+            tracker.install(received.behavior(), received.behavior().defaultDuration(), received.seed(), (int) elapsed);
             tracker.receivedBehavior = received;
         } else if (tracker.active != null) {
             tracker.active.age = (int) elapsed;
@@ -389,7 +389,7 @@ public final class ClientEyeRuntime {
     private static void tickBehaviors() {
         simulationTicks++;
         BEHAVIORS.entrySet().removeIf(entry -> {
-            boolean expired = simulationTicks - entry.getValue().startedAt() >= entry.getValue().duration();
+            boolean expired = simulationTicks - entry.getValue().startedAt() >= entry.getValue().behavior().defaultDuration();
             if (expired) {
                 GooglyTracker tracker = TRACKERS.get(entry.getKey());
                 if (tracker != null) {

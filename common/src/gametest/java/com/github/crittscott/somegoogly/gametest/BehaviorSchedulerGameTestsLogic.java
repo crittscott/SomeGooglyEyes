@@ -120,27 +120,27 @@ public final class BehaviorSchedulerGameTestsLogic {
 
             ServerConfig.LOVE_ON_AFFECTION.set(false);
             cow.setInLove(player);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 1L),
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 1L),
                     "loveOnAffection=false suppresses love");
-            advance(3);
+            advance(EyeBehavior.BLINK.defaultDuration());
 
             ServerConfig.LOVE_ON_AFFECTION.set(true);
             cow.setInLove(player);
-            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 2L),
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 2L),
                     "an animal entering love mode plays love");
             golem.offerFlower(true);
-            helper.assertTrue(!ServerBehaviorScheduler.trigger(golem, EyeBehavior.BLINK, 3, 3L),
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(golem, EyeBehavior.BLINK, 3L),
                     "an iron golem offering a flower plays love");
             helper.getLevel().broadcastEntityEvent(villager, EntityEvent.LOVE_HEARTS);
-            helper.assertTrue(!ServerBehaviorScheduler.trigger(villager, EyeBehavior.BLINK, 3, 4L),
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(villager, EyeBehavior.BLINK, 4L),
                     "villager love hearts play love");
             helper.getLevel().broadcastEntityEvent(ocelot, EntityEvent.TRUSTING_SUCCEEDED);
-            helper.assertTrue(!ServerBehaviorScheduler.trigger(ocelot, EyeBehavior.BLINK, 3, 5L),
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(ocelot, EyeBehavior.BLINK, 5L),
                     "an ocelot gaining trust plays love");
 
             advance(EyeBehavior.LOVE.defaultDuration());
             helper.getLevel().broadcastEntityEvent(cow, EntityEvent.TAMING_FAILED);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 6L),
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 6L),
                     "an entity event that is not affection plays nothing");
         } finally {
             ServerBehaviorScheduler.clear();
@@ -445,13 +445,13 @@ public final class BehaviorSchedulerGameTestsLogic {
             Cow cow = eyedTrackedMob(helper, player, EntityType.COW, new BlockPos(2, 2, 2));
             ServerBehaviorScheduler.onMilked(cow);
             advance(ServerConfig.TICKS_MIN + 1);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 1L),
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 1L),
                     "neither automatic reaction nor ambient work starts while disabled; explicit commands remain usable");
-            advance(3);
+            advance(EyeBehavior.BLINK.defaultDuration());
             ServerConfig.AMBIENT_BEHAVIORS.set(false);
             ServerConfig.GOOGLY_EYES_ENABLED.set(true);
             ServerBehaviorScheduler.onMilked(cow);
-            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 2L),
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 2L),
                     "re-enabling resumes reactions using retained watcher bookkeeping");
         } finally {
             ServerBehaviorScheduler.clear();
@@ -493,7 +493,7 @@ public final class BehaviorSchedulerGameTestsLogic {
 
             ServerBehaviorScheduler.onHealed(cow);
             ServerBehaviorScheduler.onTrade(cow);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 5, 1L),
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 1L),
                     "an eyeless mob's game events never start a behavior even while it is tracked");
         } finally {
             ServerBehaviorScheduler.clear();
@@ -525,19 +525,19 @@ public final class BehaviorSchedulerGameTestsLogic {
             ServerConfig.SWIRL_ON_HEAL.set(false);
             cow.setHealth(1F);
             ServerBehaviorScheduler.onHealed(cow);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 1L),
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 1L),
                     "swirlOnHeal=false suppresses the heal swirl");
-            advance(3);
+            advance(EyeBehavior.BLINK.defaultDuration());
 
             ServerConfig.SWIRL_ON_TRADE.set(false);
             ServerBehaviorScheduler.onTrade(cow);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 2L),
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 2L),
                     "swirlOnTrade=false suppresses the trade swirl");
-            advance(3);
+            advance(EyeBehavior.BLINK.defaultDuration());
 
             ServerConfig.GROW_ON_HIT_PERCENT.set(0);
             ServerBehaviorScheduler.onPlayerHurt(cow);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 3L),
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3L),
                     "growOnHitPercent=0 never rolls the hurt grow");
         } finally {
             ServerBehaviorScheduler.clear();
@@ -567,7 +567,7 @@ public final class BehaviorSchedulerGameTestsLogic {
 
             villager.notifyTrade(new MerchantOffer(
                     new ItemStack(Items.EMERALD), new ItemStack(Items.BREAD), 1, 1, 0.05F));
-            helper.assertTrue(!ServerBehaviorScheduler.trigger(villager, EyeBehavior.BLINK, 5, 1L),
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(villager, EyeBehavior.BLINK, 1L),
                     "the completed trade starts a swirl");
         } finally {
             ServerBehaviorScheduler.clear();
@@ -596,7 +596,7 @@ public final class BehaviorSchedulerGameTestsLogic {
                 ServerBehaviorScheduler.onStartTracking(target, attacker);
                 helper.assertTrue(target.hurt(helper.getLevel().damageSources().playerAttack(attacker), 1F),
                         "the hit lands");
-                helper.assertTrue(!ServerBehaviorScheduler.trigger(target, EyeBehavior.BLINK, 3, 1L),
+                helper.assertTrue(!ServerBehaviorScheduler.trigger(target, EyeBehavior.BLINK, 1L),
                         "the hit starts the grow, so another behavior can't start");
             }
         } finally {
@@ -635,12 +635,12 @@ public final class BehaviorSchedulerGameTestsLogic {
             cow.setHealth(1F);
 
             ServerBehaviorScheduler.onHealed(cow);
-            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 5, 1L),
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 1L),
                     "the first heal starts a swirl");
 
             advance(EyeBehavior.SWIRL.defaultDuration());
             ServerBehaviorScheduler.onHealed(cow);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 5, 2L),
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 2L),
                     "a heal inside the cooldown is dropped even though the swirl has elapsed and the mob is idle");
         } finally {
             ServerBehaviorScheduler.clear();
@@ -667,13 +667,13 @@ public final class BehaviorSchedulerGameTestsLogic {
             ServerBehaviorScheduler.onStartTracking(cow, player);
 
             ServerBehaviorScheduler.onHealed(cow);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 1, 1L),
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 1L),
                     "a heal at full health starts nothing");
-            advance(1);
+            advance(EyeBehavior.BLINK.defaultDuration());
 
             cow.setHealth(1F);
             ServerBehaviorScheduler.onHealed(cow);
-            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 1, 2L),
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 2L),
                     "a heal of a hurt mob swirls, so the one at full health left its cooldown unspent");
         } finally {
             ServerBehaviorScheduler.clear();
@@ -750,19 +750,19 @@ public final class BehaviorSchedulerGameTestsLogic {
 
             ServerConfig.GROW_ON_MILK.set(false);
             milk(player, cow);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 1L),
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 1L),
                     "growOnMilk=false suppresses the milking grow");
-            advance(3);
+            advance(EyeBehavior.BLINK.defaultDuration());
 
             ServerConfig.GROW_ON_MILK.set(true);
             milk(player, cow);
-            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 2L),
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 2L),
                     "milking a cow plays grow");
             milk(player, mooshroom);
-            helper.assertTrue(!ServerBehaviorScheduler.trigger(mooshroom, EyeBehavior.BLINK, 3, 3L),
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(mooshroom, EyeBehavior.BLINK, 3L),
                     "milking a mooshroom plays grow");
             milk(player, goat);
-            helper.assertTrue(!ServerBehaviorScheduler.trigger(goat, EyeBehavior.BLINK, 3, 4L),
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(goat, EyeBehavior.BLINK, 4L),
                     "milking a goat plays grow");
         } finally {
             ServerBehaviorScheduler.clear();
@@ -788,12 +788,15 @@ public final class BehaviorSchedulerGameTestsLogic {
             EyeState.setHasEyes(cow, true);
             ServerBehaviorScheduler.onStartTracking(cow, player);
 
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.STARE, 10, 1L),
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.STARE, 1L),
                     "the first trigger starts");
-            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 10, 2L),
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 2L),
                     "a second trigger is dropped while one is playing");
-            advance(10);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 10, 3L),
+            advance(EyeBehavior.STARE.defaultDuration() - 1);
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3L),
+                    "the active behavior still owns its final tick");
+            advance(1);
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3L),
                     "once the active behavior elapses a new trigger starts");
         } finally {
             ServerBehaviorScheduler.clear();
@@ -847,7 +850,7 @@ public final class BehaviorSchedulerGameTestsLogic {
         HeadInfo info = headInfo(helper, zombie);
         try {
             ClientEyeRuntime.onLevelChanged();
-            ClientEyeRuntime.setBehavior(zombie, EyeBehavior.SWIRL, 12, 42L, 3);
+            ClientEyeRuntime.setBehavior(zombie, EyeBehavior.SWIRL, 42L, 3);
             helper.assertTrue(ClientEyeRuntime.peek(zombie) == null, "receipt must not create a drawing cache");
             ClientEyeRuntime.tick(helper.getLevel(), true);
             GooglyTracker first = ClientEyeRuntime.get(zombie, info);
@@ -862,16 +865,16 @@ public final class BehaviorSchedulerGameTestsLogic {
             helper.assertTrue(ClientEyeRuntime.get(zombie, info).active.age == 5,
                     "paused client ticks do not advance expression time");
             ClientEyeRuntime.clear();
-            for (int tick = 0; tick < 7; tick++) {
+            for (int tick = 0; tick < EyeBehavior.SWIRL.defaultDuration() - 5; tick++) {
                 ClientEyeRuntime.tick(helper.getLevel(), true);
             }
             helper.assertTrue(ClientEyeRuntime.get(zombie, info).active == null,
                     "unrendered expressions expire without a tracker");
-            ClientEyeRuntime.setBehavior(zombie, EyeBehavior.BLINK, 8, 7L, 0);
+            ClientEyeRuntime.setBehavior(zombie, EyeBehavior.BLINK, 7L, 0);
             ClientEyeRuntime.onEntityRemoved(zombie);
             helper.assertTrue(ClientEyeRuntime.get(zombie, info).active == null,
                     "entity unloading removes received expression state");
-            ClientEyeRuntime.setBehavior(zombie, EyeBehavior.BLINK, 8, 7L, 0);
+            ClientEyeRuntime.setBehavior(zombie, EyeBehavior.BLINK, 7L, 0);
             ClientEyeRuntime.onLevelChanged();
             helper.assertTrue(ClientEyeRuntime.get(zombie, info).active == null,
                     "world replacement removes received expression state");
@@ -937,13 +940,13 @@ public final class BehaviorSchedulerGameTestsLogic {
             ServerConfig.GROW_ON_SHEAR.set(false);
             shear(player, quiet);
             helper.assertTrue(quiet.isSheared(), "the shears sheared the first sheep");
-            helper.assertTrue(ServerBehaviorScheduler.trigger(quiet, EyeBehavior.BLINK, 3, 1L),
+            helper.assertTrue(ServerBehaviorScheduler.trigger(quiet, EyeBehavior.BLINK, 1L),
                     "growOnShear=false suppresses the shearing grow");
 
             ServerConfig.GROW_ON_SHEAR.set(true);
             shear(player, bulging);
             helper.assertTrue(bulging.isSheared(), "the shears sheared the second sheep");
-            helper.assertTrue(!ServerBehaviorScheduler.trigger(bulging, EyeBehavior.BLINK, 3, 2L),
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(bulging, EyeBehavior.BLINK, 2L),
                     "shearing a sheep plays grow");
         } finally {
             ServerBehaviorScheduler.clear();
@@ -994,7 +997,7 @@ public final class BehaviorSchedulerGameTestsLogic {
             Villager villager = eyedTrackedMob(helper, player, EntityType.VILLAGER, new BlockPos(2, 2, 2));
             sleepInBed(helper, villager, new BlockPos(2, 2, 2));
 
-            helper.assertTrue(!ServerBehaviorScheduler.trigger(villager, EyeBehavior.STARE, 3, 1L),
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(villager, EyeBehavior.STARE, 1L),
                     "a trigger on a sleeping mob is dropped");
             villager.setHealth(1F);
             ServerBehaviorScheduler.onHealed(villager);
@@ -1003,7 +1006,7 @@ public final class BehaviorSchedulerGameTestsLogic {
             advance(5);
 
             villager.stopSleeping();
-            helper.assertTrue(ServerBehaviorScheduler.trigger(villager, EyeBehavior.BLINK, 3, 2L),
+            helper.assertTrue(ServerBehaviorScheduler.trigger(villager, EyeBehavior.BLINK, 2L),
                     "no heal, trade, affection, or ambient behavior started while the mob slept");
         } finally {
             ServerBehaviorScheduler.clear();
@@ -1068,7 +1071,7 @@ public final class BehaviorSchedulerGameTestsLogic {
      */
     private static boolean receivedBehaviorPlays(LivingEntity living, HeadInfo headInfo) {
         try {
-            ClientEyeRuntime.setBehavior(living, EyeBehavior.BLINK, 5, 1L, 0);
+            ClientEyeRuntime.setBehavior(living, EyeBehavior.BLINK, 1L, 0);
             return ClientEyeRuntime.get(living, headInfo).active != null;
         } finally {
             ClientEyeRuntime.onEntityRemoved(living);

@@ -19,6 +19,9 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SkullBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.functions.CopyNbtFunction;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
+import net.minecraft.world.level.storage.loot.providers.nbt.ContextNbtProvider;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -60,7 +63,7 @@ public final class SkullEyeState {
             Map.entry(EntityType.getKey(EntityType.SLIME), new HeadShape("root/right_eye", "root", true, 0F)),
             Map.entry(EntityType.getKey(EntityType.SNOW_GOLEM), new HeadShape(null, null, true, 0.06F)),
             Map.entry(EntityType.getKey(EntityType.SQUID), HeadShape.showing("root")),
-            Map.entry(new ResourceLocation(TWILIGHT_NAMESPACE, "naga"), HeadShape.showing("#0")),
+            Map.entry(new ResourceLocation(TWILIGHT_NAMESPACE, "naga"), HeadShape.showing(EyeConfigModel.attachmentIndex(0))),
             Map.entry(new ResourceLocation(TWILIGHT_NAMESPACE, "ur_ghast"), HeadShape.showing("root/body")));
     /**
      * The Heads mod's heads by floor-block id path: the mob whose definition each borrows. Its wall blocks
@@ -243,6 +246,12 @@ public final class SkullEyeState {
         return entityFor(BuiltInRegistries.BLOCK.getKey(block));
     }
 
+    /** Copy a placed head's eye compound to the item location read by placement and tooltips. */
+    public static LootItemFunction.Builder headLootCopy() {
+        return CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY)
+                .copy(DATA_KEY, BlockItem.BLOCK_ENTITY_TAG + "." + DATA_KEY);
+    }
+
     /**
      * The indexes of {@code helper}'s heads, from {@code entity}'s definition, that a head of that mob shows, in
      * order: those attached to the part the head reproduces, by default the model's head part (an attachment
@@ -328,7 +337,7 @@ public final class SkullEyeState {
     /** Whether eyes attached at {@code token} show on a head of {@code entity}'s kind ({@link #headParts}). */
     private static boolean isShownPart(ResourceLocation entity, String token) {
         String partToken = shape(entity).eyePart();
-        return partToken == null ? token.substring(token.lastIndexOf('/') + 1).equals(EyeConfigModel.PART_HEAD)
+        return partToken == null ? EyeConfigModel.lastAttachmentSegment(token).equals(EyeConfigModel.PART_HEAD)
                 : token.equals(partToken);
     }
 

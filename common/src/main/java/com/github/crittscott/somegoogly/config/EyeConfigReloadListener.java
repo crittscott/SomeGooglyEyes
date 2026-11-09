@@ -43,7 +43,7 @@ import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_BABY;
 public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
 
     /** The listener's identity for loaders that key reload listeners by id. */
-    public static final ResourceLocation ID = new ResourceLocation(SomeGooglyCommon.MOD_ID, "eye_configs");
+    public static final ResourceLocation ID = SomeGooglyCommon.id("eye_configs");
 
     /** The data-pack directory eye definitions live in: {@code data/<namespace>/eyes/<path>.json}. */
     private static final String EYE_DIRECTORY = "eyes";

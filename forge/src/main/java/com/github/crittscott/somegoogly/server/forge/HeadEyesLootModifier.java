@@ -1,7 +1,6 @@
 package com.github.crittscott.somegoogly.server.forge;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
-import com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import com.google.common.base.Suppliers;
 import com.mojang.serialization.Codec;
@@ -9,6 +8,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
@@ -29,6 +29,7 @@ public final class HeadEyesLootModifier extends LootModifier {
 
     public static final Supplier<Codec<HeadEyesLootModifier>> CODEC = Suppliers.memoize(() ->
             RecordCodecBuilder.create(instance -> codecStart(instance).apply(instance, HeadEyesLootModifier::new)));
+    private static final LootItemFunction COPY_EYES = SkullEyeState.headLootCopy().build();
     private static final DeferredRegister<Codec<? extends IGlobalLootModifier>> SERIALIZERS =
             DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, SomeGooglyCommon.MOD_ID);
 
@@ -49,11 +50,11 @@ public final class HeadEyesLootModifier extends LootModifier {
 
     @Override
     protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
-        Snapshot state = SkullEyeState.snapshot(context.getParamOrNull(LootContextParams.BLOCK_ENTITY));
-        if (state.hasEyes()) {
-            for (ItemStack stack : generatedLoot) {
+        if (SkullEyeState.hasEyes(context.getParamOrNull(LootContextParams.BLOCK_ENTITY))) {
+            for (int index = 0; index < generatedLoot.size(); index++) {
+                ItemStack stack = generatedLoot.get(index);
                 if (SkullEyeState.entityFor(stack) != null) {
-                    SkullEyeState.stampItem(stack, state);
+                    generatedLoot.set(index, COPY_EYES.apply(stack, context));
                 }
             }
         }

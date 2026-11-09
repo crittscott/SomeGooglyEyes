@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.network;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 
@@ -11,7 +12,7 @@ import net.minecraft.resources.ResourceLocation;
  */
 public record EyeAngerPacket(int entityId, boolean angry) implements Payload {
 
-    public static final ResourceLocation ID = NetworkProtocol.id("eye_anger");
+    public static final ResourceLocation ID = SomeGooglyCommon.id("eye_anger");
 
     /** Decode a received payload. */
     public static EyeAngerPacket read(FriendlyByteBuf buffer) {

@@ -3,7 +3,6 @@ package com.github.crittscott.somegoogly.network.forge;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.network.NetworkProtocol;
 import com.github.crittscott.somegoogly.network.Payload;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
@@ -20,7 +19,7 @@ public final class ForgeNetworkTransport {
 
     /** The payload channel; each payload's {@code index} in {@link Payload} is its wire id here. */
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
-            new ResourceLocation(SomeGooglyCommon.MOD_ID, "network"),
+            SomeGooglyCommon.id("network"),
             () -> NetworkProtocol.NETWORK_VERSION,
             NetworkProtocol.NETWORK_VERSION::equals,
             NetworkProtocol.NETWORK_VERSION::equals);

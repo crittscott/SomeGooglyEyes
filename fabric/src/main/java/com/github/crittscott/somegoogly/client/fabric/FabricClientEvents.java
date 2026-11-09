@@ -49,7 +49,7 @@ public final class FabricClientEvents {
                 new SimpleSynchronousResourceReloadListener() {
                     @Override
                     public ResourceLocation getFabricId() {
-                        return new ResourceLocation(SomeGooglyCommon.MOD_ID, "attachment_caches");
+                        return SomeGooglyCommon.id("attachment_caches");
                     }
 
                     @Override

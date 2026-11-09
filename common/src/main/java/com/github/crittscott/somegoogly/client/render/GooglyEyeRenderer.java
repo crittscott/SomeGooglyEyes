@@ -44,8 +44,7 @@ public final class GooglyEyeRenderer {
 
     // TEX precedes the RENDER_TYPE constants by necessity: their initializers read it by simple name,
     // and a forward reference there is a compile error (JLS 8.3.3).
-    private static final ResourceLocation TEX = new ResourceLocation(
-            SomeGooglyCommon.MOD_ID, "textures/model/modelgooglyeye.png");
+    private static final ResourceLocation TEX = SomeGooglyCommon.id("textures/model/modelgooglyeye.png");
     public static final RenderType RENDER_TYPE = RenderType.entityCutout(TEX);
     public static final RenderType RENDER_TYPE_EYES = RenderType.eyes(TEX);
 

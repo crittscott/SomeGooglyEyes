@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.network;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.picker.PickerFreezeService;
 import com.github.crittscott.somegoogly.picker.PickerGate;
 import net.minecraft.network.FriendlyByteBuf;
@@ -22,7 +23,7 @@ import java.util.UUID;
  */
 public class PickerFreezePacket implements Payload {
 
-    public static final ResourceLocation ID = NetworkProtocol.id("picker_freeze");
+    public static final ResourceLocation ID = SomeGooglyCommon.id("picker_freeze");
 
     /**
      * Server-side sanity bound on the freeze target's distance from the requester. Well past the crosshair

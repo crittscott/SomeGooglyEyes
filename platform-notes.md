@@ -38,6 +38,8 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 
 ### Data and block entities
 
+- 1.20.1: the loot-function interface extends `BiFunction<ItemStack, LootContext, ItemStack>`; apply its return value to the generated loot. [source: Fabric's published [Yarn API documentation](https://maven.fabricmc.net/docs/yarn-1.20.1+build.10/net/minecraft/loot/function/LootFunction.html), signatures only]
+
 - 1.20.1: `BlockItem` merges a stack's `BlockEntityTag` into the block entity and calls `load`, and heads are not an op-only block entity. A creative player needs no operator rights to supply that NBT, so a `load` that keeps a whole compound stores and rebroadcasts whatever was sent. [recalled]
 - A non-special recipe needs an unlock advancement, or `doLimitedCrafting` blocks it and the recipe book never offers it. The path is `data/<ns>/advancements/recipes/...` on 1.20.1 and uses the `advancement` directory on later versions. [tested on 1.20.1]
 
@@ -70,6 +72,8 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 - There is no Forge `FakePlayer` after 1.20.1.
 
 ## Fabric
+
+- 1.20.1: Fabric API's `FabricPacket`/`PacketType` play receivers decode using the type's reader and dispatch handlers on the server/client game thread. Typed direct sends exist, but `ServerPlayNetworking.createS2CPacket` takes an id and buffer, not a `FabricPacket`. [source: published [server](https://github.com/FabricMC/fabric/blob/1.20.1/fabric-networking-api-v1/src/main/java/net/fabricmc/fabric/api/networking/v1/ServerPlayNetworking.java) and [client](https://github.com/FabricMC/fabric/blob/1.20.1/fabric-networking-api-v1/src/client/java/net/fabricmc/fabric/api/client/networking/v1/ClientPlayNetworking.java) API source]
 
 - `ServerLivingEntityEvents.MOB_CONVERSION` fires only from `Mob.convertTo`. On 1.20.1 villager-to-witch and pig-to-zombified-piglin lightning conversions, and the mooshroom shear, build the new mob by hand and need their own hook. The villager path ends in `addFreshEntityWithPassengers`, the pig path in `addFreshEntity`. [tested]
 - `ClientPacketListener`'s send-command methods are injected and run through the client dispatcher, so calling `sendCommand` from a client command recurses without end. To reach the server from a client command, throw one of the two exception types Fabric forwards, such as `BUILT_IN_EXCEPTIONS.dispatcherParseException()`. [source]
@@ -104,3 +108,5 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 - Maven `VersionRange` reads a bare version as a soft recommendation that matches everything, so it is not a drop-in reader for data where a bare version means an exact one. [recalled]
 - Twilight Forest's `AbstractTrophyBlock.use` always consumes the click, so an item's `useOn` never runs on a trophy unless the player sneaks. [recalled]
 - GeckoLib 4: the entity compile-render-layers event fires for every `GeoEntityRenderer`, non-living entities included. `BakedGeoModel` is a record and `GeoBone` defines `equals`, so two baked models of the same structure compare equal; key caches by identity. [recalled]
+
+- Twilight Forest 1.20.x: `twilightforest.client.model.tileentity` contains `UrGhastTrophyModel` with face part `body`, `AlphaYetiTrophyModel` with `main`, and `KnightPhantomTrophyModel` with `helmet`. [source: published model files in the [1.20.x source tree](https://github.com/TeamTwilight/twilightforest/tree/1.20.x/src/main/java/twilightforest/client/model/tileentity)]

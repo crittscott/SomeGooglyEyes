@@ -106,7 +106,7 @@ public enum OngoingBehavior {
     private final ConfigValue<Boolean> setting;
 
     OngoingBehavior(String name, ConfigValue<Boolean> setting) {
-        this.id = new ResourceLocation(SomeGooglyCommon.MOD_ID, name);
+        this.id = SomeGooglyCommon.id(name);
         this.setting = setting;
     }
 

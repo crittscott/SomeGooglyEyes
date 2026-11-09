@@ -30,7 +30,6 @@ import java.util.function.UnaryOperator;
 import javax.annotation.Nullable;
 
 import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ADULT;
-import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_BABY;
 
 /**
  * Server-side half of {@code /sg export} (reached via {@code PickerExportPacket}): validates a
@@ -84,9 +83,6 @@ public final class PickerExportService {
         }
         if (typeId.equals(ServerEyeConfigs.ENDER_DRAGON)) {
             return Component.translatable("somegoogly.command.picker.export_rejected_ender_dragon");
-        }
-        if (!AGE_ADULT.equals(age) && !AGE_BABY.equals(age)) {
-            return Component.translatable("somegoogly.command.picker.export_rejected_malformed_payload");
         }
         RuntimeConfig config = RuntimeConfig.CODEC.parse(NbtOps.INSTANCE, configNbt).result().orElse(null);
         if (config == null) {

@@ -26,10 +26,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.storage.loot.functions.CopyNbtFunction;
-import net.minecraft.world.level.storage.loot.providers.nbt.ContextNbtProvider;
 
 /** Fabric event wiring for the loader-neutral authoritative server services. */
 public final class FabricServerEvents {
@@ -39,7 +36,7 @@ public final class FabricServerEvents {
      * phase can veto item use before either service mutates player or entity state.
      */
     private static final ResourceLocation LATE_PHASE =
-            new ResourceLocation(SomeGooglyCommon.MOD_ID, "after_protection");
+            SomeGooglyCommon.id("after_protection");
 
     /** The loot tables of the heads that can have eyes, gathered on first use, once blocks are registered. */
     @Nullable
@@ -75,8 +72,7 @@ public final class FabricServerEvents {
         // The Forge counterpart is HeadEyesLootModifier. A head without eyes saves no compound, so nothing copies.
         LootTableEvents.MODIFY.register((resourceManager, lootManager, id, tableBuilder, source) -> {
             if (headLootTables().contains(id)) {
-                tableBuilder.modifyPools(pool -> pool.apply(CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY)
-                        .copy(SkullEyeState.DATA_KEY, BlockItem.BLOCK_ENTITY_TAG + "." + SkullEyeState.DATA_KEY)));
+                tableBuilder.modifyPools(pool -> pool.apply(SkullEyeState.headLootCopy()));
             }
         });
         UseItemCallback.EVENT.addPhaseOrdering(Event.DEFAULT_PHASE, LATE_PHASE);

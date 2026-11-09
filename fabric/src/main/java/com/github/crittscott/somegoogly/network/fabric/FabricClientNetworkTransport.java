@@ -11,7 +11,7 @@ import net.minecraft.network.chat.Component;
 
 import java.util.concurrent.CompletableFuture;
 
-/** Physical-client Fabric payload receivers; each decodes on the network thread and handles on the client thread. */
+/** Physical-client Fabric login checks and typed play receivers dispatched on the client game thread. */
 public final class FabricClientNetworkTransport {
 
     private FabricClientNetworkTransport() {
@@ -33,9 +33,7 @@ public final class FabricClientNetworkTransport {
     }
 
     private static <T extends Payload> void registerClientbound(Payload.Clientbound<T> payload) {
-        ClientPlayNetworking.registerGlobalReceiver(payload.id(), (client, handler, buffer, sender) -> {
-            T packet = payload.reader().apply(buffer);
-            client.execute(() -> payload.handler().accept(packet));
-        });
+        ClientPlayNetworking.registerGlobalReceiver(FabricNetworkTransport.type(payload.id()), (packet, player, sender) ->
+                payload.handler().accept(payload.type().cast(packet.body())));
     }
 }

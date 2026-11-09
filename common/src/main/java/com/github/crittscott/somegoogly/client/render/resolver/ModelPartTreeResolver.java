@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.client.render.resolver;
 
+import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
@@ -92,7 +93,7 @@ abstract class ModelPartTreeResolver implements EyeAttachmentResolver {
     }
 
     private static void enumerate(String prefix, String name, ModelPart part, List<String> out) {
-        String path = prefix.isEmpty() ? name : prefix + "/" + name;
+        String path = EyeConfigModel.attachmentPath(prefix, name);
         out.add(path);
         for (Map.Entry<String, ModelPart> child : part.children.entrySet()) {
             enumerate(path, child.getKey(), child.getValue(), out);
@@ -157,7 +158,7 @@ abstract class ModelPartTreeResolver implements EyeAttachmentResolver {
      */
     private static boolean search(String prefix, String name, ModelPart part, String token,
                                   ArrayDeque<ModelPart> chain) {
-        String path = prefix.isEmpty() ? name : prefix + "/" + name;
+        String path = EyeConfigModel.attachmentPath(prefix, name);
         chain.addLast(part);
         if (EyeAttachmentResolver.pathMatches(token, path)) {
             return true;

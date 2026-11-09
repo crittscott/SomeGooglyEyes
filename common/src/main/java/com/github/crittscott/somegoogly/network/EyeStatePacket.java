@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.network;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import io.netty.handler.codec.DecoderException;
@@ -15,7 +16,7 @@ import net.minecraft.resources.ResourceLocation;
  */
 public record EyeStatePacket(int entityId, EyeState.Snapshot snapshot) implements Payload {
 
-    public static final ResourceLocation ID = NetworkProtocol.id("eye_state");
+    public static final ResourceLocation ID = SomeGooglyCommon.id("eye_state");
 
     /** Decode and validate a received payload. */
     public static EyeStatePacket read(FriendlyByteBuf buffer) {

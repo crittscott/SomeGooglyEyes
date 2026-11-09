@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.client.render;
 
+import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.github.crittscott.somegoogly.client.GooglyTracker;
 import com.github.crittscott.somegoogly.client.HeldEye;
@@ -39,6 +40,7 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
      * {@code gui} display transform (the other contexts honor theirs), so this is the inventory knob.
      */
     private static final float GUI_SCALE = 1.8F;
+    /** Fixed item appearance, independent of the mob placement defaults. */
     private static final float IRIS_SCALE = 0.6F;
     /** Base model scale for hand/ground/item-frame (those contexts size further via the json display). */
     private static final float MODEL_SCALE = 0.22F;
@@ -82,7 +84,7 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
             // First-person eyes retain eye-local down; their pose is relative to the camera rather than the world.
             float partialTick = presented != null ? draw.partialTick() : Minecraft.getInstance().getFrameTime();
             GooglyEyeRenderer.drawAnimatedEye(pose, buffer, light, overlay, animated,
-                    ctx == ItemDisplayContext.GUI ? GUI_SCALE : MODEL_SCALE, 1F, look.cornea(), look.iris(),
+                    ctx == ItemDisplayContext.GUI ? GUI_SCALE : MODEL_SCALE, EyePlacement.DEFAULT_DEPTH, look.cornea(), look.iris(),
                     IRIS_SCALE, look.glow(), partialTick);
         } else {
             float scale = ctx == ItemDisplayContext.GUI ? GUI_SCALE : MODEL_SCALE;

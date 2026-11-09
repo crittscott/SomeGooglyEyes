@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.network;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.EyeConfigLimits;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import io.netty.buffer.Unpooled;
@@ -27,7 +28,7 @@ import java.util.zip.GZIPOutputStream;
  */
 public class EyeConfigSyncPacket implements Payload {
 
-    public static final ResourceLocation ID = NetworkProtocol.id("eye_config");
+    public static final ResourceLocation ID = SomeGooglyCommon.id("eye_config");
     /** Compressed wire body; retains the existing transport budget on both loaders. */
     public static final int MAX_COMPRESSED_BYTES = 900 * 1024;
     /** Maximum inflated body, bounded before parsing NBT. */
