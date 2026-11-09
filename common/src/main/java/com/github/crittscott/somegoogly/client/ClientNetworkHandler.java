@@ -35,7 +35,11 @@ public final class ClientNetworkHandler {
     public static void handleBehavior(EyeBehaviorTriggerPacket packet) {
         LivingEntity living = living(packet.entityId());
         if (living != null) {
-            ClientEyeRuntime.setBehavior(living, packet.behavior(), packet.seed(), packet.elapsed());
+            if (packet.target() == EyeBehaviorTriggerPacket.Target.ENTITY) {
+                ClientEyeRuntime.setBehavior(living, packet.behavior(), packet.seed(), packet.elapsed());
+            } else {
+                ClientEyeRuntime.setHandBehavior(living, packet.target().hand(), packet.behavior(), packet.seed(), packet.elapsed());
+            }
         }
     }
 

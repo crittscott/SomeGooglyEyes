@@ -6,6 +6,8 @@ import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.item.GooglyEyeItem;
 import com.github.crittscott.somegoogly.registry.ModContent;
+import java.util.Arrays;
+import java.util.Optional;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -20,9 +22,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeType;
-
-import java.util.Arrays;
-import java.util.Optional;
 
 /**
  * The mod's two shipped crafting recipes, looked up through the server's recipe manager the way a

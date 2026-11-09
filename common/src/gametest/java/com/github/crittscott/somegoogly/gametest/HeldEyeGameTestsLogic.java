@@ -1,211 +1,183 @@
 package com.github.crittscott.somegoogly.gametest;
 
-import com.github.crittscott.somegoogly.client.HeldEye;
+import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.github.crittscott.somegoogly.config.ServerConfig;
-import com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
-import com.github.crittscott.somegoogly.eye.behavior.EyeInfluence;
+import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.registry.ModContent;
+import java.util.List;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
-/**
- * Coverage for {@link HeldEye}, the live eye a player sees in first person while holding a Googly Eye.
- * Drives it directly against a mock player, setting the hurt animation and health by hand, since the held
- * eye derives its behaviors from the holder's own vanilla-synced state on the holder's client, under the
- * server's synced {@link BehaviorSettings}, passed here by hand. How the eye looks in the hand is verified
- * in game.
- */
+/** Real server reactions feed the same per-hand presentation used by first- and third-person draws. */
 public final class HeldEyeGameTestsLogic {
+    private HeldEyeGameTestsLogic() { }
 
-    // Half of a blink, where the eye is most closed, and how far it must be closed there.
-    private static final int BLINK_PEAK_TICKS = EyeBehavior.BLINK.defaultDuration() / 2;
-    private static final float BLINK_PEAK_SQUASH = 0.5F;
-    // The server's defaults.
-    private static final BehaviorSettings DEFAULTS = TestBehaviorSettings.DEFAULTS;
-    // Ticks into a grow by which the eye has visibly bulged.
-    private static final int GROW_RISE_TICKS = 3;
-
-    private HeldEyeGameTestsLogic() {
-    }
-
-    /** A held eye ticked once under {@code settings} for a fresh mock player holding a Googly Eye in {@code hand}. */
-    private static HeldEye heldBy(Player player, InteractionHand hand, BehaviorSettings settings) {
-        player.setItemInHand(hand, new ItemStack(ModContent.GOOGLY_EYE.get()));
-        HeldEye held = new HeldEye();
-        held.tick(player, settings);
-        return held;
-    }
-
-    /** The defaults with ambient play, the hit-grow chance, and the heal swirl as given. */
-    private static BehaviorSettings settings(boolean ambient, int growOnHitPercent, boolean swirlOnHeal) {
-        return new BehaviorSettings(ambient, DEFAULTS.minTicks(), DEFAULTS.maxTicks(), DEFAULTS.pool(),
-                growOnHitPercent, swirlOnHeal, DEFAULTS.swirlHealCooldownTicks(), DEFAULTS.ongoing());
-    }
-
-    private static void step(HeldEye held, Player player, int ticks, BehaviorSettings settings) {
-        for (int i = 0; i < ticks; i++) {
-            held.tick(player, settings);
+    private static final class Context implements AutoCloseable {
+        final boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
+        final int cooldown = ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS.get();
+        final boolean enabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
+        final int grow = ServerConfig.GROW_ON_HIT_PERCENT.get();
+        final boolean heal = ServerConfig.SWIRL_ON_HEAL.get();
+        final Player player;
+        Context(ServerPlayer template) {
+            this(template, TestPlayers.create(template, false, 0));
         }
-    }
-
-    /** Steps until nothing is playing. */
-    private static void stepUntilIdle(HeldEye held, Player player, BehaviorSettings settings) {
-        while (held.active != null) {
-            held.tick(player, settings);
-        }
-    }
-
-    /**
-     * A held eye bulges when its holder is hurt, at the server's {@code growOnHitPercent}; here it is 100. In
-     * game: with {@code growOnHitPercent = 100}, hold a Googly Eye in first person and take damage (a fall, a
-     * cactus); the eye in your hand bulges and settles back.
-     */
-    public static void heldEyeBulgesWhenHurt(GameTestHelper helper) {
-        BehaviorSettings always = settings(true, ServerConfig.PERCENT_MAX, true);
-        Player player = helper.makeMockPlayer();
-        HeldEye held = heldBy(player, InteractionHand.MAIN_HAND, always);
-        helper.assertTrue(held.eye != null && held.active == null, "a freshly held eye is live and plays nothing");
-
-        player.hurtTime = player.hurtDuration = 10;
-        held.tick(player, always);
-        helper.assertTrue(held.active != null && held.active.behavior == EyeBehavior.GROW, "being hurt plays grow");
-        step(held, player, GROW_RISE_TICKS, always);
-        helper.assertTrue(held.eye.scaleMul > 1F, "the eye bulges");
-        helper.succeed();
-    }
-
-    /**
-     * A held eye follows the server's switches: with {@code growOnHitPercent} at 0 being hurt plays nothing,
-     * with {@code swirlOnHeal} off healing plays nothing, and with {@code ambientBehaviors} off it never
-     * plays an idle expression. In game: set those three in {@code somegoogly-server.toml}, hold a Googly Eye
-     * in first person, take damage, heal, and stand still for 40 seconds; the eye in your hand never bulges,
-     * swirls, winks, stares, or glances aside.
-     */
-    public static void heldEyeHonorsServerSettings(GameTestHelper helper) {
-        BehaviorSettings off = settings(false, ServerConfig.PERCENT_MIN, false);
-        Player player = helper.makeMockPlayer();
-        player.setHealth(10F);
-        HeldEye held = heldBy(player, InteractionHand.MAIN_HAND, off);
-
-        player.hurtTime = player.hurtDuration = 10;
-        held.tick(player, off);
-        helper.assertTrue(held.active == null, "growOnHitPercent=0: being hurt plays nothing");
-        player.hurtTime = 0;
-        held.tick(player, off);
-
-        player.heal(1F);
-        held.tick(player, off);
-        helper.assertTrue(held.active == null, "swirlOnHeal=false: healing plays nothing");
-
-        for (int i = 0; i < off.maxTicks(); i++) {
-            held.tick(player, off);
-            helper.assertTrue(held.active == null, "ambientBehaviors=false: no idle expression plays");
-        }
-        helper.succeed();
-    }
-
-    /**
-     * A held eye swirls when its holder heals, at most once per {@code swirlHealCooldownTicks}, and a heal while
-     * something else plays is dropped. In game: hold a Googly Eye in first person, get hurt, and eat a golden
-     * apple or drink a potion of healing; the eye swirls. Heal again soon after and it doesn't.
-     */
-    public static void heldEyeSwirlsWhenHealed(GameTestHelper helper) {
-        Player player = helper.makeMockPlayer();
-        player.setHealth(10F);
-        HeldEye held = heldBy(player, InteractionHand.MAIN_HAND, DEFAULTS);
-
-        player.heal(1F);
-        held.tick(player, DEFAULTS);
-        helper.assertTrue(held.active != null && held.active.behavior == EyeBehavior.SWIRL, "healing plays swirl");
-        BehaviorInstance swirl = held.active;
-        player.heal(1F);
-        held.tick(player, DEFAULTS);
-        helper.assertTrue(held.active == swirl, "a heal while the swirl plays is dropped");
-
-        // The idle timer can't fire before ambientMinTicks, past the end of the swirl.
-        stepUntilIdle(held, player, DEFAULTS);
-        player.heal(1F);
-        held.tick(player, DEFAULTS);
-        helper.assertTrue(held.active == null, "a heal inside the cooldown doesn't swirl");
-
-        step(held, player, DEFAULTS.swirlHealCooldownTicks(), DEFAULTS);
-        stepUntilIdle(held, player, DEFAULTS);
-        player.heal(1F);
-        held.tick(player, DEFAULTS);
-        helper.assertTrue(held.active != null && held.active.behavior == EyeBehavior.SWIRL,
-                "once the cooldown passes healing swirls again");
-        helper.succeed();
-    }
-
-    /**
-     * A held eye left alone plays an expression from the server's ambient pool now and then, and never
-     * crosses. In game: hold a Googly Eye in first person and stand still for up to 40 seconds; the eye in
-     * your hand winks, stares, or glances aside.
-     */
-    public static void heldEyePlaysIdleBehaviors(GameTestHelper helper) {
-        Player player = helper.makeMockPlayer();
-        HeldEye held = heldBy(player, InteractionHand.MAIN_HAND, DEFAULTS);
-        EyeBehavior played = null;
-        for (int i = 0; i < DEFAULTS.maxTicks() && played == null; i++) {
-            held.tick(player, DEFAULTS);
-            if (held.active != null) {
-                played = held.active.behavior;
+        Context(ServerPlayer template, Player player) {
+            this.player = player;
+            player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModContent.GOOGLY_EYE.get()));
+            ServerConfig.AMBIENT_BEHAVIORS.set(false);
+            ServerConfig.GOOGLY_EYES_ENABLED.set(true);
+            ServerConfig.GROW_ON_HIT_PERCENT.set(100);
+            ServerConfig.SWIRL_ON_HEAL.set(true);
+            ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS.set(200);
+            ServerBehaviorScheduler.clear();
+            if (player instanceof ServerPlayer serverPlayer) {
+                ServerBehaviorScheduler.onPlayerJoined(serverPlayer);
+            } else {
+                ServerBehaviorScheduler.onStartTracking(player, template);
             }
+            ClientEyeRuntime.onLevelChanged();
         }
-        helper.assertTrue(played != null, "an idle behavior plays within the longest idle wait");
-        helper.assertTrue(DEFAULTS.pool().contains(played) && played != EyeBehavior.CROSS_EYE,
-                "the idle behavior comes from the pool and isn't a cross-eye, not " + played.id());
+        @Override public void close() {
+            ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
+            ServerConfig.GOOGLY_EYES_ENABLED.set(enabled);
+            ServerConfig.GROW_ON_HIT_PERCENT.set(grow);
+            ServerConfig.SWIRL_ON_HEAL.set(heal);
+            ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS.set(cooldown);
+            ServerBehaviorScheduler.clear();
+            ClientEyeRuntime.onLevelChanged();
+            player.discard();
+        }
+    }
+
+    /** In game: hold a Googly Eye and take nonplayer damage; its bulge is visible to you and another viewer. */
+    public static void heldEyeBulgesWhenHurt(GameTestHelper helper, ServerPlayer template) {
+        try (Context context = new Context(template, helper.makeMockPlayer())) {
+            context.player.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(ModContent.GOOGLY_EYE.get()));
+            hurtByFall(helper, context.player);
+            for (InteractionHand hand : InteractionHand.values()) {
+                var packet = ServerBehaviorScheduler.handBehavior(context.player, hand);
+                helper.assertTrue(packet != null && packet.behavior() == EyeBehavior.GROW, "each held eye receives a server grow");
+                ClientEyeRuntime.setHandBehavior(context.player, hand, packet.behavior(), packet.seed(), packet.elapsed());
+            }
+            var main = ClientEyeRuntime.handEyes(context.player, InteractionHand.MAIN_HAND, context.player.getMainHandItem());
+            var off = ClientEyeRuntime.handEyes(context.player, InteractionHand.OFF_HAND, context.player.getOffhandItem());
+            for (int time = 0; time < 4; time++) {
+                ClientEyeRuntime.handEyes(context.player, InteractionHand.MAIN_HAND, context.player.getMainHandItem());
+                ClientEyeRuntime.handEyes(context.player, InteractionHand.OFF_HAND, context.player.getOffhandItem());
+                ClientEyeRuntime.tickWorld(time, BehaviorSettings.fromConfig());
+            }
+            helper.assertTrue(main != off && main.eye.scaleMul > 1F && off.eye.scaleMul > 1F, "both independent hands display the real reaction");
+        }
         helper.succeed();
     }
 
-    /**
-     * A lone eye's blink closes it, and cross-eye, which needs a partner eye, leaves it alone. In game: hold a
-     * Googly Eye in first person until it winks; the whole eye closes and opens again.
-     */
-    public static void heldEyeWinksAlone(GameTestHelper helper) {
-        Player player = helper.makeMockPlayer();
-        HeldEye held = heldBy(player, InteractionHand.MAIN_HAND, DEFAULTS);
-        helper.assertTrue(held.start(EyeBehavior.BLINK), "a blink starts on an idle held eye");
-        step(held, player, BLINK_PEAK_TICKS, DEFAULTS);
-        helper.assertTrue(held.eye.squashY < BLINK_PEAK_SQUASH, "the lone eye closes for the blink");
-
-        BehaviorInstance cross = BehaviorInstance.start(EyeBehavior.CROSS_EYE, null,
-                EyeBehavior.CROSS_EYE.defaultDuration(), 1L);
-        cross.age = cross.duration / 2;
-        EyeInfluence influence = new EyeInfluence();
-        EyeBehavior.CROSS_EYE.influence(cross, 0, 0, influence);
-        helper.assertTrue(influence.stiffness == 0F && influence.anchorX == 0F && influence.anchorY == 0F,
-                "a lone eye has no partner to cross toward");
+    /** In game: turn hit growth and heal swirl off; damage and healing leave a held eye without reactions. */
+    public static void heldEyeHonorsServerSettings(GameTestHelper helper, ServerPlayer template) {
+        try (Context context = new Context(template, helper.makeMockPlayer())) {
+            ServerConfig.GROW_ON_HIT_PERCENT.set(0);
+            ServerConfig.SWIRL_ON_HEAL.set(false);
+            hurtByFall(helper, context.player);
+            context.player.heal(1F);
+            helper.assertTrue(ServerBehaviorScheduler.handBehavior(context.player, InteractionHand.MAIN_HAND) == null,
+                "real hurt/heal actions respect their switches");
+        }
         helper.succeed();
     }
 
-    /**
-     * A held eye is dropped when it leaves the holder's hands and starts fresh when picked up again, in either
-     * hand. In game: hold a Googly Eye in first person while it is mid-wink, switch to another item and back,
-     * and it is at rest; move it to your off hand and it is live there too.
-     */
-    public static void heldEyeResetsWhenPutAway(GameTestHelper helper) {
-        Player player = helper.makeMockPlayer();
-        HeldEye held = heldBy(player, InteractionHand.MAIN_HAND, DEFAULTS);
-        held.start(EyeBehavior.BLINK);
-
-        player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
-        held.tick(player, DEFAULTS);
-        helper.assertTrue(held.eye == null && held.active == null, "putting the eye away drops it");
-
-        player.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(ModContent.GOOGLY_EYE.get()));
-        held.tick(player, DEFAULTS);
-        helper.assertTrue(held.eye != null && held.active == null, "an eye in the off hand starts fresh");
-
-        Player other = helper.makeMockPlayer();
-        other.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModContent.GOOGLY_EYE.get()));
-        held.start(EyeBehavior.STARE);
-        held.tick(other, DEFAULTS);
-        helper.assertTrue(held.active == null, "a new holder starts fresh");
+    /** In game: keep a held eye visible through F5; its stable ambient blink continues on the same pupil. */
+    public static void heldEyePlaysIdleBehaviors(GameTestHelper helper, ServerPlayer template) {
+        try (Context context = new Context(template)) {
+            var stack = context.player.getMainHandItem();
+            var eye = ClientEyeRuntime.handEyes(context.player, InteractionHand.MAIN_HAND, stack);
+            var defaults = TestBehaviorSettings.DEFAULTS;
+            var blink = new BehaviorSettings(true, 1, 1, List.of(EyeBehavior.BLINK), 0, false, 200, defaults.ongoing());
+            for (int tick = 0; tick < 4; tick++) {
+                helper.assertTrue(ClientEyeRuntime.handEyes(context.player, InteractionHand.MAIN_HAND, stack.copy()) == eye,
+                    "stack copies and view changes select the same hand entry");
+                ClientEyeRuntime.tickWorld(tick, blink);
+            }
+            helper.assertTrue(eye.active != null && eye.active.behavior == EyeBehavior.BLINK, "the hand uses deterministic ambient slots");
+        }
         helper.succeed();
+    }
+
+    /** In game: put the eye away and equip it again; the old hand simulation and received reaction are retired. */
+    public static void heldEyeResetsWhenPutAway(GameTestHelper helper, ServerPlayer template) {
+        try (Context context = new Context(template)) {
+            ItemStack eyeItem = context.player.getMainHandItem();
+            var before = ClientEyeRuntime.handEyes(context.player, InteractionHand.MAIN_HAND, eyeItem);
+            ClientEyeRuntime.setHandBehavior(context.player, InteractionHand.MAIN_HAND, EyeBehavior.GROW, 42L, 0);
+            context.player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+            ClientEyeRuntime.tickWorld(1L, BehaviorSettings.NONE);
+            context.player.setItemInHand(InteractionHand.MAIN_HAND, eyeItem);
+            var after = ClientEyeRuntime.handEyes(context.player, InteractionHand.MAIN_HAND, eyeItem);
+            ClientEyeRuntime.tickWorld(2L, BehaviorSettings.NONE);
+            helper.assertTrue(after != before && after.active == null, "reequipping starts a fresh hand presentation");
+        }
+        helper.succeed();
+    }
+
+    /** In game: heal while holding an eye, then heal again after its swirl but before the cooldown; no second swirl. */
+    public static void heldEyeSwirlsWhenHealed(GameTestHelper helper, ServerPlayer template) {
+        Context context = new Context(template);
+        try {
+            context.player.setHealth(1F);
+            context.player.heal(1F);
+            var first = ServerBehaviorScheduler.handBehavior(context.player, InteractionHand.MAIN_HAND);
+            helper.assertTrue(first != null && first.behavior() == EyeBehavior.SWIRL, "a real heal starts a server-held swirl");
+            context.player.heal(1F);
+            helper.assertTrue(ServerBehaviorScheduler.handBehavior(context.player, InteractionHand.MAIN_HAND).seed() == first.seed(),
+                "a busy eye keeps its current reaction");
+            helper.runAfterDelay(EyeBehavior.SWIRL.defaultDuration() + 1, () -> {
+                try {
+                    context.player.heal(1F);
+                    helper.assertTrue(ServerBehaviorScheduler.handBehavior(context.player, InteractionHand.MAIN_HAND) == null,
+                        "a heal after expression expiry still respects the cooldown");
+                    helper.runAfterDelay(200 - EyeBehavior.SWIRL.defaultDuration(), () -> {
+                        try {
+                            context.player.heal(1F);
+                            var next = ServerBehaviorScheduler.handBehavior(context.player, InteractionHand.MAIN_HAND);
+                            helper.assertTrue(next != null && next.behavior() == EyeBehavior.SWIRL && next.seed() != first.seed(),
+                                "a heal after the cooldown starts a fresh reaction");
+                        } finally { context.close(); }
+                        helper.succeed();
+                    });
+                } catch (RuntimeException | Error failure) { context.close(); throw failure; }
+            });
+        } catch (RuntimeException | Error failure) { context.close(); throw failure; }
+    }
+
+    /** In game: a single held eye blinks closed and never selects the paired cross-eye expression. */
+    public static void heldEyeWinksAlone(GameTestHelper helper, ServerPlayer template) {
+        try (Context context = new Context(template)) {
+            var defaults = TestBehaviorSettings.DEFAULTS;
+            var settings = new BehaviorSettings(true, 1, 1, List.of(EyeBehavior.BLINK, EyeBehavior.CROSS_EYE), 0, false, 200, defaults.ongoing());
+            var eye = ClientEyeRuntime.handEyes(context.player, InteractionHand.MAIN_HAND, context.player.getMainHandItem());
+            for (int tick = 0; tick <= EyeBehavior.BLINK.defaultDuration() / 2; tick++) {
+                ClientEyeRuntime.handEyes(context.player, InteractionHand.MAIN_HAND, context.player.getMainHandItem());
+                ClientEyeRuntime.tickWorld(tick, settings);
+            }
+            helper.assertTrue(eye.active != null && eye.active.behavior == EyeBehavior.BLINK && eye.eye.squashY < 0.5F,
+                "a lone held eye closes for its blink and filters cross-eye");
+        }
+        helper.succeed();
+    }
+
+    /** Environmental damage avoids difficulty-scaled mob attacks and reaches the real player hurt hook. */
+    private static void hurtByFall(GameTestHelper helper, Player player) {
+        DamageSource fall = new DamageSource(helper.getLevel().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
+                .getHolderOrThrow(DamageTypes.FALL));
+        float health = player.getHealth();
+        helper.assertTrue(player.hurt(fall, 1F) && player.getHealth() < health,
+                "real environmental damage must lower the holder's health");
     }
 }

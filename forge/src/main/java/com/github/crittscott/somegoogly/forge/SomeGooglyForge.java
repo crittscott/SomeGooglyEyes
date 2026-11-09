@@ -11,6 +11,8 @@ import com.github.crittscott.somegoogly.platform.forge.RegistrationImpl;
 import com.github.crittscott.somegoogly.registry.ModContent;
 import com.github.crittscott.somegoogly.server.forge.ForgeServerEvents;
 import com.github.crittscott.somegoogly.server.forge.HeadEyesLootModifier;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
@@ -18,9 +20,6 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /** Forge bootstrap for common registration and server datapack resources. */
 @Mod(SomeGooglyCommon.MOD_ID)

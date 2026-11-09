@@ -4,16 +4,22 @@ import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.migration.fabric.FabricMigration;
 import com.github.crittscott.somegoogly.network.fabric.FabricNetworkTransport;
 import com.github.crittscott.somegoogly.platform.EntityPersistentData;
+import java.util.Objects;
 import net.fabricmc.fabric.api.entity.FakePlayer;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+import net.fabricmc.fabric.api.event.player.UseEntityCallback;
+import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Cow;
-
-import java.util.Objects;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.phys.EntityHitResult;
 
 /**
  * Fabric GameTest entry points for the shared core and picker-spawn assertions. Listed under the
@@ -21,9 +27,9 @@ import java.util.Objects;
  * entrypoint since Fabric, unlike Forge's {@code @GameTestHolder} scan, requires explicit enumeration.
  */
 public final class SomeGooglyGameTests implements FabricGameTest {
+    private static final String RELEASED_PERSISTENT_DATA_KEY = "somegoogly:persistentData";
 
     private static final String TEMPLATE = "somegoogly:empty";
-    private static final String RELEASED_PERSISTENT_DATA_KEY = "somegoogly:persistentData";
 
     @GameTest(template = TEMPLATE, timeoutTicks = 20)
     public static void commandSpawnFinalizesBeforeApplyingPickerState(GameTestHelper helper) {
@@ -31,8 +37,14 @@ public final class SomeGooglyGameTests implements FabricGameTest {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 20)
-    public static void spawnCommandsRefuseDragonPlayersAndExcludedTypes(GameTestHelper helper) {
-        PickerSpawnServiceGameTestsLogic.spawnCommandsRefuseDragonPlayersAndExcludedTypes(helper);
+    public static void conversionKeepsEyeState(GameTestHelper helper) {
+        SomeGooglyGameTestsLogic.conversionKeepsEyeState(helper, FakePlayer.get(helper.getLevel()));
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void deathHarvestRejectsNonqualifyingKills(GameTestHelper helper) {
+        SomeGooglyGameTestsLogic.deathHarvestRejectsNonqualifyingKills(
+                helper, FakePlayer.get(helper.getLevel()));
     }
 
     /**
@@ -96,18 +108,40 @@ public final class SomeGooglyGameTests implements FabricGameTest {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 20)
-    public static void conversionKeepsEyeState(GameTestHelper helper) {
-        SomeGooglyGameTestsLogic.conversionKeepsEyeState(helper, FakePlayer.get(helper.getLevel()));
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 20)
     public static void googlyEyeItemStoresAppearanceOverride(GameTestHelper helper) {
         SomeGooglyGameTestsLogic.googlyEyeItemStoresAppearanceOverride(helper);
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void lightningConversionKeepsEyeState(GameTestHelper helper) {
+        SomeGooglyGameTestsLogic.lightningConversionKeepsEyeState(helper);
+    }
+
+    /** See the shared test for End exit and death reproduction steps. */
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void nativePlayerCopiesKeepEyesOnlyWhileAlive(GameTestHelper helper) {
+        LoaderInteractionGameTestsLogic.playerCopiesKeepEyesOnlyWhileAlive(helper, FakePlayer.get(helper.getLevel()), (original, replacement, alive) -> ServerPlayerEvents.COPY_FROM.invoker().copyFromPlayer(original, replacement, alive));
+    }
+    /** See the shared test for normal use and protection refusal reproduction steps. */
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void nativeUseHooksHonorResults(GameTestHelper helper) {
+        LoaderInteractionGameTestsLogic.useHooksHonorResults(helper, FakePlayer.get(helper.getLevel()), (player, target, hit, refused) -> {
+                    if (hit != null) return UseBlockCallback.EVENT.invoker().interact(player, helper.getLevel(), InteractionHand.MAIN_HAND, hit);
+                    if (target != null) return UseEntityCallback.EVENT.invoker().interact(player, helper.getLevel(),
+                            InteractionHand.MAIN_HAND, target, target instanceof ArmorStand
+                                    ? new EntityHitResult(target, target.position()) : null);
+                    return UseItemCallback.EVENT.invoker().interact(player, helper.getLevel(), InteractionHand.MAIN_HAND).getResult();
+                }, false);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
     public static void optometristAcceptsOnlyShears(GameTestHelper helper) {
         SomeGooglyGameTestsLogic.optometristAcceptsOnlyShears(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 20)
+    public static void realShearsKillsHarvestAnEye(GameTestHelper helper) {
+        SomeGooglyGameTestsLogic.realShearsKillsHarvestAnEye(helper, FakePlayer.get(helper.getLevel()));
     }
 
     /**
@@ -123,24 +157,7 @@ public final class SomeGooglyGameTests implements FabricGameTest {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 20)
-    public static void lightningConversionKeepsEyeState(GameTestHelper helper) {
-        SomeGooglyGameTestsLogic.lightningConversionKeepsEyeState(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 20)
-    public static void realShearsKillsHarvestAnEye(GameTestHelper helper) {
-        SomeGooglyGameTestsLogic.realShearsKillsHarvestAnEye(helper, FakePlayer.get(helper.getLevel()));
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 20)
-    public static void deathHarvestUsesTheSuppliedDropSink(GameTestHelper helper) {
-        SomeGooglyGameTestsLogic.deathHarvestUsesTheSuppliedDropSink(
-                helper, FakePlayer.get(helper.getLevel()));
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 20)
-    public static void deathHarvestRejectsNonqualifyingKills(GameTestHelper helper) {
-        SomeGooglyGameTestsLogic.deathHarvestRejectsNonqualifyingKills(
-                helper, FakePlayer.get(helper.getLevel()));
+    public static void spawnCommandsRefuseDragonPlayersAndExcludedTypes(GameTestHelper helper) {
+        PickerSpawnServiceGameTestsLogic.spawnCommandsRefuseDragonPlayersAndExcludedTypes(helper);
     }
 }

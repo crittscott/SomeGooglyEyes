@@ -1,6 +1,8 @@
 package com.github.crittscott.somegoogly.client.compat.gecko;
 
 import com.github.crittscott.somegoogly.client.compat.ClientIntegrationFailures;
+import java.util.List;
+import java.util.function.Consumer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
@@ -9,9 +11,6 @@ import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
-
-import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * GeckoLib-referencing entry points, reached only via {@code GeckoCompat} or from loader listeners registered

@@ -1,9 +1,8 @@
 package com.github.crittscott.somegoogly.client.render.resolver;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.model.geom.ModelPart;
-
 import javax.annotation.Nullable;
+import net.minecraft.client.model.geom.ModelPart;
 
 /**
  * A resolved attach point: the ordered transforms that carry a pose from the model's base render space

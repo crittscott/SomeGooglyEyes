@@ -1,13 +1,13 @@
 package com.github.crittscott.somegoogly.client.render.resolver;
 
+import com.github.crittscott.somegoogly.client.compat.ThirdPartyModelWraps;
 import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.mojang.blaze3d.vertex.PoseStack;
+import java.util.List;
+import java.util.function.Consumer;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.LlamaModel;
 import net.minecraft.client.model.RabbitModel;
-
-import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * Resolver for {@link RabbitModel} and {@link LlamaModel} — two vanilla models that extend
@@ -32,82 +32,46 @@ public class RabbitLlamaResolver extends ModelPartTreeResolver {
         return model instanceof RabbitModel || model instanceof LlamaModel;
     }
 
+    private static List<NamedRoot> llamaRoots(LlamaModel<?> llama) {
+        Consumer<PoseStack> headWrap = ThirdPartyModelWraps.groupTransform(llama, EyeConfigModel.PART_HEAD);
+        Consumer<PoseStack> bodyWrap = ThirdPartyModelWraps.groupTransform(llama, EyeConfigModel.PART_BODY);
+        Consumer<PoseStack> legsChestWrap = ThirdPartyModelWraps.groupTransform(llama, "limbs");
+        return List.of(
+            new NamedRoot(EyeConfigModel.PART_HEAD, llama.head, headWrap),
+            new NamedRoot(EyeConfigModel.PART_BODY, llama.body, bodyWrap),
+            new NamedRoot("rightHindLeg", llama.rightHindLeg, legsChestWrap),
+            new NamedRoot("leftHindLeg", llama.leftHindLeg, legsChestWrap),
+            new NamedRoot("rightFrontLeg", llama.rightFrontLeg, legsChestWrap),
+            new NamedRoot("leftFrontLeg", llama.leftFrontLeg, legsChestWrap),
+            new NamedRoot("rightChest", llama.rightChest, legsChestWrap),
+            new NamedRoot("leftChest", llama.leftChest, legsChestWrap)
+            );
+    }
+
+    private static List<NamedRoot> rabbitRoots(RabbitModel<?> rabbit) {
+        Consumer<PoseStack> headWrap = ThirdPartyModelWraps.groupTransform(rabbit, EyeConfigModel.PART_HEAD);
+        Consumer<PoseStack> bodyWrap = ThirdPartyModelWraps.groupTransform(rabbit, EyeConfigModel.PART_BODY);
+        return List.of(
+            new NamedRoot(EyeConfigModel.PART_HEAD, rabbit.head, headWrap),
+            new NamedRoot("rightEar", rabbit.rightEar, headWrap),
+            new NamedRoot("leftEar", rabbit.leftEar, headWrap),
+            new NamedRoot("nose", rabbit.nose, headWrap),
+            new NamedRoot("leftRearFoot", rabbit.leftRearFoot, bodyWrap),
+            new NamedRoot("rightRearFoot", rabbit.rightRearFoot, bodyWrap),
+            new NamedRoot("leftHaunch", rabbit.leftHaunch, bodyWrap),
+            new NamedRoot("rightHaunch", rabbit.rightHaunch, bodyWrap),
+            new NamedRoot(EyeConfigModel.PART_BODY, rabbit.body, bodyWrap),
+            new NamedRoot("leftFrontLeg", rabbit.leftFrontLeg, bodyWrap),
+            new NamedRoot("rightFrontLeg", rabbit.rightFrontLeg, bodyWrap),
+            new NamedRoot("tail", rabbit.tail, bodyWrap)
+            );
+    }
+
     @Override
     protected List<NamedRoot> roots(EntityModel<?> model) {
         if (model instanceof RabbitModel) {
             return rabbitRoots((RabbitModel<?>) model);
         }
         return llamaRoots((LlamaModel<?>) model);
-    }
-
-    private static List<NamedRoot> rabbitRoots(RabbitModel<?> rabbit) {
-        Consumer<PoseStack> headWrap = rabbitHeadWrap(rabbit);
-        Consumer<PoseStack> bodyWrap = rabbitBodyWrap(rabbit);
-        return List.of(
-                new NamedRoot(EyeConfigModel.PART_HEAD, rabbit.head, headWrap),
-                new NamedRoot("rightEar", rabbit.rightEar, headWrap),
-                new NamedRoot("leftEar", rabbit.leftEar, headWrap),
-                new NamedRoot("nose", rabbit.nose, headWrap),
-                new NamedRoot("leftRearFoot", rabbit.leftRearFoot, bodyWrap),
-                new NamedRoot("rightRearFoot", rabbit.rightRearFoot, bodyWrap),
-                new NamedRoot("leftHaunch", rabbit.leftHaunch, bodyWrap),
-                new NamedRoot("rightHaunch", rabbit.rightHaunch, bodyWrap),
-                new NamedRoot(EyeConfigModel.PART_BODY, rabbit.body, bodyWrap),
-                new NamedRoot("leftFrontLeg", rabbit.leftFrontLeg, bodyWrap),
-                new NamedRoot("rightFrontLeg", rabbit.rightFrontLeg, bodyWrap),
-                new NamedRoot("tail", rabbit.tail, bodyWrap)
-        );
-    }
-
-    /**
-     * {@code head}, {@code rightEar}, {@code leftEar}, {@code nose}: {@code RabbitModel.renderToBuffer}'s
-     * head-group wrap when young, its separate (but equally outside-the-tree) adult wrap otherwise.
-     * {@code young} is re-checked on every call rather than baked in when this closure is built, because
-     * {@link Resolvers#ATTACHMENTS} caches the resolved chain per (model, token) and the same model
-     * instance renders both baby and adult rabbits.
-     */
-    private static Consumer<PoseStack> rabbitHeadWrap(RabbitModel<?> rabbit) {
-        return poseStack -> {
-            if (rabbit.young) {
-                poseStack.scale(0.56666666F, 0.56666666F, 0.56666666F);
-                poseStack.translate(0.0F, 1.375F, 0.125F);
-            } else {
-                poseStack.scale(0.6F, 0.6F, 0.6F);
-                poseStack.translate(0.0F, 1.0F, 0.0F);
-            }
-        };
-    }
-
-    /**
-     * The remaining eight parts: {@code RabbitModel.renderToBuffer}'s body-group wrap when young, the same
-     * adult wrap as {@link #rabbitHeadWrap} otherwise (the adult branch renders every part together, so
-     * both groups share it).
-     */
-    private static Consumer<PoseStack> rabbitBodyWrap(RabbitModel<?> rabbit) {
-        return poseStack -> {
-            if (rabbit.young) {
-                poseStack.scale(0.4F, 0.4F, 0.4F);
-                poseStack.translate(0.0F, 2.25F, 0.0F);
-            } else {
-                poseStack.scale(0.6F, 0.6F, 0.6F);
-                poseStack.translate(0.0F, 1.0F, 0.0F);
-            }
-        };
-    }
-
-    private static List<NamedRoot> llamaRoots(LlamaModel<?> llama) {
-        Consumer<PoseStack> headWrap = youngWrap(llama, 0.71428573F, 0.64935064F, 0.7936508F, 0.0F, 1.3125F, 0.22F);
-        Consumer<PoseStack> bodyWrap = youngWrap(llama, 0.625F, 0.45454544F, 0.45454544F, 0.0F, 2.0625F, 0.0F);
-        Consumer<PoseStack> legsChestWrap = youngWrap(llama, 0.45454544F, 0.41322312F, 0.45454544F, 0.0F, 2.0625F, 0.0F);
-        return List.of(
-                new NamedRoot(EyeConfigModel.PART_HEAD, llama.head, headWrap),
-                new NamedRoot(EyeConfigModel.PART_BODY, llama.body, bodyWrap),
-                new NamedRoot("rightHindLeg", llama.rightHindLeg, legsChestWrap),
-                new NamedRoot("leftHindLeg", llama.leftHindLeg, legsChestWrap),
-                new NamedRoot("rightFrontLeg", llama.rightFrontLeg, legsChestWrap),
-                new NamedRoot("leftFrontLeg", llama.leftFrontLeg, legsChestWrap),
-                new NamedRoot("rightChest", llama.rightChest, legsChestWrap),
-                new NamedRoot("leftChest", llama.leftChest, legsChestWrap)
-        );
     }
 }

@@ -3,13 +3,12 @@ package com.github.crittscott.somegoogly.eye.behavior;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
-import net.minecraft.world.phys.Vec3;
-
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Nullable;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * The named one-shot eye expressions a mob can play, keyed by a {@link ResourceLocation} id; the

@@ -2,8 +2,8 @@ package com.github.crittscott.somegoogly.client.command;
 
 import com.github.crittscott.somegoogly.client.picker.EyeDraft;
 import com.github.crittscott.somegoogly.client.picker.PickerExporter;
-import com.github.crittscott.somegoogly.client.picker.PickerState;
 import com.github.crittscott.somegoogly.client.picker.PickerState.ListedEye;
+import com.github.crittscott.somegoogly.client.picker.PickerState;
 import com.github.crittscott.somegoogly.command.GooglyServerCommands;
 import com.github.crittscott.somegoogly.command.MaybeFloatArgumentType;
 import com.github.crittscott.somegoogly.eye.EyePlacement;
@@ -21,14 +21,12 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.network.chat.Component;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
-
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
 import static com.github.crittscott.somegoogly.command.MaybeFloatArgumentType.angle;
 import static com.github.crittscott.somegoogly.command.MaybeFloatArgumentType.compact;
 import static com.github.crittscott.somegoogly.command.MaybeFloatArgumentType.position;

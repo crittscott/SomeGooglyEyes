@@ -6,12 +6,11 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
-import net.minecraft.resources.ResourceLocation;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Nullable;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * Client-side store of the resolved server eye state: the per-entity eye geometry configs, from

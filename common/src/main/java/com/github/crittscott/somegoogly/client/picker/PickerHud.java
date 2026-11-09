@@ -3,16 +3,14 @@ package com.github.crittscott.somegoogly.client.picker;
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import static com.github.crittscott.somegoogly.command.MaybeFloatArgumentType.angle;
 import static com.github.crittscott.somegoogly.command.MaybeFloatArgumentType.compact;
 

@@ -2,11 +2,10 @@ package com.github.crittscott.somegoogly.item.forge;
 
 import com.github.crittscott.somegoogly.client.render.GooglyEyeItemRenderer;
 import com.github.crittscott.somegoogly.item.GooglyEyeItem;
+import java.util.function.Consumer;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
-
-import java.util.function.Consumer;
 
 /**
  * Forge construction boundary for the registered Googly Eye item, with its 3D held-item renderer

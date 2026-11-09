@@ -1,8 +1,7 @@
 package com.github.crittscott.somegoogly.config.fabric;
 
-import net.fabricmc.loader.api.FabricLoader;
-
 import java.util.Optional;
+import net.fabricmc.loader.api.FabricLoader;
 
 /** Fabric implementation of the loaded-mod version lookup. */
 public final class ModVersionLookupImpl {

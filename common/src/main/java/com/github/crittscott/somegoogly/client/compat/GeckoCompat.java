@@ -2,10 +2,9 @@ package com.github.crittscott.somegoogly.client.compat;
 
 import com.github.crittscott.somegoogly.client.compat.gecko.GeckoIntegration;
 import com.github.crittscott.somegoogly.config.ModVersionLookup;
+import java.util.List;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.world.entity.LivingEntity;
-
-import java.util.List;
 
 /**
  * Soft-dependency gate for the optional GeckoLib renderer integration.

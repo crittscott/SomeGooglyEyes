@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.platform.fabric;
+package com.github.crittscott.somegoogly.client.platform.fabric;
 
 import com.github.crittscott.somegoogly.network.Payload;
 import com.github.crittscott.somegoogly.network.fabric.FabricNetworkTransport.FabricPayload;

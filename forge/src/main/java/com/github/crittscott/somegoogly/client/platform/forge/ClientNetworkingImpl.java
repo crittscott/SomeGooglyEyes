@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.platform.forge;
+package com.github.crittscott.somegoogly.client.platform.forge;
 
 import com.github.crittscott.somegoogly.network.Payload;
 import com.github.crittscott.somegoogly.network.forge.ForgeNetworkTransport;

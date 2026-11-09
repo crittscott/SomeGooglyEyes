@@ -1,12 +1,12 @@
 package com.github.crittscott.somegoogly.eye.state;
 
+import com.github.crittscott.somegoogly.eye.EyeAppearance;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
+import java.util.Optional;
+import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
-
-import javax.annotation.Nullable;
-import java.util.Optional;
 
 /**
  * A <b>sparse</b> override of an eye's {@link EyeAppearance}: each field is optional and, when absent,

@@ -3,6 +3,8 @@ package com.github.crittscott.somegoogly.network.fabric;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.network.NetworkProtocol;
 import com.github.crittscott.somegoogly.network.Payload;
+import java.util.HashMap;
+import java.util.Map;
 import net.fabricmc.fabric.api.networking.v1.FabricPacket;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketType;
@@ -13,9 +15,6 @@ import net.minecraft.locale.Language;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /** Fabric packet types and server networking, with play handlers dispatched by Fabric on the game thread. */
 public final class FabricNetworkTransport {

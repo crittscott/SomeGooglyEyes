@@ -1,15 +1,14 @@
 package com.github.crittscott.somegoogly.client.render.resolver;
 
-import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.github.crittscott.somegoogly.client.compat.ThirdPartyModelWraps;
+import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.model.EntityModel;
-
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
+import javax.annotation.Nullable;
+import net.minecraft.client.model.EntityModel;
 
 /**
  * Strategy for getting from an entity model's base render pose into the animated space of a named

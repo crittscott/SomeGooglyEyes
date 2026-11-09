@@ -1,6 +1,8 @@
 package com.github.crittscott.somegoogly.platform.forge;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -10,9 +12,6 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
-
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 /** Forge implementation of the shared registration boundary, through deferred registers. */
 public final class RegistrationImpl {

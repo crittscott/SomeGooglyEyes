@@ -2,10 +2,9 @@ package com.github.crittscott.somegoogly.client.render.resolver;
 
 import com.github.crittscott.somegoogly.client.compat.ClientIntegrationFailures;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.model.EntityModel;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import net.minecraft.client.model.EntityModel;
 
 /**
  * Resolver for LLibrary-style models. Mowzie's Mobs ships its own fork of LLibrary's model toolkit

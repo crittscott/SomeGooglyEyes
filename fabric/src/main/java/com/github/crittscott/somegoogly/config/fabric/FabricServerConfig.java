@@ -1,15 +1,11 @@
 package com.github.crittscott.somegoogly.config.fabric;
 
-import com.electronwill.nightconfig.core.CommentedConfig;
-import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.server.ServerServices;
+import java.nio.file.Path;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelResource;
-
-import java.io.IOException;
-import java.nio.file.Path;
 
 /**
  * Creates and loads the active world's server TOML when the server starts and again at the start of
@@ -26,14 +22,6 @@ public final class FabricServerConfig {
     private FabricServerConfig() {
     }
 
-    /** Load the server config at server start and each {@code /reload}, and reset it at server stop. */
-    public static void register() {
-        ServerLifecycleEvents.SERVER_STARTING.register(FabricServerConfig::load);
-        // Before the reload's eye-config broadcast, so clients receive the re-read master switch.
-        ServerLifecycleEvents.START_DATA_PACK_RELOAD.register((server, resources) -> load(server));
-        ServerLifecycleEvents.SERVER_STOPPED.register(server -> ServerConfig.resetDefaults());
-    }
-
     private static void load(MinecraftServer server) {
         if (load(server.getWorldPath(LevelResource.ROOT).resolve(SERVER_CONFIG_DIR).resolve(ServerConfig.FILE_NAME))) {
             ServerServices.onServerConfigApplied();
@@ -45,15 +33,14 @@ public final class FabricServerConfig {
      * and adding any keys it lacks. Returns whether it loaded; a failure is logged.
      */
     public static boolean load(Path path) {
-        try {
-            String defaults = TomlConfig.render(ServerConfig.settings());
-            CommentedConfig values = TomlConfig.readOrCreate(path, defaults);
-            TomlConfig.apply(values, ServerConfig.settings());
-            TomlConfig.completeIfMissing(path, values, defaults);
-            return true;
-        } catch (IOException | IllegalArgumentException e) {
-            SomeGooglyCommon.LOGGER.error("Could not load server config {}; keeping the values already in effect", path, e);
-            return false;
-        }
+        return TomlConfig.load(path, ServerConfig.settings());
+    }
+
+    /** Load the server config at server start and each {@code /reload}, and reset it at server stop. */
+    public static void register() {
+        ServerLifecycleEvents.SERVER_STARTING.register(FabricServerConfig::load);
+        // Before the reload's eye-config broadcast, so clients receive the re-read master switch.
+        ServerLifecycleEvents.START_DATA_PACK_RELOAD.register((server, resources) -> load(server));
+        ServerLifecycleEvents.SERVER_STOPPED.register(server -> ServerConfig.resetDefaults());
     }
 }

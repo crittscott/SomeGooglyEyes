@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.mixin.common;
 
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
+import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -8,8 +9,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import javax.annotation.Nullable;
 
 /**
  * Gives the head block entity its eye-state compound ({@link SkullEyeState.Holder}), saved under

@@ -1,14 +1,13 @@
 package com.github.crittscott.somegoogly.client.compat.gecko;
 
-import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.github.crittscott.somegoogly.client.render.resolver.EyeAttachmentResolver;
 import com.github.crittscott.somegoogly.client.render.resolver.ModelMemo;
-import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.cache.object.GeoBone;
-
-import javax.annotation.Nullable;
+import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Nullable;
+import software.bernie.geckolib.cache.object.BakedGeoModel;
+import software.bernie.geckolib.cache.object.GeoBone;
 
 /**
  * GeckoLib bone access — the GeckoLib analog of vanilla part resolution. <b>Only loaded when GeckoLib

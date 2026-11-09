@@ -4,7 +4,7 @@ Settled review policy and accepted behavior for this project. Read this before r
 
 ## Review scope
 
-- Findings describe current actionable problems. Remove entries that have been moved or merged; do not leave numbered placeholders, relocation history, or completed-work narratives.
+- Preserve review findings, their original numbering, and follow-up items for cross-version handoff. Add a verdict to each assessed finding; when fixed, describe the implemented fix, relevant invariants, and verification status. Retain rejected findings with their reasons and qualify superseded claims explicitly rather than deleting or silently rewriting them. The verdict distinguishes the original review from the current code. This retention policy follows the owner's instruction and supersedes the earlier removal policy.
 - Trust our code, Minecraft, loaders, and other mods unless a relevant behavior is known to be unreliable or unguaranteed. Filesystem operations and reflective integration boundaries can need failure handling. A client or server across the network remains untrusted.
 - Keep effort proportional to a Minecraft mod. A theoretical nested rendering call or a variant roll changed to an exact endpoint through /data is not an actionable defect without a realistic consequence.
 - A working deliberate choice is not a finding merely because another implementation is more conventional. General principles do not override the specific decisions below.

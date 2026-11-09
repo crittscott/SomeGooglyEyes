@@ -1,12 +1,8 @@
 package com.github.crittscott.somegoogly.config.fabric;
 
-import com.electronwill.nightconfig.core.CommentedConfig;
-import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.ClientConfig;
-import net.fabricmc.loader.api.FabricLoader;
-
-import java.io.IOException;
 import java.nio.file.Path;
+import net.fabricmc.loader.api.FabricLoader;
 
 /**
  * Loads Fabric's client TOML into the shared runtime configuration. A file missing any key, such as one from an
@@ -20,15 +16,8 @@ public final class FabricClientConfig {
     /** Read {@code config/somegoogly-client.toml}, writing it with defaults if absent, into {@code ClientConfig}. */
     public static void load() {
         Path path = FabricLoader.getInstance().getConfigDir().resolve(ClientConfig.FILE_NAME);
-        try {
-            String defaults = TomlConfig.render(ClientConfig.settings());
-            CommentedConfig document = TomlConfig.readOrCreate(path, defaults);
-            TomlConfig.apply(document, ClientConfig.settings());
-            TomlConfig.completeIfMissing(path, document, defaults);
+        if (TomlConfig.load(path, ClientConfig.settings())) {
             ClientConfig.onApplied();
-        } catch (IOException | IllegalArgumentException e) {
-            SomeGooglyCommon.LOGGER.error("Could not load Fabric client config {}; keeping the values already in effect",
-                    path, e);
         }
     }
 }

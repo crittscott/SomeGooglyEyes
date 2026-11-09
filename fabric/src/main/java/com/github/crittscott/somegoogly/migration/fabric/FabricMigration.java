@@ -2,16 +2,15 @@ package com.github.crittscott.somegoogly.migration.fabric;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.platform.fabric.EntityPersistentDataImpl;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 
 /**
  * Conversion of what the released 0.8.2 Fabric build for Minecraft 1.20.1 saved.

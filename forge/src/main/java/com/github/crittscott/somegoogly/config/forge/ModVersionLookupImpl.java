@@ -1,8 +1,7 @@
 package com.github.crittscott.somegoogly.config.forge;
 
-import net.minecraftforge.fml.ModList;
-
 import java.util.Optional;
+import net.minecraftforge.fml.ModList;
 
 /** Forge implementation of the loaded-mod version lookup. */
 public final class ModVersionLookupImpl {

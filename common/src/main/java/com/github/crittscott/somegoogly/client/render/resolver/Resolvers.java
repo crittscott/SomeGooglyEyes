@@ -1,11 +1,10 @@
 package com.github.crittscott.somegoogly.client.render.resolver;
 
-import net.minecraft.client.model.EntityModel;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
+import net.minecraft.client.model.EntityModel;
 
 /**
  * Picks the first {@link EyeAttachmentResolver} that handles a given model. Order matters: the
@@ -30,7 +29,6 @@ public final class Resolvers {
     private static final EyeAttachmentResolver FALLBACK = new ChildMapResolver();
     private static final List<EyeAttachmentResolver> SPECIALIZED = List.of(
             new HierarchicalResolver(),
-            new TwilightForestResolver(),
             new AgeableListResolver(),
             AdvancedModelBoxResolver.citadel(),
             AdvancedModelBoxResolver.uranus(),

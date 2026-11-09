@@ -1,8 +1,8 @@
 package com.github.crittscott.somegoogly.client.render;
 
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
-import com.github.crittscott.somegoogly.client.PresentationEyes;
 import com.github.crittscott.somegoogly.client.GooglyTracker;
+import com.github.crittscott.somegoogly.client.PresentationEyes;
 import com.github.crittscott.somegoogly.client.compat.ClientIntegrationFailures;
 import com.github.crittscott.somegoogly.client.picker.ModelPartVocabulary;
 import com.github.crittscott.somegoogly.client.render.resolver.Attachment;
@@ -13,10 +13,18 @@ import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import com.mojang.blaze3d.vertex.PoseStack;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.PiglinHeadModel;
 import net.minecraft.client.model.Model;
+import net.minecraft.client.model.PiglinHeadModel;
 import net.minecraft.client.model.SkullModel;
 import net.minecraft.client.model.SkullModelBase;
 import net.minecraft.client.model.geom.ModelPart;
@@ -33,20 +41,9 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.joml.Quaternionf;
 
-import javax.annotation.Nullable;
-import java.lang.reflect.Field;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 /**
  * Draws the eyes of placed mob heads and head items. Mixins bracket a placed head's draw with
- * {@link #begin} and a head item's with {@link #beginItem}, both ending in {@link #end}, and call
+ * {@link ClientEyeRuntime#beginHead} and a head item's with {@link ClientEyeRuntime#beginHeadItem}, both ending in {@link ClientEyeRuntime#endItemDraw}, and call
  * {@link #render} right after the head model is drawn, in the model's space. A placed head's eyes are live
  * ({@link PresentationEyes}); GUI and framed head items use configured pupils and ambient expressions; other items rest. Worn heads
  * share the model draw without either bracket, so they draw no eyes.
@@ -72,10 +69,6 @@ public final class SkullEyeRenderer {
             "twilightforest.client.model.tileentity.AlphaYetiTrophyModel", "main",
             "twilightforest.client.model.tileentity.KnightPhantomTrophyModel", "helmet",
             "twilightforest.client.model.tileentity.UrGhastTrophyModel", "body");
-
-    private record DrawContext(@Nullable BlockEntity block, @Nullable ItemStack item, float partialTick) {}
-
-    private static final Deque<DrawContext> DRAWS = new ArrayDeque<>();
 
     private SkullEyeRenderer() {
     }
@@ -127,20 +120,12 @@ public final class SkullEyeRenderer {
     }
 
     /** A placed head's draw starts. */
-    public static void begin(BlockEntity skull, float partialTick) {
-        DRAWS.push(new DrawContext(skull, null, partialTick));
-    }
 
     /**
      * An item's draw starts; only a head item's is recorded, since no other reaches {@link #render}. Other mods'
-     * built-in item renderers may end the draw early without its matching {@link #endItem}, so an unrecorded
+     * built-in item renderers may end the draw early without its matching {@link ClientEyeRuntime#endHeadItem}, so an unrecorded
      * item must leave nothing behind.
      */
-    public static void beginItem(ItemStack stack) {
-        if (SkullEyeState.entityFor(stack) != null) {
-            DRAWS.push(new DrawContext(null, stack, 0F));
-        }
-    }
 
     /** Drop the fitted placements; called on every renderer rebuild, which replaces the head and mob models. */
     public static void clearCaches() {
@@ -148,17 +133,8 @@ public final class SkullEyeRenderer {
     }
 
     /** The placed head's draw ends. */
-    public static void end() {
-        DRAWS.pop();
-    }
 
-    /** The draw {@link #beginItem} began for {@code stack} ends; it recorded nothing for any item but a head. */
-    public static void endItem(ItemStack stack) {
-        DrawContext top = DRAWS.peek();
-        if (top != null && top.item() == stack) {
-            DRAWS.pop();
-        }
-    }
+    /** The draw {@link ClientEyeRuntime#beginHeadItem} began for {@code stack} ends; it recorded nothing for any item but a head. */
 
     /**
      * Fit eyes authored on {@code entity}'s part {@code token} to the Heads-mod head part {@code head}, or
@@ -293,8 +269,8 @@ public final class SkullEyeRenderer {
 
     private static void render(PoseStack pose, MultiBufferSource bufferSource, int packedLight, Model model,
                                boolean trophy) {
-        DrawContext draw = DRAWS.peek();
-        if (draw == null) {
+        ClientEyeRuntime.DrawContext draw = ClientEyeRuntime.currentDraw();
+        if (draw.block() == null && draw.item() == null) {
             return;
         }
         BlockEntity skull = draw.block();

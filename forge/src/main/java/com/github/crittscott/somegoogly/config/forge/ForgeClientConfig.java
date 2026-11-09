@@ -16,17 +16,11 @@ public final class ForgeClientConfig {
 
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
-        COPY_VALUES = ForgeServerConfig.define(builder, ClientConfig.settings());
+        COPY_VALUES = ForgeConfig.define(builder, ClientConfig.settings());
         SPEC = builder.build();
     }
 
     private ForgeClientConfig() {
-    }
-
-    /** Register the CLIENT config spec and copy its values into {@code ClientConfig} on load and reload. */
-    public static void register(FMLJavaModLoadingContext context) {
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, SPEC, ClientConfig.FILE_NAME);
-        context.getModEventBus().addListener(ForgeClientConfig::onConfigChanged);
     }
 
     private static void onConfigChanged(ModConfigEvent event) {
@@ -35,5 +29,11 @@ public final class ForgeClientConfig {
         }
         COPY_VALUES.run();
         ClientConfig.onApplied();
+    }
+
+    /** Register the CLIENT config spec and copy its values into {@code ClientConfig} on load and reload. */
+    public static void register(FMLJavaModLoadingContext context) {
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, SPEC, ClientConfig.FILE_NAME);
+        context.getModEventBus().addListener(ForgeClientConfig::onConfigChanged);
     }
 }

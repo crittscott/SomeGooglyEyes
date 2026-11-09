@@ -1,9 +1,8 @@
 package com.github.crittscott.somegoogly.eye.behavior;
 
 import com.github.crittscott.somegoogly.eye.HeadInfo;
-import net.minecraft.util.RandomSource;
-
 import javax.annotation.Nullable;
+import net.minecraft.util.RandomSource;
 
 /**
  * The mutable runtime state of the one behavior a mob is currently playing. Behaviors themselves are

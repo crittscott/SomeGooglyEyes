@@ -7,6 +7,10 @@ import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import com.github.crittscott.somegoogly.picker.PickerSpawnService.SpawnRefusal;
 import com.github.crittscott.somegoogly.picker.PickerSpawnService;
 import com.github.crittscott.somegoogly.util.LookTarget;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -23,11 +27,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 /** The picker command-spawn lifecycle: which types the spawn commands accept, and the finalize order. */
 public final class PickerSpawnServiceGameTestsLogic {

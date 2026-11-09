@@ -7,9 +7,6 @@ import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.resources.ResourceLocation;
-
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,6 +16,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
+import javax.annotation.Nullable;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * The complete eye-definition data model shared by datapack loading, runtime selection, network
@@ -40,7 +39,6 @@ public final class EyeConfigModel {
     public static final String PART_BODY = "body";
     public static final String PART_HEAD = "head";
     public static final String PART_ROOT = "root";
-
 
     private EyeConfigModel() {
     }

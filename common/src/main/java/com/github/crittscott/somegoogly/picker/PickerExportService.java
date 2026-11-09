@@ -7,17 +7,6 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
-import net.minecraft.SharedConstants;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.packs.PackType;
-import net.minecraft.world.level.storage.LevelResource;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,7 +17,16 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.UnaryOperator;
 import javax.annotation.Nullable;
-
+import net.minecraft.SharedConstants;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.world.level.storage.LevelResource;
 import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ADULT;
 
 /**
@@ -40,7 +38,7 @@ import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ADULT;
  * <p>The payload is <b>never trusted</b>: the entity id must parse and exist in the entity registry
  * (clients cannot supply an arbitrary unregistered id). Identifier syntax itself does not guarantee
  * filesystem containment; {@link EyeConfigReloadListener#eyeFile} constructs a path without checking it.
- * The ender dragon is refused (mirroring the reload listener's hard exclusion), and the config must
+ * Renderer-excluded entity kinds are refused, and the config must
  * decode through {@code RuntimeConfig.CODEC} — whose fields are all required, so a malformed or
  * wrong-typed payload is rejected outright rather than decoding to an empty config — and contain at
  * least one usable eye. The declared version is resolved from the <b>server's</b> loaded mod version
@@ -81,7 +79,7 @@ public final class PickerExportService {
             return Component.translatable(
                     "somegoogly.command.picker.export_rejected_unknown_type", typeId.toString());
         }
-        if (typeId.equals(ServerEyeConfigs.ENDER_DRAGON)) {
+        if (ServerEyeConfigs.isExcluded(typeId)) {
             return Component.translatable("somegoogly.command.picker.export_rejected_ender_dragon");
         }
         RuntimeConfig config = RuntimeConfig.CODEC.parse(NbtOps.INSTANCE, configNbt).result().orElse(null);

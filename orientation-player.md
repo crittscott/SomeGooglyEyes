@@ -8,8 +8,6 @@
 
 Some Googly Eyes animates eyes on living entities, vanilla boats, heads, and eye-bearing items. Harvest eyes from mobs, customize them, and apply them with slime.
 
-Two items, one enchantment, one creative tab; datapacks place eyes on mobs.
-
 Artifacts target Minecraft 1.20.1 on Fabric and Forge. Fabric requires Fabric Loader 0.16.14 or newer and Fabric API 0.92.11+1.20.1 or newer. Forge requires Forge 47.4.0 or newer within the 47 release line. Both loaders require Java 17; GeckoLib 4.7.4 or newer is an optional client dependency. Clients and servers need the same network version.
 
 ## Mobs with eyes
@@ -47,11 +45,11 @@ Harvested eyes keep effective iris/cornea colors and glow, not species or placem
 
 ## Googly Eyes and Slimy Eyes
 
-First-person loose eyes react to movement/hurt/heal; third-person eyes use world gravity and holder motion. Frames, GUI, and third-person hands animate independently; paired heads may cross-eye. GUI runs while paused. Frame eyes are 3x. Ambient-off keeps physics; global switches gate animation.
+Hand views share one simulation per holder/hand. Server hurt/heal starts reach all viewers; any damage qualifies, busy expressions are not interrupted, and heal cooldown applies. First person uses eye-local down, third person world gravity. Frames/GUI animate independently; paired heads may cross-eye. GUI runs while paused; frames are 3x. Ambient-off keeps physics; global switches gate animation.
 
 Worlds saved by the 0.8.2 release for Minecraft 1.20.1 open with their eyed mobs, eye items, and settings intact.
 
-The eye-modifier recipe is shapeless and accepts one Googly Eye and one modifier:
+The shapeless eye-modifier recipe takes one Googly Eye and one modifier:
 
 | Modifier | Result |
 | --- | --- |
@@ -162,7 +160,7 @@ config/somegoogly-client.toml
 | `disabledEntities` | empty | Hides listed entity IDs, and their heads |
 | `disabledMods` | empty | Hides entities from listed namespaces, and their heads |
 
-These options affect only display. On Forge they apply as soon as the loader reloads the file; on Fabric they apply at game start. Invisibility also hides eyes.
+On Forge they apply as soon as the loader reloads the file; on Fabric they apply at game start. Invisibility also hides eyes.
 
 ## Datapacks and compatibility
 

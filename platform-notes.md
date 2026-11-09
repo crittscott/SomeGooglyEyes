@@ -14,6 +14,12 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 
 ## Minecraft
 
+### GameTests
+
+- 1.20.1: the default GameTest timeout is 100 ticks; tests that wait for a longer cooldown need an explicit timeout. [tested: owner-run Fabric report]
+- Fabric 1.20.1 headless GameTests use the physical SERVER environment and reject loading `net.minecraft.client.Minecraft`; simulation code invoked by those tests must receive GUI context without calling the client singleton. [tested: owner-run Fabric stack trace]
+
+
 ### Rendering
 
 - 1.20.1 and 1.21.1 draw items immediately and have no use for item render state code; 1.21.4 and later use it. [tested on 1.20.1]

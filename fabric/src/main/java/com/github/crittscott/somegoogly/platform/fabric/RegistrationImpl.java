@@ -1,6 +1,8 @@
 package com.github.crittscott.somegoogly.platform.fabric;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -10,9 +12,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.enchantment.Enchantment;
-
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 /** Fabric implementation of the shared registration boundary, directly into the vanilla registries. */
 public final class RegistrationImpl {

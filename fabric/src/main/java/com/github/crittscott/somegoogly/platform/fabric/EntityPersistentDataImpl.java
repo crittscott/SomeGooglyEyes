@@ -1,12 +1,11 @@
 package com.github.crittscott.somegoogly.platform.fabric;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
+import javax.annotation.Nullable;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
-
-import javax.annotation.Nullable;
 
 /**
  * Fabric implementation of the shared entity-persistence boundary: a persistent data attachment holding

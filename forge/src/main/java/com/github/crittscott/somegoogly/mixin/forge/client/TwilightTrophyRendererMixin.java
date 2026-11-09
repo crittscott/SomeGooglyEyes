@@ -1,19 +1,19 @@
-package com.github.crittscott.somegoogly.mixin.forge;
+package com.github.crittscott.somegoogly.mixin.forge.client;
 
+import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.github.crittscott.somegoogly.client.render.SkullEyeRenderer;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.MultiBufferSource;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Pseudo;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
 import net.minecraft.client.model.Model;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
+import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Coerce;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
  * Brackets a placed trophy's draw and draws its eyes after the trophy model, as {@code SkullBlockRendererMixin}
@@ -29,12 +29,12 @@ abstract class TwilightTrophyRendererMixin {
     @Inject(method = PLACED_RENDER, at = @At("HEAD"))
     private void somegoogly$begin(@Coerce BlockEntity entity, float partialTick, PoseStack pose,
                                  MultiBufferSource buffers, int light, int overlay, CallbackInfo callback) {
-        SkullEyeRenderer.begin(entity, partialTick);
+        ClientEyeRuntime.beginHead(entity, partialTick);
     }
 
     @Inject(method = PLACED_RENDER, at = @At("RETURN"))
     private void somegoogly$end(CallbackInfo callback) {
-        SkullEyeRenderer.end();
+        ClientEyeRuntime.endItemDraw();
     }
 
     @Inject(method = "render(Lnet/minecraft/core/Direction;FLtwilightforest/client/model/tileentity/GenericTrophyModel;"

@@ -200,7 +200,7 @@ public final class EyeItemService {
         if (stack.getItem() instanceof SlimyEyeItem) {
             return applySlimyEye(stack, player, mob);
         }
-        if (!stack.is(ModContent.SHEARS) || !EyeState.hasEyes(mob) || !hasOptometrist(stack) || !enabled(level)) {
+        if (!isHarvestTool(stack) || !EyeState.hasEyes(mob) || !enabled(level)) {
             return InteractionResult.PASS;
         }
         HeadInfo helper = helperFor(mob);
@@ -223,7 +223,7 @@ public final class EyeItemService {
         if (stack.getItem() instanceof SlimyEyeItem) {
             return applySlimyEye(stack, player, boat);
         }
-        if (!stack.is(ModContent.SHEARS) || !hasOptometrist(stack)) {
+        if (!isHarvestTool(stack)) {
             return InteractionResult.PASS;
         }
         ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(boat.getType());
@@ -237,6 +237,11 @@ public final class EyeItemService {
         HeadInfo helper = BoatEyeLayout.resolve(boat, config, EyeState.getVariantRoll(boat));
         shearEyes(boat, player, hand, buildEyeDrop(helper, 0, EyeState.readProperties(boat)));
         return InteractionResult.CONSUME;
+    }
+
+    /** Optometrist harvests use the shared shears tag, including modded tools. */
+    private static boolean isHarvestTool(ItemStack stack) {
+        return stack.is(ModContent.SHEARS) && hasOptometrist(stack);
     }
 
     /**
@@ -289,7 +294,7 @@ public final class EyeItemService {
         }
         ItemStack weapon = player.getMainHandItem();
         if (!weapon.is(ModContent.SHEARS)
-                || mob.getRandom().nextInt(ServerConfig.PERCENT_MAX) >= ServerConfig.HARVEST_ON_KILL_PERCENT.get()) {
+                || !ServerConfig.roll(mob.getRandom(), ServerConfig.HARVEST_ON_KILL_PERCENT.get())) {
             return;
         }
         HeadInfo helper = helperFor(mob);
@@ -384,7 +389,7 @@ public final class EyeItemService {
         ItemStack stack = player.getItemInHand(hand);
         boolean slimy = stack.getItem() instanceof SlimyEyeItem;
         if (slimy ? verdictFor(skull) != Verdict.CAN_HAVE
-                : !stack.is(ModContent.SHEARS) || !hasOptometrist(stack) || !enabled(level)
+                : !isHarvestTool(stack) || !enabled(level)
                         || SkullEyeState.entityFor(skull.getBlockState().getBlock()) == null
                         || !SkullEyeState.hasEyes(skull)) {
             return InteractionResult.PASS;
@@ -395,6 +400,20 @@ public final class EyeItemService {
         ServerPlayer serverPlayer = (ServerPlayer) player;
         return slimy ? applySlimyEye(stack, serverPlayer, skull, hit.getDirection())
                 : harvestSkull(serverPlayer, hand, skull, hit.getDirection());
+    }
+
+    /**
+     * Whether the placed head {@code skull} can receive eyes, by what its side knows: its mob needs an adult
+     * definition, which the head borrows, with eyes the head shows.
+     */
+    public static Verdict verdictFor(BlockEntity skull) {
+        Level level = skull.getLevel();
+        ResourceLocation entity = SkullEyeState.entityFor(skull.getBlockState().getBlock());
+        if (!enabled(level) || entity == null
+                || !SkullEyeState.canHaveEyes(entity, config(level, entity, false))) {
+            return Verdict.CANNOT;
+        }
+        return SkullEyeState.hasEyes(skull) ? Verdict.ALREADY_HAS : Verdict.CAN_HAVE;
     }
 
     /** Whether the entity {@code target} can receive eyes, by what its side knows. */
@@ -418,20 +437,6 @@ public final class EyeItemService {
             return EyeState.hasEyes(target) ? Verdict.ALREADY_HAS : Verdict.CAN_HAVE;
         }
         return Verdict.CANNOT;
-    }
-
-    /**
-     * Whether the placed head {@code skull} can receive eyes, by what its side knows: its mob needs an adult
-     * definition, which the head borrows, with eyes the head shows.
-     */
-    public static Verdict verdictFor(BlockEntity skull) {
-        Level level = skull.getLevel();
-        ResourceLocation entity = SkullEyeState.entityFor(skull.getBlockState().getBlock());
-        if (!enabled(level) || entity == null
-                || !SkullEyeState.canHaveEyes(entity, config(level, entity, false))) {
-            return Verdict.CANNOT;
-        }
-        return SkullEyeState.hasEyes(skull) ? Verdict.ALREADY_HAS : Verdict.CAN_HAVE;
     }
 
     /** Spend one durability of the shears in {@code hand}, reporting them to the loader if that breaks them. */

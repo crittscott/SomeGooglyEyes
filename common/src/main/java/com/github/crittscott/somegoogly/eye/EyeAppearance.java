@@ -1,5 +1,7 @@
-package com.github.crittscott.somegoogly.eye.state;
+package com.github.crittscott.somegoogly.eye;
 
+import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
+import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

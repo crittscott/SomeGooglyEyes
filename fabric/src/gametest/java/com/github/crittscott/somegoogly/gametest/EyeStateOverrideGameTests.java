@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.gametest;
 
+import net.fabricmc.fabric.api.entity.FakePlayer;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -13,32 +14,18 @@ public final class EyeStateOverrideGameTests implements FabricGameTest {
     private static final String TEMPLATE = "somegoogly:empty";
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void clearingTintRemovesOnlyThatField(GameTestHelper helper) {
-        EyeStateOverrideGameTestsLogic.clearingTintRemovesOnlyThatField(helper);
+    public static void adminAppearanceCommands(GameTestHelper helper) {
+        EyeStateOverrideGameTestsLogic.adminAppearanceCommands(helper, FakePlayer.get(helper.getLevel()));
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void glowOverrideCanBeSetAndDropped(GameTestHelper helper) {
-        EyeStateOverrideGameTestsLogic.glowOverrideCanBeSetAndDropped(helper);
+    public static void adminEyesAndBehaviorCommands(GameTestHelper helper) {
+        EyeStateOverrideGameTestsLogic.adminEyesAndBehaviorCommands(helper, FakePlayer.get(helper.getLevel()));
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void settingOneFieldLeavesOthersAbsent(GameTestHelper helper) {
-        EyeStateOverrideGameTestsLogic.settingOneFieldLeavesOthersAbsent(helper);
+    public static void adminCommandsRefuseUnauthorizedOrInvalidUse(GameTestHelper helper) {
+        EyeStateOverrideGameTestsLogic.adminCommandsRefuseUnauthorizedOrInvalidUse(helper, FakePlayer.get(helper.getLevel()));
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void clearingEveryFieldRemovesTheCompound(GameTestHelper helper) {
-        EyeStateOverrideGameTestsLogic.clearingEveryFieldRemovesTheCompound(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void clearingTintsPreservesGlow(GameTestHelper helper) {
-        EyeStateOverrideGameTestsLogic.clearingTintsPreservesGlow(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void snapshotAppliesAllFieldsTogether(GameTestHelper helper) {
-        EyeStateOverrideGameTestsLogic.snapshotAppliesAllFieldsTogether(helper);
-    }
 }

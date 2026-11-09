@@ -1,7 +1,7 @@
 package com.github.crittscott.somegoogly.gametest;
 
-import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.fabricmc.fabric.api.entity.FakePlayer;
+import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 
@@ -12,16 +12,6 @@ import net.minecraft.gametest.framework.GameTestHelper;
 public final class EligibilityGameTests implements FabricGameTest {
 
     private static final String TEMPLATE = "somegoogly:empty";
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void usablePredicateEndpoints(GameTestHelper helper) {
-        EligibilityGameTestsLogic.usablePredicateEndpoints(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void eligibilityFollowsTheSharedPredicate(GameTestHelper helper) {
-        EligibilityGameTestsLogic.eligibilityFollowsTheSharedPredicate(helper);
-    }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void slimyEyeAppliesOnlyToEligibleTargets(GameTestHelper helper) {

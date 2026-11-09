@@ -11,12 +11,11 @@ import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import java.util.List;
+import java.util.Map;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Checks on the datapack-loaded {@link ServerEyeConfigs} (the shipped configs are loaded by the

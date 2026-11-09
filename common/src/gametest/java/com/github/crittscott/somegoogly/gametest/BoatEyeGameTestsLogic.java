@@ -10,6 +10,7 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.eye.BoatEyeLayout;
+import com.github.crittscott.somegoogly.eye.EyeAppearance;
 import com.github.crittscott.somegoogly.eye.EyeDefinition;
 import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance;
@@ -17,13 +18,12 @@ import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.github.crittscott.somegoogly.eye.behavior.EyeInfluence;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
-import com.github.crittscott.somegoogly.eye.state.EyeAppearance;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
+import com.github.crittscott.somegoogly.item.EyeItemService;
 import com.github.crittscott.somegoogly.network.EyeStatePacket;
 import com.github.crittscott.somegoogly.registry.ModContent;
-import com.github.crittscott.somegoogly.item.EyeItemService;
 import com.mojang.authlib.GameProfile;
 import io.netty.buffer.Unpooled;
 import java.util.List;
@@ -162,7 +162,7 @@ public final class BoatEyeGameTestsLogic {
             ClientEyeConfigs.replaceAll(ServerEyeConfigs.all());
             ClientEyeConfigs.applySettings(true, TestBehaviorSettings.DEFAULTS);
             EyeState.applySnapshot(boat, new EyeState.Snapshot(true, 0F, AppearanceOverride.EMPTY));
-            ClientEyeRuntime.BoatSimulations cache = new ClientEyeRuntime.BoatSimulations();
+            TestEyeRuntime.BoatCache cache = new TestEyeRuntime.BoatCache();
             var eyes = cache.get(boat);
             var blink = settings(List.of(EyeBehavior.BLINK));
             cache.tick(1L, blink);
@@ -179,7 +179,7 @@ public final class BoatEyeGameTestsLogic {
                     "a reappearing boat follows current expression time without replaying missed slots");
             EyeState.Snapshot glowing = new EyeState.Snapshot(true, 0F, AppearanceOverride.EMPTY.withGlow(true));
             EyeState.applySnapshot(boat, glowing);
-            cache.onStateChanged(boat, glowing);
+            ClientEyeRuntime.onBoatState(boat, glowing);
             cache.tick(100002L, blink);
             helper.assertTrue(cache.get(boat) != recreated, "unrendered state changes invalidate cached pupils");
             recreated = cache.get(boat);
@@ -215,7 +215,7 @@ public final class BoatEyeGameTestsLogic {
             var state = new EyeState.Snapshot(true, 0F, AppearanceOverride.EMPTY);
             EyeState.applySnapshot(moving, state);
             EyeState.applySnapshot(still, state);
-            ClientEyeRuntime.BoatSimulations cache = new ClientEyeRuntime.BoatSimulations();
+            TestEyeRuntime.BoatCache cache = new TestEyeRuntime.BoatCache();
             var movingEyes = cache.get(moving);
             var stillEyes = cache.get(still);
             for (var eyes : List.of(movingEyes, stillEyes)) {
@@ -466,7 +466,7 @@ public final class BoatEyeGameTestsLogic {
             helper.assertTrue(ClientEyeRuntime.boatEyes(boat) != changed, "geometry changes replace the layout");
             var current = ClientEyeRuntime.boatEyes(boat);
             current.tick(1L, settings(List.of(EyeBehavior.BLINK)));
-            ClientEyeRuntime.tick(helper.getLevel(), false);
+            ClientEyeRuntime.tick(helper.getLevel(), false, null);
             helper.assertTrue(current.active.age == 1, "pause leaves the cached expression unchanged");
             ClientEyeRuntime.onEntityRemoved(boat);
             helper.assertTrue(ClientEyeRuntime.boatEyes(boat) != current, "unloading retires the boat simulation");

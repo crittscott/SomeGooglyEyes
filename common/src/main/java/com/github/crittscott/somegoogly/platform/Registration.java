@@ -1,15 +1,14 @@
 package com.github.crittscott.somegoogly.platform;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.enchantment.Enchantment;
-
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * Registers the mod's content under its namespace the loader's way: Forge through deferred registers, Fabric

@@ -1,7 +1,6 @@
 package com.github.crittscott.somegoogly.mixin.common.client;
 
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
-import com.github.crittscott.somegoogly.client.GuiItemEyes;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -22,7 +21,7 @@ abstract class GuiItemEyesMixin {
             + "Lnet/minecraft/world/item/ItemStack;IIII)V", at = @At("HEAD"))
     private void somegoogly$beginGuiItem(LivingEntity owner, Level level, ItemStack stack, int x, int y,
                                          int seed, int z, CallbackInfo callback) {
-        GuiItemEyes.beginDraw(stack, x, y, seed);
+        ClientEyeRuntime.beginGuiDraw(stack, x, y, seed);
     }
 
     @Inject(method = "renderItem(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/level/Level;"

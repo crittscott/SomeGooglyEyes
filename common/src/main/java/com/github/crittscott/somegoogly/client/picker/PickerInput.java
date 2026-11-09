@@ -1,13 +1,12 @@
 package com.github.crittscott.somegoogly.client.picker;
 
 import com.github.crittscott.somegoogly.picker.PickerGate;
-import net.minecraft.client.Minecraft;
+import java.util.List;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
-
-import java.util.List;
 
 /**
  * The picker's keybindings, all rebindable in Options → Controls, and the routing of their presses to

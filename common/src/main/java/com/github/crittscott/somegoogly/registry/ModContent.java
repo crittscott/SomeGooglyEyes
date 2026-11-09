@@ -8,6 +8,7 @@ import com.github.crittscott.somegoogly.item.SlimyEyeItem;
 import com.github.crittscott.somegoogly.platform.Registration;
 import com.github.crittscott.somegoogly.recipe.EyeModifierRecipe;
 import com.github.crittscott.somegoogly.recipe.SlimyEyeRecipe;
+import java.util.function.Supplier;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -20,8 +21,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
-
-import java.util.function.Supplier;
 
 /**
  * Everything the mod registers, declared once and registered through {@link Registration}:

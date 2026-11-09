@@ -11,13 +11,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
-import net.minecraft.resources.FileToIdConverter;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.PackType;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
-import net.minecraft.util.profiling.ProfilerFiller;
-
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,7 +20,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
-
+import net.minecraft.resources.FileToIdConverter;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.util.profiling.ProfilerFiller;
 import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ADULT;
 import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ANY;
 import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_BABY;
@@ -79,7 +77,7 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
         Map<Fallback, Integer> fallbacks = new LinkedHashMap<>();
         for (Map.Entry<ResourceLocation, JsonElement> entry : files.entrySet()) {
             // Hard exclusion, not config: no config for the dragon may ever load, from any datapack.
-            if (entry.getKey().equals(ServerEyeConfigs.ENDER_DRAGON)) {
+            if (ServerEyeConfigs.isExcluded(entry.getKey())) {
                 SomeGooglyCommon.LOGGER.warn(
                         "Ignoring eye config {}; the ender dragon is hard-excluded from googly eyes", entry.getKey());
                 continue;

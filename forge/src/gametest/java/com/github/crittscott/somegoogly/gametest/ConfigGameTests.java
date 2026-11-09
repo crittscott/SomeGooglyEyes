@@ -5,12 +5,11 @@ import com.electronwill.nightconfig.toml.TomlParser;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.forge.ForgeServerConfig;
+import java.util.List;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
-
-import java.util.List;
 
 /**
  * Forge GameTest entry points for {@link ConfigGameTestsLogic}; see that class for the actual

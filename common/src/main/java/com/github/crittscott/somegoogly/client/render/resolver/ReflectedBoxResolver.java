@@ -1,11 +1,8 @@
 package com.github.crittscott.somegoogly.client.render.resolver;
 
-import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.github.crittscott.somegoogly.client.compat.ClientIntegrationFailures;
+import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.model.EntityModel;
-
-import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -15,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
+import javax.annotation.Nullable;
+import net.minecraft.client.model.EntityModel;
 
 /**
  * Shared machinery for resolvers over reflected "box-tree" model families — external mods whose

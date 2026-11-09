@@ -3,6 +3,9 @@ package com.github.crittscott.somegoogly.eye.state;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import io.netty.handler.codec.DecoderException;
+import java.util.List;
+import java.util.Optional;
+import javax.annotation.Nullable;
 import net.minecraft.nbt.CollectionTag;
 import net.minecraft.nbt.FloatTag;
 import net.minecraft.nbt.ListTag;
@@ -10,10 +13,6 @@ import net.minecraft.nbt.NumericTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.FastColor;
-
-import javax.annotation.Nullable;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * One RGB color, each channel 0..1. The single color representation across the mod — config,

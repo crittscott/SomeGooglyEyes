@@ -2,15 +2,14 @@ package com.github.crittscott.somegoogly.client.render.resolver;
 
 import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.geom.ModelPart;
-
-import javax.annotation.Nullable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import javax.annotation.Nullable;
+import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.geom.ModelPart;
 
 /**
  * Shared base for resolvers that walk a vanilla {@link ModelPart} tree by its name → child map. The three
@@ -52,69 +51,6 @@ abstract class ModelPartTreeResolver implements EyeAttachmentResolver {
         }
     }
 
-    /**
-     * A baby-only scale followed by a translate, as models apply around their parts. {@code young} is re-checked on
-     * every call rather than baked in when this closure is built, because {@link Resolvers#ATTACHMENTS} caches
-     * the resolved chain per (model, token) and the same model instance renders every baby and adult of its type.
-     */
-    protected static Consumer<PoseStack> youngWrap(EntityModel<?> model, float sx, float sy, float sz,
-                                                   float tx, float ty, float tz) {
-        return poseStack -> {
-            if (model.young) {
-                poseStack.scale(sx, sy, sz);
-                poseStack.translate(tx, ty, tz);
-            }
-        };
-    }
-
-    /** The subtrees to walk for this model, in a stable order. Only called when {@link #handles} is true. */
-    protected abstract List<NamedRoot> roots(EntityModel<?> model);
-
-    /** Name a part group {@code base}, {@code base1}, {@code base2}, … in iteration order. */
-    protected static void index(List<NamedRoot> roots, String base, Iterable<ModelPart> parts,
-                                Consumer<PoseStack> preTransform) {
-        int i = 0;
-        for (ModelPart part : parts) {
-            roots.add(new NamedRoot(i == 0 ? base : base + i, part, preTransform));
-            i++;
-        }
-    }
-
-    @Override
-    public List<String> enumerateParts(EntityModel<?> model) {
-        if (!handles(model)) {
-            return List.of();
-        }
-        List<String> out = new ArrayList<>();
-        for (NamedRoot root : roots(model)) {
-            enumerate("", root.name(), root.part(), out);
-        }
-        return out;
-    }
-
-    private static void enumerate(String prefix, String name, ModelPart part, List<String> out) {
-        String path = EyeConfigModel.attachmentPath(prefix, name);
-        out.add(path);
-        for (Map.Entry<String, ModelPart> child : part.children.entrySet()) {
-            enumerate(path, child.getKey(), child.getValue(), out);
-        }
-    }
-
-    @Override
-    public String canonicalToken(EntityModel<?> model, String storedToken) {
-        if (!handles(model)) {
-            return storedToken;
-        }
-        // First part (pre-order) whose path suffix-matches the stored token — the same order the search
-        // below follows, so canonical naming and attachment agree.
-        for (String path : enumerateParts(model)) {
-            if (EyeAttachmentResolver.pathMatches(storedToken, path)) {
-                return path;
-            }
-        }
-        return storedToken; // no part matches; leave the token as authored
-    }
-
     /** The parts from a subtree root down to the attach part, inclusive, in the order they transform. */
     private record PartChain(@Nullable Consumer<PoseStack> preTransform, ModelPart[] chain) implements Attachment {
         @Override
@@ -135,6 +71,51 @@ abstract class ModelPartTreeResolver implements EyeAttachmentResolver {
     }
 
     @Override
+    public String canonicalToken(EntityModel<?> model, String storedToken) {
+        if (!handles(model)) {
+            return storedToken;
+        }
+        // First part (pre-order) whose path suffix-matches the stored token — the same order the search
+        // below follows, so canonical naming and attachment agree.
+        for (String path : enumerateParts(model)) {
+            if (EyeAttachmentResolver.pathMatches(storedToken, path)) {
+                return path;
+            }
+        }
+        return storedToken; // no part matches; leave the token as authored
+    }
+
+    private static void enumerate(String prefix, String name, ModelPart part, List<String> out) {
+        String path = EyeConfigModel.attachmentPath(prefix, name);
+        out.add(path);
+        for (Map.Entry<String, ModelPart> child : part.children.entrySet()) {
+            enumerate(path, child.getKey(), child.getValue(), out);
+        }
+    }
+
+    @Override
+    public List<String> enumerateParts(EntityModel<?> model) {
+        if (!handles(model)) {
+            return List.of();
+        }
+        List<String> out = new ArrayList<>();
+        for (NamedRoot root : roots(model)) {
+            enumerate("", root.name(), root.part(), out);
+        }
+        return out;
+    }
+
+    /** Name a part group {@code base}, {@code base1}, {@code base2}, … in iteration order. */
+    protected static void index(List<NamedRoot> roots, String base, Iterable<ModelPart> parts,
+        Consumer<PoseStack> preTransform) {
+        int i = 0;
+        for (ModelPart part : parts) {
+            roots.add(new NamedRoot(i == 0 ? base : base + i, part, preTransform));
+            i++;
+        }
+    }
+
+    @Override
     @Nullable
     public Attachment resolve(EntityModel<?> model, String partToken) {
         if (!handles(model)) {
@@ -149,6 +130,9 @@ abstract class ModelPartTreeResolver implements EyeAttachmentResolver {
         return null;
     }
 
+    /** The subtrees to walk for this model, in a stable order. Only called when {@link #handles} is true. */
+    protected abstract List<NamedRoot> roots(EntityModel<?> model);
+
     /**
      * Depth-first pre-order over the {@code children} map, in the same root order and the same path
      * spelling {@link #enumerate} uses, so a token attaches to the part {@link #canonicalToken} names. A
@@ -157,7 +141,7 @@ abstract class ModelPartTreeResolver implements EyeAttachmentResolver {
      * <p>On success {@code chain} holds root→part inclusive; on failure it is left as it was found.
      */
     private static boolean search(String prefix, String name, ModelPart part, String token,
-                                  ArrayDeque<ModelPart> chain) {
+        ArrayDeque<ModelPart> chain) {
         String path = EyeConfigModel.attachmentPath(prefix, name);
         chain.addLast(part);
         if (EyeAttachmentResolver.pathMatches(token, path)) {

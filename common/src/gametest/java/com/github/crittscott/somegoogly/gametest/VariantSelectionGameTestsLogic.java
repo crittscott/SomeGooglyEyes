@@ -1,13 +1,12 @@
 package com.github.crittscott.somegoogly.gametest;
 
-import com.github.crittscott.somegoogly.eye.EyeDefinition;
-import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.HeadConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
-import net.minecraft.gametest.framework.GameTestHelper;
-
+import com.github.crittscott.somegoogly.config.EyeConfigModel;
+import com.github.crittscott.somegoogly.eye.EyeDefinition;
 import java.util.List;
+import net.minecraft.gametest.framework.GameTestHelper;
 
 /**
  * Pure-logic coverage of {@link EyeConfigModel#chooseVariantIndex} — the

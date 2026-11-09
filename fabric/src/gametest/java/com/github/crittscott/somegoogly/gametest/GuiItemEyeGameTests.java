@@ -46,4 +46,8 @@ public final class GuiItemEyeGameTests implements FabricGameTest {
     public static void guiHeadUsesConfiguredLayout(GameTestHelper helper) {
         GuiItemEyeGameTestsLogic.guiHeadUsesConfiguredLayout(helper);
     }
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void nestedDrawContextsRestoreOuterSelection(GameTestHelper helper) {
+        GuiItemEyeGameTestsLogic.nestedDrawContextsRestoreOuterSelection(helper);
+    }
 }

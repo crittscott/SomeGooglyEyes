@@ -2,13 +2,12 @@ package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.picker.PickerFreezeService;
 import com.github.crittscott.somegoogly.platform.EntityPersistentData;
+import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Cow;
-
-import java.util.UUID;
 
 /**
  * The server-owned freeze lifecycle ({@link PickerFreezeService}): NoAi capture and restore, the

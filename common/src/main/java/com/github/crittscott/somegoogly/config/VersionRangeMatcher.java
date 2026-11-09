@@ -1,17 +1,21 @@
 package com.github.crittscott.somegoogly.config;
 
-import javax.annotation.Nullable;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 /**
  * Minimal matcher for exact versions and bracket ranges such as [1.2.0,1.3.0), plus the
  * nearest-generation fallback pick ({@link #nearestVersion}) used when no entry matches at all and
  * the range synthesis ({@link #rangeFor}) used when exporting definitions for optional mods.
+ *
+ * <p>This is one shared data-format ordering on both loaders, including loader-word filtering and
+ * nearest-generation fallback. Loader-specific comparators would select different definitions from the same
+ * datapack. Bare declarations are exact strings; bracket bounds deliberately use zero-padded components.
  */
 public final class VersionRangeMatcher {
 

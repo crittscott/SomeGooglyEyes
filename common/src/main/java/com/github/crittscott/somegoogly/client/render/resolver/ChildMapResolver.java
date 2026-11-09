@@ -1,10 +1,7 @@
 package com.github.crittscott.somegoogly.client.render.resolver;
 
-import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.github.crittscott.somegoogly.client.compat.ClientIntegrationFailures;
-import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.geom.ModelPart;
-
+import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
+import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.geom.ModelPart;
 
 /**
  * Catch-all resolver for any vanilla {@link EntityModel} that isn't a

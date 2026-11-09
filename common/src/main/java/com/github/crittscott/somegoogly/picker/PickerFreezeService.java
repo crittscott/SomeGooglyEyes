@@ -2,6 +2,10 @@ package com.github.crittscott.somegoogly.picker;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.platform.EntityPersistentData;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import javax.annotation.Nullable;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -12,11 +16,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.phys.Vec3;
-
-import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 /**
  * Server-owned picker mob freezing: a picker-targeted mob is held {@code NoAi=true} while edited and
@@ -165,7 +164,6 @@ public final class PickerFreezeService {
         mob.setNoAi(data.getBoolean(PREV_NO_AI_TAG));
         data.remove(PREV_NO_AI_TAG);
     }
-
 
     /**
      * Restore every frozen mob synchronously at server stop — before the final world save — so a

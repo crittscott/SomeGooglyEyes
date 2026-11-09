@@ -1,13 +1,12 @@
 package com.github.crittscott.somegoogly.client.render.resolver;
 
+import com.github.crittscott.somegoogly.client.compat.ThirdPartyModelWraps;
 import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.model.AgeableListModel;
-import net.minecraft.client.model.EntityModel;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
+import net.minecraft.client.model.AgeableListModel;
+import net.minecraft.client.model.EntityModel;
 
 /**
  * Resolver for the {@link AgeableListModel} family — the base of most vanilla mob models (humanoids,
@@ -23,7 +22,7 @@ import java.util.function.Consumer;
  *
  * <p>For a young entity, {@link AgeableListModel#renderToBuffer} wraps {@code headParts()} and
  * {@code bodyParts()} each in their own baby-only scale/offset, applied and popped entirely inside that
- * method — invisible to a render layer's {@link PoseStack} otherwise. {@link #headWrap}/{@link #bodyWrap}
+ * method — invisible to a render layer's {@link PoseStack} otherwise. {@link ThirdPartyModelWraps#groupTransform}
  * replay that wrap (made accessible by the mod's access transformer) so a baby's attach points land where
  * the model actually draws them, not where the same tokens sit on an adult.
  */
@@ -38,37 +37,9 @@ public class AgeableListResolver extends ModelPartTreeResolver {
     protected List<NamedRoot> roots(EntityModel<?> model) {
         AgeableListModel<?> ageable = (AgeableListModel<?>) model;
         List<NamedRoot> roots = new ArrayList<>();
-        index(roots, EyeConfigModel.PART_HEAD, ageable.headParts(), headWrap(ageable));
-        index(roots, EyeConfigModel.PART_BODY, ageable.bodyParts(), bodyWrap(ageable));
+        index(roots, EyeConfigModel.PART_HEAD, ageable.headParts(), ThirdPartyModelWraps.groupTransform(ageable, EyeConfigModel.PART_HEAD));
+        index(roots, EyeConfigModel.PART_BODY, ageable.bodyParts(), ThirdPartyModelWraps.groupTransform(ageable, EyeConfigModel.PART_BODY));
         return roots;
     }
 
-    /**
-     * The scale/offset {@link AgeableListModel#renderToBuffer} applies around {@code headParts()} for a
-     * young entity. {@code young} is re-checked on every call rather than baked in when this closure is
-     * built, because {@link Resolvers#ATTACHMENTS} caches the resolved chain per (model, token) and the
-     * same model instance renders both baby and adult entities of its type.
-     */
-    private static Consumer<PoseStack> headWrap(AgeableListModel<?> ageable) {
-        boolean scaleHead = ageable.scaleHead;
-        float babyHeadScale = ageable.babyHeadScale;
-        float yOffset = ageable.babyYHeadOffset;
-        float zOffset = ageable.babyZHeadOffset;
-        return poseStack -> {
-            if (!ageable.young) {
-                return;
-            }
-            if (scaleHead) {
-                float f = 1.5F / babyHeadScale;
-                poseStack.scale(f, f, f);
-            }
-            poseStack.translate(0.0F, yOffset / 16.0F, zOffset / 16.0F);
-        };
-    }
-
-    /** Same as {@link #headWrap}, for the scale/offset {@code renderToBuffer} applies around {@code bodyParts()}. */
-    private static Consumer<PoseStack> bodyWrap(AgeableListModel<?> ageable) {
-        float f = 1.0F / ageable.babyBodyScale;
-        return youngWrap(ageable, f, f, f, 0.0F, ageable.bodyYOffset / 16.0F, 0.0F);
-    }
 }

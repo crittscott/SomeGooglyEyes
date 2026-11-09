@@ -3,21 +3,25 @@ package com.github.crittscott.somegoogly.eye.behavior;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.network.EyeAngerPacket;
+import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket.Target;
 import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket;
 import com.github.crittscott.somegoogly.platform.Networking;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityEvent;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.NeutralMob;
-import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraft.world.entity.monster.piglin.AbstractPiglin;
-
+import com.github.crittscott.somegoogly.registry.ModContent;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Nullable;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityEvent;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * The single authority for which eye behavior a mob is playing, and when. Behaviors are cosmetic and
@@ -28,7 +32,7 @@ import java.util.Map;
  * were busy, and each client derives the sleeping squint from vanilla's synced sleep state.
  *
  * <p>Anger is the one ongoing state the scheduler shares, because vanilla keeps it on the server: each
- * tick it checks every {@link #ACTIVE} mob with {@link #isAngry} and sends an {@link EyeAngerPacket} only
+ * tick it checks every {@link #ACTIVE} mob with {@link OngoingBehavior#serverAngry} and sends an {@link EyeAngerPacket} only
  * when that changes. It never blocks a behavior; the client reddens the pupils underneath whatever plays.
  *
  * <p><b>Server-polite:</b> only mobs currently tracked by a player are considered — the tracked set is
@@ -37,7 +41,7 @@ import java.util.Map;
  * eye state), but {@link #serverTick} only walks {@link #ACTIVE}, the subset that can actually do
  * something: mobs known to have eyes, plus any mob mid-behavior (started via {@link #start}, including
  * the debug {@link #trigger}). A tracked-but-eyeless mob — the overwhelming majority, since the default
- * spawn chance is {@link ServerConfig#GLOBAL_PERCENT} — costs one map entry and nothing per tick. {@link #onEyesGained} promotes a mob
+ * spawn chance is {@link ServerConfig#GLOBAL_PERCENT} — costs one map entry and nothing per tick unless it has a recent held-eye reaction. {@link #onEyesGained} promotes a mob
  * into {@link #ACTIVE} the moment its eyes turn on (natural spawn already tracked, or a mid-life slimy
  * eye / admin toggle), called from {@link EyeState}. A promoted mob that loses its eyes leaves {@link #ACTIVE}
  * at once ({@link #onEyesLost}), or when the behavior it is playing retires.
@@ -50,16 +54,26 @@ import java.util.Map;
  * a single-player JVM doesn't carry one world's mobs into the next.
  */
 public final class ServerBehaviorScheduler {
+    // Only an idle mob leaves while tracked, so one whose behavior still needs retiring is never evicted.
+    private static final Map<LivingEntity, MobState> ACTIVE = new HashMap<>();
+    private static final Map<LivingEntity, Map<InteractionHand, HandState>> HANDS = new HashMap<>();
 
     private static final RandomSource RANDOM = RandomSource.create();
     private static final Map<LivingEntity, MobState> STATES = new HashMap<>();
-    // Only an idle mob leaves while tracked, so one whose behavior still needs retiring is never evicted.
-    private static final Map<LivingEntity, MobState> ACTIVE = new HashMap<>();
 
-    private static long now; // monotonic scheduler tick, advanced once per server tick
     private static boolean suspended;
 
     private ServerBehaviorScheduler() {
+    }
+
+    private static final class HandState {
+        EyeBehavior behavior;
+        long healReadyAt;
+        final ItemStack item;
+        long readyAt;
+        long seed;
+        long startedAt;
+        HandState(ItemStack item) { this.item = item.copyWithCount(1); }
     }
 
     /** Per-mob schedule state. {@code busyUntil == 0} means idle. */
@@ -77,16 +91,55 @@ public final class ServerBehaviorScheduler {
 
     /** {@code mob}'s playing behavior for a viewer joining it partway through. */
     private static EyeBehaviorTriggerPacket catchUpPacket(LivingEntity mob, MobState state) {
-        return new EyeBehaviorTriggerPacket(mob.getId(), state.activeBehavior, state.activeSeed,
-                (int) (now - state.startedAt));
+        return new EyeBehaviorTriggerPacket(mob.getId(), Target.ENTITY, state.activeBehavior, state.activeSeed,
+            (int) (clock(mob) - state.startedAt));
     }
 
     /** Forget all state (server stop), so a single-player JVM doesn't bleed one world into the next. */
     public static void clear() {
         STATES.clear();
         ACTIVE.clear();
-        now = 0;
+        HANDS.clear();
         suspended = false;
+    }
+
+    /** The active server clock shared by scheduling, cooldowns, and catch-up. */
+    private static long clock(LivingEntity mob) {
+        return mob.level().getServer().getTickCount();
+    }
+
+    /**
+     * The schedule state for {@code mob} <i>iff</i> it's a legitimate event target: a state exists for
+     * every mob a player is tracking (created in {@link #onStartTracking}), so we gate on {@code hasEyes}
+     * here — a tracked mob with no eyes (not yet given them, or having lost them) is not a target. Returns
+     * {@code null} (caller no-ops) otherwise — so reactions never fire for off-screen or eyeless mobs.
+     */
+    private static MobState eventTarget(LivingEntity mob) {
+        MobState state = STATES.get(mob);
+        if (!ServerConfig.GOOGLY_EYES_ENABLED.get() || state == null || !EyeState.hasEyes(mob)) {
+            return null;
+        }
+        return state;
+    }
+
+    /** Active held expression for a viewer who starts tracking the holder mid-reaction. */
+    @Nullable
+    public static EyeBehaviorTriggerPacket handBehavior(LivingEntity holder, InteractionHand hand) {
+        Map<InteractionHand, HandState> hands = HANDS.get(holder);
+        HandState state = hands == null ? null : hands.get(hand);
+        return state != null && clock(holder) < state.readyAt
+        && ItemStack.isSameItemSameTags(state.item, holder.getItemInHand(hand))
+        ? handPacket(holder, hand, state) : null;
+    }
+
+    private static EyeBehaviorTriggerPacket handPacket(LivingEntity holder, InteractionHand hand, HandState state) {
+        return new EyeBehaviorTriggerPacket(holder.getId(), Target.forHand(hand), state.behavior,
+            state.seed, (int) (clock(holder) - state.startedAt));
+    }
+
+    private static int nextCooldown() {
+        return BehaviorSettings.drawAmbientTicks(ServerConfig.AMBIENT_MIN_TICKS.get(),
+            ServerConfig.AMBIENT_MAX_TICKS.get(), RANDOM);
     }
 
     /**
@@ -101,7 +154,7 @@ public final class ServerBehaviorScheduler {
         }
         boolean affection = switch (eventId) {
             case EntityEvent.IN_LOVE_HEARTS, EntityEvent.LOVE_HEARTS, EntityEvent.OFFER_FLOWER,
-                 EntityEvent.TAMING_SUCCEEDED, EntityEvent.TRUSTING_SUCCEEDED -> true;
+            EntityEvent.TAMING_SUCCEEDED, EntityEvent.TRUSTING_SUCCEEDED -> true;
             default -> false;
         };
         if (affection && ServerConfig.LOVE_ON_AFFECTION.get()) {
@@ -137,60 +190,36 @@ public final class ServerBehaviorScheduler {
     }
 
     /**
-     * The schedule state for {@code mob} <i>iff</i> it's a legitimate event target: a state exists for
-     * every mob a player is tracking (created in {@link #onStartTracking}), so we gate on {@code hasEyes}
-     * here — a tracked mob with no eyes (not yet given them, or having lost them) is not a target. Returns
-     * {@code null} (caller no-ops) otherwise — so reactions never fire for off-screen or eyeless mobs.
-     */
-    private static MobState eventTarget(LivingEntity mob) {
-        MobState state = STATES.get(mob);
-        if (!ServerConfig.GOOGLY_EYES_ENABLED.get() || state == null || !EyeState.hasEyes(mob)) {
-            return null;
-        }
-        return state;
-    }
-
-    private static int nextCooldown() {
-        return BehaviorSettings.drawAmbientTicks(ServerConfig.AMBIENT_MIN_TICKS.get(),
-                ServerConfig.AMBIENT_MAX_TICKS.get(), RANDOM);
-    }
-
-    /**
      * {@code mob} is about to be healed: play 'swirl' (if enabled), rate-limited per mob so regen doesn't loop it.
      * Both loaders call this ahead of the heal, since vanilla also asks a mob at full health to heal.
      */
     public static void onHealed(LivingEntity mob) {
-        if (!ServerConfig.SWIRL_ON_HEAL.get() || mob.getHealth() >= mob.getMaxHealth()) {
-            return;
-        }
+        if (mob.level().isClientSide() || mob.getHealth() >= mob.getMaxHealth()) return;
+        reactHands(mob, EyeBehavior.SWIRL);
+        BehaviorSettings settings = BehaviorSettings.fromConfig();
         MobState state = eventTarget(mob);
-        if (state == null || now < state.healSwirlReadyAt) {
+        if (state == null || !settings.canSwirlOnHeal(clock(mob), state.healSwirlReadyAt)) {
             return;
         }
         // Arm the cooldown only on an actual start: if the mob is busy the swirl is dropped
         // (non-interruptable), and the next heal once free can still react.
         if (start(mob, state, EyeBehavior.SWIRL, RANDOM.nextLong())) {
-            state.healSwirlReadyAt = now + ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS.get();
+            state.healSwirlReadyAt = settings.nextHealReadyAt(clock(mob));
+        }
+    }
+
+    /** A player damaged {@code mob}: roll the configured chance to play 'grow'. */
+    public static void onHurt(LivingEntity mob, DamageSource source) {
+        reactHands(mob, EyeBehavior.GROW);
+        if (!mob.level().isClientSide() && source.getEntity() instanceof Player
+            && ServerConfig.roll(RANDOM, ServerConfig.GROW_ON_HIT_PERCENT.get())) {
+            react(mob, EyeBehavior.GROW);
         }
     }
 
     /** A player milked {@code mob}: play 'grow' (if enabled). */
     public static void onMilked(LivingEntity mob) {
         if (ServerConfig.GROW_ON_MILK.get()) {
-            react(mob, EyeBehavior.GROW);
-        }
-    }
-
-    /** {@code sheep} was sheared: play 'grow' (if enabled). */
-    public static void onSheared(LivingEntity sheep) {
-        if (ServerConfig.GROW_ON_SHEAR.get()) {
-            react(sheep, EyeBehavior.GROW);
-        }
-    }
-
-    /** A player damaged {@code mob}: roll the configured chance to play 'grow'. */
-    public static void onPlayerHurt(LivingEntity mob) {
-        if (RANDOM.nextInt(ServerConfig.PERCENT_MAX) < ServerConfig.GROW_ON_HIT_PERCENT.get()) {
             react(mob, EyeBehavior.GROW);
         }
     }
@@ -220,6 +249,13 @@ public final class ServerBehaviorScheduler {
         }
     }
 
+    /** {@code sheep} was sheared: play 'grow' (if enabled). */
+    public static void onSheared(LivingEntity sheep) {
+        if (ServerConfig.GROW_ON_SHEAR.get()) {
+            react(sheep, EyeBehavior.GROW);
+        }
+    }
+
     /**
      * A player started tracking {@code mob}. Always creates a {@link #STATES} entry (needed for the
      * {@code trackers} count regardless of eye state) and promotes into {@link #ACTIVE} immediately if
@@ -240,9 +276,13 @@ public final class ServerBehaviorScheduler {
             return;
         }
 
+        for (InteractionHand hand : InteractionHand.values()) {
+            EyeBehaviorTriggerPacket report = handBehavior(mob, hand);
+            if (report != null) Networking.sendToPlayer(player, report);
+        }
         // Calm is every client's default, so only anger needs catching up. The cached delta still belongs to
         // all existing watchers.
-        if (EyeState.hasEyes(mob) && isAngry(mob)) {
+        if (EyeState.hasEyes(mob) && OngoingBehavior.ANGER.serverAngry(mob)) {
             Networking.sendToPlayer(player, new EyeAngerPacket(mob.getId(), true));
         }
         // Mid-effect join: send just this player the active behavior with how far in it already is, so
@@ -275,6 +315,35 @@ public final class ServerBehaviorScheduler {
         }
     }
 
+    private static void reactHands(LivingEntity holder, EyeBehavior behavior) {
+        if (holder.level().isClientSide() || !ServerConfig.GOOGLY_EYES_ENABLED.get() || holder.isSleeping()) return;
+        if (!holder.getMainHandItem().is(ModContent.GOOGLY_EYE.get())
+                && !holder.getOffhandItem().is(ModContent.GOOGLY_EYE.get())) return;
+        MobState watched = STATES.get(holder);
+        if (watched == null || watched.trackers == 0) return;
+        BehaviorSettings settings = BehaviorSettings.fromConfig();
+        long time = clock(holder);
+        for (InteractionHand hand : InteractionHand.values()) {
+            ItemStack item = holder.getItemInHand(hand);
+            if (!item.is(ModContent.GOOGLY_EYE.get())) continue;
+            Map<InteractionHand, HandState> hands = HANDS.computeIfAbsent(holder, key -> new EnumMap<>(InteractionHand.class));
+            HandState state = hands.get(hand);
+            if (state == null || !ItemStack.isSameItemSameTags(state.item, item)) {
+                state = new HandState(item);
+                hands.put(hand, state);
+            }
+            if (time < state.readyAt || settings.handAmbientBusy(holder.getUUID(), hand, holder.level().getGameTime())
+                || behavior == EyeBehavior.SWIRL && !settings.canSwirlOnHeal(time, state.healReadyAt)
+                || behavior == EyeBehavior.GROW && !settings.rollGrowOnHit(RANDOM)) continue;
+            state.behavior = behavior;
+            state.seed = RANDOM.nextLong();
+            state.startedAt = time;
+            state.readyAt = time + behavior.defaultDuration();
+            if (behavior == EyeBehavior.SWIRL) state.healReadyAt = settings.nextHealReadyAt(time);
+            Networking.sendTrackingAndSelf(holder, handPacket(holder, hand, state));
+        }
+    }
+
     /** One of {@code mob}'s watchers is gone; drop its state when none is left. */
     private static void removeWatcher(LivingEntity mob, MobState state) {
         if (--state.trackers <= 0) {
@@ -300,10 +369,14 @@ public final class ServerBehaviorScheduler {
      * per tick; a mob evicted here is dropped from {@link #STATES} too, keeping the two in sync.
      */
     public static void serverTick() {
-        now++;
+        tickHands();
         boolean enabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
         boolean resuming = suspended && enabled;
         suspended = !enabled;
+        if (resuming) HANDS.forEach((holder, hands) -> hands.forEach((hand, state) -> {
+            EyeBehaviorTriggerPacket packet = handBehavior(holder, hand);
+            if (packet != null) Networking.sendTrackingAndSelf(holder, packet);
+        }));
         boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
         Iterator<Map.Entry<LivingEntity, MobState>> it = ACTIVE.entrySet().iterator();
         while (it.hasNext()) {
@@ -317,7 +390,7 @@ public final class ServerBehaviorScheduler {
                 continue;
             }
             // Retire a finished behavior back to idle; a mob that lost its eyes meanwhile stops being walked.
-            if (state.busyUntil != 0 && now >= state.busyUntil) {
+            if (state.busyUntil != 0 && clock(mob) >= state.busyUntil) {
                 state.busyUntil = 0;
                 state.activeBehavior = null;
                 if (!EyeState.hasEyes(mob)) {
@@ -346,7 +419,7 @@ public final class ServerBehaviorScheduler {
             // Anger changes are rare, so a packet goes out only when one happens. An eyeless mob's anger
             // stays unsent; it's picked up on the first tick after the mob gains eyes.
             // Resuming, a viewer added while disabled still needs to hear of anger that didn't change.
-            boolean angry = isAngry(mob);
+            boolean angry = OngoingBehavior.ANGER.serverAngry(mob);
             if ((angry != state.angry || resuming && angry) && (!angry || EyeState.hasEyes(mob))) {
                 state.angry = angry;
                 Networking.sendTrackingAndSelf(mob, new EyeAngerPacket(mob.getId(), angry));
@@ -358,35 +431,20 @@ public final class ServerBehaviorScheduler {
         }
     }
 
-    /**
-     * Whether {@code mob}'s eyes should show anger the client can't see for itself: a neutral mob (iron
-     * golem, zombified piglin, enderman, wolf, bee, ...) with anger time left, or a piglin with someone
-     * to be angry at. Always {@code false} while {@code angryEyes} is off.
-     */
-    public static boolean isAngry(LivingEntity mob) {
-        if (!ServerConfig.ANGRY_EYES.get()) {
-            return false;
-        }
-        if (mob instanceof NeutralMob neutral) {
-            return neutral.isAngry();
-        }
-        return mob instanceof AbstractPiglin && mob.getBrain().hasMemoryValue(MemoryModuleType.ANGRY_AT);
-    }
-
     private static boolean start(LivingEntity mob, MobState state, EyeBehavior behavior, long seed) {
         // Already playing something, or asleep (the client holds a squint instead): drop the trigger.
-        if (state.busyUntil != 0 || mob.isSleeping()) {
+        if (state.busyUntil != 0 && clock(mob) < state.busyUntil || mob.isSleeping()) {
             return false;
         }
         state.activeBehavior = behavior;
         state.activeSeed = seed;
-        state.busyUntil = now + behavior.defaultDuration();
-        state.startedAt = now;
+        state.busyUntil = clock(mob) + behavior.defaultDuration();
+        state.startedAt = clock(mob);
         // A started behavior needs retiring at busyUntil regardless of eye state or tracking, which
         // matters for trigger() (the admin/debug path): it can start one on a mob ACTIVE never saw yet.
         ACTIVE.putIfAbsent(mob, state);
         Networking.sendTrackingAndSelf(mob,
-                new EyeBehaviorTriggerPacket(mob.getId(), behavior, seed, 0));
+            new EyeBehaviorTriggerPacket(mob.getId(), Target.ENTITY, behavior, seed, 0));
         return true;
     }
 
@@ -395,6 +453,16 @@ public final class ServerBehaviorScheduler {
             MobState state = new MobState();
             state.ambientCooldown = nextCooldown();
             return state;
+        });
+    }
+
+    private static void tickHands() {
+        HANDS.entrySet().removeIf(entry -> {
+            LivingEntity holder = entry.getKey();
+            if (holder.isRemoved() || !STATES.containsKey(holder)) return true;
+            entry.getValue().entrySet().removeIf(hand -> !ItemStack.isSameItemSameTags(hand.getValue().item,
+                holder.getItemInHand(hand.getKey())) || clock(holder) >= Math.max(hand.getValue().readyAt, hand.getValue().healReadyAt));
+            return entry.getValue().isEmpty();
         });
     }
 

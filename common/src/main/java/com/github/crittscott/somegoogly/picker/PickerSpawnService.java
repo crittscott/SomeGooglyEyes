@@ -5,10 +5,14 @@ import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.platform.MobSpawning;
 import com.github.crittscott.somegoogly.util.LookTarget;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import javax.annotation.Nullable;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -29,11 +33,6 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import javax.annotation.Nullable;
 
 /**
  * Authoring aid behind {@code /sg spawnall}: spawns one of every mob that <i>could</i> wear
@@ -120,7 +119,7 @@ public final class PickerSpawnService {
     @Nullable
     public static SpawnRefusal refusal(EntityType<?> type) {
         ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
-        if (id.equals(ServerEyeConfigs.ENDER_DRAGON)) {
+        if (ServerEyeConfigs.isExcluded(id)) {
             return SpawnRefusal.ENDER_DRAGON;
         }
         if (!type.canSummon()) {
@@ -167,8 +166,7 @@ public final class PickerSpawnService {
 
     /** Report a world change to the sender, other operators, and the console, per vanilla convention. */
     private static void announce(CommandSourceStack source, String key, Object... args) {
-        source.sendSuccess(() -> Component.translatable("somegoogly.command.picker.feedback",
-                Component.translatable(key, args)), true);
+        PickerGate.tellSuccess(source, true, key, args);
     }
 
     /**

@@ -2,10 +2,9 @@ package com.github.crittscott.somegoogly.client.render.resolver;
 
 import com.github.crittscott.somegoogly.client.compat.ClientIntegrationFailures;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.model.EntityModel;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import net.minecraft.client.model.EntityModel;
 
 /**
  * Resolver for the {@code AdvancedEntityModel} / {@code AdvancedModelBox} toolkit, shipped by two

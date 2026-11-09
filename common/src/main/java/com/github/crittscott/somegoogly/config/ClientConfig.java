@@ -1,14 +1,13 @@
 package com.github.crittscott.somegoogly.config;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
-import net.minecraft.resources.ResourceLocation;
-
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
+import net.minecraft.resources.ResourceLocation;
 
 /** Client-local rendering preferences shared across loaders. */
 public final class ClientConfig {

@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.platform;
+package com.github.crittscott.somegoogly.client.platform;
 
 import com.github.crittscott.somegoogly.network.Payload;
 import dev.architectury.injectables.annotations.ExpectPlatform;

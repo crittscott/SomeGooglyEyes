@@ -3,21 +3,23 @@ package com.github.crittscott.somegoogly.eye.behavior;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.ConfigValue;
 import com.github.crittscott.somegoogly.config.ServerConfig;
+import java.util.HashMap;
+import java.util.Map;
+import javax.annotation.Nullable;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.NeutralMob;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.animal.goat.Goat;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.entity.monster.piglin.AbstractPiglin;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ProjectileWeaponItem;
-
-import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * The named eye behaviors that last as long as the mob stays in some state, as opposed to the one-shot
@@ -46,7 +48,7 @@ public enum OngoingBehavior {
             }
             Item weapon = entity.getUseItem().getItem();
             return on(entity instanceof AbstractSkeleton && weapon instanceof ProjectileWeaponItem
-                    || entity instanceof Player && weapon instanceof BowItem);
+                || entity instanceof Player && weapon instanceof BowItem);
         }
     },
 
@@ -129,6 +131,15 @@ public enum OngoingBehavior {
 
     private static float on(boolean on) {
         return on ? 1F : 0F;
+    }
+
+    /** Server-only anger that vanilla does not synchronize to viewers. */
+    public boolean serverAngry(LivingEntity entity) {
+        if (this != ANGER || !setting.get()) {
+            return false;
+        }
+        return entity instanceof NeutralMob neutral ? neutral.isAngry()
+        : entity instanceof AbstractPiglin && entity.getBrain().hasMemoryValue(MemoryModuleType.ANGRY_AT);
     }
 
     /** The server switch that enables this behavior. */

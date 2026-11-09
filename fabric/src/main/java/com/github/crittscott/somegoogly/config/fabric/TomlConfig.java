@@ -10,7 +10,6 @@ import com.electronwill.nightconfig.toml.TomlWriter;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.ConfigValue;
 import com.github.crittscott.somegoogly.migration.fabric.FabricMigration;
-
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
@@ -67,14 +66,6 @@ public final class TomlConfig {
         }
     }
 
-    /** Assign {@code raw} to {@code target}, logging when its range clamps the value. */
-    public static void assign(ConfigValue<Integer> target, String key, int raw) {
-        target.set(raw);
-        if (target.get() != raw) {
-            SomeGooglyCommon.LOGGER.warn("Config key '{}' value {} is out of range; using {}", key, raw, target.get());
-        }
-    }
-
     /** Assign {@code raw} to {@code target}, logging each entry its validator rejects. */
     public static void assign(ConfigValue.Parsed<?> target, String key, List<String> raw) {
         target.set(raw);
@@ -89,6 +80,14 @@ public final class TomlConfig {
         if (!raw.isEmpty() && !anyValid) {
             SomeGooglyCommon.LOGGER.warn("Config key '{}' has no valid entries; using the default {}",
                     key, target.get());
+        }
+    }
+
+    /** Assign {@code raw} to {@code target}, logging when its range clamps the value. */
+    public static void assign(ConfigValue<Integer> target, String key, int raw) {
+        target.set(raw);
+        if (target.get() != raw) {
+            SomeGooglyCommon.LOGGER.warn("Config key '{}' value {} is out of range; using {}", key, raw, target.get());
         }
     }
 
@@ -136,6 +135,20 @@ public final class TomlConfig {
         return fallback;
     }
 
+    /** Load a schema without coupling client application to world lifecycle callbacks. */
+    public static boolean load(Path path, List<ConfigValue<?>> settings) {
+        try {
+            String defaults = render(settings);
+            CommentedConfig document = readOrCreate(path, defaults);
+            apply(document, settings);
+            completeIfMissing(path, document, defaults);
+            return true;
+        } catch (IOException | IllegalArgumentException failure) {
+            SomeGooglyCommon.LOGGER.error("Could not load config {}; keeping the values already in effect", path, failure);
+            return false;
+        }
+    }
+
     private static CommentedConfig parse(String source) throws IOException {
         CommentedConfig config = TomlFormat.newConfig(LinkedHashMap::new);
         try {
@@ -162,6 +175,17 @@ public final class TomlConfig {
         return values;
     }
 
+    /** Render {@code settings} at their defaults as a commented file, section by section. */
+    public static String render(List<ConfigValue<?>> settings) {
+        CommentedConfig config = TomlFormat.newConfig(LinkedHashMap::new);
+        for (ConfigValue<?> setting : settings) {
+            List<String> path = List.of(setting.section(), setting.key());
+            config.set(path, setting.defaultValue());
+            config.setComment(path, " " + setting.comment().replace("\n", "\n "));
+        }
+        return new TomlWriter().writeToString(config);
+    }
+
     /** Values from exactly the schema's declared table; similarly named keys elsewhere do not apply. */
     public static Map<String, Object> section(UnmodifiableConfig values, String section) {
         Object table = values.get(List.of(section));
@@ -172,17 +196,6 @@ public final class TomlConfig {
             throw new IllegalArgumentException("Config section is not a table: " + section);
         }
         return config.valueMap();
-    }
-
-    /** Render {@code settings} at their defaults as a commented file, section by section. */
-    public static String render(List<ConfigValue<?>> settings) {
-        CommentedConfig config = TomlFormat.newConfig(LinkedHashMap::new);
-        for (ConfigValue<?> setting : settings) {
-            List<String> path = List.of(setting.section(), setting.key());
-            config.set(path, setting.defaultValue());
-            config.setComment(path, " " + setting.comment().replace("\n", "\n "));
-        }
-        return new TomlWriter().writeToString(config);
     }
 
     /**

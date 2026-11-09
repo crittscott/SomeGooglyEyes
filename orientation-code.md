@@ -26,7 +26,7 @@ Server owns gameplay; client owns rendering and picker UI.
 
 ## Configuration and eye definitions
 
-`ServerConfig`/`ClientConfig` declare each setting once as a `ConfigValue` (section, key, comment, default, limits); both loaders derive their schema and file from `settings()`. Forge applies native CLIENT/SERVER specs on load/reload and resets SERVER on unload. Fabric uses bundled NightConfig TOML at startup and `/reload`, resets on stop, preserves raw values/comments during missing-key completion, and backs up rewrites. Malformed input preserves loaded values. `FabricMigration.quoteReleasedHeader` quotes released spaced headers and retains a `.0.8.2.bak`; sections retain released names. Config application logs effective settings.
+`ServerConfig`/`ClientConfig` declare each setting once as a `ConfigValue`; loader schemas derive from `settings()`. `ForgeConfig` converts the schema to native CLIENT/SERVER specs, with server-thread reload application and defaults reset on unload. Fabric entry points share `TomlConfig.load`, using bundled NightConfig at startup and `/reload`; missing-key completion preserves values/comments and backs up rewrites. Malformed input preserves effective values. `FabricMigration.quoteReleasedHeader` retains released names and a `.0.8.2.bak`. Effective config is logged.
 
 Eye definitions (`data/<namespace>/eyes/*.json`, `EyeConfigModel`) reload through decoding, version selection, validation, and NBT encoding. `ServerEyeConfigs` swaps only on encoding changes, retaining the installed set on failure; that set owns its prebuilt sync packet. GZIP sync caps compressed/decoded size and total eyes before client install. Reload, picker export, and decoding share geometry limits; color codecs reject invalid channels.
 
@@ -54,27 +54,27 @@ Application emits `ENTITY_INTERACT` (`BLOCK_CHANGE` on a head), harvest `SHEAR`,
 
 `ServerServices.onLivingEntityLoaded` owns natural eye initialization; later configuration changes never revisit an initialized entity.
 
-`EyeBehavior` catalogs expressions; `OngoingBehavior` catalogs ongoing states. `BehaviorInstance` carries id/duration/seed/elapsed; server expressions use their behavior's default duration. `ServerBehaviorScheduler` runs watched eyed mobs (a player watches their own) and event triggers; sleepers start nothing. `GooglyTracker` applies enabled ongoing states. `HeldEye` runs first-person idle/hurt/heal expressions. `PresentationEyes` caches ambient slots for items, placed heads, and boats. Placed heads seed by position; only paired layouts cross-eye. Slots fit the longest eligible expression or the synced mean interval. Anger syncs on change and to a new viewer while angry. `ClientEyeRuntime` keeps mob reports apart from simulations and ages expressions offscreen. Only recently drawn trackers simulate; idle ones expire. Heads cache by position, frames by entity, each checked when drawn. Level change or disconnect clears all. The master switch pauses mob scheduling; authoring triggers still work. Client behaviors wait for sync.
+`EyeBehavior` catalogs expressions; `OngoingBehavior` owns ongoing classifications, including server anger. `ServerBehaviorScheduler` schedules watched eyed mobs and reacts to game events using server tick time; players watch their own eyes. Separate per-hand reactions work without applied eyes and send scoped triggers to holder/trackers. Sleepers start nothing. `PresentationEyes` selects deterministic ambient slots for items, heads, and boats, fitting the longest eligible expression; cross-eye requires a partner. Anger syncs only on change and to new angry viewers. `ClientEyeRuntime` retains reports independently of evicted simulations, ages them offscreen, simulates recently drawn entries, and clears connection state on level replacement/disconnect. The master switch suppresses automatic starts; authoring triggers remain available.
 
 ## Rendering and attachment
 
-`ClientRenderLayers` installs eye layers once per renderer rebuild, before slime's outer layer; GeckoLib uses `CompileRenderLayers`. Both draw picker previews through `EyeRenderData`. `LayerGooglyEyes` insets sheared adult sheep `body` eyes by wool depth. `ClientEyeConfigs` caches resolved views. `GooglyEyeRenderer` draws static and simulated eyes; `ClientLifecycle` ticks the first-person held eye. `EyePlacement.orientation` owns rendering and pupil-plane rotation.
+`ClientRenderLayers` installs eye layers once per renderer rebuild, before slime's outer layer; GeckoLib uses `CompileRenderLayers`. Both draw picker previews through `EyeRenderData`. `LayerGooglyEyes` insets sheared adult sheep `body` eyes by wool depth. `ClientEyeConfigs` caches resolved views. `GooglyEyeRenderer` draws static and simulated eyes; `ClientLifecycle` advances the shared presentation runtime. `EyePlacement.orientation` owns rendering and pupil-plane rotation.
 
-Resolvers cache by model identity, clear on renderer/runtime reset, and replay `ThirdPartyModelWraps`; `Resolvers` selects the model family, with `ChildMapResolver` as its non-null fallback.
+Resolvers cache by model identity, clear on renderer/runtime reset, and replay `ThirdPartyModelWraps`, which owns both whole-model and named-root-group transform decisions; `Resolvers` selects the model family, with `ChildMapResolver` as its non-null fallback.
 
 `somegoogly.accesswidener` serves all modules; Forge remaps it to an access transformer.
 
 Optional GeckoLib: `client/compat/gecko` holds GeckoLib-typed code, reached through `GeckoCompat` only when GeckoLib is found.
 
-`BoatEyeLayout` selects hull/raft geometry for supported vanilla boats. Boats use generic eye snapshots without behavior scheduling. `ClientEyeRuntime.BoatSimulations` holds disposable world-clock simulations, replaced when a differing snapshot arrives. `PresentationEyes` supplies presentation layouts, ambient expressions, and owner-motion inputs. `HandItemEyes` keys world-timed state by holder/hand; `GuiItemEyes` owns view keys and UI time. Hand, GUI, and frame draws share `ClientEyeRuntime`'s draw stack. GUI Mixins select slots/cursor. `ClientEyeRuntime.sweep` is the eviction and simulation rule every eye cache shares, each on its own clock.
+`BoatEyeLayout` selects hull/raft geometry; boats use generic snapshots without server expression scheduling. `ClientEyeRuntime` owns boat, hand, GUI, frame, head and mob maps. `PresentationEyes` supplies layouts, ambient expressions and motion inputs. Holder/hand identity is shared by first-/third-person loose-eye views. One nested draw context inherits GUI keys, animation and block/head-item identity. `sweep` shares eviction and simulation on world time or the separate pause-independent GUI clock.
 
 ## Networking
 
-Seven `Payload` classes: eye definitions, eye settings, entity eye state, behavior triggers, anger, picker freeze, and picker export. Each declares its id; both loaders register from `Payload.CLIENTBOUND`/`SERVERBOUND` (index, reader, handler); `NetworkProtocol` holds network version `20`; bump it on wire changes. Forge registers each on a `SimpleChannel` under its index, requiring that version; Fabric's `HANDSHAKE` login query refuses a client that doesn't understand it or replies with another version; its loader-local `FabricPayload`/`PacketType` adapters decode shared bodies and dispatch handlers on the game thread. Broadcasts encode once through the identifier/buffer API.
+Seven `Payload` classes declare eye definitions/settings/state, behavior, anger, freeze and export messages. Both loaders register from `Payload.CLIENTBOUND`/`SERVERBOUND`; stable indices are explicit. `NetworkProtocol` is `21`. Forge uses a required-version `SimpleChannel`; Fabric uses a versioned login query, typed play adapters and game-thread dispatch. Broadcasts encode once.
 
 `EyeSettingsPacket` carries `googlyEyesEnabled` and `BehaviorSettings`. Joins always get it and the definitions, before the player's eye state. After each datapack reload or Forge server-config apply, `ServerServices.broadcastEyeSyncIfChanged` resends each only on a change; only new definitions reset client trackers.
 
-Sends go through `@ExpectPlatform` `Networking` and client-only `ClientNetworking`; clientbound handlers reach `ClientNetworkHandler` only inside lambdas, so servers never link it. Behavior triggers carry id/seed/elapsed and derive duration from the behavior. Export age is checked on decode; server-dependent config validation stays in the service. Freeze/export handlers re-check authorization; releasing one's own mob is exempt; the client refuses a picker export over vanilla's serverbound cap. Eye-state, behavior, and anger packets reach trackers and the entity; eye state follows the entity's spawn packet, carrying only its id.
+Sends go through `@ExpectPlatform` `Networking` and client-only `ClientNetworking`; clientbound handlers reach `ClientNetworkHandler` only inside lambdas, so servers never link it. Behavior triggers carry entity/hand scope, id, seed, and elapsed time, and derive duration from the behavior. Held scopes decode only grow/swirl. Export age is checked on decode; server-dependent config validation stays in the service. Freeze/export handlers re-check authorization; releasing one's own mob is exempt; the client refuses a picker export over vanilla's serverbound cap. Eye-state, behavior, and anger packets reach trackers and the entity; eye state follows the entity's spawn packet, carrying only its id.
 
 ## Picker and commands
 
@@ -92,7 +92,7 @@ Forge registers from `@Mod`, keeping client bootstrap apart from the dedicated s
 
 ## Automated verification
 
-GameTests: Fabric 194, Forge 198 (three require Twilight Forest). Visuals, multiplayer, protection, commands, and real saves need manual checks; see `docs/picker-hud-testing.md` for picker/network scenarios.
+GameTests: Fabric 191, Forge 195 (three require Twilight Forest). Native use wiring, Forge refusals, clone events, real scheduler triggers/kills/spawns, and admin dispatch have GameTest coverage. Visuals, multiplayer, Fabric protection ordering, full respawn transitions, and real saves need manual checks; see `docs/picker-hud-testing.md` for picker/network scenarios.
 
 ## Operational boundaries
 

@@ -2,10 +2,6 @@ package com.github.crittscott.somegoogly.config;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
-import net.minecraft.SharedConstants;
-import net.minecraft.resources.ResourceLocation;
-
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,6 +10,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
+import net.minecraft.SharedConstants;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
 
 /**
  * Server-authoritative spawn settings. The googly-eye chance lives here (not in the bundled eye
@@ -204,17 +204,6 @@ public class ServerConfig {
         return Arrays.stream(EyeBehavior.values()).map(b -> b.id().getPath()).collect(Collectors.joining(", "));
     }
 
-    private static List<EyeBehavior> parseBehaviorPool(List<String> pool) {
-        Set<String> enabled = new LinkedHashSet<>(pool);
-        List<EyeBehavior> result = new ArrayList<>();
-        for (EyeBehavior behavior : EyeBehavior.values()) {
-            if (enabled.contains(behavior.id().toString())) {
-                result.add(behavior);
-            }
-        }
-        return List.copyOf(result);
-    }
-
     /** Translate a glob (only '*' is special) into an anchored regex by quoting the literal runs. */
     private static String globToRegex(String glob) {
         StringBuilder regex = new StringBuilder();
@@ -230,12 +219,14 @@ public class ServerConfig {
         return regex.toString();
     }
 
-    private static List<SpawnOverride> parseOverrides(List<String> entries) {
-        List<SpawnOverride> built = new ArrayList<>();
-        for (String entry : entries) {
-            built.add(parse(entry));
-        }
-        return List.copyOf(built);
+    /**
+     * Whether {@code /sg spawn} and {@code /sg spawnall} should skip this entity type: its exact id is
+     * listed in {@link #SPAWN_EXCLUDED_ENTITIES}, or its namespace in {@link #SPAWN_EXCLUDED_MODS}. Purely
+     * an authoring-command filter — it has no bearing on eye eligibility or natural spawning.
+     */
+    public static boolean isSpawnExcluded(ResourceLocation entityType) {
+        return SPAWN_EXCLUDED_MODS.parsed().contains(entityType.getNamespace())
+                || SPAWN_EXCLUDED_ENTITIES.parsed().contains(entityType.toString());
     }
 
     /**
@@ -267,6 +258,25 @@ public class ServerConfig {
                 : new SpawnOverride(false, null, Pattern.compile(globToRegex(pattern)), percent);
     }
 
+    private static List<EyeBehavior> parseBehaviorPool(List<String> pool) {
+        Set<String> enabled = new LinkedHashSet<>(pool);
+        List<EyeBehavior> result = new ArrayList<>();
+        for (EyeBehavior behavior : EyeBehavior.values()) {
+            if (enabled.contains(behavior.id().toString())) {
+                result.add(behavior);
+            }
+        }
+        return List.copyOf(result);
+    }
+
+    private static List<SpawnOverride> parseOverrides(List<String> entries) {
+        List<SpawnOverride> built = new ArrayList<>();
+        for (String entry : entries) {
+            built.add(parse(entry));
+        }
+        return List.copyOf(built);
+    }
+
     /**
      * The configured eye chance (0–100) for the given entity: an exact override if one matches, else
      * the first matching wildcard override, else {@link #GLOBAL_PERCENT}.
@@ -286,32 +296,19 @@ public class ServerConfig {
         return firstWildcard != null ? firstWildcard.percent : GLOBAL_PERCENT.get();
     }
 
-    /**
-     * Whether {@code /sg spawn} and {@code /sg spawnall} should skip this entity type: its exact id is
-     * listed in {@link #SPAWN_EXCLUDED_ENTITIES}, or its namespace in {@link #SPAWN_EXCLUDED_MODS}. Purely
-     * an authoring-command filter — it has no bearing on eye eligibility or natural spawning.
-     */
-    public static boolean isSpawnExcluded(ResourceLocation entityType) {
-        return SPAWN_EXCLUDED_MODS.parsed().contains(entityType.getNamespace())
-                || SPAWN_EXCLUDED_ENTITIES.parsed().contains(entityType.toString());
-    }
-
     /** Restore built-in defaults before a loader applies a newly opened world's values. */
     public static void resetDefaults() {
         SETTINGS.forEach(ConfigValue::reset);
     }
 
+    /** Roll one configured percentage, including the never/always endpoints. */
+    public static boolean roll(RandomSource random, int percent) {
+        return random.nextInt(PERCENT_MAX) < percent;
+    }
+
     /** Every setting, in the order and sections of the server config file. */
     public static List<ConfigValue<?>> settings() {
         return Collections.unmodifiableList(SETTINGS);
-    }
-
-    /**
-     * Whether a config string parses as a {@link ResourceLocation}; the entry guard for
-     * {@link #AMBIENT_BEHAVIOR_POOL}, {@link #SPAWN_EXCLUDED_ENTITIES}, and the client's {@code disabledEntities}.
-     */
-    public static boolean validateResourceLocation(String value) {
-        return ResourceLocation.tryParse(value) != null;
     }
 
     /**
@@ -326,5 +323,13 @@ public class ServerConfig {
     /** Whether a config string is a well-formed override line ({@link #parse}); the entry guard for {@link #ENTITY_OVERRIDES}. */
     public static boolean validateOverride(String value) {
         return parse(value) != null;
+    }
+
+    /**
+     * Whether a config string parses as a {@link ResourceLocation}; the entry guard for
+     * {@link #AMBIENT_BEHAVIOR_POOL}, {@link #SPAWN_EXCLUDED_ENTITIES}, and the client's {@code disabledEntities}.
+     */
+    public static boolean validateResourceLocation(String value) {
+        return ResourceLocation.tryParse(value) != null;
     }
 }

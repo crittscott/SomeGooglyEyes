@@ -1,10 +1,9 @@
 package com.github.crittscott.somegoogly.config;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
+import java.util.Optional;
 import net.minecraft.SharedConstants;
 import net.minecraft.resources.ResourceLocation;
-
-import java.util.Optional;
 
 /** Resolves the loaded version string for a config namespace. */
 public final class ModVersionLookup {

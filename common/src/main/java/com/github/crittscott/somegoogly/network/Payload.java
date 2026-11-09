@@ -1,20 +1,19 @@
 package com.github.crittscott.somegoogly.network;
 
 import com.github.crittscott.somegoogly.client.ClientNetworkHandler;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
-
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 
 /**
  * One of the mod's payloads: its id and its body. Each payload class pairs this with a static
  * {@code read(FriendlyByteBuf)} that validates on decode; the loader bridges
  * {@link com.github.crittscott.somegoogly.platform.Networking} and
- * {@link com.github.crittscott.somegoogly.platform.ClientNetworking} send it on that id.
+ * {@link com.github.crittscott.somegoogly.client.platform.ClientNetworking} send it on that id.
  *
  * <p>{@link #CLIENTBOUND} and {@link #SERVERBOUND} are the one declaration of every payload, its direction, and
  * what handles it on arrival; each loader registers from them. Clientbound handlers reach

@@ -6,16 +6,15 @@ import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.github.crittscott.somegoogly.server.ServerServices;
+import java.util.HashMap;
+import java.util.Map;
+import javax.annotation.Nullable;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-
-import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Server-authoritative store of eye geometry configs, loaded from datapacks by
@@ -30,6 +29,8 @@ import java.util.Map;
  */
 public final class ServerEyeConfigs {
 
+    private static final EyeConfigSyncPacket EMPTY = new EyeConfigSyncPacket(Map.of(), Map.of());
+
     /**
      * Hard-excluded from googly eyes: the ender dragon's renderer bypasses the
      * {@code LivingEntityRenderer} family entirely (no eye layer can attach) and its model has no
@@ -38,8 +39,6 @@ public final class ServerEyeConfigs {
      */
     public static final ResourceLocation ENDER_DRAGON =
             EntityType.getKey(EntityType.ENDER_DRAGON);
-
-    private static final EyeConfigSyncPacket EMPTY = new EyeConfigSyncPacket(Map.of(), Map.of());
 
     private static volatile EyeConfigSyncPacket installed = EMPTY;
 
@@ -54,7 +53,6 @@ public final class ServerEyeConfigs {
         return installed.configs();
     }
 
-
     /**
      * Whether this entity can wear eyes at <b>any</b> life stage (baby or adult). Used by the at-spawn
      * roll ({@link ServerServices#onLivingEntityLoaded}): that decision is stored for life, so a baby
@@ -67,25 +65,6 @@ public final class ServerEyeConfigs {
         return RuntimeConfig.isUsable(get(type, false)) || RuntimeConfig.isUsable(get(type, true));
     }
 
-    /** Return the entity's config for the requested age, including the age-independent fallback. */
-    @Nullable
-    public static RuntimeConfig get(ResourceLocation entity, boolean baby) {
-        RuntimeConfigSet set = installed.configs().get(entity);
-        return set == null ? null : set.get(baby);
-    }
-
-    /** Resolve the selected variant for the requested age without sharing the client's renderer cache. */
-    public static HeadInfo resolve(ResourceLocation entity, boolean baby, float variantRoll) {
-        RuntimeConfig config = get(entity, baby);
-        return new HeadInfo(config, EyeConfigModel.chooseVariantIndex(config, variantRoll));
-    }
-
-    /** Resolve the variant a placed head of {@code entity}'s kind shows ({@link SkullEyeState#variantIndex}). */
-    public static HeadInfo resolveHead(ResourceLocation entity, float variantRoll) {
-        RuntimeConfig config = get(entity, false);
-        return new HeadInfo(config, SkullEyeState.variantIndex(entity, config, variantRoll));
-    }
-
     /** Encode each set through {@link RuntimeConfigSet#CODEC} as NBT. */
     public static Map<ResourceLocation, CompoundTag> encode(Map<ResourceLocation, RuntimeConfigSet> configs) {
         Map<ResourceLocation, CompoundTag> encoded = new HashMap<>();
@@ -94,6 +73,23 @@ public final class ServerEyeConfigs {
                     .encodeStart(NbtOps.INSTANCE, entry.getValue()).getOrThrow(false, error -> { }));
         }
         return Map.copyOf(encoded);
+    }
+
+    /** Return the entity's config for the requested age, including the age-independent fallback. */
+    @Nullable
+    public static RuntimeConfig get(ResourceLocation entity, boolean baby) {
+        RuntimeConfigSet set = installed.configs().get(entity);
+        return set == null ? null : set.get(baby);
+    }
+
+    /** Entity kinds for which the renderer cannot display eyes. */
+    public static boolean isExcluded(ResourceLocation type) {
+        return ENDER_DRAGON.equals(type);
+    }
+
+    /** Drop the installed set so nothing carries over to the next world. */
+    public static void onServerStopping() {
+        installed = EMPTY;
     }
 
     /** The installed set as the packet every client receives. */
@@ -119,8 +115,15 @@ public final class ServerEyeConfigs {
         return true;
     }
 
-    /** Drop the installed set so nothing carries over to the next world. */
-    public static void onServerStopping() {
-        installed = EMPTY;
+    /** Resolve the selected variant for the requested age without sharing the client's renderer cache. */
+    public static HeadInfo resolve(ResourceLocation entity, boolean baby, float variantRoll) {
+        RuntimeConfig config = get(entity, baby);
+        return new HeadInfo(config, EyeConfigModel.chooseVariantIndex(config, variantRoll));
+    }
+
+    /** Resolve the variant a placed head of {@code entity}'s kind shows ({@link SkullEyeState#variantIndex}). */
+    public static HeadInfo resolveHead(ResourceLocation entity, float variantRoll) {
+        RuntimeConfig config = get(entity, false);
+        return new HeadInfo(config, SkullEyeState.variantIndex(entity, config, variantRoll));
     }
 }

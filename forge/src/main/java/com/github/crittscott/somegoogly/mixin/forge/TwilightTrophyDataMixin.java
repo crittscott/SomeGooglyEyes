@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.mixin.forge;
 
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
+import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
@@ -10,8 +11,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Unique;
-
-import javax.annotation.Nullable;
 
 /**
  * Gives Twilight Forest's boss trophies the same saved and synced eye state vanilla heads get from

@@ -1,10 +1,9 @@
 package com.github.crittscott.somegoogly.platform;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
+import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
-
-import javax.annotation.Nullable;
 
 /**
  * Returns the mod-owned persistent compound attached to an entity. Forge exposes its patched

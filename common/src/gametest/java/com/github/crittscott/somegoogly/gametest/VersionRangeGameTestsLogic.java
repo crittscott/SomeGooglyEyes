@@ -1,9 +1,8 @@
 package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.config.VersionRangeMatcher;
-import net.minecraft.gametest.framework.GameTestHelper;
-
 import java.util.List;
+import net.minecraft.gametest.framework.GameTestHelper;
 
 /**
  * Pure-logic coverage of {@link VersionRangeMatcher}: {@code matches} (bracket-range bounds,

@@ -1,15 +1,13 @@
 package com.github.crittscott.somegoogly.client.render.resolver;
 
+import com.github.crittscott.somegoogly.client.compat.ThirdPartyModelWraps;
 import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.mojang.blaze3d.vertex.PoseStack;
+import java.util.List;
 import net.minecraft.client.model.AgeableHierarchicalModel;
 import net.minecraft.client.model.CamelModel;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.HierarchicalModel;
-
-import javax.annotation.Nullable;
-import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * Resolver for the {@link HierarchicalModel} family (a named root + child maps). The whole tree hangs off
@@ -25,7 +23,7 @@ import java.util.function.Consumer;
  * <p>{@link AgeableHierarchicalModel} and {@link CamelModel} each wrap their whole {@code root()} render in
  * a baby-only scale/translate applied and popped entirely inside their own {@code renderToBuffer} —
  * invisible to a render layer's {@link PoseStack} otherwise, the {@code HierarchicalModel} counterpart of
- * the wrap {@link AgeableListResolver} replays for its own family. {@link #youngWrap} replays it so a young
+ * the wrap {@link AgeableListResolver} replays for its own family. {@link ThirdPartyModelWraps#groupTransform} replays it so a young
  * Sniffer or Camel's attach points land where the model actually draws them.
  */
 public class HierarchicalResolver extends ModelPartTreeResolver {
@@ -38,24 +36,7 @@ public class HierarchicalResolver extends ModelPartTreeResolver {
     @Override
     protected List<NamedRoot> roots(EntityModel<?> model) {
         HierarchicalModel<?> hierarchical = (HierarchicalModel<?>) model;
-        return List.of(new NamedRoot(EyeConfigModel.PART_ROOT, hierarchical.root(), youngWrap(hierarchical)));
+        return List.of(new NamedRoot(EyeConfigModel.PART_ROOT, hierarchical.root(), ThirdPartyModelWraps.groupTransform(hierarchical, EyeConfigModel.PART_ROOT)));
     }
 
-    /**
-     * {@code null} for the common case (no wrap to replay). {@code young} is re-checked on every call
-     * rather than baked in when this closure is built, because {@link Resolvers#ATTACHMENTS} caches the
-     * resolved chain per (model, token) and the same model instance renders both baby and adult entities
-     * of its type.
-     */
-    @Nullable
-    private static Consumer<PoseStack> youngWrap(HierarchicalModel<?> model) {
-        if (model instanceof AgeableHierarchicalModel<?> ageable) {
-            float scale = ageable.youngScaleFactor;
-            return youngWrap(ageable, scale, scale, scale, 0.0F, ageable.bodyYOffset / 16.0F, 0.0F);
-        }
-        if (model instanceof CamelModel<?> camel) {
-            return youngWrap(camel, 0.45F, 0.45F, 0.45F, 0.0F, 1.834375F, 0.0F);
-        }
-        return null;
-    }
 }

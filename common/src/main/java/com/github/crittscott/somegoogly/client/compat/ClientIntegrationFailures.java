@@ -1,10 +1,9 @@
 package com.github.crittscott.somegoogly.client.compat;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
-
-import javax.annotation.Nullable;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import javax.annotation.Nullable;
 
 /** Logs recoverable client integration failures once each. */
 public final class ClientIntegrationFailures {

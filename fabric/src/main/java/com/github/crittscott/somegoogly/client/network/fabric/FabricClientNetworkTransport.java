@@ -1,15 +1,15 @@
-package com.github.crittscott.somegoogly.network.fabric;
+package com.github.crittscott.somegoogly.client.network.fabric;
 
 import com.github.crittscott.somegoogly.network.NetworkProtocol;
 import com.github.crittscott.somegoogly.network.Payload;
 import com.github.crittscott.somegoogly.network.PickerFreezePacket;
+import com.github.crittscott.somegoogly.network.fabric.FabricNetworkTransport;
+import java.util.concurrent.CompletableFuture;
 import net.fabricmc.fabric.api.client.networking.v1.ClientLoginNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.network.chat.Component;
-
-import java.util.concurrent.CompletableFuture;
 
 /** Physical-client Fabric login checks and typed play receivers dispatched on the client game thread. */
 public final class FabricClientNetworkTransport {

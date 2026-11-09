@@ -13,8 +13,8 @@
     "defaultRequire": 0
   },
   "client": [
-    "TwilightHeadItemRendererMixin",
-    "TwilightSkullCandleRendererMixin",
-    "TwilightTrophyRendererMixin"
+    "client.TwilightHeadItemRendererMixin",
+    "client.TwilightSkullCandleRendererMixin",
+    "client.TwilightTrophyRendererMixin"
   ]
 }

@@ -4,12 +4,11 @@ import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.client.compat.GeckoCompat;
 import com.github.crittscott.somegoogly.client.picker.PickerInput;
 import com.github.crittscott.somegoogly.client.picker.PickerState;
-import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
-import net.minecraft.client.Minecraft;
-
+import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.client.Minecraft;
 
 /** Per-tick and disconnect housekeeping for client-side eye state, shared by every loader's client hooks. */
 public final class ClientLifecycle {
@@ -40,12 +39,7 @@ public final class ClientLifecycle {
     /** Advance the pupil/behavior runtime, held-eye pupil, inspector, and picker key input. */
     public static void tick() {
         Minecraft minecraft = Minecraft.getInstance();
-        GuiItemEyes.tick();
-        HandItemEyes.tick();
-        ClientEyeRuntime.tick(minecraft.level, minecraft.level != null && !minecraft.isPaused());
-        if (!minecraft.isPaused()) {
-            ClientEyeRuntime.tickHeldEye(minecraft.player);
-        }
+        ClientEyeRuntime.tick(minecraft.level, minecraft.level != null && !minecraft.isPaused(), minecraft.screen);
         EyeInspector.tick();
         PickerInput.consumePendingKeys();
     }

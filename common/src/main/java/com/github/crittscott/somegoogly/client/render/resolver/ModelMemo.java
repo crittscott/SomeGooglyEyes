@@ -1,9 +1,9 @@
 package com.github.crittscott.somegoogly.client.render.resolver;
 
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
+import javax.annotation.Nullable;
 
 /**
  * Memoizes a value per (model instance, attach token), misses included. An entry stays valid for as long

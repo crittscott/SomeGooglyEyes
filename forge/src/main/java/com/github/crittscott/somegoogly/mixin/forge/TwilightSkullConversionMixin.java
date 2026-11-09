@@ -2,6 +2,8 @@ package com.github.crittscott.somegoogly.mixin.forge;
 
 import com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -11,9 +13,6 @@ import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
-
-import java.util.ArrayDeque;
-import java.util.Deque;
 
 /**
  * Carries a placed head's eyes onto the skull candle that replaces it when a candle is put on it, by hand or by
