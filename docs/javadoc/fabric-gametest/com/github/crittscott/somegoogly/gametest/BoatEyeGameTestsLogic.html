@@ -108,71 +108,80 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#boatsBeginEyelessAndSelectGeometry(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">boatsBeginEyelessAndSelectGeometry</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">In game: place every wood's boat and chest boat; they start eyeless and retain eyes only after application.</div>
+<div class="block">Every wood's boat and chest boat starts without eyes and has a bundled definition; a bamboo raft takes its eyes
+ on its raft attachment and every other wood on its hull.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#boatsCrossOnlyWithConfiguredPartners(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">boatsCrossOnlyWithConfiguredPartners</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">In game: a datapack's paired eyes cross; the bundled opposite-side eyes and unpaired eyes never cross.</div>
+<div class="block">Boat eyes cross only with a partner their definition names; the bundled eyes, one on each side of the hull, never
+ do, nor does a lone eye.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#boatsEvictIdleSimulations(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">boatsEvictIdleSimulations</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">In game: look away from an eyed boat for a moment, then return; unseen boats retire their pupils.</div>
+<div class="block">A boat's pupils are simulated only while it is drawn.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#boatsFollowGravityAndOwnerMotion(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">boatsFollowGravityAndOwnerMotion</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">In game: with ambient expressions off, row and turn an eyed boat; its pupils lag motion and settle under gravity.</div>
+<div class="block">Boat pupils fall toward world-down and react to the boat's movement and turning.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#boatsHarvestOneEye(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">boatsHarvestOneEye</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.world.entity.player.Player&nbsp;player)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">In game: Optometrist shears remove a boat's eyes, drop their appearance, and cost one durability.</div>
+<div class="block">Optometrist shears take a boat's eyes as one Googly Eye that keeps their appearance, for one durability, without
+ opening a chest boat.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#boatsHaveIndependentAmbientAndPhysics(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">boatsHaveIndependentAmbientAndPhysics</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">In game: let two eyed boats blink, pause, then resume after hiding one; pupils remain independent.</div>
+<div class="block">Each boat's pupils and expressions are its own, expressions follow world time without catching up on missed ones,
+ and turning ambient expressions off stops them but not the pupils' physics.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#boatsHonorCreativeConsumption(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">boatsHonorCreativeConsumption</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.world.entity.player.Player&nbsp;player)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">In game: apply eyes in creative; the Slimy Eye remains in your hand.</div>
+<div class="block">Giving a boat eyes in creative spends no Slimy Eye.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#boatsHonorInteractionGates(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">boatsHonorInteractionGates</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.world.entity.player.Player&nbsp;player)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">In game: turn off the mod or disable the boat definition; using eyes or plain shears leaves the boat alone.</div>
+<div class="block">With the mod switched off, or with no boat definition loaded, a Slimy Eye leaves a boat to its vanilla use and is
+ not spent; plain shears never take a boat's eyes.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#boatsReceiveAppearanceAndRefuseRestyling(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">boatsReceiveAppearanceAndRefuseRestyling</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.world.entity.player.Player&nbsp;player)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">In game: apply a dyed, glowing Slimy Eye in either hand, then try another; only the first is consumed.</div>
+<div class="block">A Slimy Eye in either hand gives a boat or chest boat eyes with the eye's whole appearance and is spent once; an
+ eyed boat refuses another and keeps its vanilla use.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#boatsRefuseSpectatorMutation(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">boatsRefuseSpectatorMutation</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">In game: try Slimy Eyes and Optometrist shears in spectator mode; the boat, tools, and stacks stay unchanged.</div>
+<div class="block">Spectators can't give a boat eyes or take them.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#boatsReplaceAndClearSimulations(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">boatsReplaceAndClearSimulations</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">In game: nearby boats keep separate simulations; restyling, hiding, resource reload, and unloading retire old pupils.</div>
+<div class="block">A boat keeps its pupils while nothing about it changes and starts afresh when its appearance or wood changes, it
+ unloads, resources reload, or the world changes; an invisible boat, and every boat while the mod is switched off,
+ shows no eyes.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#boatsRequireMatchingEnabledAttachments(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">boatsRequireMatchingEnabledAttachments</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">In game: switch boat definitions between hull/raft-only and disabled; only configured geometry accepts eyes.</div>
+<div class="block">A boat takes eyes only when its definition is enabled and puts eyes on the boat's own attachment: <code>raft</code>
+ for bamboo, <code>hull</code> for other woods.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#boatsSaveAndSynchronizeSnapshots(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">boatsSaveAndSynchronizeSnapshots</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">In game: eyed boats retain their layout and appearance through saving and chunk reload, including disabled worlds.</div>
+<div class="block">A boat's eyes, placement, and appearance survive saving and reach clients unchanged.</div>
 </div>
 </div>
 </div>
@@ -195,28 +204,40 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="boatsBeginEyelessAndSelectGeometry(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>boatsBeginEyelessAndSelectGeometry</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">boatsBeginEyelessAndSelectGeometry</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">In game: place every wood's boat and chest boat; they start eyeless and retain eyes only after application.</div>
+<div class="block">Every wood's boat and chest boat starts without eyes and has a bundled definition; a bamboo raft takes its eyes
+ on its raft attachment and every other wood on its hull. In game: place a boat and a chest boat of each wood;
+ none has eyes. Right-click each with a Slimy Eye; each gains a pair of eyes, one on each side.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="boatsCrossOnlyWithConfiguredPartners(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>boatsCrossOnlyWithConfiguredPartners</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">boatsCrossOnlyWithConfiguredPartners</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">In game: a datapack's paired eyes cross; the bundled opposite-side eyes and unpaired eyes never cross.</div>
+<div class="block">Boat eyes cross only with a partner their definition names; the bundled eyes, one on each side of the hull, never
+ do, nor does a lone eye. In game: in <code>somegoogly-server.toml</code> set <code>ambientBehaviorPool =
+ ["somegoogly:cross_eye"]</code>, <code>ambientMinTicks = 20</code>, and <code>ambientMaxTicks = 40</code>, then <code>/reload</code>;
+ an eyed boat's eyes never cross. Add a datapack <code>data/minecraft/eyes/boat.json</code> whose hull has two eyes on
+ the same side, each naming the other as its <code>crossTarget</code>, <code>/reload</code>, and give a new boat eyes; its
+ pupils turn toward each other.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="boatsEvictIdleSimulations(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>boatsEvictIdleSimulations</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">boatsEvictIdleSimulations</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">In game: look away from an eyed boat for a moment, then return; unseen boats retire their pupils.</div>
+<div class="block">A boat's pupils are simulated only while it is drawn. One out of view for a moment starts afresh when seen again,
+ at the current expression rather than replaying missed ones, and a removed boat keeps none. In game: push an eyed
+ boat so its pupils swing, look away for a second or two, and look back; the pupils start again from rest.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="boatsFollowGravityAndOwnerMotion(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>boatsFollowGravityAndOwnerMotion</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">boatsFollowGravityAndOwnerMotion</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">In game: with ambient expressions off, row and turn an eyed boat; its pupils lag motion and settle under gravity.</div>
+<div class="block">Boat pupils fall toward world-down and react to the boat's movement and turning. In game: set <code>
+ ambientBehaviors = false</code> in <code>somegoogly-server.toml</code> and <code>/reload</code>, then row an eyed boat forward
+ and turn it; the pupils swing against the motion, the two sides' pupils swing opposite ways, and both settle
+ downward when the boat stops.</div>
 </section>
 </li>
 <li>
@@ -224,14 +245,21 @@ loadScripts(document, 'script');</script>
 <h3>boatsHarvestOneEye</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">boatsHarvestOneEye</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.world.entity.player.Player&nbsp;player)</span></div>
-<div class="block">In game: Optometrist shears remove a boat's eyes, drop their appearance, and cost one durability.</div>
+<div class="block">Optometrist shears take a boat's eyes as one Googly Eye that keeps their appearance, for one durability, without
+ opening a chest boat. In game: give a bamboo chest raft eyes with a dyed, glowing Slimy Eye, then right-click it
+ with Optometrist shears in your offhand; the eyes vanish, one Googly Eye drops with that iris and glow and a
+ white cornea, the shears lose one durability, and the chest stays closed.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="boatsHaveIndependentAmbientAndPhysics(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>boatsHaveIndependentAmbientAndPhysics</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">boatsHaveIndependentAmbientAndPhysics</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">In game: let two eyed boats blink, pause, then resume after hiding one; pupils remain independent.</div>
+<div class="block">Each boat's pupils and expressions are its own, expressions follow world time without catching up on missed ones,
+ and turning ambient expressions off stops them but not the pupils' physics. In game: with <code>
+ ambientBehaviorPool = ["somegoogly:blink"]</code> in <code>somegoogly-server.toml</code>, place two eyed boats side by side;
+ they blink at different times, and pushing one moves only its pupils. Set <code>ambientBehaviors = false</code> and
+ <code>/reload</code>; blinking stops while pupils still swing when a boat moves.</div>
 </section>
 </li>
 <li>
@@ -239,7 +267,8 @@ loadScripts(document, 'script');</script>
 <h3>boatsHonorCreativeConsumption</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">boatsHonorCreativeConsumption</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.world.entity.player.Player&nbsp;player)</span></div>
-<div class="block">In game: apply eyes in creative; the Slimy Eye remains in your hand.</div>
+<div class="block">Giving a boat eyes in creative spends no Slimy Eye. In game: in creative, right-click a boat with a Slimy Eye;
+ the boat gains eyes and the stack keeps its count.</div>
 </section>
 </li>
 <li>
@@ -247,7 +276,12 @@ loadScripts(document, 'script');</script>
 <h3>boatsHonorInteractionGates</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">boatsHonorInteractionGates</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.world.entity.player.Player&nbsp;player)</span></div>
-<div class="block">In game: turn off the mod or disable the boat definition; using eyes or plain shears leaves the boat alone.</div>
+<div class="block">With the mod switched off, or with no boat definition loaded, a Slimy Eye leaves a boat to its vanilla use and is
+ not spent; plain shears never take a boat's eyes. In game: set <code>googlyEyesEnabled = false</code> in <code>
+ somegoogly-server.toml</code> and <code>/reload</code>, then right-click a boat with a Slimy Eye; you board it and keep the
+ eye. Set it back and add a datapack <code>data/minecraft/eyes/boat.json</code> with <code>"enabled": false</code>, <code>
+ /reload</code>, and repeat; same result. Right-click an eyed boat with plain shears; you board it, its eyes stay, and
+ the shears lose no durability.</div>
 </section>
 </li>
 <li>
@@ -255,35 +289,50 @@ loadScripts(document, 'script');</script>
 <h3>boatsReceiveAppearanceAndRefuseRestyling</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">boatsReceiveAppearanceAndRefuseRestyling</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.world.entity.player.Player&nbsp;player)</span></div>
-<div class="block">In game: apply a dyed, glowing Slimy Eye in either hand, then try another; only the first is consumed.</div>
+<div class="block">A Slimy Eye in either hand gives a boat or chest boat eyes with the eye's whole appearance and is spent once; an
+ eyed boat refuses another and keeps its vanilla use. In game: dye a Slimy Eye and craft it with glowstone, then
+ right-click a boat with it from your main hand; the boat's eyes show that iris and glow and one eye is spent.
+ Right-click again with another Slimy Eye; you board the boat and nothing is spent. Repeat from the offhand and on
+ a chest boat.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="boatsRefuseSpectatorMutation(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>boatsRefuseSpectatorMutation</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">boatsRefuseSpectatorMutation</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">In game: try Slimy Eyes and Optometrist shears in spectator mode; the boat, tools, and stacks stay unchanged.</div>
+<div class="block">Spectators can't give a boat eyes or take them. No in-game form, since a spectator's click never uses the held
+ item; guards that the loaders' entity-use hooks, which can fire before vanilla's spectator test, change nothing
+ for a spectator: no eyes, no spent item, no durability, no drop.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="boatsReplaceAndClearSimulations(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>boatsReplaceAndClearSimulations</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">boatsReplaceAndClearSimulations</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">In game: nearby boats keep separate simulations; restyling, hiding, resource reload, and unloading retire old pupils.</div>
+<div class="block">A boat keeps its pupils while nothing about it changes and starts afresh when its appearance or wood changes, it
+ unloads, resources reload, or the world changes; an invisible boat, and every boat while the mod is switched off,
+ shows no eyes. In game: push an eyed boat so its pupils swing, then press F3+T; they start again from rest. Run
+ <code>/data merge entity @e[type=boat,limit=1,sort=nearest] {Invisible:1b}</code>; its eyes disappear. Set <code>
+ googlyEyesEnabled = false</code> in <code>somegoogly-server.toml</code> and <code>/reload</code>; no boat shows eyes.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="boatsRequireMatchingEnabledAttachments(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>boatsRequireMatchingEnabledAttachments</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">boatsRequireMatchingEnabledAttachments</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">In game: switch boat definitions between hull/raft-only and disabled; only configured geometry accepts eyes.</div>
+<div class="block">A boat takes eyes only when its definition is enabled and puts eyes on the boat's own attachment: <code>raft</code>
+ for bamboo, <code>hull</code> for other woods. In game: add a datapack <code>data/minecraft/eyes/boat.json</code> copied
+ from the bundled one with only its <code>hull</code> head, and <code>/reload</code>; an oak boat takes a Slimy Eye and a
+ bamboo raft refuses it. Set <code>"enabled": false</code> and <code>/reload</code>; neither takes one.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="boatsSaveAndSynchronizeSnapshots(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>boatsSaveAndSynchronizeSnapshots</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">boatsSaveAndSynchronizeSnapshots</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">In game: eyed boats retain their layout and appearance through saving and chunk reload, including disabled worlds.</div>
+<div class="block">A boat's eyes, placement, and appearance survive saving and reach clients unchanged. In game: give a bamboo raft
+ and a bamboo chest raft eyes with a dyed Slimy Eye, then quit and reopen the world; both show the same eyes in
+ the same places with the same iris.</div>
 </section>
 </li>
 </ul>

@@ -108,7 +108,7 @@ loadScripts(document, 'script');</script>
  <p><code>AgeableHierarchicalModel</code> and <code>CamelModel</code> each wrap their whole <code>root()</code> render in
  a baby-only scale/translate applied and popped entirely inside their own <code>renderToBuffer</code> —
  invisible to a render layer's <code>PoseStack</code> otherwise, the <code>HierarchicalModel</code> counterpart of
- the wrap <a href="AgeableListResolver.html" title="class in com.github.crittscott.somegoogly.client.render.resolver"><code>AgeableListResolver</code></a> replays for its own family. <code>youngWrap(net.minecraft.client.model.HierarchicalModel&lt;?&gt;)</code> replays it so a young
+ the wrap <a href="AgeableListResolver.html" title="class in com.github.crittscott.somegoogly.client.render.resolver"><code>AgeableListResolver</code></a> replays for its own family. <a href="../../compat/ThirdPartyModelWraps.html#groupTransform(net.minecraft.client.model.EntityModel,java.lang.String)"><code>ThirdPartyModelWraps.groupTransform(net.minecraft.client.model.EntityModel&lt;?&gt;, java.lang.String)</code></a> replays it so a young
  Sniffer or Camel's attach points land where the model actually draws them.</div>
 </section>
 <section class="summary">
@@ -184,17 +184,6 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The subtrees to walk for this model, in a stable order.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>protected static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a><wbr>&lt;com.mojang.blaze3d.vertex.PoseStack&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#youngWrap(net.minecraft.client.model.EntityModel,float,float,float,float,float,float)" class="member-name-link">youngWrap</a><wbr>(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model,
- float&nbsp;sx,
- float&nbsp;sy,
- float&nbsp;sz,
- float&nbsp;tx,
- float&nbsp;ty,
- float&nbsp;tz)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">A baby-only scale followed by a translate, as models apply around their parts.</div>
-</div>
 </div>
 </div>
 </div>
@@ -242,21 +231,6 @@ loadScripts(document, 'script');</script>
 <h3>roots</h3>
 <div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;com.github.crittscott.somegoogly.client.render.resolver.ModelPartTreeResolver.NamedRoot&gt;</span>&nbsp;<span class="element-name">roots</span><wbr><span class="parameters">(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model)</span></div>
 <div class="block">The subtrees to walk for this model, in a stable order. Only called when <a href="EyeAttachmentResolver.html#handles(net.minecraft.client.model.EntityModel)"><code>EyeAttachmentResolver.handles(net.minecraft.client.model.EntityModel&lt;?&gt;)</code></a> is true.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="youngWrap(net.minecraft.client.model.EntityModel,float,float,float,float,float,float)">
-<h3>youngWrap</h3>
-<div class="member-signature"><span class="modifiers">protected static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;com.mojang.blaze3d.vertex.PoseStack&gt;</span>&nbsp;<span class="element-name">youngWrap</span><wbr><span class="parameters">(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model,
- float&nbsp;sx,
- float&nbsp;sy,
- float&nbsp;sz,
- float&nbsp;tx,
- float&nbsp;ty,
- float&nbsp;tz)</span></div>
-<div class="block">A baby-only scale followed by a translate, as models apply around their parts. <code>young</code> is re-checked on
- every call rather than baked in when this closure is built, because <code>Resolvers.ATTACHMENTS</code> caches
- the resolved chain per (model, token) and the same model instance renders every baby and adult of its type.</div>
 </section>
 </li>
 <li>

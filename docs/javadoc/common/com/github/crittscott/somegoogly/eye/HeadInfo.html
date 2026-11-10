@@ -128,7 +128,7 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="state/EyeAppearance.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeAppearance</a></code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="EyeAppearance.html" title="class in com.github.crittscott.somegoogly.eye">EyeAppearance</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#appearanceAt(int,int)" class="member-name-link">appearanceAt</a><wbr>(int&nbsp;headIndex,
  int&nbsp;eyeIndex)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
@@ -144,31 +144,25 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">How many eyes the selected head carries.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>float</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getEyeScale(int,int)" class="member-name-link">getEyeScale</a><wbr>(int&nbsp;headIndex,
- int&nbsp;eyeIndex)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getHeadCount()" class="member-name-link">getHeadCount</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">The selected eye's placement scale.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getHeadCount()" class="member-name-link">getHeadCount</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">How many heads the selected variant places eyes on; 0 when <a href="#hasConfig()"><code>hasConfig()</code></a> is false.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hasConfig()" class="member-name-link">hasConfig</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hasConfig()" class="member-name-link">hasConfig</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Whether this view contains a usable enabled placement variant.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="../config/EyeConfigModel.HeadConfig.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.HeadConfig</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#headsRef()" class="member-name-link">headsRef</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="../config/EyeConfigModel.HeadConfig.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.HeadConfig</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#headsRef()" class="member-name-link">headsRef</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The selected variant's head list; its identity invalidates per-mob trackers.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="EyePlacement.html" title="class in com.github.crittscott.somegoogly.eye">EyePlacement</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#placementAt(int,int)" class="member-name-link">placementAt</a><wbr>(int&nbsp;headIndex,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="EyePlacement.html" title="class in com.github.crittscott.somegoogly.eye">EyePlacement</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#placementAt(int,int)" class="member-name-link">placementAt</a><wbr>(int&nbsp;headIndex,
  int&nbsp;eyeIndex)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The selected eye's placement.</div>
 </div>
 </div>
@@ -215,7 +209,7 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="appearanceAt(int,int)">
 <h3>appearanceAt</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="state/EyeAppearance.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeAppearance</a></span>&nbsp;<span class="element-name">appearanceAt</span><wbr><span class="parameters">(int&nbsp;headIndex,
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="EyeAppearance.html" title="class in com.github.crittscott.somegoogly.eye">EyeAppearance</a></span>&nbsp;<span class="element-name">appearanceAt</span><wbr><span class="parameters">(int&nbsp;headIndex,
  int&nbsp;eyeIndex)</span></div>
 <div class="block">The selected eye's config appearance.</div>
 </section>
@@ -232,14 +226,6 @@ loadScripts(document, 'script');</script>
 <h3>getEyeCount</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">getEyeCount</span><wbr><span class="parameters">(int&nbsp;headIndex)</span></div>
 <div class="block">How many eyes the selected head carries.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="getEyeScale(int,int)">
-<h3>getEyeScale</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">getEyeScale</span><wbr><span class="parameters">(int&nbsp;headIndex,
- int&nbsp;eyeIndex)</span></div>
-<div class="block">The selected eye's placement scale.</div>
 </section>
 </li>
 <li>

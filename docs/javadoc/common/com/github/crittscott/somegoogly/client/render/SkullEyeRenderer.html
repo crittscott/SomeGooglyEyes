@@ -92,7 +92,8 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">SkullEyeRenderer</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Draws the eyes of placed mob heads and head items. Mixins bracket a placed head's draw with
- <a href="#begin(net.minecraft.world.level.block.entity.BlockEntity,float)"><code>begin(net.minecraft.world.level.block.entity.BlockEntity, float)</code></a> and a head item's with <a href="#beginItem(net.minecraft.world.item.ItemStack)"><code>beginItem(net.minecraft.world.item.ItemStack)</code></a>, both ending in <a href="#end()"><code>end()</code></a>, and call
+ <a href="../ClientEyeRuntime.html#beginHead(net.minecraft.world.level.block.entity.BlockEntity,float)"><code>ClientEyeRuntime.beginHead(net.minecraft.world.level.block.entity.BlockEntity, float)</code></a> and a head item's with <a href="../ClientEyeRuntime.html#beginHeadItem(net.minecraft.world.item.ItemStack)"><code>ClientEyeRuntime.beginHeadItem(net.minecraft.world.item.ItemStack)</code></a>, closed by
+ <a href="../ClientEyeRuntime.html#endItemDraw()"><code>ClientEyeRuntime.endItemDraw()</code></a> and <a href="../ClientEyeRuntime.html#endHeadItem(net.minecraft.world.item.ItemStack)"><code>ClientEyeRuntime.endHeadItem(net.minecraft.world.item.ItemStack)</code></a>, and call
  <a href="#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,net.minecraft.client.model.SkullModelBase)"><code>render(com.mojang.blaze3d.vertex.PoseStack, net.minecraft.client.renderer.MultiBufferSource, int, net.minecraft.client.model.SkullModelBase)</code></a> right after the head model is drawn, in the model's space. A placed head's eyes are live
  (<a href="../PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client"><code>PresentationEyes</code></a>); GUI and framed head items use configured pupils and ambient expressions; other items rest. Worn heads
  share the model draw without either bracket, so they draw no eyes.
@@ -117,41 +118,25 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#begin(net.minecraft.world.level.block.entity.BlockEntity,float)" class="member-name-link">begin</a><wbr>(net.minecraft.world.level.block.entity.BlockEntity&nbsp;skull,
- float&nbsp;partialTick)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">A placed head's draw starts.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#beginItem(net.minecraft.world.item.ItemStack)" class="member-name-link">beginItem</a><wbr>(net.minecraft.world.item.ItemStack&nbsp;stack)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">A head item's draw starts; any other item's draw is ignored, since it never reaches <a href="#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,net.minecraft.client.model.SkullModelBase)"><code>render(com.mojang.blaze3d.vertex.PoseStack, net.minecraft.client.renderer.MultiBufferSource, int, net.minecraft.client.model.SkullModelBase)</code></a>.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#clearCaches()" class="member-name-link">clearCaches</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Drop the fitted placements; called on every renderer rebuild, which replaces the head and mob models.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#end()" class="member-name-link">end</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The placed head's or head item's draw ends.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,net.minecraft.client.model.SkullModelBase)" class="member-name-link">render</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,net.minecraft.client.model.SkullModelBase)" class="member-name-link">render</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
  net.minecraft.client.renderer.MultiBufferSource&nbsp;bufferSource,
  int&nbsp;packedLight,
  net.minecraft.client.model.SkullModelBase&nbsp;model)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Draw the current placed head's or head item's eyes, if it has any to show, with <code>pose</code> in the space
  <code>model</code> was just drawn in and the head's <code>packedLight</code>.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#renderTrophy(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,net.minecraft.client.model.geom.ModelPart)" class="member-name-link">renderTrophy</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#renderTrophy(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,net.minecraft.client.model.geom.ModelPart)" class="member-name-link">renderTrophy</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
  net.minecraft.client.renderer.MultiBufferSource&nbsp;bufferSource,
  int&nbsp;packedLight,
  net.minecraft.client.model.geom.ModelPart&nbsp;head)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Draw a trophy's eyes on its <code>head</code> part, in Twilight Forest's model space.</div>
 </div>
 </div>
@@ -172,32 +157,10 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="begin(net.minecraft.world.level.block.entity.BlockEntity,float)">
-<h3>begin</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">begin</span><wbr><span class="parameters">(net.minecraft.world.level.block.entity.BlockEntity&nbsp;skull,
- float&nbsp;partialTick)</span></div>
-<div class="block">A placed head's draw starts.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="beginItem(net.minecraft.world.item.ItemStack)">
-<h3>beginItem</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">beginItem</span><wbr><span class="parameters">(net.minecraft.world.item.ItemStack&nbsp;stack)</span></div>
-<div class="block">A head item's draw starts; any other item's draw is ignored, since it never reaches <a href="#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,net.minecraft.client.model.SkullModelBase)"><code>render(com.mojang.blaze3d.vertex.PoseStack, net.minecraft.client.renderer.MultiBufferSource, int, net.minecraft.client.model.SkullModelBase)</code></a>.</div>
-</section>
-</li>
-<li>
 <section class="detail" id="clearCaches()">
 <h3>clearCaches</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">clearCaches</span>()</div>
 <div class="block">Drop the fitted placements; called on every renderer rebuild, which replaces the head and mob models.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="end()">
-<h3>end</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">end</span>()</div>
-<div class="block">The placed head's or head item's draw ends.</div>
 </section>
 </li>
 <li>

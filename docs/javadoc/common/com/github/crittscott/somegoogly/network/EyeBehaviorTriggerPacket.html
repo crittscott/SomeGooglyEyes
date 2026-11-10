@@ -95,18 +95,17 @@ loadScripts(document, 'script');</script>
 <dd><code>net.minecraft.network.protocol.common.custom.CustomPacketPayload</code></dd>
 </dl>
 <hr>
-<div class="type-signature"><span class="modifiers">public record </span><span class="element-name type-name-label">EyeBehaviorTriggerPacket</span>(int&nbsp;entityId, <a href="../eye/behavior/EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a>&nbsp;behavior, int&nbsp;duration, long&nbsp;seed, int&nbsp;elapsed)
+<div class="type-signature"><span class="modifiers">public record </span><span class="element-name type-name-label">EyeBehaviorTriggerPacket</span>(int&nbsp;entityId, <a href="EyeBehaviorTriggerPacket.Target.html" title="enum class in com.github.crittscott.somegoogly.network">EyeBehaviorTriggerPacket.Target</a>&nbsp;target, <a href="../eye/behavior/EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a>&nbsp;behavior, long&nbsp;seed, int&nbsp;elapsed)
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a>
 implements net.minecraft.network.protocol.common.custom.CustomPacketPayload</span></div>
-<div class="block">Server → client: "play <code>behavior</code> on entity <code>entityId</code> for <code>duration</code>
- ticks, seeded with <code>seed</code>." Sent to a mob's trackers when the server scheduler starts a behavior
- (and to a newly-tracking player mid-effect, with the full duration and the ticks already <code>elapsed</code>),
- so every viewer animates the
- same thing in lock-step. Purely transient — the trigger is the only thing sent; the client runs the
- animation locally.
+<div class="block">Server → client: "play <code>behavior</code> on the eyes of entity <code>entityId</code>, or on the loose Googly Eye in
+ one of its hands, seeded with <code>seed</code>." Sent to the viewers of the entity when the server scheduler starts
+ an expression, and to a newly tracking player mid-effect with the ticks already <code>elapsed</code>, so every
+ viewer animates the same thing in lock-step. Every expression runs for its behavior's
+ <a href="../eye/behavior/EyeBehavior.html#defaultDuration()"><code>EyeBehavior.defaultDuration()</code></a>.
 
- <p>The client retains the latest trigger for a known entity independently of its render tracker and
- derives its current age from elapsed simulation time, including when the tracker is rebuilt.</div>
+ <p>The client retains the latest report for a known entity or hand independently of its render
+ simulation and derives its current age from elapsed simulation time, including when the simulation is rebuilt.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -114,6 +113,17 @@ implements net.minecraft.network.protocol.common.custom.CustomPacketPayload</spa
 <li>
 <section class="nested-class-summary" id="nested-class-summary">
 <h2>Nested Class Summary</h2>
+<div class="caption"><span>Nested Classes</span></div>
+<div class="summary-table three-column-summary">
+<div class="table-header col-first">Modifier and Type</div>
+<div class="table-header col-second">Class</div>
+<div class="table-header col-last">Description</div>
+<div class="col-first even-row-color"><code>static enum&nbsp;</code></div>
+<div class="col-second even-row-color"><code><a href="EyeBehaviorTriggerPacket.Target.html" class="type-name-link" title="enum class in com.github.crittscott.somegoogly.network">EyeBehaviorTriggerPacket.Target</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Which eyes play the expression: those applied to the entity, or a loose Googly Eye in one of its hands.</div>
+</div>
+</div>
 <div class="inherited-list">
 <h2 id="nested-classes-inherited-from-class-net.minecraft.network.protocol.common.custom.CustomPacketPayload">Nested classes/interfaces inherited from interface&nbsp;net.minecraft.network.protocol.common.custom.CustomPacketPayload</h2>
 <code>net.minecraft.network.protocol.common.custom.CustomPacketPayload.FallbackProvider&lt;B extends net.minecraft.network.FriendlyByteBuf&gt;, net.minecraft.network.protocol.common.custom.CustomPacketPayload.Type&lt;T extends net.minecraft.network.protocol.common.custom.CustomPacketPayload&gt;, net.minecraft.network.protocol.common.custom.CustomPacketPayload.TypeAndCodec&lt;B extends net.minecraft.network.FriendlyByteBuf,<wbr>T extends net.minecraft.network.protocol.common.custom.CustomPacketPayload&gt;</code></div>
@@ -148,9 +158,9 @@ implements net.minecraft.network.protocol.common.custom.CustomPacketPayload</spa
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(int,com.github.crittscott.somegoogly.eye.behavior.EyeBehavior,int,long,int)" class="member-name-link">EyeBehaviorTriggerPacket</a><wbr>(int&nbsp;entityId,
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(int,com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket.Target,com.github.crittscott.somegoogly.eye.behavior.EyeBehavior,long,int)" class="member-name-link">EyeBehaviorTriggerPacket</a><wbr>(int&nbsp;entityId,
+ <a href="EyeBehaviorTriggerPacket.Target.html" title="enum class in com.github.crittscott.somegoogly.network">EyeBehaviorTriggerPacket.Target</a>&nbsp;target,
  <a href="../eye/behavior/EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a>&nbsp;behavior,
- int&nbsp;duration,
  long&nbsp;seed,
  int&nbsp;elapsed)</code></div>
 <div class="col-last even-row-color">
@@ -176,34 +186,34 @@ implements net.minecraft.network.protocol.common.custom.CustomPacketPayload</spa
 <div class="block">Returns the value of the <code>behavior</code> record component.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#duration()" class="member-name-link">duration</a>()</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#elapsed()" class="member-name-link">elapsed</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns the value of the <code>duration</code> record component.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#elapsed()" class="member-name-link">elapsed</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value of the <code>elapsed</code> record component.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#entityId()" class="member-name-link">entityId</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#entityId()" class="member-name-link">entityId</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value of the <code>entityId</code> record component.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#equals(java.lang.Object)" class="member-name-link">equals</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;o)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#equals(java.lang.Object)" class="member-name-link">equals</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;o)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Indicates whether some other object is "equal to" this one.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hashCode()" class="member-name-link">hashCode</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hashCode()" class="member-name-link">hashCode</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns a hash code value for this object.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>long</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#seed()" class="member-name-link">seed</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>long</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#seed()" class="member-name-link">seed</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the value of the <code>seed</code> record component.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="EyeBehaviorTriggerPacket.Target.html" title="enum class in com.github.crittscott.somegoogly.network">EyeBehaviorTriggerPacket.Target</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#target()" class="member-name-link">target</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns the value of the <code>target</code> record component.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
@@ -257,19 +267,19 @@ implements net.minecraft.network.protocol.common.custom.CustomPacketPayload</spa
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(int,com.github.crittscott.somegoogly.eye.behavior.EyeBehavior,int,long,int)">
+<section class="detail" id="&lt;init&gt;(int,com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket.Target,com.github.crittscott.somegoogly.eye.behavior.EyeBehavior,long,int)">
 <h3>EyeBehaviorTriggerPacket</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">EyeBehaviorTriggerPacket</span><wbr><span class="parameters">(int&nbsp;entityId,
+ <a href="EyeBehaviorTriggerPacket.Target.html" title="enum class in com.github.crittscott.somegoogly.network">EyeBehaviorTriggerPacket.Target</a>&nbsp;target,
  <a href="../eye/behavior/EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a>&nbsp;behavior,
- int&nbsp;duration,
  long&nbsp;seed,
  int&nbsp;elapsed)</span></div>
 <div class="block">Creates an instance of a <code>EyeBehaviorTriggerPacket</code> record class.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>entityId</code> - the value for the <code>entityId</code> record component</dd>
+<dd><code>target</code> - the value for the <code>target</code> record component</dd>
 <dd><code>behavior</code> - the value for the <code>behavior</code> record component</dd>
-<dd><code>duration</code> - the value for the <code>duration</code> record component</dd>
 <dd><code>seed</code> - the value for the <code>seed</code> record component</dd>
 <dd><code>elapsed</code> - the value for the <code>elapsed</code> record component</dd>
 </dl>
@@ -346,6 +356,17 @@ implements net.minecraft.network.protocol.common.custom.CustomPacketPayload</spa
 </section>
 </li>
 <li>
+<section class="detail" id="target()">
+<h3>target</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="EyeBehaviorTriggerPacket.Target.html" title="enum class in com.github.crittscott.somegoogly.network">EyeBehaviorTriggerPacket.Target</a></span>&nbsp;<span class="element-name">target</span>()</div>
+<div class="block">Returns the value of the <code>target</code> record component.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the value of the <code>target</code> record component</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="behavior()">
 <h3>behavior</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../eye/behavior/EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a></span>&nbsp;<span class="element-name">behavior</span>()</div>
@@ -353,17 +374,6 @@ implements net.minecraft.network.protocol.common.custom.CustomPacketPayload</spa
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the value of the <code>behavior</code> record component</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="duration()">
-<h3>duration</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">duration</span>()</div>
-<div class="block">Returns the value of the <code>duration</code> record component.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>the value of the <code>duration</code> record component</dd>
 </dl>
 </section>
 </li>

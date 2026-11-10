@@ -1,8 +1,8 @@
 com.github.crittscott.somegoogly.client.neoforge
+com.github.crittscott.somegoogly.client.platform.neoforge
 com.github.crittscott.somegoogly.config.neoforge
 com.github.crittscott.somegoogly.item.neoforge
 com.github.crittscott.somegoogly.neoforge
 com.github.crittscott.somegoogly.network.neoforge
 com.github.crittscott.somegoogly.platform.neoforge
-com.github.crittscott.somegoogly.registry.neoforge
 com.github.crittscott.somegoogly.server.neoforge

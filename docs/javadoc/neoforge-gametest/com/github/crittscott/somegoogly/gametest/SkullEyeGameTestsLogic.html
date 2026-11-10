@@ -241,8 +241,9 @@ loadScripts(document, 'script');</script>
  net.minecraft.world.entity.player.Player&nbsp;player,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/BiConsumer.html" title="class or interface in java.util.function" class="external-link">BiConsumer</a>&lt;net.minecraft.world.phys.BlockHitResult,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;&nbsp;interact)</span></div>
 <div class="block">A native item-use denial prevents both applying and harvesting head eyes, without consuming the
- item, damaging shears, or spawning a drop. In game: deny item use on a placed skull with a protection
- listener while leaving the event uncanceled, then try a Slimy Eye and Optometrist shears.</div>
+ item, damaging shears, or spawning a drop. No in-game form without a protection mod that denies item use while
+ leaving the click event uncanceled; guards that such a denial leaves the head, the item, and the shears as
+ they were.</div>
 </section>
 </li>
 <li>
@@ -284,7 +285,8 @@ loadScripts(document, 'script');</script>
  net.minecraft.world.entity.player.Player&nbsp;player)</span></div>
 <div class="block">Breaking an eyed head drops a head item carrying its eyes, and placing that item restores them. In game: give
  a skeleton skull purple eyes, break it in survival, and hover the dropped skull; its tooltip lists googly eyes
- and the iris color. Place it again; it shows the same purple eyes in the same arrangement.</div>
+ and the iris color. Place it again; it shows the same purple eyes in the same arrangement. Remove the eyes
+ and break it again; the plain dropped skull carries no eye component and stacks with ordinary skulls.</div>
 </section>
 </li>
 <li>

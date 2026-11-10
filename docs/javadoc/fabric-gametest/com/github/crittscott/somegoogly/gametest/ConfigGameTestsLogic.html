@@ -125,26 +125,37 @@ loadScripts(document, 'script');</script>
 <div class="block">Minecraft-version selection, end to end, including paired adult/baby entries.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#percentForResolvesExactBeforeWildcard(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">percentForResolvesExactBeforeWildcard</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#listSettingWithNoValidEntryUsesDefault(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">listSettingWithNoValidEntryUsesDefault</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">An exact <code>entityOverrides</code> id wins over a wildcard, and an unmatched id uses <code>globalPercent</code>.</div>
+<div class="block">A list setting drops its invalid entries, and a list with no valid entry means the default, on every
+ loader.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#percentForResolvesWildcardsInListOrder(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">percentForResolvesWildcardsInListOrder</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#percentForResolvesExactBeforeWildcard(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">percentForResolvesExactBeforeWildcard</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">An exact <code>entityOverrides</code> id wins over a wildcard, and an unmatched id uses <code>globalPercent</code>.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#percentForResolvesWildcardsInListOrder(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">percentForResolvesWildcardsInListOrder</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block"><code>entityOverrides</code>: an exact id always wins; among wildcards, the first matching list entry
  wins.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reloadFallsBackToNearestGeneration(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadFallsBackToNearestGeneration</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reloadFallsBackToNearestGeneration(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadFallsBackToNearestGeneration</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">An entry with no range covering the loaded version degrades to its nearest generation, not to
  nothing.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reloadHardExcludesEnderDragon(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadHardExcludesEnderDragon</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reloadHardExcludesEnderDragon(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadHardExcludesEnderDragon</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">No datapack, from any namespace, may install an eye config for the ender dragon.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reloadRejectsFileWithMalformedEntry(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadRejectsFileWithMalformedEntry</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">A file with one entry the codec cannot decode is rejected whole, not loaded without that entry.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reloadReplacesConfigsOnlyOnContentChange(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadReplacesConfigsOnlyOnContentChange</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
@@ -248,6 +259,26 @@ loadScripts(document, 'script');</script>
 <div class="block">No datapack, from any namespace, may install an eye config for the ender dragon. In game: add a
  datapack with <code>data/minecraft/eyes/ender_dragon.json</code> and run <code>/reload</code>; the server log
  reports the dragon file refused.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="listSettingWithNoValidEntryUsesDefault(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>listSettingWithNoValidEntryUsesDefault</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">listSettingWithNoValidEntryUsesDefault</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">A list setting drops its invalid entries, and a list with no valid entry means the default, on every
+ loader. In game: set <code>ambientBehaviorPool = ["not a behavior"]</code> in the server config and restart;
+ eyed mobs still blink, cross their eyes, side-eye, and stare, and on Fabric the log says the key has no
+ valid entries.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="reloadRejectsFileWithMalformedEntry(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>reloadRejectsFileWithMalformedEntry</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">reloadRejectsFileWithMalformedEntry</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">A file with one entry the codec cannot decode is rejected whole, not loaded without that entry. In
+ game: add a datapack whose <code>zombie.json</code> has a valid adult entry for the running version beside
+ an entry with no <code>"version"</code> field, and run <code>/reload</code>; the log names the file as invalid,
+ the summary counts it as failed to parse, and new zombies spawn without eyes.</div>
 </section>
 </li>
 <li>
