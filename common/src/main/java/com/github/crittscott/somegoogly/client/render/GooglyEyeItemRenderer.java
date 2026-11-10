@@ -4,6 +4,7 @@ import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.github.crittscott.somegoogly.client.GooglyTracker;
 import com.github.crittscott.somegoogly.client.HeldEye;
 import com.github.crittscott.somegoogly.client.PresentationEyes;
+import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeAppearance;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
@@ -39,6 +40,7 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
      * {@code gui} display transform (the other contexts honor theirs), so this is the inventory knob.
      */
     private static final float GUI_SCALE = 1.8F;
+    /** Fixed item appearance, independent of the mob placement defaults. */
     private static final float IRIS_SCALE = 0.6F;
     /** Base model scale for hand/ground/item-frame (those contexts size further via the json display). */
     private static final float MODEL_SCALE = 0.22F;
@@ -69,7 +71,7 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
         if (ctx != ItemDisplayContext.FIXED) {
             pose.mulPose(Axis.XP.rotationDegrees(180));
         }
-        // Items have no placement, so they keep the standard thickness (depth multiplier 1).
+        // Items have no placement, so they keep the standard thickness.
         GooglyTracker.EyeInfo animated = presented != null ? presented.eye
                 : isFirstPersonHand(ctx) ? ClientEyeRuntime.heldEye() : null;
         if (presented != null) {
@@ -82,8 +84,8 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
             // First-person eyes retain eye-local down; their pose is relative to the camera rather than the world.
             float partialTick = presented != null ? draw.partialTick() : Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
             GooglyEyeRenderer.drawAnimatedEye(pose, buffer, light, overlay, animated,
-                    ctx == ItemDisplayContext.GUI ? GUI_SCALE : MODEL_SCALE, 1F, look.cornea(), look.iris(),
-                    IRIS_SCALE, look.glow(), partialTick);
+                    ctx == ItemDisplayContext.GUI ? GUI_SCALE : MODEL_SCALE, EyePlacement.DEFAULT_DEPTH,
+                    look.cornea(), look.iris(), IRIS_SCALE, look.glow(), partialTick);
         } else {
             float scale = ctx == ItemDisplayContext.GUI ? GUI_SCALE : MODEL_SCALE;
             pose.scale(scale, scale, scale * ModelGooglyEye.BASE_DEPTH);

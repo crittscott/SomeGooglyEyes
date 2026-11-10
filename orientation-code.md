@@ -24,7 +24,7 @@
 
 Server owns gameplay/authorization; client owns rendering/picker UI.
 
-`ModContent` binds two items, the appearance and head-eyes components, creative tab, and recipe serializers through each loader's `ContentRegistrar`. Optometrist and `self_shear` are data-driven enchantment and damage-type definitions.
+`ModContent` registers two items, the appearance and head-eyes components, creative tab, and recipe serializers through the `@ExpectPlatform` `Registration`. Optometrist and `self_shear` are data-driven enchantment and damage-type definitions.
 
 ## Configuration and eye definitions
 
@@ -46,7 +46,7 @@ Placed heads save and sync their eye snapshot under the Mixin-owned `somegoogly:
 
 For 1.20.1 saves, `EyeItemMigration` converts `EyeProperties` custom data during `verifyComponentsAfterLoad`: current components win; undecodable data stays and is logged.
 
-`EyeItemService` owns authorization, mutation, drops, and durability for Slimy Eye use and both harvests, on mobs and heads. Loader adapters run interactions and self-shearing after default protection listeners (Forge/NeoForge `LOWEST`, Fabric a late callback phase); head use honors native item-use denial and checks `mayInteract`/`mayUseItemAt`. `markHeadDrop` stamps an eyed mob's own head among its death drops (Forge/NeoForge at `LOWEST`); head loot copies the state to the item (Forge/NeoForge `HeadEyesLootModifier`, data in each native loader; Fabric `LootTableEvents.MODIFY` adding `copy_components`). `EyeItemService` refuses spectators at every use entry and answers `verdictFor`, the eligibility the inspect hint also shows. Another player's eyes need `canHarmPlayer` (`mayAffect`). Item use counts in statistics, and application and harvesting are predicted on the client. Shears are `#somegoogly:shears` (vanilla plus optional `#c:tools/shear`). The shears-kill drop honors `doMobLoot`. Plain-shears self-damage uses the attacker-less `self_shear` type.
+`EyeItemService` owns authorization, mutation, drops, and durability for Slimy Eye use and both harvests, on mobs and heads. Loader adapters run interactions and self-shearing after default protection listeners (Forge/NeoForge `LOWEST`, Fabric a late callback phase); head use honors native item-use denial and checks `mayInteract`/`mayUseItemAt`. `markHeadDrop` stamps an eyed mob's own head among its death drops (Forge/NeoForge at `LOWEST`); head loot copies the state to the item with `SkullEyeState.headLootCopy` (Forge/NeoForge `HeadEyesLootModifier`, data in each native loader; Fabric `LootTableEvents.MODIFY`). `EyeItemService` refuses spectators at every use entry and answers `verdictFor`, the eligibility the inspect hint also shows. Another player's eyes need `canHarmPlayer` (`mayAffect`). Item use counts in statistics, and application and harvesting are predicted on the client. Shears are `#somegoogly:shears` (vanilla plus optional `#c:tools/shear`). The shears-kill drop honors `doMobLoot`. Plain-shears self-damage uses the attacker-less `self_shear` type.
 
 Applications emit `ENTITY_INTERACT` (`BLOCK_CHANGE` on heads); harvests emit `SHEAR`; refusals emit neither.
 
@@ -72,11 +72,11 @@ GeckoLib is optional: common compiles against compile-only `geckolib-common`, to
 
 ## Networking
 
-Seven `CustomPacketPayload` classes: eye definitions, settings, entity eye state, behavior triggers, anger, picker freeze, and picker export. Each declares its `ID`; `NetworkProtocol` holds wire version `18`, and incompatible wire changes require a bump. Forge/NeoForge require the channel version; on Fabric a configuration task sends a handshake, the client answers its version, and the server completes the task or refuses the client.
+Seven `CustomPacketPayload` classes: eye definitions, settings, entity eye state, behavior triggers, anger, picker freeze, and picker export. `NetworkProtocol` holds wire version `18` and the payload table (type, codec, handler per direction) every loader registers from. Forge/NeoForge require the channel version; on Fabric a configuration task asks the client's version and refuses a mismatch or a client without the mod.
 
 `EyeSettingsPacket` carries `googlyEyesEnabled` and `BehaviorSettings`. Joins receive both; the installed definitions packet is built once; after each datapack reload and Forge/NeoForge server-config apply, `ServerServices.broadcastEyeSyncIfChanged` sends each only if it changed. Only new definitions reset client trackers. Behavior triggers name behaviors by `wireId`.
 
-Networking bridges use `@ExpectPlatform`; clientbound lambdas isolate `ClientNetworkHandler`. Serverbound handlers recheck authorization; client export enforces vanilla's payload cap. Eye state follows entity spawn by ID.
+Clientbound lambdas isolate `ClientNetworkHandler`. Serverbound handlers recheck authorization; client export enforces vanilla's payload cap. Eye state follows entity spawn by ID.
 
 ## Picker and commands
 
@@ -88,7 +88,7 @@ Client picker drafts/previews are separate from server freezing/spawning/movemen
 
 ## Loader integration
 
-Fabric Mixins (`somegoogly-fabric.mixins.json`, `mixin.fabric`) cover data migration, hurt and heal, trades, lightning conversion, shears-kill and head drops, and client level replacement; common Mixins (`somegoogly-common.mixins.json`, `mixin.common`) report milking, sheep shearing, and entity events and hold head eyes. The optional Twilight config is not required. All target the pinned Minecraft version; Fabric and common write fixed refmaps.
+Fabric Mixins (`somegoogly-fabric.mixins.json`, `mixin.fabric`) cover data migration, hurt and heal, trades, lightning conversion, shears-kill and head drops, tracking start after the spawn packet, and client level replacement; common Mixins (`somegoogly-common.mixins.json`, `mixin.common`) report milking, sheep shearing, and entity events and hold head eyes. The optional Twilight config is not required. All target the pinned Minecraft version; Fabric and common write fixed refmaps.
 
 NeoForge and Forge keep client bootstrap apart from the dedicated server's.
 

@@ -14,13 +14,13 @@ import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.registry.ModContent;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.resources.PlayerSkin;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
@@ -45,6 +45,10 @@ public final class NeoForgeClient {
         for (EntityType<?> entityType : event.getEntityTypes()) {
             ClientRenderLayers.install(event.getRenderer(entityType));
         }
+    }
+
+    private static void onClientSetup(FMLClientSetupEvent event) {
+        ClientLifecycle.logStartup();
     }
 
     private static void onClientTick(ClientTickEvent.Post event) {
@@ -76,6 +80,7 @@ public final class NeoForgeClient {
         NeoForgeClientConfig.register(modBus, modContainer);
 
         modBus.addListener(NeoForgeClient::addRendererLayers);
+        modBus.addListener(NeoForgeClient::onClientSetup);
         modBus.addListener(NeoForgeClient::registerItemColors);
         modBus.addListener(NeoForgeClient::registerClientExtensions);
         modBus.addListener(NeoForgeClient::registerGuiLayers);
@@ -90,7 +95,6 @@ public final class NeoForgeClient {
         if (GeckoCompat.isLoaded()) {
             NeoForgeGeckoLayers.register(gameBus);
         }
-        ClientLifecycle.logStartup();
     }
 
     private static void registerClientCommands(RegisterClientCommandsEvent event) {
@@ -114,7 +118,7 @@ public final class NeoForgeClient {
 
     private static void registerGuiLayers(RegisterGuiLayersEvent event) {
         event.registerAboveAll(
-                ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "picker"),
+                SomeGooglyCommon.id("picker"),
                 (graphics, partialTick) -> PickerHud.render(graphics, graphics.guiWidth()));
     }
 

@@ -4,7 +4,6 @@ import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.command.GooglyServerCommands;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
-import com.github.crittscott.somegoogly.registry.ModContent;
 import com.github.crittscott.somegoogly.item.EyeItemService;
 import com.github.crittscott.somegoogly.server.ServerServices;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -23,12 +22,10 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.functions.CopyComponentsFunction;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
@@ -42,7 +39,7 @@ public final class FabricServerEvents {
      * callbacks can veto before either action mutates state.
      */
     private static final ResourceLocation LATE_PHASE =
-            ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "after_protection");
+            SomeGooglyCommon.id("after_protection");
 
     /** The loot tables of the heads that can have eyes, gathered on first use, once blocks are registered. */
     @Nullable
@@ -78,18 +75,12 @@ public final class FabricServerEvents {
         // The Forge and NeoForge counterpart is HeadEyesLootModifier.
         LootTableEvents.MODIFY.register((key, tableBuilder, source, registries) -> {
             if (headLootTables().contains(key)) {
-                tableBuilder.modifyPools(pool -> pool.apply(
-                        CopyComponentsFunction.copyComponents(CopyComponentsFunction.Source.BLOCK_ENTITY)
-                                .include(ModContent.HEAD_EYES.get())));
+                tableBuilder.modifyPools(pool -> pool.apply(SkullEyeState.headLootCopy()));
             }
         });
         UseItemCallback.EVENT.addPhaseOrdering(Event.DEFAULT_PHASE, LATE_PHASE);
-        UseItemCallback.EVENT.register(LATE_PHASE, (player, level, hand) -> {
-            if (EyeItemService.selfRemoveWithShears(player, hand) == InteractionResult.PASS) {
-                return InteractionResultHolder.pass(player.getItemInHand(hand));
-            }
-            return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), level.isClientSide());
-        });
+        UseItemCallback.EVENT.register(LATE_PHASE, (player, level, hand) -> new InteractionResultHolder<>(
+                EyeItemService.selfRemoveWithShears(player, hand), player.getItemInHand(hand)));
         ServerEntityEvents.ENTITY_LOAD.register((entity, level) -> {
             if (entity instanceof LivingEntity living) {
                 ServerServices.onLivingEntityLoaded(living);
@@ -112,9 +103,7 @@ public final class FabricServerEvents {
                 ServerServices.broadcastEyeSyncIfChanged(server));
         ServerLifecycleEvents.SERVER_STOPPING.register(ServerServices::onServerStopping);
         ServerTickEvents.END_SERVER_TICK.register(server -> ServerBehaviorScheduler.serverTick());
-        EntityTrackingEvents.START_TRACKING.register((entity, player) -> {
-            ServerServices.onStartTracking(entity, player);
-        });
+        // Starting to track is ServerEntityPairingMixin: START_TRACKING fires before the entity's spawn packet.
         EntityTrackingEvents.STOP_TRACKING.register((entity, player) -> ServerServices.onStopTracking(entity));
     }
 }

@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.network;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.picker.PickerExportService;
 import com.github.crittscott.somegoogly.picker.PickerGate;
 import io.netty.buffer.Unpooled;
@@ -33,7 +34,7 @@ public class PickerExportPacket implements CustomPacketPayload {
     /** Vanilla's cap on a serverbound custom payload's encoded data. */
     public static final int MAX_SERVERBOUND_BYTES = 32767;
 
-    public static final ResourceLocation ID = NetworkProtocol.id("picker_export");
+    public static final ResourceLocation ID = SomeGooglyCommon.id("picker_export");
     public static final CustomPacketPayload.Type<PickerExportPacket> TYPE = new CustomPacketPayload.Type<>(ID);
     public static final StreamCodec<RegistryFriendlyByteBuf, PickerExportPacket> STREAM_CODEC =
             StreamCodec.ofMember(PickerExportPacket::write, PickerExportPacket::new);

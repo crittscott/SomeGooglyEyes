@@ -14,7 +14,6 @@ import com.github.crittscott.somegoogly.registry.ModContent;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -29,6 +28,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 /** Physical-client registration kept out of the dedicated-server entry point. */
 public final class ForgeClientBootstrap {
@@ -52,6 +52,10 @@ public final class ForgeClientBootstrap {
                 ClientRenderLayers.install(renderer);
             }
         }
+    }
+
+    private static void onClientSetup(FMLClientSetupEvent event) {
+        ClientLifecycle.logStartup();
     }
 
     private static void onClientTick(TickEvent.ClientTickEvent event) {
@@ -89,6 +93,7 @@ public final class ForgeClientBootstrap {
         ForgeClientConfig.register(context);
 
         modBus.addListener(ForgeClientBootstrap::addRendererLayers);
+        modBus.addListener(ForgeClientBootstrap::onClientSetup);
         modBus.addListener(ForgeClientBootstrap::registerItemColors);
         modBus.addListener(ForgeClientBootstrap::registerGuiLayers);
         modBus.addListener(ForgeClientBootstrap::registerKeyMappings);
@@ -102,7 +107,6 @@ public final class ForgeClientBootstrap {
         if (GeckoCompat.isLoaded()) {
             ForgeGeckoLayers.register(gameBus);
         }
-        ClientLifecycle.logStartup();
     }
 
     private static void registerClientCommands(RegisterClientCommandsEvent event) {
@@ -111,7 +115,7 @@ public final class ForgeClientBootstrap {
 
     private static void registerGuiLayers(AddGuiOverlayLayersEvent event) {
         event.getLayeredDraw().add(
-                ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "picker"),
+                SomeGooglyCommon.id("picker"),
                 (graphics, partialTick) -> PickerHud.render(graphics, graphics.guiWidth()));
     }
 

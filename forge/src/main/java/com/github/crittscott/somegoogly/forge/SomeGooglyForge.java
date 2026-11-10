@@ -7,7 +7,7 @@ import com.github.crittscott.somegoogly.config.forge.ForgeServerConfig;
 import com.github.crittscott.somegoogly.config.ModVersionLookup;
 import com.github.crittscott.somegoogly.network.forge.ForgeNetworkTransport;
 import com.github.crittscott.somegoogly.registry.ModContent;
-import com.github.crittscott.somegoogly.registry.forge.ForgeContentRegistrar;
+import com.github.crittscott.somegoogly.platform.forge.RegistrationImpl;
 import com.github.crittscott.somegoogly.server.forge.ForgeServerEvents;
 import com.github.crittscott.somegoogly.server.forge.HeadEyesLootModifier;
 import net.minecraftforge.api.distmarker.Dist;
@@ -24,9 +24,8 @@ public final class SomeGooglyForge {
 
     public SomeGooglyForge(FMLJavaModLoadingContext context) {
         IEventBus modEventBus = context.getModEventBus();
-        ForgeContentRegistrar registrar = new ForgeContentRegistrar();
-        ModContent.register(registrar);
-        registrar.register(modEventBus);
+        ModContent.init();
+        RegistrationImpl.attach(modEventBus);
         HeadEyesLootModifier.register(modEventBus);
         ForgeNetworkTransport.register();
         ForgeServerConfig.register(context);
