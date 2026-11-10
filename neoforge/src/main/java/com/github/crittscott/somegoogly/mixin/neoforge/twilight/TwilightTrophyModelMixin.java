@@ -11,6 +11,12 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
+/**
+ * Draws a boss trophy's eyes on the first part its trophy model draws, right after drawing it, while the trophy
+ * draw is bracketed by {@code TwilightTrophyRendererMixin} or {@code TwilightHeadItemRendererMixin}. Twilight Forest
+ * is an optional mod with no API for this, and its trophy models draw themselves, so no vanilla head path or render
+ * layer sees the part the eyes sit on.
+ */
 @Pseudo
 @Mixin(targets = {"twilightforest.client.model.entity.AlphaYetiModel",
         "twilightforest.client.model.entity.HydraHeadModel",

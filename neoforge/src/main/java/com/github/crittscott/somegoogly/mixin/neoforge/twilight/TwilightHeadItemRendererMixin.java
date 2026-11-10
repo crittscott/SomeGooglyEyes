@@ -12,6 +12,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
+/**
+ * Brackets Twilight Forest's item renderer so a held, worn, framed, or GUI trophy or skull-candle item draws the
+ * eyes its stack carries, as {@link SkullEyeRenderer} does for vanilla head items. Twilight Forest is an optional
+ * mod with no API for this, and its items draw through its own renderer rather than vanilla's head item path.
+ */
 @Pseudo
 @Mixin(targets = "twilightforest.client.ISTER", remap = false)
 abstract class TwilightHeadItemRendererMixin {

@@ -12,6 +12,12 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.Shadow;
 
+/**
+ * Draws a Knight Phantom trophy's eyes on its helmet, right after the helmet is drawn, while the trophy draw is
+ * bracketed by {@code TwilightTrophyRendererMixin} or {@code TwilightHeadItemRendererMixin}. Twilight Forest is an
+ * optional mod with no API for this, and its trophy models draw themselves, so no vanilla head path or render layer
+ * sees the part the eyes sit on.
+ */
 @Pseudo
 @Mixin(targets = {"twilightforest.client.model.entity.KnightPhantomModel"}, remap = false)
 abstract class TwilightKnightTrophyModelMixin {

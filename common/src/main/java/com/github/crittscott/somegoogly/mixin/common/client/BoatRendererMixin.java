@@ -10,7 +10,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-/** Draw hull-mounted eyes before vanilla restores the boat's composed model pose. */
+/**
+ * Draws hull-mounted eyes before vanilla restores the boat's composed model pose. No loader has a render event
+ * for non-living entities that exposes that pose, and a render layer exists only for living entities.
+ */
 @Mixin(BoatRenderer.class)
 abstract class BoatRendererMixin {
 

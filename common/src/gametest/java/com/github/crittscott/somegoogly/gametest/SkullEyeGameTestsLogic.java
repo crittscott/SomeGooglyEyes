@@ -134,8 +134,9 @@ public final class SkullEyeGameTestsLogic {
 
     /**
      * A native item-use denial prevents both applying and harvesting head eyes, without consuming the
-     * item, damaging shears, or spawning a drop. In game: deny item use on a placed skull with a protection
-     * listener while leaving the event uncanceled, then try a Slimy Eye and Optometrist shears.
+     * item, damaging shears, or spawning a drop. No in-game form without a protection mod that denies item use while
+     * leaving the click event uncanceled; guards that such a denial leaves the head, the item, and the shears as
+     * they were.
      */
     public static void deniedItemUseLeavesHeadsUntouched(GameTestHelper helper, Player player,
                                                          BiConsumer<BlockHitResult, Boolean> interact) {

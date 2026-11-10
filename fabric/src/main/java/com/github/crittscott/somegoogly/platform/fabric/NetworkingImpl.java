@@ -7,7 +7,7 @@ import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 
-/** Fabric clientbound sends; fanout encodes once and uses the vanilla broadcasts NeoForge's and Forge's distributors do. */
+/** Fabric clientbound sends; fanout encodes once and sends through vanilla's tracking broadcasts. */
 public final class NetworkingImpl {
 
     private NetworkingImpl() {

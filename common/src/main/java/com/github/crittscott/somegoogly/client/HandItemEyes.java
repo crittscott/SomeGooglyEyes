@@ -90,6 +90,7 @@ public final class HandItemEyes {
         }
     }
 
+    /** Drop every held-eye simulation, so each held eye starts afresh when next drawn. */
     public static void clear() {
         SIMULATIONS.clear();
     }
@@ -111,10 +112,15 @@ public final class HandItemEyes {
         return eyes == null ? PresentationEyes.Draw.NONE : new PresentationEyes.Draw(eyes, minecraft.getTimer().getGameTimeDeltaPartialTick(false));
     }
 
+    /** Drop both hands' eye simulations for {@code holder}. */
     public static void remove(UUID holder) {
         SIMULATIONS.remove(holder);
     }
 
+    /**
+     * Advance held-eye simulations on the world clock, holding expressions while the game is paused; with no
+     * world or with eyes hidden, drop them all.
+     */
     public static void tick() {
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.level == null || !ClientEyeConfigs.eyesVisible()) {

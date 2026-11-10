@@ -13,7 +13,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-/** Carries the actual holder and hand into the immediate item draw, including other players and mobs. */
+/**
+ * Carries the actual holder and hand into the immediate item draw, including other players and mobs. The Forge
+ * and NeoForge hand render events cover only the local player's first-person view, and Fabric has none.
+ */
 @Mixin(ItemInHandRenderer.class)
 abstract class HandItemEyesMixin {
 

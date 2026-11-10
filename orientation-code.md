@@ -28,7 +28,7 @@ Server owns gameplay/authorization; client owns rendering/picker UI.
 
 ## Configuration and eye definitions
 
-`ServerConfig`/`ClientConfig` expose validated `ConfigValue<T>`s. Forge/NeoForge use native CLIENT/SERVER specs and reset SERVER values on unload. Each `ConfigValue` carries its section, key, default, and comment; `settings()` drives every loader's file. Fabric uses NightConfig TOML at startup and `/reload`, resets on stop, preserves raw values/comments when completing defaults, backs up rewrites, and retains loaded values on malformed input. `FabricMigration` quotes released spaced headers under its own backup; sections retain 0.8.2's names. `ServerServices.onServerConfigApplied` and `ClientConfig.onApplied` log the deciding settings when they change.
+`ServerConfig`/`ClientConfig` expose validated `ConfigValue<T>`s. Forge/NeoForge use native CLIENT/SERVER specs and reset SERVER values on unload. Each `ConfigValue` carries its section, key, default, and comment; `settings()` drives every loader's file. Fabric uses NightConfig TOML at startup and `/reload`, resets on stop, preserves raw values/comments when completing defaults, backs up rewrites, and retains loaded values on malformed input. `FabricMigration.quoteReleasedHeader` quotes released spaced headers under its own backup; sections retain 0.8.2's names. `ServerServices.onServerConfigApplied` and `ClientConfig.onApplied` log the deciding settings when they change.
 
 Datapack definitions at `data/<namespace>/eyes/*.json` use `EyeConfigModel`. Reload resolves versions, validates, encodes to NBT, and swaps `ServerEyeConfigs` only when the encoding changes, keeping the old set on failure. Reload, export, and network decode share geometry limits.
 

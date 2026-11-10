@@ -26,6 +26,11 @@ public final class EyeItemServiceGameTests implements FabricGameTest {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void optometristRollsOnlyOntoShearsAndBooks(GameTestHelper helper) {
+        EyeItemServiceGameTestsLogic.optometristRollsOnlyOntoShearsAndBooks(helper);
+    }
+
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void selfRemoveWithShearsDropsAnEyeAndCostsDurability(GameTestHelper helper) {
         EyeItemServiceGameTestsLogic.selfRemoveWithShearsDropsAnEyeAndCostsDurability(
                 helper, FakePlayer.get(helper.getLevel()));

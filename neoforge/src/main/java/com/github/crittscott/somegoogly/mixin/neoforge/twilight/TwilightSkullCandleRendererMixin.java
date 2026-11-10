@@ -15,6 +15,11 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.spongepowered.asm.mixin.injection.Coerce;
 
+/**
+ * Brackets a placed skull candle's draw and draws its eyes after the head model, as
+ * {@code SkullBlockRendererMixin} does for vanilla heads. Twilight Forest is an optional mod with no API for
+ * this, and its skull candle renderer draws the head itself instead of going through vanilla's head renderer.
+ */
 @Pseudo
 @Mixin(targets = "twilightforest.client.renderer.block.SkullCandleRenderer", remap = false)
 abstract class TwilightSkullCandleRendererMixin {

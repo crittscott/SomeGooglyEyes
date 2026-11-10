@@ -18,8 +18,7 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
  * Breaking an eyed head copies its eye state onto the dropped head item, where placing it restores it. Applied
  * to every loot table through {@code data/neoforge/loot_modifiers/global_loot_modifiers.json}; it acts only on
  * loot generated for a head block entity that has eyes, so it reaches other mods' heads, such as the Heads mod's.
- * Its data files live in this loader's resources. Fabric's counterpart is the {@code CopyComponentsFunction} in
- * {@code FabricServerEvents}; both copy only a head's eyes onto that head's item.
+ * Its data files live in this loader's resources. It copies only a head's eyes onto that head's item.
  */
 public final class HeadEyesLootModifier extends LootModifier {
 
