@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
- * Fabric hook for the reaction to a player's hit, the point NeoForge's and Forge's {@code LivingDamageEvent} marks. Fabric API's
+ * Fabric hook for the damage reactions, the point NeoForge's and Forge's {@code LivingDamageEvent} marks. Fabric API's
  * {@code ALLOW_DAMAGE} fires before invulnerability and damage are resolved. {@code Player} overrides
  * {@code actuallyHurt} without calling super, so both classes are targeted.
  */
@@ -19,9 +19,6 @@ abstract class HurtReactionMixin {
 
     @Inject(method = "actuallyHurt", at = @At("TAIL"))
     private void somegoogly$afterHurt(DamageSource source, float amount, CallbackInfo callback) {
-        LivingEntity self = (LivingEntity) (Object) this;
-        if (source.getEntity() instanceof Player) {
-            ServerBehaviorScheduler.onPlayerHurt(self);
-        }
+        ServerBehaviorScheduler.onHurt((LivingEntity) (Object) this, source);
     }
 }

@@ -30,7 +30,7 @@ import java.util.function.UnaryOperator;
 import javax.annotation.Nullable;
 
 import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ADULT;
-import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_BABY;
+
 
 /**
  * Server-side half of {@code /sg export} (reached via {@code PickerExportPacket}): validates a
@@ -41,7 +41,7 @@ import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_BABY;
  * <p>The payload is <b>never trusted</b>: the entity id must parse and exist in the entity registry
  * (clients cannot supply an arbitrary unregistered id). Identifier syntax itself does not guarantee
  * filesystem containment; {@link EyeConfigReloadListener#eyeFile} constructs a path without checking it.
- * The ender dragon is refused (mirroring the reload listener's hard exclusion), and the config must
+ * Renderer-excluded entity kinds are refused, and the config must
  * decode through {@code RuntimeConfig.CODEC} — whose fields are all required, so a malformed or
  * wrong-typed payload is rejected outright rather than decoding to an empty config — and contain at
  * least one usable eye. The declared version is resolved from the <b>server's</b> loaded mod version
@@ -82,11 +82,8 @@ public final class PickerExportService {
             return Component.translatable(
                     "somegoogly.command.picker.export_rejected_unknown_type", typeId.toString());
         }
-        if (typeId.equals(ServerEyeConfigs.ENDER_DRAGON)) {
+        if (ServerEyeConfigs.isExcluded(typeId)) {
             return Component.translatable("somegoogly.command.picker.export_rejected_ender_dragon");
-        }
-        if (!AGE_ADULT.equals(age) && !AGE_BABY.equals(age)) {
-            return Component.translatable("somegoogly.command.picker.export_rejected_malformed_payload");
         }
         RuntimeConfig config = RuntimeConfig.CODEC.parse(NbtOps.INSTANCE, configNbt).result().orElse(null);
         if (config == null) {

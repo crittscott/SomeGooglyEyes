@@ -7,13 +7,13 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
+import com.github.crittscott.somegoogly.eye.EyeAppearance;
 import com.github.crittscott.somegoogly.eye.EyeDefinition;
 import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.github.crittscott.somegoogly.eye.behavior.OngoingBehavior;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
-import com.github.crittscott.somegoogly.eye.state.EyeAppearance;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.network.EyeAngerPacket;
@@ -47,6 +47,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ADULT;
+import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_BABY;
 
 /**
  * Serialization contracts: the flat-JSON eye codecs round-trip by value, and all seven native
@@ -148,17 +149,39 @@ public final class SerializationGameTestsLogic {
     }
 
     /**
-     * The behavior trigger survives the wire, and every behavior has its own wire id. No in-game form; guards
-     * that every client sees the expression the server started and refuses a number it doesn't know.
+     * The behavior trigger survives the wire for every behavior on the entity's eyes and every reaction in either
+     * hand, at the start, middle, and end of its lifetime. No in-game form; guards that every client sees the
+     * expression the server started and refuses an unknown behavior or target number, a non-reaction on a held eye,
+     * or an elapsed time outside the expression's lifetime.
      */
     public static void behaviorTriggerPacketRoundTrips(GameTestHelper helper) {
         for (EyeBehavior behavior : EyeBehavior.values()) {
-            EyeBehaviorTriggerPacket decoded = roundTrip(helper, EyeBehaviorTriggerPacket.STREAM_CODEC,
-                    new EyeBehaviorTriggerPacket(7, behavior, 8, 12345L, 3), "EyeBehaviorTriggerPacket");
-            helper.assertTrue(decoded.behavior() == behavior, behavior + " should survive the round-trip");
+            for (EyeBehaviorTriggerPacket.Target target : EyeBehaviorTriggerPacket.Target.values()) {
+                if (target != EyeBehaviorTriggerPacket.Target.ENTITY && behavior != EyeBehavior.GROW
+                        && behavior != EyeBehavior.SWIRL) {
+                    continue;
+                }
+                for (int elapsed : new int[]{0, behavior.defaultDuration() / 2, behavior.defaultDuration()}) {
+                    EyeBehaviorTriggerPacket decoded = roundTrip(helper, EyeBehaviorTriggerPacket.STREAM_CODEC,
+                            new EyeBehaviorTriggerPacket(7, target, behavior, 12345L, elapsed), "EyeBehaviorTriggerPacket");
+                    helper.assertTrue(decoded.target() == target && decoded.behavior() == behavior
+                                    && decoded.elapsed() == elapsed && decoded.seed() == 12345L,
+                            behavior + " on " + target + " and its elapsed time should survive the round-trip");
+                }
+            }
+            for (int elapsed : new int[]{-1, behavior.defaultDuration() + 1}) {
+                helper.assertTrue(rejectsTrigger(helper, new EyeBehaviorTriggerPacket(
+                                7, EyeBehaviorTriggerPacket.Target.ENTITY, behavior, 12345L, elapsed)),
+                        behavior + " must reject elapsed time outside its lifetime");
+            }
         }
+        helper.assertTrue(rejectsTrigger(helper, new EyeBehaviorTriggerPacket(
+                        7, EyeBehaviorTriggerPacket.Target.MAIN_HAND, EyeBehavior.BLINK, 42L, 0)),
+                "a held eye rejects a behavior that is not a reaction");
+
         RegistryFriendlyByteBuf unknown = buffer(helper);
         unknown.writeVarInt(7);
+        unknown.writeVarInt(0);
         unknown.writeVarInt(EyeBehavior.values().length);
         boolean rejected = false;
         try {
@@ -169,7 +192,31 @@ public final class SerializationGameTestsLogic {
             unknown.release();
         }
         helper.assertTrue(rejected, "a trigger with an unassigned behavior number should fail to decode");
+
+        RegistryFriendlyByteBuf badTarget = buffer(helper);
+        try {
+            badTarget.writeVarInt(7);
+            badTarget.writeVarInt(EyeBehaviorTriggerPacket.Target.values().length);
+            badTarget.writeVarInt(EyeBehavior.GROW.wireId());
+            badTarget.writeLong(123L);
+            badTarget.writeVarInt(0);
+            helper.assertTrue(throwsRuntime(() -> EyeBehaviorTriggerPacket.STREAM_CODEC.decode(badTarget)),
+                    "an unknown target number is rejected");
+        } finally {
+            badTarget.release();
+        }
         helper.succeed();
+    }
+
+    /** Whether {@code packet}, encoded as written, fails to decode. */
+    private static boolean rejectsTrigger(GameTestHelper helper, EyeBehaviorTriggerPacket packet) {
+        RegistryFriendlyByteBuf invalid = buffer(helper);
+        try {
+            EyeBehaviorTriggerPacket.STREAM_CODEC.encode(invalid, packet);
+            return throwsRuntime(() -> EyeBehaviorTriggerPacket.STREAM_CODEC.decode(invalid));
+        } finally {
+            invalid.release();
+        }
     }
 
     /**
@@ -367,18 +414,31 @@ public final class SerializationGameTestsLogic {
     }
 
     /**
-     * The picker export request survives the wire, and a request with no definition is refused on decode. No
-     * in-game form; guards that {@code /sg export} delivers exactly the definition the client authored.
+     * The picker export request survives the wire for both ages, and a request with no definition or an
+     * unsupported age is refused on decode. No in-game form; guards that {@code /sg export} delivers exactly the
+     * definition the client authored.
      */
     public static void pickerExportPacketRoundTrips(GameTestHelper helper) {
+        ResourceLocation cow = ResourceLocation.fromNamespaceAndPath("minecraft", "cow");
         CompoundTag config = new CompoundTag();
         config.putBoolean("enabled", true);
-        roundTrip(helper, PickerExportPacket.STREAM_CODEC,
-                new PickerExportPacket(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), AGE_ADULT, config),
-                "PickerExportPacket with a config");
+        for (String age : List.of(AGE_ADULT, AGE_BABY)) {
+            roundTrip(helper, PickerExportPacket.STREAM_CODEC, new PickerExportPacket(cow, age, config),
+                    "PickerExportPacket with a config");
+        }
+        for (String age : List.of("", "any", "Adult", "unknown")) {
+            RegistryFriendlyByteBuf invalidAge = buffer(helper);
+            try {
+                PickerExportPacket.STREAM_CODEC.encode(invalidAge, new PickerExportPacket(cow, age, config));
+                helper.assertTrue(throwsRuntime(() -> PickerExportPacket.STREAM_CODEC.decode(invalidAge)),
+                        "picker export must reject the age \"" + age + "\" on decode");
+            } finally {
+                invalidAge.release();
+            }
+        }
 
         RegistryFriendlyByteBuf noConfig = buffer(helper);
-        noConfig.writeResourceLocation(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"));
+        noConfig.writeResourceLocation(cow);
         noConfig.writeUtf(AGE_ADULT);
         noConfig.writeNbt(null);
         helper.assertTrue(throwsRuntime(() -> PickerExportPacket.STREAM_CODEC.decode(noConfig)),

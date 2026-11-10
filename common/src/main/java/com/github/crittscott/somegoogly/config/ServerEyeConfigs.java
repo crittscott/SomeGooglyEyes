@@ -66,6 +66,11 @@ public final class ServerEyeConfigs {
         return RuntimeConfig.isUsable(get(type, false)) || RuntimeConfig.isUsable(get(type, true));
     }
 
+    /** Entity kinds for which the renderer cannot display eyes. */
+    public static boolean isExcluded(ResourceLocation type) {
+        return ENDER_DRAGON.equals(type);
+    }
+
     /** Return the entity's config for the requested age, including the age-independent fallback. */
     @Nullable
     public static RuntimeConfig get(ResourceLocation entity, boolean baby) {

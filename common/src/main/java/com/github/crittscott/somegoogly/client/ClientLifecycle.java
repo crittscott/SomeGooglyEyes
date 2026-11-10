@@ -34,15 +34,10 @@ public final class ClientLifecycle {
         PickerState.resetOnDisconnect();
     }
 
-    /** Advance the pupil/behavior runtime, held-eye pupil, inspector, and picker key input. */
+    /** Advance the eye runtime, inspector, and picker key input. */
     public static void tick() {
         Minecraft minecraft = Minecraft.getInstance();
-        GuiItemEyes.tick();
-        HandItemEyes.tick();
-        ClientEyeRuntime.tick(minecraft.level, minecraft.level != null && !minecraft.isPaused());
-        if (!minecraft.isPaused()) {
-            ClientEyeRuntime.tickHeldEye(minecraft.player);
-        }
+        ClientEyeRuntime.tick(minecraft.level, minecraft.level != null && !minecraft.isPaused(), minecraft.screen);
         EyeInspector.tick();
         PickerInput.consumePendingKeys();
     }

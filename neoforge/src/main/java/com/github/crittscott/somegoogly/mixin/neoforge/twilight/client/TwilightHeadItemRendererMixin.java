@@ -1,5 +1,6 @@
-package com.github.crittscott.somegoogly.mixin.neoforge.twilight;
+package com.github.crittscott.somegoogly.mixin.neoforge.twilight.client;
 
+import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.github.crittscott.somegoogly.client.render.SkullEyeRenderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -23,12 +24,12 @@ abstract class TwilightHeadItemRendererMixin {
     @Inject(method = "renderByItem", at = @At("HEAD"))
     private void somegoogly$begin(ItemStack stack, ItemDisplayContext display, PoseStack pose,
                                  MultiBufferSource buffers, int light, int overlay, CallbackInfo callback) {
-        SkullEyeRenderer.beginItem(stack);
+        ClientEyeRuntime.beginHeadItem(stack);
     }
 
     @Inject(method = "renderByItem", at = @At("RETURN"))
     private void somegoogly$end(ItemStack stack, ItemDisplayContext display, PoseStack pose,
                                MultiBufferSource buffers, int light, int overlay, CallbackInfo callback) {
-        SkullEyeRenderer.endItem(stack);
+        ClientEyeRuntime.endHeadItem(stack);
     }
 }

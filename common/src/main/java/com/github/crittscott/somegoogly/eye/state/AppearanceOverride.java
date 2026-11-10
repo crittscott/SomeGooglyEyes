@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.eye.state;
 
+import com.github.crittscott.somegoogly.eye.EyeAppearance;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

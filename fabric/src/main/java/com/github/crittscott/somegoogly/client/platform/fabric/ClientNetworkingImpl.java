@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.platform.fabric;
+package com.github.crittscott.somegoogly.client.platform.fabric;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;

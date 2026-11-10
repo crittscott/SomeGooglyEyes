@@ -34,9 +34,7 @@ import org.joml.Quaternionf;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -45,7 +43,8 @@ import java.util.Optional;
 
 /**
  * Draws the eyes of placed mob heads and head items. Mixins bracket a placed head's draw with
- * {@link #begin} and {@link #end}, and a head item's with {@link #beginItem} and {@link #endItem}, and call
+ * {@link ClientEyeRuntime#beginHead} and a head item's with {@link ClientEyeRuntime#beginHeadItem}, closed by
+ * {@link ClientEyeRuntime#endItemDraw} and {@link ClientEyeRuntime#endHeadItem}, and call
  * {@link #render} right after the head model is drawn, in the model's space. A placed head's eyes are live
  * ({@link PresentationEyes}); GUI and framed head items use configured pupils and ambient expressions; other items rest. Worn heads
  * share the model draw without either bracket, so they draw no eyes.
@@ -66,10 +65,6 @@ public final class SkullEyeRenderer {
     /** Fitted placements by Heads-mod head model and eye attach token; empty where fitting failed. */
     private static final Map<ModelPart, Map<String, Optional<Placement>>> PLACEMENTS =
             new IdentityHashMap<>();
-
-    private record DrawContext(@Nullable BlockEntity block, @Nullable ItemStack item, float partialTick) {}
-
-    private static final Deque<DrawContext> DRAWS = new ArrayDeque<>();
 
     private SkullEyeRenderer() {
     }
@@ -120,37 +115,9 @@ public final class SkullEyeRenderer {
         }
     }
 
-    /** A placed head's draw starts. */
-    public static void begin(BlockEntity skull, float partialTick) {
-        DRAWS.push(new DrawContext(skull, null, partialTick));
-    }
-
-    /**
-     * An item's draw starts. Only a head item opens a context, since no other item reaches {@link #render}; a
-     * loader that cancels the draw before its end hook then leaves nothing behind for any other item.
-     */
-    public static void beginItem(ItemStack stack) {
-        if (SkullEyeState.entityFor(stack) != null) {
-            DRAWS.push(new DrawContext(null, stack, 0F));
-        }
-    }
-
     /** Drop the fitted placements; called on every renderer rebuild, which replaces the head and mob models. */
     public static void clearCaches() {
         PLACEMENTS.clear();
-    }
-
-    /** The placed head's draw ends. */
-    public static void end() {
-        DRAWS.pop();
-    }
-
-    /** An item's draw ends: closes the context {@link #beginItem} opened for {@code stack}, if it opened one. */
-    public static void endItem(ItemStack stack) {
-        DrawContext draw = DRAWS.peek();
-        if (draw != null && draw.item() == stack) {
-            DRAWS.pop();
-        }
     }
 
     /**
@@ -289,8 +256,8 @@ public final class SkullEyeRenderer {
 
     private static void render(PoseStack pose, MultiBufferSource bufferSource, int packedLight,
                                @Nullable ModelPart head, boolean trophy) {
-        DrawContext draw = DRAWS.peek();
-        if (draw == null || head == null) {
+        ClientEyeRuntime.DrawContext draw = ClientEyeRuntime.currentDraw();
+        if (draw.block() == null && draw.item() == null || head == null) {
             return;
         }
         BlockEntity skull = draw.block();

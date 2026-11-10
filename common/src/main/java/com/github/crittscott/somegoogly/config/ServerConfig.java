@@ -4,6 +4,7 @@ import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import net.minecraft.SharedConstants;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -284,6 +285,11 @@ public class ServerConfig {
             }
         }
         return firstWildcard != null ? firstWildcard.percent : GLOBAL_PERCENT.get();
+    }
+
+    /** Roll one configured percentage, including the never/always endpoints. */
+    public static boolean roll(RandomSource random, int percent) {
+        return random.nextInt(PERCENT_MAX) < percent;
     }
 
     /**

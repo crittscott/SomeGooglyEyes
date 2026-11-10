@@ -2,16 +2,23 @@ package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.migration.fabric.FabricMigration;
-import com.github.crittscott.somegoogly.platform.EntityPersistentData;
 import com.github.crittscott.somegoogly.network.fabric.FabricNetworkTransport;
-import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import com.github.crittscott.somegoogly.platform.EntityPersistentData;
 import net.fabricmc.fabric.api.entity.FakePlayer;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+import net.fabricmc.fabric.api.event.player.UseEntityCallback;
+import net.fabricmc.fabric.api.event.player.UseItemCallback;
+import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Cow;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.phys.EntityHitResult;
 
 import java.util.Objects;
 
@@ -111,12 +118,6 @@ public final class SomeGooglyGameTests implements FabricGameTest {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 20)
-    public static void deathHarvestUsesTheSuppliedDropSink(GameTestHelper helper) {
-        SomeGooglyGameTestsLogic.deathHarvestUsesTheSuppliedDropSink(
-                helper, FakePlayer.get(helper.getLevel()));
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 20)
     public static void deathHarvestRejectsNonqualifyingKills(GameTestHelper helper) {
         SomeGooglyGameTestsLogic.deathHarvestRejectsNonqualifyingKills(
                 helper, FakePlayer.get(helper.getLevel()));
@@ -142,5 +143,33 @@ public final class SomeGooglyGameTests implements FabricGameTest {
         helper.assertTrue(refusal.getFallback() != null && !refusal.getFallback().equals(refusal.getKey()),
                 "the refusal should carry the English text for a client without our language file");
         helper.succeed();
+    }
+
+    /** Fabric's copy event; see the shared test for the End-exit and death steps. */
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void nativePlayerCopiesKeepEyesOnlyWhileAlive(GameTestHelper helper) {
+        LoaderInteractionGameTestsLogic.playerCopiesKeepEyesOnlyWhileAlive(helper, FakePlayer.get(helper.getLevel()),
+                (original, replacement, alive) -> ServerPlayerEvents.COPY_FROM.invoker()
+                        .copyFromPlayer(original, replacement, alive));
+    }
+
+    /**
+     * Fabric's registered use callbacks; see the shared test for the in-game steps. Protection-listener ordering is
+     * checked by hand, so no refusal is exercised here.
+     */
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void nativeUseHooksHonorResults(GameTestHelper helper) {
+        LoaderInteractionGameTestsLogic.useHooksHonorResults(helper, FakePlayer.get(helper.getLevel()),
+                (player, target, hit, refused) -> {
+                    if (hit != null) {
+                        return UseBlockCallback.EVENT.invoker().interact(player, helper.getLevel(), InteractionHand.MAIN_HAND, hit);
+                    }
+                    if (target != null) {
+                        return UseEntityCallback.EVENT.invoker().interact(player, helper.getLevel(), InteractionHand.MAIN_HAND,
+                                target, target instanceof ArmorStand ? new EntityHitResult(target, target.position()) : null);
+                    }
+                    return UseItemCallback.EVENT.invoker().interact(player, helper.getLevel(), InteractionHand.MAIN_HAND)
+                            .getResult();
+                }, false);
     }
 }

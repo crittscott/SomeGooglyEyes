@@ -3,6 +3,7 @@ package com.github.crittscott.somegoogly.gametest;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.neoforged.neoforge.common.util.FakePlayerFactory;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -20,33 +21,18 @@ public final class EyeStateOverrideGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void clearingTintRemovesOnlyThatField(GameTestHelper helper) {
-        EyeStateOverrideGameTestsLogic.clearingTintRemovesOnlyThatField(helper);
+    public static void adminAppearanceCommands(GameTestHelper helper) {
+        EyeStateOverrideGameTestsLogic.adminAppearanceCommands(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void glowOverrideCanBeSetAndDropped(GameTestHelper helper) {
-        EyeStateOverrideGameTestsLogic.glowOverrideCanBeSetAndDropped(helper);
+    public static void adminCommandsRefuseUnauthorizedOrInvalidUse(GameTestHelper helper) {
+        EyeStateOverrideGameTestsLogic.adminCommandsRefuseUnauthorizedOrInvalidUse(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void settingOneFieldLeavesOthersAbsent(GameTestHelper helper) {
-        EyeStateOverrideGameTestsLogic.settingOneFieldLeavesOthersAbsent(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void clearingEveryFieldRemovesTheCompound(GameTestHelper helper) {
-        EyeStateOverrideGameTestsLogic.clearingEveryFieldRemovesTheCompound(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void clearingTintsPreservesGlow(GameTestHelper helper) {
-        EyeStateOverrideGameTestsLogic.clearingTintsPreservesGlow(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void snapshotAppliesAllFieldsTogether(GameTestHelper helper) {
-        EyeStateOverrideGameTestsLogic.snapshotAppliesAllFieldsTogether(helper);
+    public static void adminEyesAndBehaviorCommands(GameTestHelper helper) {
+        EyeStateOverrideGameTestsLogic.adminEyesAndBehaviorCommands(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
     }
 }
 

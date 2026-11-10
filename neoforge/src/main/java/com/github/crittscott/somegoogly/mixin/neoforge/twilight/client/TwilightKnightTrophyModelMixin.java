@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.mixin.neoforge.twilight;
+package com.github.crittscott.somegoogly.mixin.neoforge.twilight.client;
 
 import com.github.crittscott.somegoogly.client.render.SkullEyeRenderer;
 import com.mojang.blaze3d.vertex.PoseStack;

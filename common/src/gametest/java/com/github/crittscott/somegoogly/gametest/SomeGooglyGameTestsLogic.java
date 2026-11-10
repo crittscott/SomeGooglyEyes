@@ -9,7 +9,6 @@ import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.item.GooglyEyeItem;
 import com.github.crittscott.somegoogly.registry.ModContent;
-import com.github.crittscott.somegoogly.item.EyeItemService;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
@@ -30,14 +29,12 @@ import net.minecraft.world.entity.monster.Witch;
 import net.minecraft.world.entity.monster.ZombifiedPiglin;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.phys.AABB;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -139,101 +136,63 @@ public final class SomeGooglyGameTestsLogic {
         helper.succeed();
     }
 
-    /**
-     * A shears kill can drop one Googly Eye carrying the mob's look. In game: set
-     * {@code harvestOnKillPercent = 100}, tint an eyed cow's iris with {@code /sg admin tint iris 0.2 0.4 0.6},
-     * and kill it in survival with melee blows from shears; one Googly Eye with that iris color drops with the
-     * cow's loot, and the shears lose one durability for the harvest.
-     */
-    public static void deathHarvestUsesTheSuppliedDropSink(GameTestHelper helper, Player player) {
-        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
-        ItemStack shears = new ItemStack(Items.SHEARS);
-        EyeColor iris = new EyeColor(0.2F, 0.4F, 0.6F);
-        List<ItemStack> drops = new ArrayList<>();
-        int originalPercent = ServerConfig.HARVEST_ON_KILL_PERCENT.get();
-
-        try {
-            ServerConfig.HARVEST_ON_KILL_PERCENT.set(100);
-            player.setItemInHand(InteractionHand.MAIN_HAND, shears);
-            EyeState.setHasEyes(cow, true);
-            EyeState.setIrisTint(cow, iris);
-
-            EyeItemService.onDeath(cow, helper.getLevel().damageSources().playerAttack(player), drops::add);
-        } finally {
-            ServerConfig.HARVEST_ON_KILL_PERCENT.set(originalPercent);
-        }
-
-        helper.assertTrue(drops.size() == 1, "A qualifying death harvest should emit exactly one stack");
-        helper.assertTrue(drops.get(0).is(ModContent.GOOGLY_EYE.get()), "The emitted stack should be a Googly Eye");
-        helper.assertTrue(iris.equals(EyeItemProperties.get(drops.get(0)).iris().orElse(null)),
-                "The harvested eye should capture the entity's effective iris color");
-        helper.assertTrue(shears.getDamageValue() == 1, "A successful death harvest should damage the shears once");
-        helper.assertTrue(helper.getLevel().getEntitiesOfClass(
-                        ItemEntity.class, cow.getBoundingBox().inflate(4.0)).isEmpty(),
-                "The shared harvest service should not spawn the returned eye directly");
-        helper.succeed();
-    }
 
     /**
-     * Only a qualifying kill harvests. In game, with {@code harvestOnKillPercent = 100}: no Googly Eye drops when
-     * an eyed cow is killed with a sword, an eyeless cow with shears, an eyed cow by something other than a
-     * player, an eyed cow shot by a player holding shears, an eyed cow killed by the Thorns armor of a player holding
-     * shears, or an eyed cow with shears while {@code harvestOnKillPercent = 0} or
-     * {@code googlyEyesEnabled = false} or the {@code doMobLoot} game rule off.
+     * Only a qualifying kill harvests. In game, with {@code harvestOnKillPercent = 100}: no Googly Eye drops and the
+     * shears keep their durability when an eyed cow is killed with a sword, an eyeless cow with shears, an eyed cow
+     * by something other than a player, an eyed cow shot by a player holding shears, an eyed cow killed by the Thorns
+     * armor of a player holding shears, an eyed cow with no eye definition, or an eyed cow with shears while
+     * {@code harvestOnKillPercent = 0} or {@code googlyEyesEnabled = false} or the {@code doMobLoot} game rule off.
      */
     public static void deathHarvestRejectsNonqualifyingKills(GameTestHelper helper, Player player) {
-        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
-        ItemStack shears = new ItemStack(Items.SHEARS);
-        List<ItemStack> drops = new ArrayList<>();
-        int originalPercent = ServerConfig.HARVEST_ON_KILL_PERCENT.get();
-        Map<ResourceLocation, EyeConfigModel.RuntimeConfigSet> originalConfigs = ServerEyeConfigs.all();
-        GameRules.BooleanValue mobLoot = helper.getLevel().getGameRules().getRule(GameRules.RULE_DOMOBLOOT);
-        boolean originalMobLoot = mobLoot.get();
-        boolean originalEnabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
-
+        Map<ResourceLocation, EyeConfigModel.RuntimeConfigSet> definitions = ServerEyeConfigs.all();
+        int percent = ServerConfig.HARVEST_ON_KILL_PERCENT.get();
+        boolean enabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
+        ItemStack held = player.getMainHandItem().copy();
+        boolean creative = player.getAbilities().instabuild;
+        GameRules.BooleanValue rule = helper.getLevel().getGameRules().getRule(GameRules.RULE_DOMOBLOOT);
+        boolean mobLoot = rule.get();
         try {
-            ServerConfig.HARVEST_ON_KILL_PERCENT.set(100);
-            EyeState.setHasEyes(cow, true);
-            player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_SWORD));
-            EyeItemService.onDeath(cow, helper.getLevel().damageSources().playerAttack(player), drops::add);
-
-            player.setItemInHand(InteractionHand.MAIN_HAND, shears);
-            EyeState.setHasEyes(cow, false);
-            EyeItemService.onDeath(cow, helper.getLevel().damageSources().playerAttack(player), drops::add);
-
-            EyeState.setHasEyes(cow, true);
-            EyeItemService.onDeath(cow, helper.getLevel().damageSources().mobAttack(cow), drops::add);
-
-            Arrow arrow = Objects.requireNonNull(
-                    EntityType.ARROW.create(helper.getLevel()));
-            EyeItemService.onDeath(cow, helper.getLevel().damageSources().arrow(arrow, player), drops::add);
-
-            EyeItemService.onDeath(cow, helper.getLevel().damageSources().thorns(player), drops::add);
-
-            ServerConfig.HARVEST_ON_KILL_PERCENT.set(0);
-            EyeItemService.onDeath(cow, helper.getLevel().damageSources().playerAttack(player), drops::add);
-
-            ServerConfig.HARVEST_ON_KILL_PERCENT.set(100);
-            TestEyeConfigs.install(Map.of());
-            EyeItemService.onDeath(cow, helper.getLevel().damageSources().playerAttack(player), drops::add);
-
-            TestEyeConfigs.install(originalConfigs);
-            EyeState.setHasEyes(cow, true);
-            ServerConfig.GOOGLY_EYES_ENABLED.set(false);
-            EyeItemService.onDeath(cow, helper.getLevel().damageSources().playerAttack(player), drops::add);
-
-            ServerConfig.GOOGLY_EYES_ENABLED.set(true);
-            mobLoot.set(false, helper.getLevel().getServer());
-            EyeItemService.onDeath(cow, helper.getLevel().damageSources().playerAttack(player), drops::add);
+            player.getAbilities().instabuild = false;
+            for (String refusal : List.of("sword", "eyeless", "mob", "arrow", "thorns", "chance", "definition",
+                    "disabled", "loot")) {
+                TestEyeConfigs.install(definitions);
+                ServerConfig.GOOGLY_EYES_ENABLED.set(true);
+                ServerConfig.HARVEST_ON_KILL_PERCENT.set(ServerConfig.PERCENT_MAX);
+                rule.set(true, helper.getLevel().getServer());
+                Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+                EyeState.setHasEyes(cow, !refusal.equals("eyeless"));
+                ItemStack weapon = new ItemStack(refusal.equals("sword") ? Items.IRON_SWORD : Items.SHEARS);
+                player.setItemInHand(InteractionHand.MAIN_HAND, weapon);
+                switch (refusal) {
+                    case "chance" -> ServerConfig.HARVEST_ON_KILL_PERCENT.set(0);
+                    case "definition" -> TestEyeConfigs.install(Map.of());
+                    case "disabled" -> ServerConfig.GOOGLY_EYES_ENABLED.set(false);
+                    case "loot" -> rule.set(false, helper.getLevel().getServer());
+                    default -> {
+                    }
+                }
+                var sources = helper.getLevel().damageSources();
+                var source = switch (refusal) {
+                    case "mob" -> sources.mobAttack(cow);
+                    case "arrow" -> sources.arrow(Objects.requireNonNull(EntityType.ARROW.create(helper.getLevel())), player);
+                    case "thorns" -> sources.thorns(player);
+                    default -> sources.playerAttack(player);
+                };
+                List<ItemEntity> before = eyeDrops(helper, cow);
+                cow.hurt(source, Float.MAX_VALUE);
+                helper.assertTrue(cow.isDeadOrDying(), "the refusal case still kills its victim: " + refusal);
+                helper.assertTrue(eyeDrops(helper, cow).equals(before), "no eye drops for " + refusal);
+                helper.assertTrue(weapon.getDamageValue() == 0, "no harvest durability is spent for " + refusal);
+            }
         } finally {
-            TestEyeConfigs.install(originalConfigs);
-            ServerConfig.HARVEST_ON_KILL_PERCENT.set(originalPercent);
-            ServerConfig.GOOGLY_EYES_ENABLED.set(originalEnabled);
-            mobLoot.set(originalMobLoot, helper.getLevel().getServer());
+            TestEyeConfigs.install(definitions);
+            ServerConfig.HARVEST_ON_KILL_PERCENT.set(percent);
+            ServerConfig.GOOGLY_EYES_ENABLED.set(enabled);
+            player.setItemInHand(InteractionHand.MAIN_HAND, held);
+            player.getAbilities().instabuild = creative;
+            rule.set(mobLoot, helper.getLevel().getServer());
         }
-
-        helper.assertTrue(drops.isEmpty(), "Nonqualifying death harvests should emit no eye stacks");
-        helper.assertTrue(shears.getDamageValue() == 0, "Nonqualifying death harvests should not damage shears");
         helper.succeed();
     }
 
@@ -275,33 +234,53 @@ public final class SomeGooglyGameTestsLogic {
 
     /**
      * A real shears kill harvests through each loader's own death path, and a baby harvests like an adult though it
-     * drops no loot of its own. In game: set {@code harvestOnKillPercent = 100} and kill an eyed cow and an eyed calf
-     * with shears; each drops one Googly Eye.
+     * drops no loot of its own; the eye carries the mob's look and the harvest wears the shears once. In game: set
+     * {@code harvestOnKillPercent = 100}, tint an eyed cow's iris with {@code /sg admin tint iris 0.2 0.4 0.6}, and
+     * kill it and an eyed calf with shears in survival; each drops one Googly Eye in its own iris color, and each
+     * harvest costs the shears one durability.
      */
     public static void realShearsKillsHarvestAnEye(GameTestHelper helper, Player player) {
-        BlockPos adultPos = new BlockPos(2, 2, 2);
-        Cow adult = helper.spawnWithNoFreeWill(EntityType.COW, adultPos);
-        Cow baby = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(3, 2, 2));
-        baby.setBaby(true);
-        int originalPercent = ServerConfig.HARVEST_ON_KILL_PERCENT.get();
-
+        ItemStack held = player.getMainHandItem().copy();
+        boolean creative = player.getAbilities().instabuild;
+        boolean enabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
+        int percent = ServerConfig.HARVEST_ON_KILL_PERCENT.get();
+        GameRules.BooleanValue rule = helper.getLevel().getGameRules().getRule(GameRules.RULE_DOMOBLOOT);
+        boolean mobLoot = rule.get();
         try {
-            ServerConfig.HARVEST_ON_KILL_PERCENT.set(100);
-            player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.SHEARS));
-            for (Cow cow : List.of(adult, baby)) {
+            player.getAbilities().instabuild = false;
+            ServerConfig.GOOGLY_EYES_ENABLED.set(true);
+            ServerConfig.HARVEST_ON_KILL_PERCENT.set(ServerConfig.PERCENT_MAX);
+            rule.set(true, helper.getLevel().getServer());
+            for (boolean baby : List.of(false, true)) {
+                Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+                cow.setBaby(baby);
                 EyeState.setHasEyes(cow, true);
+                EyeColor iris = baby ? new EyeColor(0.7F, 0.2F, 0.1F) : new EyeColor(0.2F, 0.4F, 0.6F);
+                EyeState.setIrisTint(cow, iris);
+                ItemStack shears = new ItemStack(Items.SHEARS);
+                player.setItemInHand(InteractionHand.MAIN_HAND, shears);
+                List<ItemEntity> before = eyeDrops(helper, cow);
                 cow.hurt(helper.getLevel().damageSources().playerAttack(player), Float.MAX_VALUE);
-                helper.assertTrue(cow.isDeadOrDying(), "the blow should kill the cow");
+                List<ItemEntity> after = eyeDrops(helper, cow).stream().filter(drop -> !before.contains(drop)).toList();
+                helper.assertTrue(cow.isDeadOrDying(), "the real blow kills the cow");
+                helper.assertTrue(after.size() == 1, "an adult or baby shears kill drops exactly one eye");
+                helper.assertTrue(iris.equals(EyeItemProperties.get(after.get(0).getItem()).iris().orElse(null)),
+                        "the real death path carries the chosen iris color");
+                helper.assertTrue(shears.getDamageValue() == 1, "one harvest wears the shears exactly once");
             }
         } finally {
-            ServerConfig.HARVEST_ON_KILL_PERCENT.set(originalPercent);
-            player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+            player.setItemInHand(InteractionHand.MAIN_HAND, held);
+            player.getAbilities().instabuild = creative;
+            ServerConfig.GOOGLY_EYES_ENABLED.set(enabled);
+            ServerConfig.HARVEST_ON_KILL_PERCENT.set(percent);
+            rule.set(mobLoot, helper.getLevel().getServer());
         }
-
-        int eyes = helper.getLevel().getEntitiesOfClass(ItemEntity.class,
-                new AABB(helper.absolutePos(adultPos)).inflate(4.0),
-                drop -> drop.getItem().is(ModContent.GOOGLY_EYE.get())).size();
-        helper.assertTrue(eyes == 2, "both kills should drop one Googly Eye, found " + eyes);
         helper.succeed();
+    }
+
+    /** The Googly Eyes lying around {@code victim}. */
+    private static List<ItemEntity> eyeDrops(GameTestHelper helper, LivingEntity victim) {
+        return helper.getLevel().getEntitiesOfClass(ItemEntity.class, victim.getBoundingBox().inflate(4.0),
+                drop -> drop.getItem().is(ModContent.GOOGLY_EYE.get()));
     }
 }

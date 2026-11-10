@@ -7,7 +7,7 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
 import com.github.crittscott.somegoogly.network.PickerExportPacket;
-import com.github.crittscott.somegoogly.platform.ClientNetworking;
+import com.github.crittscott.somegoogly.client.platform.ClientNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;

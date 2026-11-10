@@ -30,7 +30,6 @@ public final class Resolvers {
     private static final EyeAttachmentResolver FALLBACK = new ChildMapResolver();
     private static final List<EyeAttachmentResolver> SPECIALIZED = List.of(
             new HierarchicalResolver(),
-            new TwilightForestResolver(),
             new AgeableListResolver(),
             AdvancedModelBoxResolver.citadel(),
             AdvancedModelBoxResolver.uranus(),

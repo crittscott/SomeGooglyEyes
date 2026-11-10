@@ -1,6 +1,5 @@
 package com.github.crittscott.somegoogly.gametest;
 
-import com.github.crittscott.somegoogly.client.HandItemEyes;
 import com.github.crittscott.somegoogly.client.PresentationEyes;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
@@ -80,7 +79,7 @@ public final class HandItemEyeGameTestsLogic {
      * when you stop.
      */
     public static void handEyesReactToHolderMotion(GameTestHelper helper) {
-        HandItemEyes.Simulations cache = new HandItemEyes.Simulations();
+        TestEyeRuntime.HandCache cache = new TestEyeRuntime.HandCache();
         LivingEntity moving = holder(helper, FIRST);
         LivingEntity still = holder(helper, SECOND);
         var movingEyes = cache.get(moving, InteractionHand.MAIN_HAND, eye());
@@ -119,7 +118,7 @@ public final class HandItemEyeGameTestsLogic {
      * a diamond; only the eyes show pupils, each with its own look.
      */
     public static void handEyesReplaceContentsAndHonorGates(GameTestHelper helper) {
-        HandItemEyes.Simulations cache = new HandItemEyes.Simulations();
+        TestEyeRuntime.HandCache cache = new TestEyeRuntime.HandCache();
         LivingEntity firstHolder = holder(helper, FIRST);
         ItemStack stack = eye();
         var first = cache.get(firstHolder, InteractionHand.MAIN_HAND, stack);
@@ -148,7 +147,7 @@ public final class HandItemEyeGameTestsLogic {
      * and unseen holders leave no state behind.
      */
     public static void handEyesRetireUnloadedAndHiddenHolders(GameTestHelper helper) {
-        HandItemEyes.Simulations cache = new HandItemEyes.Simulations();
+        TestEyeRuntime.HandCache cache = new TestEyeRuntime.HandCache();
         LivingEntity firstHolder = holder(helper, FIRST);
         LivingEntity secondHolder = holder(helper, SECOND);
         var first = cache.get(firstHolder, InteractionHand.MAIN_HAND, eye());
@@ -178,7 +177,7 @@ public final class HandItemEyeGameTestsLogic {
      * both hands beside another player who holds one, and press F5; all three eyes blink at different times.
      */
     public static void handEyesSeparateHoldersAndHands(GameTestHelper helper) {
-        HandItemEyes.Simulations cache = new HandItemEyes.Simulations();
+        TestEyeRuntime.HandCache cache = new TestEyeRuntime.HandCache();
         LivingEntity firstHolder = holder(helper, FIRST);
         LivingEntity secondHolder = holder(helper, SECOND);
         var main = cache.get(firstHolder, InteractionHand.MAIN_HAND, eye());
@@ -200,7 +199,7 @@ public final class HandItemEyeGameTestsLogic {
      * same eye in your inventory keeps blinking.
      */
     public static void handEyesUseWorldClockAndPause(GameTestHelper helper) {
-        HandItemEyes.Simulations cache = new HandItemEyes.Simulations();
+        TestEyeRuntime.HandCache cache = new TestEyeRuntime.HandCache();
         LivingEntity firstHolder = holder(helper, FIRST);
         var eye = cache.get(firstHolder, InteractionHand.MAIN_HAND, eye());
         BehaviorSettings defaults = TestBehaviorSettings.DEFAULTS;
@@ -233,7 +232,7 @@ public final class HandItemEyeGameTestsLogic {
         try {
             ClientEyeConfigs.replaceAll(ServerEyeConfigs.all());
             ClientEyeConfigs.applySettings(true, TestBehaviorSettings.DEFAULTS);
-            HandItemEyes.Simulations cache = new HandItemEyes.Simulations();
+            TestEyeRuntime.HandCache cache = new TestEyeRuntime.HandCache();
             LivingEntity firstHolder = holder(helper, FIRST);
             ItemStack head = new ItemStack(Items.SKELETON_SKULL);
             SkullEyeState.stampItem(head, new Snapshot(true, 0F, AppearanceOverride.EMPTY.withGlow(true)));

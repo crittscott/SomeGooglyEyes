@@ -1,7 +1,6 @@
 package com.github.crittscott.somegoogly.mixin.common.client;
 
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
-import com.github.crittscott.somegoogly.client.HandItemEyes;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -26,7 +25,7 @@ abstract class HandItemEyesMixin {
     private void somegoogly$beginHand(LivingEntity holder, ItemStack stack, ItemDisplayContext context,
                                       boolean leftHand, PoseStack pose, MultiBufferSource buffers,
                                       int light, CallbackInfo callback) {
-        ClientEyeRuntime.beginItemDraw(HandItemEyes.context(holder, stack, context));
+        ClientEyeRuntime.beginItemDraw(ClientEyeRuntime.handContext(holder, stack, context));
     }
 
     @Inject(method = "renderItem(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;"

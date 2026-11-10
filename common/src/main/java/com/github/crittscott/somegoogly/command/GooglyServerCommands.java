@@ -270,8 +270,7 @@ public final class GooglyServerCommands {
             return 0;
         }
 
-        boolean started = ServerBehaviorScheduler.trigger(
-                target, behavior, behavior.defaultDuration(), target.getRandom().nextLong());
+        boolean started = ServerBehaviorScheduler.trigger(target, behavior, target.getRandom().nextLong());
         return feedback(ctx, started
                 ? Component.translatable("somegoogly.command.admin.behavior_playing", behavior.id().getPath())
                 : Component.translatable("somegoogly.command.admin.behavior_dropped", behavior.id().getPath()));

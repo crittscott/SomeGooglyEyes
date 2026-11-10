@@ -8,11 +8,11 @@
     "TwilightTrophyDataMixin"
   ],
   "client": [
-    "TwilightSkullCandleRendererMixin",
-    "TwilightTrophyRendererMixin",
-    "TwilightHeadItemRendererMixin",
-    "TwilightTrophyModelMixin",
-    "TwilightKnightTrophyModelMixin"
+    "client.TwilightSkullCandleRendererMixin",
+    "client.TwilightTrophyRendererMixin",
+    "client.TwilightHeadItemRendererMixin",
+    "client.TwilightTrophyModelMixin",
+    "client.TwilightKnightTrophyModelMixin"
   ],
   "injectors": {
     "defaultRequire": 0

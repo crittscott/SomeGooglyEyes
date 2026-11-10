@@ -172,6 +172,11 @@ public final class EyeItemService {
                 stack) > 0;
     }
 
+    /** Whether {@code stack} harvests applied eyes: mod shears carrying Optometrist. */
+    private static boolean isHarvestTool(ItemStack stack, HolderLookup.Provider registries) {
+        return stack.is(ModContent.SHEARS) && hasOptometrist(stack, registries);
+    }
+
     private static HeadInfo helperFor(LivingEntity mob) {
         ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType());
         float roll = EyeState.getVariantRoll(mob);
@@ -201,7 +206,7 @@ public final class EyeItemService {
         if (stack.getItem() instanceof SlimyEyeItem) {
             return applySlimyEye(stack, player, mob);
         }
-        if (!stack.is(ModContent.SHEARS) || !EyeState.hasEyes(mob) || !hasOptometrist(stack, level.registryAccess()) || !enabled(level)) {
+        if (!isHarvestTool(stack, level.registryAccess()) || !EyeState.hasEyes(mob) || !enabled(level)) {
             return InteractionResult.PASS;
         }
         HeadInfo helper = helperFor(mob);
@@ -224,7 +229,7 @@ public final class EyeItemService {
         if (stack.getItem() instanceof SlimyEyeItem) {
             return applySlimyEye(stack, player, boat);
         }
-        if (!stack.is(ModContent.SHEARS) || !hasOptometrist(stack, level.registryAccess())) {
+        if (!isHarvestTool(stack, level.registryAccess())) {
             return InteractionResult.PASS;
         }
         ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(boat.getType());
@@ -290,7 +295,7 @@ public final class EyeItemService {
         }
         ItemStack weapon = player.getMainHandItem();
         if (!weapon.is(ModContent.SHEARS)
-                || mob.getRandom().nextInt(ServerConfig.PERCENT_MAX) >= ServerConfig.HARVEST_ON_KILL_PERCENT.get()) {
+                || !ServerConfig.roll(mob.getRandom(), ServerConfig.HARVEST_ON_KILL_PERCENT.get())) {
             return;
         }
         HeadInfo helper = helperFor(mob);
@@ -385,7 +390,7 @@ public final class EyeItemService {
         ItemStack stack = player.getItemInHand(hand);
         boolean slimy = stack.getItem() instanceof SlimyEyeItem;
         if (slimy ? verdictFor(skull) != Verdict.CAN_HAVE
-                : !stack.is(ModContent.SHEARS) || !hasOptometrist(stack, level.registryAccess()) || !enabled(level)
+                : !isHarvestTool(stack, level.registryAccess()) || !enabled(level)
                         || SkullEyeState.entityFor(skull.getBlockState().getBlock()) == null
                         || !SkullEyeState.hasEyes(skull)) {
             return InteractionResult.PASS;

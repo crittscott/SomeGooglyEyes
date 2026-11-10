@@ -1,7 +1,8 @@
-package com.github.crittscott.somegoogly.network.fabric;
+package com.github.crittscott.somegoogly.client.network.fabric;
 
 import com.github.crittscott.somegoogly.network.NetworkProtocol;
 import com.github.crittscott.somegoogly.network.PickerFreezePacket;
+import com.github.crittscott.somegoogly.network.fabric.FabricNetworkTransport;
 import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;

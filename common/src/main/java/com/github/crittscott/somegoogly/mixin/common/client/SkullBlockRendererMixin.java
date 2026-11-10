@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.mixin.common.client;
 
+import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.github.crittscott.somegoogly.client.render.SkullEyeRenderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.SkullModelBase;
@@ -28,7 +29,7 @@ abstract class SkullBlockRendererMixin {
     private void somegoogly$beginHead(SkullBlockEntity skull, float partialTick, PoseStack pose,
                                       MultiBufferSource bufferSource, int packedLight, int packedOverlay,
                                       CallbackInfo callback) {
-        SkullEyeRenderer.begin(skull, partialTick);
+        ClientEyeRuntime.beginHead(skull, partialTick);
     }
 
     @Inject(method = "renderSkull", at = @At(value = "INVOKE", shift = At.Shift.AFTER,
@@ -44,6 +45,6 @@ abstract class SkullBlockRendererMixin {
     private void somegoogly$endHead(SkullBlockEntity skull, float partialTick, PoseStack pose,
                                     MultiBufferSource bufferSource, int packedLight, int packedOverlay,
                                     CallbackInfo callback) {
-        SkullEyeRenderer.end();
+        ClientEyeRuntime.endItemDraw();
     }
 }

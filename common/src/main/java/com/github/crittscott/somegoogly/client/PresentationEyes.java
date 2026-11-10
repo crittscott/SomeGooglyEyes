@@ -21,20 +21,23 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.levelgen.RandomSupport;
 
 /**
- * One presentation's loose eye or configured eye layout and ambient expressions. Its identity and
- * supplied clock determine expression age; physics is local and disposable. The renderer supplies gravity.
+ * One presentation's loose eye or configured eye layout, its ambient expressions, and, for an eye in a hand, the
+ * server's reactions. Its identity and supplied clock determine expression age; physics is local and disposable.
+ * The renderer supplies gravity.
  */
 public final class PresentationEyes {
 
-    /** Spreads consecutive ambient slots' seeds apart. */
-    private static final long SLOT_SEED_STEP = RandomSupport.GOLDEN_RATIO_64;
-
     @Nullable
     public BehaviorInstance active;
+    @Nullable
+    private BehaviorInstance ambientExpression;
     private long behaviorSeed;
+    /** A server-owned hand reaction, which plays over the ambient expression until it ends. */
+    @Nullable
+    private BehaviorInstance reaction;
+    private long reactionSeed;
     @Nullable
     public final ResourceLocation entity;
     /** Loose-item pupil; configured heads use the shaped arrays in eyes. */
@@ -74,7 +77,7 @@ public final class PresentationEyes {
     private final boolean stationaryHead;
 
     private PresentationEyes(UUID uuid, ItemStack looseEye) {
-        this(uuidSeed(uuid), looseEye.copyWithCount(1), null, null, null, new int[]{0}, false);
+        this(BehaviorSettings.presentationSeed(uuid), looseEye.copyWithCount(1), null, null, null, new int[]{0}, false);
     }
 
     private PresentationEyes(long seed, ItemStack item, @Nullable ResourceLocation entity, @Nullable Snapshot snapshot,
@@ -129,12 +132,12 @@ public final class PresentationEyes {
         if (parts.length == 0) {
             return null;
         }
-        return new PresentationEyes(uuidSeed(uuid), stack.copyWithCount(1), entity, snapshot, helper, parts, false);
+        return new PresentationEyes(BehaviorSettings.presentationSeed(uuid), stack.copyWithCount(1), entity, snapshot, helper, parts, false);
     }
 
     /** Build a validated, enabled layout without item or skull eligibility assumptions. */
     public static PresentationEyes create(UUID uuid, ResourceLocation entity, Snapshot snapshot, HeadInfo helper) {
-        return new PresentationEyes(uuidSeed(uuid), ItemStack.EMPTY, entity, snapshot, helper,
+        return new PresentationEyes(BehaviorSettings.presentationSeed(uuid), ItemStack.EMPTY, entity, snapshot, helper,
                 IntStream.range(0, helper.getHeadCount()).toArray(), false);
     }
 
@@ -142,10 +145,6 @@ public final class PresentationEyes {
     public static PresentationEyes placedHead(long seed, ResourceLocation entity, Snapshot snapshot,
                                               HeadInfo helper, int[] parts) {
         return new PresentationEyes(seed, ItemStack.EMPTY, entity, snapshot, helper, parts, true);
-    }
-
-    private static long uuidSeed(UUID uuid) {
-        return uuid.getMostSignificantBits() ^ Long.rotateLeft(uuid.getLeastSignificantBits(), 1);
     }
 
     /** Stamp this presentation as rendered during the current client tick. */
@@ -187,6 +186,7 @@ public final class PresentationEyes {
             prevY = owner.getY();
             prevZ = owner.getZ();
         }
+        active = ambientExpression;
         if (settings != behaviors) {
             settings = behaviors;
             boolean paired = false;
@@ -199,9 +199,8 @@ public final class PresentationEyes {
                 }
             }
             boolean hasPartner = paired;
-            pool = behaviors.pool().stream().filter(b -> hasPartner || b != EyeBehavior.CROSS_EYE).toList();
-            slotTicks = Math.max(behaviors.meanTicks(), pool.stream()
-                    .mapToInt(EyeBehavior::defaultDuration).max().orElse(1));
+            pool = behaviors.ambientPool(hasPartner);
+            slotTicks = behaviors.slotTicks(pool);
             scheduledSlot = Long.MIN_VALUE;
             active = null;
         }
@@ -211,10 +210,10 @@ public final class PresentationEyes {
             long slot = Math.floorDiv(gameTime, slotTicks);
             if (slot != scheduledSlot) {
                 scheduledSlot = slot;
-                RandomSource slotRand = RandomSource.create(seed ^ slot * SLOT_SEED_STEP);
-                slotBehavior = pool.get(slotRand.nextInt(pool.size()));
-                startsAt = slot * slotTicks + slotRand.nextInt(slotTicks - slotBehavior.defaultDuration() + 1);
-                behaviorSeed = slotRand.nextLong();
+                BehaviorSettings.AmbientSlot selected = behaviors.ambientSlot(seed, slot, slotTicks, pool);
+                slotBehavior = selected.behavior();
+                startsAt = selected.startsAt();
+                behaviorSeed = selected.seed();
                 active = null;
             }
             long elapsed = gameTime - startsAt;
@@ -228,6 +227,14 @@ public final class PresentationEyes {
             }
         }
 
+        ambientExpression = active;
+        if (reaction != null) {
+            active = reaction;
+            if (reaction.advance()) {
+                reaction = null;
+            }
+        }
+
         for (int part : parts) {
             for (int index = 0; index < eyes[part].length; index++) {
                 GooglyTracker.EyeInfo pupil = eyes[part][index];
@@ -237,6 +244,15 @@ public final class PresentationEyes {
                 pupil.step(influence, active, part, index, rand, yaw, pitch, mx, my, mz);
             }
         }
+    }
+
+    /** Install or catch up a server-owned hand reaction before its physics tick. */
+    public void react(EyeBehavior behavior, long seed, int elapsed) {
+        if (reaction == null || reactionSeed != seed || reaction.behavior != behavior) {
+            reaction = BehaviorInstance.start(behavior, helper, behavior.defaultDuration(), seed);
+            reactionSeed = seed;
+        }
+        reaction.age = elapsed;
     }
 
     /** Use screen-down rather than world-down when the GUI renderer captures pupil orientation. */

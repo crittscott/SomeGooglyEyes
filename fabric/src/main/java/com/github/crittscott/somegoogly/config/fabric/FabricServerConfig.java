@@ -1,14 +1,11 @@
 package com.github.crittscott.somegoogly.config.fabric;
 
-import com.electronwill.nightconfig.core.CommentedConfig;
-import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.server.ServerServices;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelResource;
 
-import java.io.IOException;
 import java.nio.file.Path;
 
 /**
@@ -45,15 +42,6 @@ public final class FabricServerConfig {
      * and adding any keys it lacks. Returns whether it loaded; a failure is logged.
      */
     public static boolean load(Path path) {
-        try {
-            String defaults = TomlConfig.render(ServerConfig.settings());
-            CommentedConfig values = TomlConfig.readOrCreate(path, defaults);
-            TomlConfig.apply(values, ServerConfig.settings());
-            TomlConfig.completeIfMissing(path, values, defaults);
-            return true;
-        } catch (IOException | IllegalArgumentException e) {
-            SomeGooglyCommon.LOGGER.error("Could not load server config {}; keeping the values already in effect", path, e);
-            return false;
-        }
+        return TomlConfig.load(path, ServerConfig.settings());
     }
 }
