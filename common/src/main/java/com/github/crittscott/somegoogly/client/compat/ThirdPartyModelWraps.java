@@ -18,8 +18,8 @@ import java.util.Map;
  *
  * <p>Each table is keyed by fully qualified model class name, so there is no compile-time or classloading
  * dependency on either mod. The branch is chosen by the render state's baby flag — the same age the
- * models themselves branch on. A {@code null} adult transform means that branch renders at identity (those
- * models already worked for adults); the Alex's Mobs entries are young-only and always carry a
+ * models themselves branch on. A {@code null} adult transform means that branch renders at identity;
+ * the Alex's Mobs entries are young-only and always carry a
  * {@code null} adult.
  *
  * <p><b>Alex's Mobs</b> (Citadel models): young-only whole-model scale + translate. {@code ModelKangaroo}'s

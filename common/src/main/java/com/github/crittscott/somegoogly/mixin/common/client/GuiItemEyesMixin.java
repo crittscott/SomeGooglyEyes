@@ -11,7 +11,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-/** Selects GUI animation before models are resolved; rendering states retain the selection. */
+/**
+ * Selects GUI animation and position-based identity for every GUI item before its models are resolved; the item's
+ * render state keeps the selection until its draw. No loader has a render event around a single GUI item.
+ */
 @Mixin(GuiGraphics.class)
 abstract class GuiItemEyesMixin {
 

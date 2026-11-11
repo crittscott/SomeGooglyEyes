@@ -30,8 +30,10 @@ public final class GuiItemEyeGameTestsLogic {
     }
 
     /**
-     * The UI clock advances expressions without world ticks. In game: view an animated inventory
-     * preview in a pausing screen; its eyes continue expressing while world entities are paused.
+     * Inventory icons keep their own clock, so their expressions continue while the world is paused. In game: in single
+     * player with {@code ambientBehaviorPool = ["somegoogly:blink"]} and {@code ambientMinTicks = 1} and {@code
+     * ambientMaxTicks = 1} in {@code somegoogly-server.toml}, open your inventory with a Googly Eye in it and press Esc
+     * to pause; the icon keeps blinking while mobs behind the menu stand still.
      */
     public static void guiEyesAdvanceWithoutWorldTicks(GameTestHelper helper) {
         GuiItemEyes.Simulations cache = new GuiItemEyes.Simulations();
@@ -52,8 +54,10 @@ public final class GuiItemEyeGameTestsLogic {
     }
 
     /**
-     * Hidden eyes and ordinary items retire their old presentation. In game: disable eye animation, then
-     * replace a visible eye with a diamond; restoring the eye produces a fresh live presentation.
+     * Only eye items get animated icons, and hiding eyes discards icon state, so showing them again starts fresh. In
+     * game: put a Googly Eye, a plain skull, and a diamond in your inventory; only the eye's pupil moves. Set {@code
+     * disableGooglyEyes = true} in {@code somegoogly-client.toml}; the icon is drawn plain. Set it back; the pupil
+     * moves again, starting from rest.
      */
     public static void guiEyesHonorEligibilityAndSwitch(GameTestHelper helper) {
         GuiItemEyes.Simulations cache = new GuiItemEyes.Simulations();
@@ -71,8 +75,9 @@ public final class GuiItemEyeGameTestsLogic {
     }
 
     /**
-     * Stack copies and count changes preserve a slot's simulation.
-     * In game: split and merge a stack in one slot; its pupil does not restart on each rendered frame.
+     * A slot keeps its eye's simulation when the stack is copied or its count changes, and the pupil falls toward
+     * screen-down. In game: with a stack of Googly Eyes in a slot, right-click to pick up half and put it back; the
+     * slot's pupil keeps moving smoothly instead of jumping back to rest.
      */
     public static void guiEyesKeepPresentationIdentity(GameTestHelper helper) {
         GuiItemEyes.Simulations cache = new GuiItemEyes.Simulations();
@@ -90,8 +95,8 @@ public final class GuiItemEyeGameTestsLogic {
     }
 
     /**
-     * A changed appearance replaces the simulation. In game: replace a normal eye in one slot
-     * with a glowing or dyed copy; its icon immediately shows the new appearance.
+     * A changed appearance gives a slot's eye a new simulation with the new look. In game: put a Googly Eye in a slot,
+     * then replace it with a dyed or glowing one; the icon shows the new color or glow at once.
      */
     public static void guiEyesReplaceChangedContents(GameTestHelper helper) {
         GuiItemEyes.Simulations cache = new GuiItemEyes.Simulations();
@@ -106,8 +111,9 @@ public final class GuiItemEyeGameTestsLogic {
     }
 
     /**
-     * Closing a view drops its trackers while a visible HUD presentation survives. Hidden icons expire.
-     * In game: close a chest, change screens, and scroll creative entries out of view; no old icon state leaks.
+     * Closing a screen frees its icons' state, the hotbar's icons keep theirs, and icons out of view expire. No visible
+     * in-game form, since a fresh pupil starts at rest where the old one settled; guards that closed chests, changed
+     * screens, and creative entries scrolled out of view leave no state behind.
      */
     public static void guiEyesRetireClosedAndHiddenViews(GameTestHelper helper) {
         GuiItemEyes.Simulations cache = new GuiItemEyes.Simulations();
@@ -134,8 +140,9 @@ public final class GuiItemEyeGameTestsLogic {
     }
 
     /**
-     * Neighboring copies and a carried stack have independent animation. In game:
-     * drag an eye across matching occupied slots; the cursor eye keeps its own expression while moving.
+     * Each slot and the carried stack animate on their own. In game: fill several slots with Googly Eyes and pick up
+     * another stack with the cursor; the slots blink at different times, and the carried eye keeps its own pupil and
+     * expressions as you drag it across the occupied slots.
      */
     public static void guiEyesSeparateSlotsAndCursor(GameTestHelper helper) {
         GuiItemEyes.Simulations cache = new GuiItemEyes.Simulations();
@@ -156,9 +163,11 @@ public final class GuiItemEyeGameTestsLogic {
     }
 
     /**
-     * GUI heads retain their actual layout and paired expressions, with GUI gravity on each pupil.
-     * In game: place eyed skulls in inventory and a chest; their configured pupils blink and cross-eye
-     * at normal icon size, independently of the same heads in frames.
+     * An eyed head in the inventory shows its mob's eyes in place, and both eyes can blink and cross, independent of
+     * the same head in a frame. In game: with {@code ambientBehaviorPool = ["somegoogly:blink",
+     * "somegoogly:cross_eye"]} in {@code somegoogly-server.toml}, put eyed skeleton skulls in your inventory and a
+     * chest and frame another; the icons show both eyes at normal icon size, blink and cross, and do so at different
+     * times from the framed skull.
      */
     public static void guiHeadUsesConfiguredLayout(GameTestHelper helper) {
         var definitions = ClientEyeConfigs.all();

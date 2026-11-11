@@ -13,7 +13,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractSkullBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SkullBlock;
@@ -192,11 +191,8 @@ public final class SkullEyeState {
     public static void set(SkullBlockEntity skull, Snapshot snapshot) {
         snapshot.write(((Holder) skull).somegoogly$get());
         skull.setChanged();
-        Level level = skull.getLevel();
-        if (level != null) {
-            BlockState state = skull.getBlockState();
-            level.sendBlockUpdated(skull.getBlockPos(), state, state, Block.UPDATE_CLIENTS);
-        }
+        BlockState state = skull.getBlockState();
+        skull.getLevel().sendBlockUpdated(skull.getBlockPos(), state, state, Block.UPDATE_CLIENTS);
     }
 
     /** Whether {@code variant} has eyes on the model's head part, the ones a head shows. */

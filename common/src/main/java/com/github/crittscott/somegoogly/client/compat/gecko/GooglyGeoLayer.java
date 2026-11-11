@@ -102,9 +102,8 @@ public class GooglyGeoLayer<T extends Entity & GeoAnimatable> extends GeoRenderL
         Frame frame = new Frame();
         frame.helper = helper;
         frame.tracker = data.tracker();
-        // Per-mob appearance overrides (dye / redstone / harvested-eye item / slimy eye), the same as the
-        // vanilla layer applies — without this, GeckoLib mobs would ignore item/NBT appearance changes.
-        // Mirrored onto the tracker by ClientNetworkHandler so this doesn't re-parse it from NBT every frame.
+        // Per-mob appearance overrides (dye / redstone / harvested-eye item / slimy eye) come from the tracker,
+        // which ClientNetworkHandler keeps current.
         frame.overrides = frame.tracker.overrides;
         frame.headBones = new GeoBone[helper.getHeadCount()];
         for (int h = 0; h < frame.headBones.length; h++) {

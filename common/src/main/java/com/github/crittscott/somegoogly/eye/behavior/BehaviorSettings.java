@@ -134,6 +134,7 @@ public record BehaviorSettings(boolean ambient, int minTicks, int maxTicks, List
         return on;
     }
 
+    /** Encode these settings for the client. */
     public void write(FriendlyByteBuf buffer) {
         buffer.writeBoolean(ambient);
         buffer.writeVarInt(minTicks);
