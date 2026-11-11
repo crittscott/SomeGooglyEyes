@@ -140,9 +140,8 @@ public final class VersionRangeGameTestsLogic {
     }
 
     /**
-     * A segment of any length compares as a number, so a date-stamped build sorts after an older one. In game:
-     * entries {@code "[1.0.202601010000,1.0.202701010000)"} (blue) and {@code "[1.1,1.2)"} (red) for a mod at
-     * version {@code 1.0.202606010000}; its mob spawns with blue irises.
+     * A segment of any length compares as a number, so a date-stamped build sorts after an older one. No in-game
+     * form with stock mods; guards version ordering for mods with date-stamped versions.
      */
     public static void longSegmentsCompareAsNumbers(GameTestHelper helper) {
         String range = "[1.0.202601010000,1.0.202701010000)";
@@ -153,9 +152,8 @@ public final class VersionRangeGameTestsLogic {
     }
 
     /**
-     * A loader name in a version says nothing about its age, so {@code 1.0.0-forge} is {@code 1.0.0}. In game:
-     * entries {@code "[1.0.0,1.1)"} (blue) and {@code "[0.9,1.0)"} (red) for a mod at version
-     * {@code 1.0.0-forge}; its mob spawns with blue irises and the log reports no fallback.
+     * A loader name in a version says nothing about its age, so {@code 1.0.0-forge} is {@code 1.0.0}. No in-game
+     * form with stock mods; guards version ordering for mods with loader-suffixed versions.
      */
     public static void loaderNamesDoNotChangeAVersion(GameTestHelper helper) {
         helper.assertTrue(VersionRangeMatcher.matches("[1.0.0,1.1)", "1.0.0-forge"), Component.literal("a suffixed lower bound should match"));

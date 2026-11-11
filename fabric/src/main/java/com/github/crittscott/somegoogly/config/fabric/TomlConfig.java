@@ -166,38 +166,13 @@ public final class TomlConfig {
 
     /** Render {@code settings} at their defaults as a commented file, section by section. */
     public static String render(List<ConfigValue<?>> settings) {
-        StringBuilder toml = new StringBuilder();
-        String section = null;
+        CommentedConfig config = TomlFormat.newConfig(LinkedHashMap::new);
         for (ConfigValue<?> setting : settings) {
-            if (!setting.section().equals(section)) {
-                if (section != null) {
-                    toml.append('\n');
-                }
-                section = setting.section();
-                toml.append(table(section)).append('\n');
-            }
-            for (String line : setting.comment().split("\n")) {
-                toml.append("# ").append(line).append('\n');
-            }
-            String value = setting instanceof ConfigValue.Parsed<?> list ? stringList(list.defaultValue())
-                    : String.valueOf(setting.defaultValue());
-            toml.append(setting.key()).append(" = ").append(value).append('\n');
+            List<String> path = List.of(setting.section(), setting.key());
+            config.set(path, setting.defaultValue());
+            config.setComment(path, " " + setting.comment().replace("\n", "\n "));
         }
-        return toml.toString();
-    }
-
-    /** Render {@code values} as a TOML array of escaped basic strings, for writing config files. */
-    public static String stringList(List<String> values) {
-        StringBuilder result = new StringBuilder("[");
-        for (int i = 0; i < values.size(); i++) {
-            if (i > 0) {
-                result.append(", ");
-            }
-            result.append('"')
-                    .append(values.get(i).replace("\\", "\\\\").replace("\"", "\\\""))
-                    .append('"');
-        }
-        return result.append(']').toString();
+        return new TomlWriter().writeToString(config);
     }
 
     /**
@@ -224,11 +199,6 @@ public final class TomlConfig {
             }
         }
         return strings;
-    }
-
-    /** Render a table header for {@code name}, quoting it when it isn't a bare TOML key, as Forge does. */
-    public static String table(String name) {
-        return name.matches("[A-Za-z0-9_-]+") ? "[" + name + "]" : "[\"" + name + "\"]";
     }
 
     private static void warnMismatch(String key, String expected, Object value, Object fallback) {

@@ -83,7 +83,7 @@ While holding either eye item, sneak and aim at a living entity, vanilla boat, o
 - supports eyes only at another life stage; or
 - has no configuration.
 
-The check reaches about 16 blocks. Client settings that hide eyes do not affect the result.
+The check answers for the crosshair target within reach. Client settings that hide eyes do not affect the result.
 
 ## Creative tab
 

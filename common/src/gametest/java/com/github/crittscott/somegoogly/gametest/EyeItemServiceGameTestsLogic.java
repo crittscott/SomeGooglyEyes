@@ -26,7 +26,10 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -37,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 /**
  * {@link EyeItemService#interact} (the Optometrist right-click harvest) and
@@ -212,6 +216,38 @@ public final class EyeItemServiceGameTestsLogic {
     }
 
     /**
+     * Loot that rolls enchantments by level from the random-loot set can put Optometrist on shears or a book but on
+     * nothing else. In game: run {@code /loot give @s loot minecraft:chests/end_city_treasure} many times; no tool,
+     * weapon, or armor piece comes with Optometrist.
+     */
+    public static void optometristRollsOnlyOntoShearsAndBooks(GameTestHelper helper) {
+        int level = 5; // within optometrist.json's min_cost..max_cost, so only the item decides
+        helper.assertTrue(rollsOptometrist(helper, level, new ItemStack(Items.SHEARS)),
+                Component.literal("shears can roll Optometrist"));
+        helper.assertTrue(rollsOptometrist(helper, level, new ItemStack(Items.BOOK)),
+                Component.literal("a book can roll Optometrist"));
+        for (ItemStack other : List.of(new ItemStack(Items.BOW), new ItemStack(Items.FISHING_ROD),
+                new ItemStack(Items.DIAMOND_SWORD), new ItemStack(Items.DIAMOND_CHESTPLATE))) {
+            helper.assertTrue(!rollsOptometrist(helper, level, other),
+                    Component.literal(other.getItem() + " cannot roll Optometrist"));
+        }
+        helper.succeed();
+    }
+
+    private static boolean rollsOptometrist(GameTestHelper helper, int level, ItemStack stack) {
+        TagKey<Enchantment> randomLoot = TagKey.create(Registries.ENCHANTMENT,
+                ResourceLocation.withDefaultNamespace("on_random_loot"));
+        Stream<Holder<Enchantment>> possible = helper.getLevel().registryAccess()
+                .lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(randomLoot).stream();
+        for (EnchantmentInstance result : EnchantmentHelper.getAvailableEnchantmentResults(level, stack, possible)) {
+            if (result.enchantment().is(ModContent.OPTOMETRIST)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Sneak + shears on air removes your own eyes for one durability, whether or not the shears carry
      * Optometrist; only a non-sneaking use is left to the vanilla item. The plain-shears self-damage
      * (a melee hit's worth of health) is not asserted here — fake players are inert to {@code hurt} —
@@ -219,9 +255,9 @@ public final class EyeItemServiceGameTestsLogic {
      * air with Optometrist shears; your eyes come off, one Googly Eye drops, the shears lose one durability,
      * and you take no damage. Repeat with plain shears and you also lose some health. Without sneaking, or
      * with {@code googlyEyesEnabled = false}, nothing happens.
-     * With a protection mod refusing item use, repeat with plain and Optometrist shears: neither use
-     * removes eyes, drops an eye, changes durability, or hurts the player. This callback-ordering
-     * check needs a connected client and the loader's item-use event; the service test below bypasses it.
+     * The refusal case has no in-game form without a protection mod; it guards that a loader's denial of
+     * item use leaves eyes, drops, durability, and health unchanged.
+     * Callback ordering needs a connected client; this service test bypasses the loader callback.
      */
     public static void selfRemoveWithShearsDropsAnEyeAndCostsDurability(GameTestHelper helper, Player player) {
         // The loader's shared fake player takes the server's default game mode, and creative skips both the

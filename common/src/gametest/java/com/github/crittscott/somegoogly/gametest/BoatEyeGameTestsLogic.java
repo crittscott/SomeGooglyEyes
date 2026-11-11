@@ -58,7 +58,11 @@ public final class BoatEyeGameTestsLogic {
     private BoatEyeGameTestsLogic() {
     }
 
-    /** In game: place every wood's boat and chest boat; they start eyeless and retain eyes only after application. */
+    /**
+     * Every wood's boat and chest boat starts without eyes and has a bundled definition; a bamboo raft takes its eyes
+     * on its raft attachment and every other wood on its hull. In game: place a boat and a chest boat of each wood;
+     * none has eyes. Right-click each with a Slimy Eye; each gains a pair of eyes, one on each side.
+     */
     public static void boatsBeginEyelessAndSelectGeometry(GameTestHelper helper) {
         for (var type : BoatEyeLayout.TYPES) {
             AbstractBoat boat = Objects.requireNonNull(type.create(helper.getLevel(), EntitySpawnReason.LOAD));
@@ -75,7 +79,14 @@ public final class BoatEyeGameTestsLogic {
         helper.succeed();
     }
 
-    /** In game: a datapack's paired eyes cross; the bundled opposite-side eyes and unpaired eyes never cross. */
+    /**
+     * Boat eyes cross only with a partner their definition names; the bundled eyes, one on each side of the hull, never
+     * do, nor does a lone eye. In game: in {@code somegoogly-server.toml} set {@code ambientBehaviorPool =
+     * ["somegoogly:cross_eye"]}, {@code ambientMinTicks = 20}, and {@code ambientMaxTicks = 40}, then {@code /reload};
+     * an eyed boat's eyes never cross. Add a datapack {@code data/minecraft/eyes/boat.json} whose hull has two eyes on
+     * the same side, each naming the other as its {@code crossTarget}, {@code /reload}, and give a new boat eyes; its
+     * pupils turn toward each other.
+     */
     public static void boatsCrossOnlyWithConfiguredPartners(GameTestHelper helper) {
         AbstractBoat boat = Objects.requireNonNull(EntityType.OAK_BOAT.create(helper.getLevel(), EntitySpawnReason.LOAD));
         var source = ServerEyeConfigs.get(EntityType.getKey(EntityType.OAK_BOAT), false);
@@ -132,7 +143,11 @@ public final class BoatEyeGameTestsLogic {
         helper.succeed();
     }
 
-    /** In game: pause beside an eyed boat, look away, then return; pause retains pupils and unseen boats retire. */
+    /**
+     * A boat's pupils are simulated only while it is drawn. One out of view for a moment starts afresh when seen again,
+     * at the current expression rather than replaying missed ones, and a removed boat keeps none. In game: push an eyed
+     * boat so its pupils swing, look away for a second or two, and look back; the pupils start again from rest.
+     */
     public static void boatsEvictIdleSimulations(GameTestHelper helper) {
         var definitions = ClientEyeConfigs.all();
         var behaviors = ClientEyeConfigs.behaviors();
@@ -175,7 +190,12 @@ public final class BoatEyeGameTestsLogic {
         helper.succeed();
     }
 
-    /** In game: with ambient expressions off, row and turn an eyed boat; its pupils lag motion and settle under gravity. */
+    /**
+     * Boat pupils fall toward world-down and react to the boat's movement and turning. In game: set {@code
+     * ambientBehaviors = false} in {@code somegoogly-server.toml} and {@code /reload}, then row an eyed boat forward
+     * and turn it; the pupils swing against the motion, the two sides' pupils swing opposite ways, and both settle
+     * downward when the boat stops.
+     */
     public static void boatsFollowGravityAndOwnerMotion(GameTestHelper helper) {
         var definitions = ClientEyeConfigs.all();
         var behaviors = ClientEyeConfigs.behaviors();
@@ -226,7 +246,12 @@ public final class BoatEyeGameTestsLogic {
         helper.succeed();
     }
 
-    /** In game: Optometrist shears remove a boat's eyes, drop their appearance, and cost one durability. */
+    /**
+     * Optometrist shears take a boat's eyes as one Googly Eye that keeps their appearance, for one durability, without
+     * opening a chest boat. In game: give a bamboo chest raft eyes with a dyed, glowing Slimy Eye, then right-click it
+     * with Optometrist shears in your offhand; the eyes vanish, one Googly Eye drops with that iris and glow and a
+     * white cornea, the shears lose one durability, and the chest stays closed.
+     */
     public static void boatsHarvestOneEye(GameTestHelper helper, Player player) {
         AbstractBoat boat = spawn(helper, EntityType.BAMBOO_CHEST_RAFT);
         var appearance = AppearanceOverride.EMPTY.withIrisColor(new EyeColor(0.3F, 0.7F, 0.2F)).withGlow(true);
@@ -250,7 +275,13 @@ public final class BoatEyeGameTestsLogic {
         helper.succeed();
     }
 
-    /** In game: let two eyed boats blink, pause, then resume after hiding one; pupils remain independent. */
+    /**
+     * Each boat's pupils and expressions are its own, expressions follow world time without catching up on missed ones,
+     * and turning ambient expressions off stops them but not the pupils' physics. In game: with {@code
+     * ambientBehaviorPool = ["somegoogly:blink"]} in {@code somegoogly-server.toml}, place two eyed boats side by side;
+     * they blink at different times, and pushing one moves only its pupils. Set {@code ambientBehaviors = false} and
+     * {@code /reload}; blinking stops while pupils still swing when a boat moves.
+     */
     public static void boatsHaveIndependentAmbientAndPhysics(GameTestHelper helper) {
         AbstractBoat boat = Objects.requireNonNull(EntityType.OAK_BOAT.create(helper.getLevel(), EntitySpawnReason.LOAD));
         var config = ServerEyeConfigs.get(EntityType.getKey(EntityType.OAK_BOAT), false);
@@ -275,7 +306,10 @@ public final class BoatEyeGameTestsLogic {
         helper.succeed();
     }
 
-    /** In game: apply eyes in creative; the Slimy Eye remains in your hand. */
+    /**
+     * Giving a boat eyes in creative spends no Slimy Eye. In game: in creative, right-click a boat with a Slimy Eye;
+     * the boat gains eyes and the stack keeps its count.
+     */
     public static void boatsHonorCreativeConsumption(GameTestHelper helper, Player player) {
         boolean creative = player.getAbilities().instabuild;
         try {
@@ -292,7 +326,14 @@ public final class BoatEyeGameTestsLogic {
         helper.succeed();
     }
 
-    /** In game: turn off the mod or disable the boat definition; using eyes or plain shears leaves the boat alone. */
+    /**
+     * With the mod switched off, or with no boat definition loaded, a Slimy Eye leaves a boat to its vanilla use and is
+     * not spent; plain shears never take a boat's eyes. In game: set {@code googlyEyesEnabled = false} in {@code
+     * somegoogly-server.toml} and {@code /reload}, then right-click a boat with a Slimy Eye; you board it and keep the
+     * eye. Set it back and add a datapack {@code data/minecraft/eyes/boat.json} with {@code "enabled": false}, {@code
+     * /reload}, and repeat; same result. Right-click an eyed boat with plain shears; you board it, its eyes stay, and
+     * the shears lose no durability.
+     */
     public static void boatsHonorInteractionGates(GameTestHelper helper, Player player) {
         AbstractBoat boat = spawn(helper, EntityType.OAK_BOAT);
         ItemStack slimy = new ItemStack(ModContent.SLIMY_EYE.get(), 2);
@@ -321,7 +362,13 @@ public final class BoatEyeGameTestsLogic {
         helper.succeed();
     }
 
-    /** In game: apply a dyed, glowing Slimy Eye in either hand, then try another; only the first is consumed. */
+    /**
+     * A Slimy Eye in either hand gives a boat or chest boat eyes with the eye's whole appearance and is spent once; an
+     * eyed boat refuses another and keeps its vanilla use. In game: dye a Slimy Eye and craft it with glowstone, then
+     * right-click a boat with it from your main hand; the boat's eyes show that iris and glow and one eye is spent.
+     * Right-click again with another Slimy Eye; you board the boat and nothing is spent. Repeat from the offhand and on
+     * a chest boat.
+     */
     public static void boatsReceiveAppearanceAndRefuseRestyling(GameTestHelper helper, Player player) {
         for (var type : List.of(EntityType.OAK_BOAT, EntityType.OAK_CHEST_BOAT)) {
             AbstractBoat boat = spawn(helper, type);
@@ -347,7 +394,11 @@ public final class BoatEyeGameTestsLogic {
         helper.succeed();
     }
 
-    /** In game: try Slimy Eyes and Optometrist shears in spectator mode; the boat, tools, and stacks stay unchanged. */
+    /**
+     * Spectators can't give a boat eyes or take them. No in-game form, since a spectator's click never uses the held
+     * item; guards that the loaders' entity-use hooks, which can fire before vanilla's spectator test, change nothing
+     * for a spectator: no eyes, no spent item, no durability, no drop.
+     */
     public static void boatsRefuseSpectatorMutation(GameTestHelper helper) {
         ServerPlayer spectator = new ServerPlayer(helper.getLevel().getServer(), helper.getLevel(),
                 new GameProfile(UUID.randomUUID(), "boat_spectator"), ClientInformation.createDefault()) {
@@ -376,7 +427,13 @@ public final class BoatEyeGameTestsLogic {
         helper.succeed();
     }
 
-    /** In game: nearby boats keep separate simulations; restyling, hiding, resource reload, and unloading retire old pupils. */
+    /**
+     * A boat keeps its pupils while nothing about it changes and starts afresh when its appearance or wood changes, it
+     * unloads, resources reload, or the world changes; an invisible boat, and every boat while the mod is switched off,
+     * shows no eyes. In game: push an eyed boat so its pupils swing, then press F3+T; they start again from rest. Run
+     * {@code /data merge entity @e[type=boat,limit=1,sort=nearest] {Invisible:1b}}; its eyes disappear. Set {@code
+     * googlyEyesEnabled = false} in {@code somegoogly-server.toml} and {@code /reload}; no boat shows eyes.
+     */
     public static void boatsReplaceAndClearSimulations(GameTestHelper helper) {
         var definitions = ClientEyeConfigs.all();
         var behaviors = ClientEyeConfigs.behaviors();
@@ -423,7 +480,12 @@ public final class BoatEyeGameTestsLogic {
         helper.succeed();
     }
 
-    /** In game: switch boat definitions between hull/raft-only and disabled; only configured geometry accepts eyes. */
+    /**
+     * A boat takes eyes only when its definition is enabled and puts eyes on the boat's own attachment: {@code raft}
+     * for bamboo, {@code hull} for other woods. In game: add a datapack {@code data/minecraft/eyes/boat.json} copied
+     * from the bundled one with only its {@code hull} head, and {@code /reload}; an oak boat takes a Slimy Eye and a
+     * bamboo raft refuses it. Set {@code "enabled": false} and {@code /reload}; neither takes one.
+     */
     public static void boatsRequireMatchingEnabledAttachments(GameTestHelper helper) {
         AbstractBoat boat = Objects.requireNonNull(EntityType.OAK_BOAT.create(helper.getLevel(), EntitySpawnReason.LOAD));
         var config = ServerEyeConfigs.get(EntityType.getKey(EntityType.OAK_BOAT), false);
@@ -442,7 +504,11 @@ public final class BoatEyeGameTestsLogic {
         helper.succeed();
     }
 
-    /** In game: eyed boats retain their layout and appearance through saving and chunk reload, including disabled worlds. */
+    /**
+     * A boat's eyes, placement, and appearance survive saving and reach clients unchanged. In game: give a bamboo raft
+     * and a bamboo chest raft eyes with a dyed Slimy Eye, then quit and reopen the world; both show the same eyes in
+     * the same places with the same iris.
+     */
     public static void boatsSaveAndSynchronizeSnapshots(GameTestHelper helper) {
         for (var type : List.of(EntityType.OAK_BOAT, EntityType.OAK_CHEST_BOAT, EntityType.BAMBOO_RAFT, EntityType.BAMBOO_CHEST_RAFT)) {
             AbstractBoat original = spawn(helper, type);

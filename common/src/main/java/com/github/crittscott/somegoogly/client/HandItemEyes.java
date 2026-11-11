@@ -90,6 +90,7 @@ public final class HandItemEyes {
         }
     }
 
+    /** Drop every held-item simulation; held eyes drawn afterward start fresh. */
     public static void clear() {
         SIMULATIONS.clear();
     }
@@ -111,10 +112,12 @@ public final class HandItemEyes {
         return eyes == null ? PresentationEyes.Draw.NONE : new PresentationEyes.Draw(eyes, minecraft.getDeltaTracker().getGameTimeDeltaPartialTick(false));
     }
 
+    /** Release both hands' simulations for {@code holder}, which has left the client world. */
     public static void remove(UUID holder) {
         SIMULATIONS.remove(holder);
     }
 
+    /** Advance held eyes on world time, or drop them all while there is no world or eyes are hidden. */
     public static void tick() {
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.level == null || !ClientEyeConfigs.eyesVisible()) {

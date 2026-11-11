@@ -208,7 +208,7 @@ public final class GooglyServerCommands {
             return 0;
         }
         living.teleportTo(living.getX() + dx, living.getY() + dy, living.getZ() + dz);
-        PickerGate.tellSuccess(source, "somegoogly.command.picker.mob_moved",
+        PickerGate.tellSuccess(source, true, "somegoogly.command.picker.mob_moved",
                 compact(living.getX()), compact(living.getY()),
                 compact(living.getZ()));
         return 1;
@@ -229,7 +229,7 @@ public final class GooglyServerCommands {
         living.setYRot(yaw);
         living.setYHeadRot(yaw);
         living.setYBodyRot(yaw);
-        PickerGate.tellSuccess(source, "somegoogly.command.picker.mob_rotated", angle(azimuth));
+        PickerGate.tellSuccess(source, true, "somegoogly.command.picker.mob_rotated", angle(azimuth));
         return 1;
     }
 

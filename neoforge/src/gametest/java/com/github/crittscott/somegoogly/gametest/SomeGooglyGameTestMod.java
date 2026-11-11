@@ -80,6 +80,7 @@ public final class SomeGooglyGameTestMod {
         functions.register("eyeconfiglimitsgametests/variant_weight_must_be_nonnegative", () -> EyeConfigLimitsGameTests::variantWeightMustBeNonnegative);
         functions.register("eyeitemservicegametests/optometrist_interact_harvests_eyes_for_one_durability", () -> EyeItemServiceGameTests::optometristInteractHarvestsEyesForOneDurability);
         functions.register("eyeitemservicegametests/optometrist_interact_passes_when_not_applicable", () -> EyeItemServiceGameTests::optometristInteractPassesWhenNotApplicable);
+        functions.register("eyeitemservicegametests/optometrist_rolls_only_onto_shears_and_books", () -> EyeItemServiceGameTests::optometristRollsOnlyOntoShearsAndBooks);
         functions.register("eyeitemservicegametests/self_remove_with_shears_drops_an_eye_and_costs_durability", () -> EyeItemServiceGameTests::selfRemoveWithShearsDropsAnEyeAndCostsDurability);
         functions.register("eyeitemservicegametests/another_players_eyes_follow_the_pvp_rules", () -> EyeItemServiceGameTests::anotherPlayersEyesFollowThePvpRules);
         functions.register("eyeitemservicegametests/harvest_breaking_shears_reports_them", () -> EyeItemServiceGameTests::harvestBreakingShearsReportsThem);

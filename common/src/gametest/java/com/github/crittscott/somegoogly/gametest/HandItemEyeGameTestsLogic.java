@@ -43,10 +43,11 @@ public final class HandItemEyeGameTestsLogic {
     }
 
     /**
-     * World gravity ignores camera rotation and item display scale. In game: disable ambient expressions,
-     * tilt a held eye, and switch both F5 views; the pupil falls toward world-down, not camera-down. A new
-     * simulation starts at rest. In game: look away from a framed eye for a second and back; its pupil is
-     * already down rather than dropping from the center.
+     * A held eye's pupil falls toward world-down whatever the camera angle or the item's display scale, a new pupil
+     * starts already resting toward the ground, and an eye facing straight up rests centered. In game: set {@code
+     * ambientBehaviors = false} in {@code somegoogly-server.toml} and {@code /reload}, hold a Googly Eye, and switch to
+     * both third-person views with F5; as you look up and down the pupil stays toward the ground. Switch the eye away
+     * and back; its pupil is already down rather than dropping from the center.
      */
     public static void handEyesFollowWorldGravityAcrossViews(GameTestHelper helper) {
         var localToWorld = new Matrix3f().rotationZ((float) (Math.PI / 2D)).scale(4F);
@@ -75,8 +76,10 @@ public final class HandItemEyeGameTestsLogic {
     }
 
     /**
-     * Holder movement drives third-person pupil physics. In game: disable ambient expressions, switch to
-     * F5, and start/stop walking or jumping; the pupils lag acceleration and settle after movement stops.
+     * A held eye's pupil reacts to its holder walking, jumping, and turning, and a holder who reappears far away does
+     * not jolt it. In game: set {@code ambientBehaviors = false} in {@code somegoogly-server.toml} and {@code /reload},
+     * hold a Googly Eye, press F5, and start and stop walking or jump; the pupil lags each change of speed and settles
+     * when you stop.
      */
     public static void handEyesReactToHolderMotion(GameTestHelper helper) {
         HandItemEyes.Simulations cache = new HandItemEyes.Simulations();
@@ -112,8 +115,10 @@ public final class HandItemEyeGameTestsLogic {
     }
 
     /**
-     * Replacement and eligibility gates retire the former hand state. In game: swap a held eye for a
-     * glowing copy, a plain skull, and an ordinary item; no previous layout or color persists.
+     * A held eye keeps its pupil when the stack's count changes and starts a new one when its appearance changes or
+     * eyes are shown again; plain heads, ordinary items, and empty hands have none. In game: in third person, hold a
+     * stack of Googly Eyes, drop one, and watch the pupil keep moving; swap to a glowing eye, then a plain skull, then
+     * a diamond; only the eyes show pupils, each with its own look.
      */
     public static void handEyesReplaceContentsAndHonorGates(GameTestHelper helper) {
         HandItemEyes.Simulations cache = new HandItemEyes.Simulations();
@@ -140,8 +145,9 @@ public final class HandItemEyeGameTestsLogic {
     }
 
     /**
-     * Unloading, hidden hands, and resource/world resets drop disposable state. In game: hide a holder,
-     * unload its chunk, reload resources, and reconnect; no old hand state remains attached.
+     * A holder that unloads drops both hands' eye state, unseen hands expire, and resource or world resets clear it
+     * all. No visible in-game form, since a fresh pupil starts at rest where the old one settled; guards that removed
+     * and unseen holders leave no state behind.
      */
     public static void handEyesRetireUnloadedAndHiddenHolders(GameTestHelper helper) {
         HandItemEyes.Simulations cache = new HandItemEyes.Simulations();
@@ -169,8 +175,9 @@ public final class HandItemEyeGameTestsLogic {
     }
 
     /**
-     * Holders and logical hands have independent pupils and expression seeds. In game: F5 with eyes in
-     * both hands beside another player holding eyes; all presentations animate independently.
+     * Each holder and each hand has its own pupil and expression schedule, and held pupils use world gravity. In game:
+     * with {@code ambientBehaviorPool = ["somegoogly:blink"]} in {@code somegoogly-server.toml}, hold Googly Eyes in
+     * both hands beside another player who holds one, and press F5; all three eyes blink at different times.
      */
     public static void handEyesSeparateHoldersAndHands(GameTestHelper helper) {
         HandItemEyes.Simulations cache = new HandItemEyes.Simulations();
@@ -188,8 +195,11 @@ public final class HandItemEyeGameTestsLogic {
     }
 
     /**
-     * The world clock advances ambient expressions and pause freezes them. In game: pause in F5,
-     * resume, and compare with inventory animation; only the world presentation freezes.
+     * Held eyes follow world time: pausing freezes their expressions, resuming continues them, and turning ambient
+     * expressions off stops them while the pupils keep moving. In game: in single player with {@code
+     * ambientBehaviorPool = ["somegoogly:blink"]} and {@code ambientMinTicks = 1} and {@code ambientMaxTicks = 1} in
+     * {@code somegoogly-server.toml}, hold a Googly Eye in F5 and press Esc; the held eye stops mid-blink while the
+     * same eye in your inventory keeps blinking.
      */
     public static void handEyesUseWorldClockAndPause(GameTestHelper helper) {
         HandItemEyes.Simulations cache = new HandItemEyes.Simulations();
@@ -213,8 +223,10 @@ public final class HandItemEyeGameTestsLogic {
     }
 
     /**
-     * Eyed head items retain their configured layout and paired ambient pool. In game: hold an eyed
-     * skeleton skull in F5, shorten the ambient interval, and select cross-eye; its pupils cross.
+     * A held eyed head shows its mob's eyes in place, and both can cross. In game: set {@code ambientBehaviorPool =
+     * ["somegoogly:cross_eye"]} and {@code ambientMinTicks = 1} and {@code ambientMaxTicks = 1} in {@code
+     * somegoogly-server.toml}, {@code /reload}, then hold an eyed skeleton skull and press F5; its pupils cross toward
+     * each other.
      */
     public static void handHeadUsesConfiguredLayout(GameTestHelper helper) {
         var definitions = ClientEyeConfigs.all();

@@ -85,33 +85,28 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<Js
                 skippedModNotInstalled++;
                 continue;
             }
-            try {
-                // Every field is required, so a typo'd datapack fails to parse rather than quietly
-                // decoding to defaults — say which file and which field rather than dropping it silently.
-                ConfigFile file = ConfigFile.CODEC.parse(JsonOps.INSTANCE, entry.getValue())
-                        .resultOrPartial(error -> SomeGooglyCommon.LOGGER.error(
-                                "Invalid eye config {}: {}", entry.getKey(), error))
-                        .orElse(null);
-                if (file == null) {
-                    failedParse++;
-                    continue;
-                }
-                RuntimeConfigSet config = selectForLoadedVersion(entry.getKey(), file, loadedVersion.get(), fallbacks);
-                if (!config.hasAnyConfig()) {
-                    SomeGooglyCommon.LOGGER.warn("Ignoring eye config {}: no usable entry", entry.getKey());
-                    rejected++;
-                    continue;
-                }
-                EyeConfigLimits.Issue error = EyeConfigLimits.validateSync(Map.of(entry.getKey(), config));
-                if (error == null) {
-                    selected.put(entry.getKey(), config);
-                } else {
-                    rejected++;
-                    SomeGooglyCommon.LOGGER.error("Ignoring unsafe eye config {}: {}", entry.getKey(), error.diagnostic());
-                }
-            } catch (Exception e) {
+            // Every field is required, so a typo'd datapack fails to parse rather than quietly
+            // decoding to defaults — say which file and which field rather than dropping it silently.
+            ConfigFile file = ConfigFile.CODEC.parse(JsonOps.INSTANCE, entry.getValue())
+                    .resultOrPartial(error -> SomeGooglyCommon.LOGGER.error(
+                            "Invalid eye config {}: {}", entry.getKey(), error))
+                    .orElse(null);
+            if (file == null) {
                 failedParse++;
-                SomeGooglyCommon.LOGGER.error("Failed to parse eye config {}", entry.getKey(), e);
+                continue;
+            }
+            RuntimeConfigSet config = selectForLoadedVersion(entry.getKey(), file, loadedVersion.get(), fallbacks);
+            if (!config.hasAnyConfig()) {
+                SomeGooglyCommon.LOGGER.warn("Ignoring eye config {}: no usable entry", entry.getKey());
+                rejected++;
+                continue;
+            }
+            EyeConfigLimits.Issue error = EyeConfigLimits.validateSync(Map.of(entry.getKey(), config));
+            if (error == null) {
+                selected.put(entry.getKey(), config);
+            } else {
+                rejected++;
+                SomeGooglyCommon.LOGGER.error("Ignoring unsafe eye config {}: {}", entry.getKey(), error.diagnostic());
             }
         }
         int fallbackTotal = 0;

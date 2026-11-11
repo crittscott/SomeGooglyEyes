@@ -14,7 +14,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
 /**
- * Applies the five server-to-client payloads on the client game thread. Loader payload registration runs on
+ * Applies the server-to-client payloads on the client game thread. Loader payload registration runs on
  * both distributions, so it reaches these handlers only from inside lambda bodies, which link this class when a
  * payload arrives rather than when the handler is registered.
  */

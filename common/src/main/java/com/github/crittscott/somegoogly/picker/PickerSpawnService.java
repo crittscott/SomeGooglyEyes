@@ -408,7 +408,7 @@ public final class PickerSpawnService {
             announce(source, "somegoogly.command.spawnall.skipped", skipped);
         }
         if (filtering && !dropped.isEmpty()) {
-            PickerGate.tellSuccess(source, "somegoogly.command.spawnall.dropped_header", dropped.size());
+            PickerGate.tellSuccess(source, false, "somegoogly.command.spawnall.dropped_header", dropped.size());
             for (Component entry : dropped) {
                 source.sendSuccess(() -> Component.translatable("somegoogly.command.spawnall.dropped_entry", entry), false);
             }

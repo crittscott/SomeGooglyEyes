@@ -118,10 +118,12 @@ public final class GuiItemEyes {
         PRESENTATIONS.push(new Key(view, kind, index, 0, 0));
     }
 
+    /** Drop every GUI icon simulation; icons drawn afterward start fresh. */
     public static void clear() {
         SIMULATIONS.clear();
     }
 
+    /** Close the innermost open presentation, restoring the one that encloses it. */
     public static void endPresentation() {
         PRESENTATIONS.pop();
     }

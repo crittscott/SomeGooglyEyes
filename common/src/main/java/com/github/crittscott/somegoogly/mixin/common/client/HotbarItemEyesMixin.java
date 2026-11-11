@@ -7,7 +7,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-/** The vanilla hotbar supplies a stable per-slot item seed, independent of screen position. */
+/**
+ * Brackets the hotbar's draw with a fixed hotbar presentation key, so its items' eyes are keyed by vanilla's
+ * per-slot item seed rather than by screen position. One Mixin serves every loader; each loader's HUD-layer hook
+ * would have to wrap the same draw separately.
+ */
 @Mixin(Gui.class)
 abstract class HotbarItemEyesMixin {
 

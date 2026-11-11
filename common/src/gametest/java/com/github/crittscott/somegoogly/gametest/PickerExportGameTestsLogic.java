@@ -151,7 +151,8 @@ public final class PickerExportGameTestsLogic {
     /**
      * Export-all can replace both ages and preserve an empty disabled bucket; a newly configured
      * species needs no prior definition. In game: author both ages, export-all, and inspect both
-     * entries; repeat for a previously unconfigured species. An existing disabled any entry remains.
+     * entries; repeat for a previously unconfigured species. An existing entry with {@code "age": "any"} and
+     * {@code "enabled": false} remains in the exported file.
      */
     public static void exportOverlayCombinesDraftAges(GameTestHelper helper) {
         RuntimeConfigSet base = new RuntimeConfigSet();

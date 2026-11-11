@@ -277,7 +277,6 @@ public final class PickerState {
 
     /** The variant currently being edited (never null; the list always holds at least one). */
     public static DraftVariant currentVariant() {
-        variantIndex = Math.max(0, Math.min(variantIndex, variants.size() - 1));
         return variants.get(variantIndex);
     }
 
@@ -622,14 +621,14 @@ public final class PickerState {
         return true;
     }
 
-    /** Thickness multiplier along the look axis (1 = standard; clamped >= 0). */
+    /** Thickness multiplier along the look axis (1 = standard). */
     public static void setDepth(float v) {
-        currentEye.depth = Math.max(0, v);
+        currentEye.depth = v;
     }
 
-    /** Set the current draft eye's overall scale, clamped to {@code >= 0}. */
+    /** Set the current draft eye's overall scale. */
     public static void setEyeScale(float v) {
-        currentEye.eyeScale = Math.max(0, v);
+        currentEye.eyeScale = v;
     }
 
     /** Set whether the current draft eye renders full-bright. */
@@ -642,9 +641,9 @@ public final class PickerState {
         currentEye.irisColors = new float[]{r, g, b};
     }
 
-    /** Set the current draft eye's iris scale, clamped to {@code >= 0}. */
+    /** Set the current draft eye's iris scale. */
     public static void setIrisScale(float v) {
-        currentEye.irisScale = Math.max(0, v);
+        currentEye.irisScale = v;
     }
 
     /**
@@ -687,9 +686,9 @@ public final class PickerState {
         azimuth.ifPresent(v -> currentEye.azimuth = v);
     }
 
-    /** The CLI {@code variant weight <w>} op: set the current variant's relative weight (clamped >= 0). */
+    /** The CLI {@code variant weight <w>} op: set the current variant's relative weight. */
     public static void setVariantWeight(double w) {
-        currentVariant().weight = Math.max(0, w);
+        currentVariant().weight = w;
     }
 
     private static void syncPartIndex() {
