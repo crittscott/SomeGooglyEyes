@@ -38,19 +38,13 @@ public final class LookTarget {
                 e -> accepts.test(e) && e.isPickable() && !e.isSpectator(), distance);
     }
 
-    /** The nearest living-entity intersection before any blocking surface, or {@code null}. */
-    @Nullable
-    public static EntityHitResult livingHitInCrosshair(Player player, double reach) {
-        return hitInCrosshair(player, reach, entity -> entity instanceof LivingEntity);
-    }
-
     /**
      * The pickable, non-spectator living entity under {@code player}'s crosshair within {@code reach} blocks, or
      * {@code null}.
      */
     @Nullable
     public static LivingEntity livingInCrosshair(Player player, double reach) {
-        EntityHitResult hit = livingHitInCrosshair(player, reach);
+        EntityHitResult hit = hitInCrosshair(player, reach, entity -> entity instanceof LivingEntity);
         return hit != null && hit.getEntity() instanceof LivingEntity living ? living : null;
     }
 }

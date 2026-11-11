@@ -4,6 +4,7 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
+import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.github.crittscott.somegoogly.server.ServerServices;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -22,10 +23,10 @@ import java.util.Map;
  * (see {@link ServerServices#onLivingEntityLoaded}) and to build the sync payload sent to clients.
  *
  * <p>Kept separate from {@link ClientEyeConfigs} so the integrated server and client don't share
- * one static map in single-player. Installed maps are immutable snapshots; their mutable model
- * values are owned by this store and must be treated as read-only after installation. Each snapshot
- * carries its sets' NBT encoding, which is both the sync payload content and the identity a reload
- * compares to decide whether anything changed.
+ * one static map in single-player. The installed set is held as the immutable sync packet built for it; its
+ * mutable model values are owned by this store and must be treated as read-only after installation. The packet
+ * carries the sets' NBT encoding, which is the identity a reload compares to decide whether anything changed,
+ * and its already-serialized bytes, which every joining player and every broadcast reuses.
  */
 public final class ServerEyeConfigs {
 
@@ -38,13 +39,9 @@ public final class ServerEyeConfigs {
     public static final ResourceLocation ENDER_DRAGON =
             EntityType.getKey(EntityType.ENDER_DRAGON);
 
-    private record Installed(Map<ResourceLocation, RuntimeConfigSet> configs,
-                             Map<ResourceLocation, CompoundTag> encoded) {
-    }
+    private static final EyeConfigSyncPacket EMPTY = new EyeConfigSyncPacket(Map.of(), Map.of());
 
-    private static final Installed EMPTY = new Installed(Map.of(), Map.of());
-
-    private static volatile Installed installed = EMPTY;
+    private static volatile EyeConfigSyncPacket installed = EMPTY;
 
     private ServerEyeConfigs() {
     }
@@ -55,11 +52,6 @@ public final class ServerEyeConfigs {
      */
     public static Map<ResourceLocation, RuntimeConfigSet> all() {
         return installed.configs();
-    }
-
-    /** The installed sets encoded through {@link RuntimeConfigSet#CODEC}; read-only, like {@link #all}. */
-    public static Map<ResourceLocation, CompoundTag> encoded() {
-        return installed.encoded();
     }
 
     /**
@@ -108,17 +100,26 @@ public final class ServerEyeConfigs {
      * set's, so a {@code /reload} for an unrelated datapack leaves the installed snapshot, and therefore
      * every client's copy, alone. Returns whether a swap happened.
      */
-    public static boolean replaceIfChanged(Map<ResourceLocation, RuntimeConfigSet> next,
-                                           Map<ResourceLocation, CompoundTag> nextEncoded) {
-        if (nextEncoded.equals(installed.encoded())) {
+    public static boolean replaceIfChanged(EyeConfigSyncPacket next) {
+        if (next.encoded().equals(installed.encoded())) {
             return false;
         }
-        installed = new Installed(Map.copyOf(next), Map.copyOf(nextEncoded));
+        installed = next;
         return true;
     }
 
     /** Drop the installed set so nothing carries over to the next world. */
     public static void onServerStopping() {
         installed = EMPTY;
+    }
+
+    /** The installed set as the packet every client receives. */
+    public static EyeConfigSyncPacket packet() {
+        return installed;
+    }
+
+    /** The sync packet for {@code configs}, serialized once, to check and then install. */
+    public static EyeConfigSyncPacket packetFor(Map<ResourceLocation, RuntimeConfigSet> configs) {
+        return new EyeConfigSyncPacket(configs, encode(configs));
     }
 }

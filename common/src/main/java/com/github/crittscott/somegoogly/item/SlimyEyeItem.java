@@ -1,6 +1,5 @@
 package com.github.crittscott.somegoogly.item;
 
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -40,12 +39,6 @@ public class SlimyEyeItem extends GooglyEyeItem {
         if (!player.isShiftKeyDown()) {
             return InteractionResult.PASS;
         }
-        if (level.isClientSide()) {
-            return InteractionResult.SUCCESS;
-        }
-        return EyeItemService.applySlimyEye(player.getItemInHand(hand), (ServerPlayer) player, player)
-                .consumesAction()
-                ? InteractionResult.CONSUME
-                : InteractionResult.FAIL;
+        return EyeItemService.applySlimyEye(player.getItemInHand(hand), player, player);
     }
 }

@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.client;
 
+import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
@@ -22,8 +23,9 @@ import javax.annotation.Nullable;
  * {@link BehaviorSettings}. One behavior plays at a time, as on a mob. Cross-eye, which needs a partner eye, and
  * the ongoing behaviors don't apply.
  *
- * <p>It steps only while the holder holds a Googly Eye, and starts at rest, with nothing playing, each time
- * one is picked up or the holder changes.
+ * <p>It steps only while the holder holds a Googly Eye and eyes are visible on this client (the server's
+ * {@code googlyEyesEnabled} and the client's own switch), and starts at rest, with nothing playing, each time
+ * one is picked up, eyes are shown again, or the holder changes.
  */
 public final class HeldEye {
 
@@ -48,7 +50,7 @@ public final class HeldEye {
     private final RandomSource rand = RandomSource.create();
 
     /** Whether {@code entity} holds a Googly Eye in either hand. */
-    public static boolean holdsGooglyEye(LivingEntity entity) {
+    private static boolean holdsGooglyEye(LivingEntity entity) {
         return entity.getMainHandItem().is(ModContent.GOOGLY_EYE.get())
                 || entity.getOffhandItem().is(ModContent.GOOGLY_EYE.get());
     }
@@ -103,12 +105,13 @@ public final class HeldEye {
     }
 
     /**
-     * Advance one tick for {@code holder}, or reset when there is none or it holds no Googly Eye: age the
+     * Advance one tick for {@code holder}, or reset when there is none, it holds no Googly Eye, or eyes are
+     * hidden: age the
      * active behavior, start any behavior this tick's hurt, heal, or idle timer calls for under
      * {@code settings}, and step the pupil with the behavior folded in.
      */
     public void tick(@Nullable LivingEntity holder, BehaviorSettings settings) {
-        if (holder == null || !holdsGooglyEye(holder)) {
+        if (holder == null || !ClientEyeConfigs.eyesVisible() || !holdsGooglyEye(holder)) {
             reset();
             return;
         }

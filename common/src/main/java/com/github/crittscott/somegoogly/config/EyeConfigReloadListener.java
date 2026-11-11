@@ -9,7 +9,6 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel.VersionedEntry;
 import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
@@ -124,22 +123,15 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<Js
                             + " Placement may be off.",
                     fallback.getValue(), key.namespace(), key.installed(), key.used());
         }
-        EyeConfigLimits.Issue aggregateError = EyeConfigLimits.validateSync(selected);
-        if (aggregateError != null) {
+        EyeConfigSyncPacket packet = ServerEyeConfigs.packetFor(selected);
+        EyeConfigLimits.Issue refusal = packet.refusal();
+        if (refusal != null) {
             SomeGooglyCommon.LOGGER.error(
-                    "Eye config reload exceeds synchronized work limits; keeping the previous configs: {}",
-                    aggregateError.diagnostic());
+                    "Eye config reload exceeds the limits clients accept; keeping the previous configs: {}",
+                    refusal.diagnostic());
             return;
         }
-        Map<ResourceLocation, CompoundTag> encoded = ServerEyeConfigs.encode(selected);
-        int wireSize = EyeConfigSyncPacket.wireSize(encoded);
-        if (wireSize > EyeConfigSyncPacket.MAX_PAYLOAD_BYTES) {
-            SomeGooglyCommon.LOGGER.error(
-                    "Eye config reload encodes to {} bytes, exceeding the {}-byte sync limit; keeping the previous configs",
-                    wireSize, EyeConfigSyncPacket.MAX_PAYLOAD_BYTES);
-            return;
-        }
-        boolean changed = ServerEyeConfigs.replaceIfChanged(selected, encoded);
+        boolean changed = ServerEyeConfigs.replaceIfChanged(packet);
         SomeGooglyCommon.LOGGER.info(
                 "Eye config reload {}: {} selected eye configs from {} files ({} skipped: mod not installed,"
                         + " {} failed to parse, {} rejected: no usable entry or unsafe; {} using another version's entry)",

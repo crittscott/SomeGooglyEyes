@@ -305,13 +305,24 @@ public final class PickerState {
         return true;
     }
 
+    /** Flat cross target {@code target} once the eye at {@code deleted} is gone. */
+    private static int crossTargetAfterDelete(int target, int deleted) {
+        if (target == deleted) {
+            return EyePlacement.NO_CROSS_TARGET;
+        }
+        return target > deleted ? target - 1 : target;
+    }
+
     /** Turn the picker off and release the frozen mob; the authored drafts stay in memory. */
     public static void deactivate() {
         active = false;
         unlock();
     }
 
-    /** The CLI {@code delete <n>} op (1-based): remove an eye from the current variant. */
+    /**
+     * The CLI {@code delete <n>} op (1-based): remove an eye from the current variant. Cross targets are flat list
+     * indexes, so every later eye's target moves down one and a target on the deleted eye is cleared.
+     */
     public static boolean delete(int oneBased) {
         List<ListedEye> eyes = currentEyes();
         int idx = oneBased - 1;
@@ -319,6 +330,12 @@ public final class PickerState {
             return false;
         }
         eyes.remove(idx);
+        for (ListedEye listed : eyes) {
+            listed.eye.crossTarget = crossTargetAfterDelete(listed.eye.crossTarget, idx);
+        }
+        if (currentEye != null) {
+            currentEye.crossTarget = crossTargetAfterDelete(currentEye.crossTarget, idx);
+        }
         if (selectedIndex == idx) {
             clearDraft(); // the edited eye is gone; return to no-draft rather than a phantom
         } else if (selectedIndex > idx) {
@@ -455,7 +472,7 @@ public final class PickerState {
     /**
      * Reset picker state to its construction state on disconnect, <b>without sending anything</b> — the
      * connection may already be gone, and the server's own logout handling
-     * ({@link PickerFreezeService#onPlayerLoggedOut}) releases any frozen mob regardless.
+     * ({@link PickerFreezeService#unfreeze}) releases any frozen mob regardless.
      *
      * <p>The authored drafts go too, along with {@link #targetType()}. They were authored against — and
      * seeded from — the server we're leaving, and {@code export} would happily send them to the next

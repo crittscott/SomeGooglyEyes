@@ -90,7 +90,7 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 
 - Common Mixins compile in `common/src/main/java` with no `refmap` key in the config; Loom produces and remaps the refmap. A wrong refmap surfaces only at runtime, so check a production-jar launch after changing this. [tested on 1.20.1]
 - `@ExpectPlatform` needs a per-loader class, so its one-line forwarding is forced. [tested]
-- Forge receives the Fabric access widener converted to an access transformer through `atAccessWideners` in `remapJar`; one file serves both loaders. [tested]
+- Forge and NeoForge receive the Fabric access widener converted to an access transformer at remap time; one file serves every loader. [tested] Loom's `forge { convertAccessWideners = true; extraAccessWideners.add <widener name> }` does the conversion by filling `remapJar`'s `atAccessWideners`; NeoForge sets `atAccessWideners` directly because whether its extension has the same switches is unknown. [recalled]
 - GeckoLib publishes no common artifact for 1.20.1. Common compiles against the Fabric artifact with `modCompileOnly`. Only `GeoRenderEvent` differs by loader. [tested]
 
 ## Libraries and other mods

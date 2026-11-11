@@ -47,11 +47,6 @@ public final class HeadInfo {
         return heads.get(headIndex).eyes.size();
     }
 
-    /** The selected eye's placement scale. */
-    public float getEyeScale(int headIndex, int eyeIndex) {
-        return placementAt(headIndex, eyeIndex).eyeScale();
-    }
-
     /** How many heads the selected variant places eyes on; 0 when {@link #hasConfig()} is false. */
     public int getHeadCount() {
         return hasConfig() ? heads.size() : 0;

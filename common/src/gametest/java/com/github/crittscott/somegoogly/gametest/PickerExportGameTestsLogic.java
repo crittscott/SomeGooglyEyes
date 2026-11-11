@@ -14,6 +14,7 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel.VersionedEntry;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
 import com.github.crittscott.somegoogly.eye.state.EyeAppearance;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
+import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.github.crittscott.somegoogly.network.PickerExportPacket;
 import com.github.crittscott.somegoogly.picker.PickerExportService;
 import com.google.gson.JsonObject;
@@ -341,8 +342,7 @@ public final class PickerExportGameTestsLogic {
         config.variants = List.of(variant);
         CompoundTag exported = (CompoundTag) RuntimeConfig.CODEC.encodeStart(NbtOps.INSTANCE, config).result().orElseThrow();
 
-        Map<ResourceLocation, RuntimeConfigSet> originalSet = ServerEyeConfigs.all();
-        Map<ResourceLocation, CompoundTag> originalEncoded = ServerEyeConfigs.encoded();
+        EyeConfigSyncPacket original = ServerEyeConfigs.packet();
         Map<ResourceLocation, RuntimeConfigSet> full = new HashMap<>();
         for (int part = 0; part < EyeConfigLimits.MAX_TOTAL_EYES_PER_SYNC / EyeConfigLimits.MAX_EYES_PER_HEAD; part++) {
             HeadConfig fullHead = new HeadConfig();
@@ -358,11 +358,11 @@ public final class PickerExportGameTestsLogic {
         }
         Component result;
         try {
-            ServerEyeConfigs.replaceIfChanged(full, ServerEyeConfigs.encode(full));
+            ServerEyeConfigs.replaceIfChanged(ServerEyeConfigs.packetFor(full));
             result = PickerExportService.export(server(helper), UUID.randomUUID(),
                     ResourceLocation.fromNamespaceAndPath("minecraft", "cow"), AGE_ADULT, exported);
         } finally {
-            ServerEyeConfigs.replaceIfChanged(originalSet, originalEncoded);
+            ServerEyeConfigs.replaceIfChanged(original);
         }
         helper.assertTrue(result.getContents() instanceof TranslatableContents contents
                         && contents.getKey().equals("somegoogly.command.picker.export_rejected_unsafe_payload"),

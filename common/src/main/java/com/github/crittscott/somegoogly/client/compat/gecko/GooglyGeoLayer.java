@@ -10,6 +10,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
@@ -31,9 +32,12 @@ import java.util.List;
  * bone lookup happen once in {@link #preRender}; {@link #renderForBone} draws on the matching bones;
  * {@link #render} (which GeckoLib calls last) just clears the per-render state.
  *
+ * <p>GeckoLib's layer event reaches every entity renderer, projectiles and vehicles included, so the layer is
+ * typed on any entity and draws nothing on one that isn't living.
+ *
  * <p>Only loaded when GeckoLib is present (referenced via {@code GeckoCompat}).
  */
-public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoRenderLayer<T> {
+public class GooglyGeoLayer<T extends Entity & GeoAnimatable> extends GeoRenderLayer<T> {
 
     /**
      * State computed in {@link #preRender} for the entity currently being rendered, consumed by
@@ -69,7 +73,10 @@ public class GooglyGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoR
                           MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick,
                           int packedLight, int packedOverlay, int renderColor) {
         this.frame = null;
-        EyeRenderData data = EyeRenderData.extract(animatable, partialTick);
+        if (!(animatable instanceof LivingEntity living)) {
+            return;
+        }
+        EyeRenderData data = EyeRenderData.extract(living, partialTick);
 
         if (data.pickerTarget()) {
             Frame frame = new Frame();

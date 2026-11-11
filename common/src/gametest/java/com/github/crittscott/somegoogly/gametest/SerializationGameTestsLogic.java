@@ -184,8 +184,8 @@ public final class SerializationGameTestsLogic {
     }
 
     /**
-     * The eye-definition sync survives the wire, and the reload budget measures it exactly. No in-game form;
-     * guards that joining clients draw the same eyes the server's datapacks define.
+     * The eye-definition sync survives the wire, and a decoded packet writes the very bytes it received. No in-game
+     * form; guards that joining clients draw the same eyes the server's datapacks define.
      */
     public static void configSyncPacketRoundTrips(GameTestHelper helper) {
         Map<ResourceLocation, RuntimeConfigSet> configs =
@@ -194,8 +194,10 @@ public final class SerializationGameTestsLogic {
         EyeConfigSyncPacket packet = new EyeConfigSyncPacket(configs, encoded);
         EyeConfigSyncPacket decoded = roundTrip(helper, EyeConfigSyncPacket.STREAM_CODEC, packet, "EyeConfigSyncPacket");
         helper.assertTrue(decoded.configs().size() == 1, "the definitions should survive the round-trip");
-        helper.assertTrue(bytes(helper, EyeConfigSyncPacket.STREAM_CODEC, packet).length == EyeConfigSyncPacket.wireSize(encoded),
-                "the reload budget must measure the packet exactly");
+        helper.assertTrue(Arrays.equals(bytes(helper, EyeConfigSyncPacket.STREAM_CODEC, decoded),
+                        bytes(helper, EyeConfigSyncPacket.STREAM_CODEC, packet)),
+                "a decoded packet must write the bytes it was sent");
+        helper.assertTrue(packet.refusal() == null, "a small definition set must pass the sync limits");
         helper.succeed();
     }
 

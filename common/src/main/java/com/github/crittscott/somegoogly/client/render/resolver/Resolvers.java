@@ -22,7 +22,7 @@ public final class Resolvers {
 
     // Which resolver handles a given model instance never changes for that instance's life, and the
     // resolvers themselves are stateless singletons holding no reference back to any model, so weak keys
-    // alone are enough here (unlike ModelMemo's cached values, nothing pins a stale model alive).
+    // alone are enough here (nothing in the values pins a stale model alive).
     private static final Map<EntityModel<?>, EyeAttachmentResolver> BY_MODEL = new WeakHashMap<>();
 
     private static final EyeAttachmentResolver ROOT = new RootModelResolver();

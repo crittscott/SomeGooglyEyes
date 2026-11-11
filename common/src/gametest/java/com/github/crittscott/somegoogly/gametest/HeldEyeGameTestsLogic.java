@@ -26,7 +26,7 @@ public final class HeldEyeGameTestsLogic {
     private static final int BLINK_PEAK_TICKS = EyeBehavior.BLINK.defaultDuration() / 2;
     private static final float BLINK_PEAK_SQUASH = 0.5F;
     // The server's defaults.
-    private static final BehaviorSettings DEFAULTS = BehaviorSettings.DEFAULTS;
+    private static final BehaviorSettings DEFAULTS = TestBehaviorSettings.DEFAULTS;
     // Ticks into a grow by which the eye has visibly bulged.
     private static final int GROW_RISE_TICKS = 3;
 

@@ -26,9 +26,9 @@ import org.joml.Vector3f;
  * eye, plus which {@link BehaviorInstance} (if any) is currently playing on that entity.
  *
  * <p>One tracker is kept per tracked {@link LivingEntity} (see {@link ClientEyeRuntime}), matched
- * against the entity's current placement via {@link #matches}. {@link #update} advances the active
- * behavior and steps every eye's physics once per client tick; {@link #startBehavior} applies a
- * server-triggered behavior, enforcing the "one at a time, non-interruptable" rule.
+ * against the entity's current placement via {@link #matches}. {@link #update} steps every eye's physics once
+ * per client tick under the {@link #active} behavior, which {@link ClientEyeRuntime} installs from the server's
+ * trigger and ages by its own clock, so an expression keeps time while the entity is not drawn.
  *
  * <p>Each tick also folds in the {@link OngoingBehavior}s whose server switches are on, easing each one in or
  * out over a few ticks: the sleeping squint, or a sleeping villager's lids closing to a slit; the ramming
@@ -88,9 +88,6 @@ public class GooglyTracker {
      * freeze instead of wobbling unseen.
      */
     public int lastRenderTick;
-
-    /** The entity's position change over the last {@link #update}. */
-    public double motionX, motionY, motionZ;
 
     private double prevX, prevY, prevZ;
 
@@ -291,9 +288,9 @@ public class GooglyTracker {
 
         private boolean capturedPose;
         private final Matrix3f inversePose = new Matrix3f();
-        /** Rows of world-to-eye rotation; pupil displacement renders with the opposite sign. */
         /** Whether physics has stepped since the last capture; it alone reads the pose, so one capture a tick is enough. */
         public boolean poseStale = true;
+        /** Rows of world-to-eye rotation; pupil displacement renders with the opposite sign. */
         private final Vector3f worldRight = new Vector3f();
         private final Vector3f worldUp = new Vector3f();
 
@@ -414,7 +411,7 @@ public class GooglyTracker {
          * @param stiffness positive behavior-spring strength; nonpositive values disable the spring
          * @param agitation 0 to 1; above 0, a pupil slower than its scaled speed floor gets a random kick
          */
-        public void update(RandomSource rand, float headYaw, float headPitch, double motionX, double motionY, double motionZ,
+        private void update(RandomSource rand, float headYaw, float headPitch, double motionX, double motionY, double motionZ,
                            float anchorX, float anchorY, float stiffness, float agitation) {
             poseStale = true;
             prevDeltaX = deltaX;
@@ -589,47 +586,32 @@ public class GooglyTracker {
     }
 
     /**
-     * Start a behavior now, unless one is already playing — the "one at a time, non-interruptable"
-     * rule — or the entity is asleep. Returns whether it started (a dropped trigger returns
-     * {@code false}). Called from the trigger packet on the client.
-     *
-     * <p>{@code elapsed} starts the behavior that many ticks in, so a player who starts watching a mob
-     * mid-effect sees the same state as everyone else: the seeded {@code onStart} plus the age fully
-     * determine each behavior's influence.
+     * Play {@code behavior} from {@code age} ticks in, replacing whatever played, unless the entity is asleep:
+     * the client holds a squint instead, as the server drops triggers on a sleeper. The seeded {@code onStart}
+     * plus the age fully determine each behavior's influence, so a viewer who joins mid-effect sees the same
+     * state as everyone else.
      */
-    public boolean startBehavior(@Nonnull EyeBehavior behavior, int duration, long seed, int elapsed) {
-        if (active != null || parent.isSleeping()) {
-            return false;
+    void install(EyeBehavior behavior, int duration, long seed, int age) {
+        if (parent.isSleeping()) {
+            active = null;
+            return;
         }
-        BehaviorInstance instance = BehaviorInstance.start(behavior, helper, duration, seed);
-        // Fast-forward to where the effect already is (mid-join catch-up). Each behavior derives its
-        // influence from age alone, so advancing age is all the catch-up needs — no per-tick replay.
-        instance.age = elapsed;
-        if (instance.age >= instance.duration) {
-            return false; // already finished by the time we'd show it (stale catch-up); nothing to play
-        }
-        active = instance;
-        return true;
+        active = BehaviorInstance.start(behavior, helper, duration, seed);
+        active.age = age;
     }
 
     /**
-     * Advance one client tick: sample the entity's motion, age the active behavior, and step every eye, with
+     * Advance one client tick: sample the entity's motion and step every eye under the active behavior, with
      * the ongoing behaviors {@code settings} switches on folded in.
      */
     public void update(BehaviorSettings settings) {
-        motionX = parent.getX() - prevX;
-        motionY = parent.getY() - prevY;
-        motionZ = parent.getZ() - prevZ;
+        double motionX = parent.getX() - prevX;
+        double motionY = parent.getY() - prevY;
+        double motionZ = parent.getZ() - prevZ;
 
         prevX = parent.getX();
         prevY = parent.getY();
         prevZ = parent.getZ();
-
-        // Advance the active behavior (if any), retiring it when it runs out. Done before the physics so
-        // this tick's simulation already sees the retired (null) behavior on its final step.
-        if (active != null && active.advance()) {
-            active = null;
-        }
 
         // Ease toward the squint or back out. A behavior playing under it (one already playing when sleep
         // begins, or any while a goat rams) multiplies with it in squashY.

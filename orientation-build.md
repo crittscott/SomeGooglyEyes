@@ -32,7 +32,7 @@ The project is a Groovy-DSL Gradle build with `common`, `fabric`, `forge`, and `
 
 Fabric bundles NightConfig core and TOML as nested dependencies through Loom's `include` configuration; the parser is an implementation dependency during development. Every module declares Maven Central, which supplies these modules and the shared annotation dependency.
 
-`common` declares the access widener `common/src/main/resources/somegoogly.accesswidener` through `loom.accessWidenerPath`; every loader points its own `loom.accessWidenerPath` at common's. Forge and NeoForge, which read access transformers rather than wideners, also name that widener in `atAccessWideners` so their production JARs carry the converted rules.
+`common` declares the access widener `common/src/main/resources/somegoogly.accesswidener` through `loom.accessWidenerPath`; every loader points its own `loom.accessWidenerPath` at common's. Forge and NeoForge read access transformers rather than wideners. Forge sets `convertAccessWideners` and names that widener in `extraAccessWideners` inside `loom.forge`; NeoForge names it in `remapJar`'s `atAccessWideners`. Either way remapping writes the converted rules into the production JAR.
 
 Fabric Loom uses the legacy Mixin annotation processor and writes the fixed `somegoogly.refmap.json` refmap named by `somegoogly-fabric.mixins.json`. `common` uses the same processor for `somegoogly-common.mixins.json` and writes `somegoogly-common.refmap.json`, which Fabric needs because it resolves common Mixins against intermediary names. Forge registers that config through `loom.forge.mixinConfig` and NeoForge through its metadata; both run on Mojang names, so their `shadowJar` excludes the common refmap and their dev runs set `mixin.env.disableRefMap`.
 
