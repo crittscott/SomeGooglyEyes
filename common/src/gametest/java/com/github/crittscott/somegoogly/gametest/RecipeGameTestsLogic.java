@@ -39,11 +39,11 @@ import java.util.Optional;
 public final class RecipeGameTestsLogic {
 
     private static final ResourceLocation EYE_MODIFIER =
-            ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "eye_modifier");
+            SomeGooglyCommon.id("eye_modifier");
     private static final ResourceLocation SLIMY_EYE =
-            ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "slimy_eye");
+            SomeGooglyCommon.id("slimy_eye");
     private static final ResourceLocation SLIMY_EYE_ADVANCEMENT =
-            ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "recipes/misc/slimy_eye");
+            SomeGooglyCommon.id("recipes/misc/slimy_eye");
 
     private RecipeGameTestsLogic() {
     }

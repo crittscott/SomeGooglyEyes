@@ -44,7 +44,7 @@ public final class ClientRenderLayers {
                 return;
             }
         }
-        renderer.addLayer(eyes);
+        layers.add(eyes);
     }
 
     /** Clear the attachment caches once per renderer rebuild; they are keyed by model, so before or after it. */

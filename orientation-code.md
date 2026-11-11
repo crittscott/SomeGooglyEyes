@@ -26,7 +26,7 @@ Common imports no loader types (adapters or `@ExpectPlatform`); loader packages 
 
 The server owns gameplay, definitions, and authorization; the client owns rendering, inspection, and picker UI.
 
-`ModContent` binds content through loader `ContentRegistrar`s. Slimy Eye uses vanilla `crafting_transmute`; Optometrist and `self_shear` are data-driven.
+`ModContent` registers content through the `@ExpectPlatform` `Registration`. Slimy Eye uses vanilla `crafting_transmute`; Optometrist and `self_shear` are data-driven.
 
 ## Configuration and eye definitions
 
@@ -50,7 +50,7 @@ Eye items carry `AppearanceOverride` in the synced `somegoogly:eye_properties` c
 
 Only Fabric entity data needs migration from the 1.21.1 release.
 
-`EyeItemService` owns authorization, mutation, drops, and durability for Slimy Eye use and both harvests, on mobs and heads. Loader adapters run entity interaction, block use, and self-shearing after protection listeners (Forge/NeoForge `LOWEST`, Fabric a late phase); head use also checks `mayInteract`/`mayUseItemAt`, and Forge/NeoForge honor separate item-use denials. `markHeadDrop` stamps an eyed mob's own head among its death drops (Forge/NeoForge at `LOWEST`); head loot copies the state to the item (Forge/NeoForge `HeadEyesLootModifier` delegates to `SkullEyeState.copyToLoot`, with native data in each loader; Fabric `LootTableEvents.MODIFY` adding `copy_components`). It refuses spectators itself. Shears are `#somegoogly:shears` (vanilla plus optional `#c:tools/shear`). Applying a Slimy Eye to another player also requires server PvP and `canHarmPlayer`. Plain-shears self-damage uses the attacker-less `self_shear` type.
+`EyeItemService` owns authorization, mutation, drops, and durability for Slimy Eye use and both harvests, on mobs and heads. Loader adapters run interactions and self-shearing after protection listeners (Forge/NeoForge `LOWEST`, Fabric a late phase); head use also checks `mayInteract`/`mayUseItemAt`, and Forge/NeoForge honor separate item-use denials. `markHeadDrop` stamps an eyed mob's own head among its death drops (Forge/NeoForge at `LOWEST`); head loot copies the state to the item with `SkullEyeState.headLootCopy` (Forge/NeoForge `HeadEyesLootModifier`; Fabric `LootTableEvents.MODIFY`). It refuses spectators itself. Shears are `#somegoogly:shears` (vanilla plus optional `#c:tools/shear`). Applying a Slimy Eye to another player also requires server PvP and `canHarmPlayer`. Plain-shears self-damage uses the attacker-less `self_shear` type.
 
 Slimy Eye applications emit `GameEvent.ENTITY_INTERACT` (`BLOCK_CHANGE` on a head), harvests `GameEvent.SHEAR`; refusals emit neither.
 
@@ -74,7 +74,7 @@ GeckoLib code links only after detection; attach failures cannot block loading.
 
 ## Networking
 
-Seven payloads carry definitions, settings, entity eye state, expressions, anger, picker freeze, and export. `NetworkProtocol` holds version `18`; bump on wire changes. Native loaders require that channel version; Fabric checks it in a configuration task (`Handshake`/`HandshakeReply`).
+Seven payloads carry definitions, settings, entity eye state, expressions, anger, picker freeze, and export. `NetworkProtocol` holds version `18` (bump on wire changes) and the payload table every loader registers from. Native loaders require that channel version; Fabric checks it in a configuration task (`Handshake`/`HandshakeReply`).
 
 `EyeSettingsPacket` carries `googlyEyesEnabled`/`BehaviorSettings`. Joins receive both; the definitions packet is built once per set. Reload/config apply calls `broadcastEyeSyncIfChanged`, sending each only when it changed; only new definitions restart client motion.
 

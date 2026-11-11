@@ -38,6 +38,8 @@ public final class FabricClientEvents {
 
     /** Register the client's Fabric event callbacks. */
     public static void register() {
+        // Not helper.register: it appends after a slime's outer jelly layer, hiding the eyes behind it, so the
+        // shared installer inserts into the renderer's layer list itself.
         LivingEntityFeatureRendererRegistrationCallback.EVENT.register(
                 (entityType, renderer, helper, context) ->
                         ClientRenderLayers.install(renderer));
@@ -48,7 +50,7 @@ public final class FabricClientEvents {
                 new SimpleSynchronousResourceReloadListener() {
                     @Override
                     public ResourceLocation getFabricId() {
-                        return ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "attachment_caches");
+                        return SomeGooglyCommon.id("attachment_caches");
                     }
 
                     @Override

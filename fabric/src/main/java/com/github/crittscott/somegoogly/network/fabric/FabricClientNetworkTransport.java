@@ -1,17 +1,12 @@
 package com.github.crittscott.somegoogly.network.fabric;
 
-import com.github.crittscott.somegoogly.client.ClientNetworkHandler;
-import com.github.crittscott.somegoogly.network.EyeAngerPacket;
-import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket;
-import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
-import com.github.crittscott.somegoogly.network.EyeSettingsPacket;
-import com.github.crittscott.somegoogly.network.EyeStatePacket;
 import com.github.crittscott.somegoogly.network.NetworkProtocol;
 import com.github.crittscott.somegoogly.network.PickerFreezePacket;
 import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
 /** Physical-client Fabric payload receivers. */
 public final class FabricClientNetworkTransport {
@@ -29,15 +24,12 @@ public final class FabricClientNetworkTransport {
                 handler.getConnection().disconnect(Component.translatable("somegoogly.network.required_server"));
             }
         });
-        ClientPlayNetworking.registerGlobalReceiver(EyeStatePacket.TYPE,
-                (payload, context) -> ClientNetworkHandler.handleEyeState(payload));
-        ClientPlayNetworking.registerGlobalReceiver(EyeConfigSyncPacket.TYPE,
-                (payload, context) -> ClientNetworkHandler.handleEyeConfigSync(payload));
-        ClientPlayNetworking.registerGlobalReceiver(EyeSettingsPacket.TYPE,
-                (payload, context) -> ClientNetworkHandler.handleEyeSettings(payload));
-        ClientPlayNetworking.registerGlobalReceiver(EyeBehaviorTriggerPacket.TYPE,
-                (payload, context) -> ClientNetworkHandler.handleBehavior(payload));
-        ClientPlayNetworking.registerGlobalReceiver(EyeAngerPacket.TYPE,
-                (payload, context) -> ClientNetworkHandler.handleAnger(payload));
+        for (NetworkProtocol.Clientbound<?> payload : NetworkProtocol.CLIENTBOUND) {
+            registerReceiver(payload);
+        }
+    }
+
+    private static <T extends CustomPacketPayload> void registerReceiver(NetworkProtocol.Clientbound<T> payload) {
+        ClientPlayNetworking.registerGlobalReceiver(payload.type(), (packet, context) -> payload.handler().accept(packet));
     }
 }

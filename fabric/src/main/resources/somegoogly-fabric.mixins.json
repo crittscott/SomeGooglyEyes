@@ -8,8 +8,8 @@
     "AbstractVillagerTradeMixin",
     "EntityHeadDropMixin",
     "EntityPersistentDataMigrationMixin",
-    "LivingEntityDeathLootMixin",
-    "LivingEntityReactionMixin"
+    "HealReactionMixin",
+    "LivingEntityDeathLootMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -35,6 +35,9 @@ import java.util.List;
 public record EyePlacement(Vec3 position, float eyeScale, float irisScale, float depth,
                            float inclination, float azimuth, int crossTarget) {
 
+    /** Azimuth starts at +X; vanilla yaw starts at +Z. */
+    public static final float AZIMUTH_TO_YAW_OFFSET = 90F;
+
     /** Default orientation: pupil facing local -Z (straight ahead), matching the unrotated eye. */
     public static final float DEFAULT_AZIMUTH = 270F;
     public static final float DEFAULT_INCLINATION = 90F;
@@ -88,7 +91,7 @@ public record EyePlacement(Vec3 position, float eyeScale, float irisScale, float
     /** {@link #orientation()} for raw authored angles, in degrees. */
     public static Quaternionf orientation(double inclination, double azimuth) {
         return new Quaternionf()
-                .rotationY((float) Math.toRadians(-(azimuth + 90.0)))
+                .rotationY((float) Math.toRadians(-(azimuth + AZIMUTH_TO_YAW_OFFSET)))
                 .rotateX((float) Math.toRadians(90.0 - inclination));
     }
 

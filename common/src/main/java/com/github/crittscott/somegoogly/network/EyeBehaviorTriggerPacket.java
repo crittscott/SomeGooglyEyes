@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.network;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import io.netty.handler.codec.DecoderException;
 import net.minecraft.network.FriendlyByteBuf;
@@ -22,7 +23,7 @@ import net.minecraft.resources.ResourceLocation;
 public record EyeBehaviorTriggerPacket(int entityId, EyeBehavior behavior, int duration, long seed, int elapsed)
         implements CustomPacketPayload {
 
-    public static final ResourceLocation ID = NetworkProtocol.id("eye_behavior");
+    public static final ResourceLocation ID = SomeGooglyCommon.id("eye_behavior");
     public static final CustomPacketPayload.Type<EyeBehaviorTriggerPacket> TYPE = new CustomPacketPayload.Type<>(ID);
     public static final StreamCodec<RegistryFriendlyByteBuf, EyeBehaviorTriggerPacket> STREAM_CODEC =
             StreamCodec.ofMember(EyeBehaviorTriggerPacket::write, EyeBehaviorTriggerPacket::read);

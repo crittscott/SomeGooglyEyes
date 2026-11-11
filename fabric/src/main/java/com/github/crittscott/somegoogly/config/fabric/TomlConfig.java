@@ -76,16 +76,19 @@ public final class TomlConfig {
     }
 
     /** Assign {@code raw} to {@code target}, logging each entry its validator rejects. */
-    public static void assign(ConfigValue<List<String>> target, String key, List<String> raw) {
+    public static void assign(ConfigValue.Parsed<?> target, String key, List<String> raw) {
         target.set(raw);
-        List<String> accepted = target.get();
-        if (accepted.size() == raw.size()) {
-            return;
-        }
+        boolean anyValid = false;
         for (String entry : raw) {
-            if (!accepted.contains(entry)) {
+            if (target.valid().test(entry)) {
+                anyValid = true;
+            } else {
                 SomeGooglyCommon.LOGGER.warn("Config key '{}' has an invalid entry '{}'; ignoring it", key, entry);
             }
+        }
+        if (!raw.isEmpty() && !anyValid) {
+            SomeGooglyCommon.LOGGER.warn("Config key '{}' has no valid entries; using the default {}",
+                    key, target.get());
         }
     }
 
