@@ -4,20 +4,20 @@ import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.github.crittscott.somegoogly.client.GooglyTracker;
 import com.github.crittscott.somegoogly.client.PresentationEyes;
+import com.github.crittscott.somegoogly.eye.EyeAppearance;
 import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
-import com.github.crittscott.somegoogly.eye.state.EyeAppearance;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Matrix3f;
 import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
@@ -27,10 +27,10 @@ import java.util.Set;
  * Renders a {@code googly_eye} item as the actual 3D {@link ModelGooglyEye}, tinted by the item's
  * {@link AppearanceOverride}. Reuses the in-world eye model so the item and the mob eyes can't drift.
  *
- * <p>When the local player holds the item, its first-person view is a live eye, the held eye stepped
- * from the client tick: its pupil moves with the player's look and movement plus gravity, and it plays its
- * own behaviors. Framed eyes have independent mounted pupil physics and ambient expressions, supplied
- * by the frame's extracted render state. GUI and third-person hand presentations have independent ambient animation; ground views are static.
+ * <p>First- and third-person hand views select one holder/hand presentation, whose hurt and heal reactions the
+ * server sends to the holder and other viewers. Framed eyes have independent mounted pupil physics and ambient
+ * expressions, supplied by the frame's extracted render state. GUI presentations have their own clock, and ground
+ * views are static.
  *
  * <p>Registered as the {@code somegoogly:googly_eye} special model type and selected by
  * {@code assets/somegoogly/items/googly_eye.json}; each loader puts {@link Unbaked#MAP_CODEC} under
@@ -43,6 +43,8 @@ public class GooglyEyeItemRenderer implements SpecialModelRenderer<AppearanceOve
 
     public static final ResourceLocation ID = SomeGooglyCommon.id("googly_eye");
 
+    /** Eye-local down for the camera-relative first-person pose. */
+    private static final Matrix3f EYE_LOCAL_POSE = new Matrix3f().scaling(-1F, -1F, 1F);
     /** Mounted diameter multiplier; eye thickness is unchanged. */
     private static final float FRAME_DIAMETER_MULTIPLIER = 3F;
     private static final float GUI_SCALE = 1.8F;
@@ -90,7 +92,7 @@ public class GooglyEyeItemRenderer implements SpecialModelRenderer<AppearanceOve
     public void render(@Nullable AppearanceOverride argument, ItemDisplayContext ctx, PoseStack pose,
                        MultiBufferSource buffer, int light, int overlay, boolean hasFoil) {
         EyeAppearance look = EyeAppearance.DEFAULT.overlay(argument != null ? argument : AppearanceOverride.EMPTY);
-        PresentationEyes.Draw draw = ClientEyeRuntime.itemDraw();
+        PresentationEyes.Draw draw = ClientEyeRuntime.currentDraw().draw();
         PresentationEyes presented = draw.eyes();
 
         pose.pushPose();
@@ -103,9 +105,12 @@ public class GooglyEyeItemRenderer implements SpecialModelRenderer<AppearanceOve
             pose.mulPose(Axis.XP.rotationDegrees(180));
         }
         // Items have no placement, so they keep the standard thickness.
-        GooglyTracker.EyeInfo animated = presented != null ? presented.eye
-                : isFirstPersonHand(ctx) ? ClientEyeRuntime.heldEye() : null;
-        if (presented != null) {
+        GooglyTracker.EyeInfo animated = presented != null ? presented.eye : null;
+        if (animated != null && isFirstPersonHand(ctx)) {
+            animated.itemGravity = false;
+            animated.capturePose(EYE_LOCAL_POSE);
+        } else if (animated != null) {
+            animated.itemGravity = ctx != ItemDisplayContext.GUI;
             GooglyEyeRenderer.captureGravity(pose, animated);
         }
         if (ctx == ItemDisplayContext.FIXED) {
@@ -113,11 +118,9 @@ public class GooglyEyeItemRenderer implements SpecialModelRenderer<AppearanceOve
         }
         if (animated != null) {
             // First-person eyes retain eye-local down; their pose is relative to the camera rather than the world.
-            float partialTick = presented != null ? draw.partialTick()
-                    : Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false);
             GooglyEyeRenderer.drawAnimatedEye(pose, buffer, light, overlay, animated,
                     ctx == ItemDisplayContext.GUI ? GUI_SCALE : MODEL_SCALE, EyePlacement.DEFAULT_DEPTH,
-                    look.cornea(), look.iris(), IRIS_SCALE, look.glow(), partialTick);
+                    look.cornea(), look.iris(), IRIS_SCALE, look.glow(), draw.partialTick());
         } else {
             float scale = ctx == ItemDisplayContext.GUI ? GUI_SCALE : MODEL_SCALE;
             pose.scale(scale, scale, scale * ModelGooglyEye.BASE_DEPTH);

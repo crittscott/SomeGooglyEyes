@@ -60,7 +60,7 @@ import java.util.List;
 /**
  * Server-side coverage for {@link ServerBehaviorScheduler} — the authority for which behavior a mob is
  * playing and when. {@link BehaviorDeterminismGameTestsLogic} covers the client's animation derivation;
- * this drives the server clock by hand ({@code serverTick()}) and probes the schedule through
+ * this lets the server clock run (waiting real ticks where time matters) and probes the schedule through
  * {@code trigger()}'s return (a dropped trigger means the mob is busy or asleep). Every test forces the
  * scheduler to a clean slate with {@code clear()} and force-and-restores the behavior config it touches;
  * ambient play is disabled so only the events under test can move the schedule, except where ambient
@@ -102,10 +102,19 @@ public final class BehaviorSchedulerGameTestsLogic {
     private BehaviorSchedulerGameTestsLogic() {
     }
 
-    private static void advance(int ticks) {
-        for (int i = 0; i < ticks; i++) {
-            ServerBehaviorScheduler.serverTick();
-        }
+    /**
+     * Run {@code step} {@code ticks} real server ticks from now; a failure there runs {@code restore} before it is
+     * reported, since the test method has already returned.
+     */
+    private static void after(GameTestHelper helper, int ticks, Runnable restore, Runnable step) {
+        helper.runAfterDelay(ticks, () -> {
+            try {
+                step.run();
+            } catch (RuntimeException | Error failure) {
+                restore.run();
+                throw failure;
+            }
+        });
     }
 
     /**
@@ -118,6 +127,11 @@ public final class BehaviorSchedulerGameTestsLogic {
     public static void affectionEventsPlayLove(GameTestHelper helper, ServerPlayer player) {
         boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
         boolean onAffection = ServerConfig.LOVE_ON_AFFECTION.get();
+        Runnable restore = () -> {
+            ServerBehaviorScheduler.clear();
+            ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
+            ServerConfig.LOVE_ON_AFFECTION.set(onAffection);
+        };
         ServerBehaviorScheduler.clear();
         try {
             ServerConfig.AMBIENT_BEHAVIORS.set(false);
@@ -128,34 +142,34 @@ public final class BehaviorSchedulerGameTestsLogic {
 
             ServerConfig.LOVE_ON_AFFECTION.set(false);
             cow.setInLove(player);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 1L),
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 1L),
                     Component.literal("loveOnAffection=false suppresses love"));
-            advance(3);
-
-            ServerConfig.LOVE_ON_AFFECTION.set(true);
-            cow.setInLove(player);
-            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 2L),
-                    Component.literal("an animal entering love mode plays love"));
-            golem.offerFlower(true);
-            helper.assertTrue(!ServerBehaviorScheduler.trigger(golem, EyeBehavior.BLINK, 3, 3L),
-                    Component.literal("an iron golem offering a flower plays love"));
-            helper.getLevel().broadcastEntityEvent(villager, EntityEvent.LOVE_HEARTS);
-            helper.assertTrue(!ServerBehaviorScheduler.trigger(villager, EyeBehavior.BLINK, 3, 4L),
-                    Component.literal("villager love hearts play love"));
-            helper.getLevel().broadcastEntityEvent(ocelot, EntityEvent.TRUSTING_SUCCEEDED);
-            helper.assertTrue(!ServerBehaviorScheduler.trigger(ocelot, EyeBehavior.BLINK, 3, 5L),
-                    Component.literal("an ocelot gaining trust plays love"));
-
-            advance(EyeBehavior.LOVE.defaultDuration());
-            helper.getLevel().broadcastEntityEvent(cow, EntityEvent.TAMING_FAILED);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 6L),
-                    Component.literal("an entity event that is not affection plays nothing"));
-        } finally {
-            ServerBehaviorScheduler.clear();
-            ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
-            ServerConfig.LOVE_ON_AFFECTION.set(onAffection);
+            after(helper, EyeBehavior.BLINK.defaultDuration(), restore, () -> {
+                ServerConfig.LOVE_ON_AFFECTION.set(true);
+                cow.setInLove(player);
+                helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 2L),
+                        Component.literal("an animal entering love mode plays love"));
+                golem.offerFlower(true);
+                helper.assertTrue(!ServerBehaviorScheduler.trigger(golem, EyeBehavior.BLINK, 3L),
+                        Component.literal("an iron golem offering a flower plays love"));
+                helper.getLevel().broadcastEntityEvent(villager, EntityEvent.LOVE_HEARTS);
+                helper.assertTrue(!ServerBehaviorScheduler.trigger(villager, EyeBehavior.BLINK, 4L),
+                        Component.literal("villager love hearts play love"));
+                helper.getLevel().broadcastEntityEvent(ocelot, EntityEvent.TRUSTING_SUCCEEDED);
+                helper.assertTrue(!ServerBehaviorScheduler.trigger(ocelot, EyeBehavior.BLINK, 5L),
+                        Component.literal("an ocelot gaining trust plays love"));
+                after(helper, EyeBehavior.LOVE.defaultDuration(), restore, () -> {
+                    helper.getLevel().broadcastEntityEvent(cow, EntityEvent.TAMING_FAILED);
+                    helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 6L),
+                            Component.literal("an entity event that is not affection plays nothing"));
+                    restore.run();
+                    helper.succeed();
+                });
+            });
+        } catch (RuntimeException | Error failure) {
+            restore.run();
+            throw failure;
         }
-        helper.succeed();
     }
 
     /**
@@ -443,6 +457,16 @@ public final class BehaviorSchedulerGameTestsLogic {
         int min = ServerConfig.AMBIENT_MIN_TICKS.get();
         int max = ServerConfig.AMBIENT_MAX_TICKS.get();
         boolean milk = ServerConfig.GROW_ON_MILK.get();
+        ItemStack held = player.getMainHandItem().copy();
+        Runnable restore = () -> {
+            player.setItemInHand(InteractionHand.MAIN_HAND, held);
+            ServerBehaviorScheduler.clear();
+            ServerConfig.GOOGLY_EYES_ENABLED.set(enabled);
+            ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
+            ServerConfig.AMBIENT_MIN_TICKS.set(min);
+            ServerConfig.AMBIENT_MAX_TICKS.set(max);
+            ServerConfig.GROW_ON_MILK.set(milk);
+        };
         ServerBehaviorScheduler.clear();
         try {
             ServerConfig.GOOGLY_EYES_ENABLED.set(false);
@@ -451,25 +475,24 @@ public final class BehaviorSchedulerGameTestsLogic {
             ServerConfig.AMBIENT_MIN_TICKS.set(ServerConfig.TICKS_MIN);
             ServerConfig.AMBIENT_MAX_TICKS.set(ServerConfig.TICKS_MIN);
             Cow cow = eyedTrackedMob(helper, player, EntityType.COW, new BlockPos(2, 2, 2));
-            ServerBehaviorScheduler.onMilked(cow);
-            advance(ServerConfig.TICKS_MIN + 1);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 1L),
-                    Component.literal("neither automatic reaction nor ambient work starts while disabled; explicit commands remain usable"));
-            advance(3);
-            ServerConfig.AMBIENT_BEHAVIORS.set(false);
-            ServerConfig.GOOGLY_EYES_ENABLED.set(true);
-            ServerBehaviorScheduler.onMilked(cow);
-            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 2L),
-                    Component.literal("re-enabling resumes reactions using retained watcher bookkeeping"));
-        } finally {
-            ServerBehaviorScheduler.clear();
-            ServerConfig.GOOGLY_EYES_ENABLED.set(enabled);
-            ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
-            ServerConfig.AMBIENT_MIN_TICKS.set(min);
-            ServerConfig.AMBIENT_MAX_TICKS.set(max);
-            ServerConfig.GROW_ON_MILK.set(milk);
+            milk(player, cow);
+            after(helper, ServerConfig.TICKS_MIN + 1, restore, () -> {
+                helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 1L),
+                        Component.literal("neither automatic reaction nor ambient work starts while disabled; explicit commands remain usable"));
+                after(helper, EyeBehavior.BLINK.defaultDuration(), restore, () -> {
+                    ServerConfig.AMBIENT_BEHAVIORS.set(false);
+                    ServerConfig.GOOGLY_EYES_ENABLED.set(true);
+                    milk(player, cow);
+                    helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 2L),
+                            Component.literal("re-enabling resumes reactions using retained watcher bookkeeping"));
+                    restore.run();
+                    helper.succeed();
+                });
+            });
+        } catch (RuntimeException | Error failure) {
+            restore.run();
+            throw failure;
         }
-        helper.succeed();
     }
 
     private static <T extends Mob> T eyedTrackedMob(GameTestHelper helper, ServerPlayer player,
@@ -481,9 +504,9 @@ public final class BehaviorSchedulerGameTestsLogic {
     }
 
     /**
-     * A tracked mob with no eyes is not an event target: heal and trade triggers no-op. No in-game form,
-     * since an eyeless mob has nothing to show; guards that heal and trade hooks send nothing for eyeless
-     * mobs.
+     * A tracked mob with no eyes is not an event target: a real heal and a real completed trade start nothing.
+     * No in-game form, since an eyeless mob has nothing to show; guards that the heal and trade hooks send
+     * nothing for eyeless mobs.
      */
     public static void eyelessTrackedMobIgnoresGameEvents(GameTestHelper helper, ServerPlayer player) {
         boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
@@ -495,14 +518,19 @@ public final class BehaviorSchedulerGameTestsLogic {
             ServerConfig.SWIRL_ON_HEAL.set(true);
             ServerConfig.SWIRL_ON_TRADE.set(true);
             Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+            Villager villager = helper.spawnWithNoFreeWill(EntityType.VILLAGER, new BlockPos(3, 2, 2));
             ServerBehaviorScheduler.onStartTracking(cow, player);
+            ServerBehaviorScheduler.onStartTracking(villager, player);
             EyeState.setHasEyes(cow, false);
+            EyeState.setHasEyes(villager, false);
 
             cow.setHealth(1F);
-            ServerBehaviorScheduler.onHealed(cow);
-            ServerBehaviorScheduler.onTrade(cow);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 5, 1L),
-                    Component.literal("an eyeless mob's game events never start a behavior even while it is tracked"));
+            cow.heal(1F);
+            trade(player, villager);
+            helper.assertTrue(ServerBehaviorScheduler.trigger(villager, EyeBehavior.BLINK, 2L),
+                    Component.literal("an eyeless villager does not react to a real completed trade"));
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 1L),
+                    Component.literal("an eyeless mob's real heal never starts a behavior even while it is tracked"));
         } finally {
             ServerBehaviorScheduler.clear();
             ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
@@ -523,38 +551,42 @@ public final class BehaviorSchedulerGameTestsLogic {
         boolean onHeal = ServerConfig.SWIRL_ON_HEAL.get();
         boolean onTrade = ServerConfig.SWIRL_ON_TRADE.get();
         int growPercent = ServerConfig.GROW_ON_HIT_PERCENT.get();
-        ServerBehaviorScheduler.clear();
-        try {
-            ServerConfig.AMBIENT_BEHAVIORS.set(false);
-            Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
-            EyeState.setHasEyes(cow, true);
-            ServerBehaviorScheduler.onStartTracking(cow, player);
-
-            ServerConfig.SWIRL_ON_HEAL.set(false);
-            cow.setHealth(1F);
-            ServerBehaviorScheduler.onHealed(cow);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 1L),
-                    Component.literal("swirlOnHeal=false suppresses the heal swirl"));
-            advance(3);
-
-            ServerConfig.SWIRL_ON_TRADE.set(false);
-            ServerBehaviorScheduler.onTrade(cow);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 2L),
-                    Component.literal("swirlOnTrade=false suppresses the trade swirl"));
-            advance(3);
-
-            ServerConfig.GROW_ON_HIT_PERCENT.set(0);
-            ServerBehaviorScheduler.onPlayerHurt(cow);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 3L),
-                    Component.literal("growOnHitPercent=0 never rolls the hurt grow"));
-        } finally {
+        Runnable restore = () -> {
             ServerBehaviorScheduler.clear();
             ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
             ServerConfig.SWIRL_ON_HEAL.set(onHeal);
             ServerConfig.SWIRL_ON_TRADE.set(onTrade);
             ServerConfig.GROW_ON_HIT_PERCENT.set(growPercent);
+        };
+        ServerBehaviorScheduler.clear();
+        try {
+            ServerConfig.AMBIENT_BEHAVIORS.set(false);
+            Cow cow = eyedTrackedMob(helper, player, EntityType.COW, new BlockPos(2, 2, 2));
+            Villager villager = eyedTrackedMob(helper, player, EntityType.VILLAGER, new BlockPos(3, 2, 2));
+
+            ServerConfig.SWIRL_ON_HEAL.set(false);
+            cow.setHealth(1F);
+            cow.heal(1F);
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 1L),
+                    Component.literal("swirlOnHeal=false suppresses the heal swirl"));
+            after(helper, EyeBehavior.BLINK.defaultDuration(), restore, () -> {
+                ServerConfig.SWIRL_ON_TRADE.set(false);
+                trade(player, villager);
+                helper.assertTrue(ServerBehaviorScheduler.trigger(villager, EyeBehavior.BLINK, 2L),
+                        Component.literal("swirlOnTrade=false suppresses the trade swirl"));
+                after(helper, EyeBehavior.BLINK.defaultDuration(), restore, () -> {
+                    ServerConfig.GROW_ON_HIT_PERCENT.set(0);
+                    cow.hurtServer(helper.getLevel(), helper.getLevel().damageSources().playerAttack(player), 1F);
+                    helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3L),
+                            Component.literal("growOnHitPercent=0 never rolls the hurt grow"));
+                    restore.run();
+                    helper.succeed();
+                });
+            });
+        } catch (RuntimeException | Error failure) {
+            restore.run();
+            throw failure;
         }
-        helper.succeed();
     }
 
     private static HeadInfo headInfo(GameTestHelper helper, LivingEntity mob) {
@@ -574,6 +606,12 @@ public final class BehaviorSchedulerGameTestsLogic {
         boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
         boolean onHeal = ServerConfig.SWIRL_ON_HEAL.get();
         int cooldown = ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS.get();
+        Runnable restore = () -> {
+            ServerBehaviorScheduler.clear();
+            ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
+            ServerConfig.SWIRL_ON_HEAL.set(onHeal);
+            ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS.set(cooldown);
+        };
         ServerBehaviorScheduler.clear();
         try {
             ServerConfig.AMBIENT_BEHAVIORS.set(false);
@@ -584,22 +622,21 @@ public final class BehaviorSchedulerGameTestsLogic {
             ServerBehaviorScheduler.onStartTracking(cow, player);
 
             cow.setHealth(1F);
-            ServerBehaviorScheduler.onHealed(cow);
-            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 5, 1L),
+            cow.heal(1F);
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 1L),
                     Component.literal("the first heal starts a swirl"));
-
-            advance(EyeBehavior.SWIRL.defaultDuration());
-            cow.setHealth(1F);
-            ServerBehaviorScheduler.onHealed(cow);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 5, 2L),
-                    Component.literal("a heal inside the cooldown is dropped even though the swirl has elapsed and the mob is idle"));
-        } finally {
-            ServerBehaviorScheduler.clear();
-            ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
-            ServerConfig.SWIRL_ON_HEAL.set(onHeal);
-            ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS.set(cooldown);
+            after(helper, EyeBehavior.SWIRL.defaultDuration(), restore, () -> {
+                cow.setHealth(1F);
+                cow.heal(1F);
+                helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 2L),
+                        Component.literal("a heal inside the cooldown is dropped even though the swirl has elapsed and the mob is idle"));
+                restore.run();
+                helper.succeed();
+            });
+        } catch (RuntimeException | Error failure) {
+            restore.run();
+            throw failure;
         }
-        helper.succeed();
     }
 
     /** Steps the tracker; returns the smallest and largest pupil size multiplier seen on any eye. */
@@ -651,6 +688,12 @@ public final class BehaviorSchedulerGameTestsLogic {
         mob.interact(player, InteractionHand.MAIN_HAND);
     }
 
+    /** Complete a real villager trade, which reaches the loader's trade hook. */
+    private static void trade(ServerPlayer player, Villager villager) {
+        villager.setTradingPlayer(player);
+        villager.notifyTrade(new MerchantOffer(new ItemCost(Items.EMERALD), new ItemStack(Items.BREAD), 1, 1, 0.05F));
+    }
+
     /**
      * Milking a cow, mooshroom, or goat with a bucket plays grow, and only while {@code growOnMilk} is on.
      * In game: use an empty bucket on an eyed cow, mooshroom, or goat, and its eyes bulge as the bucket
@@ -660,6 +703,12 @@ public final class BehaviorSchedulerGameTestsLogic {
         boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
         boolean onMilk = ServerConfig.GROW_ON_MILK.get();
         ItemStack held = player.getMainHandItem().copy();
+        Runnable restore = () -> {
+            ServerBehaviorScheduler.clear();
+            ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
+            ServerConfig.GROW_ON_MILK.set(onMilk);
+            player.setItemInHand(InteractionHand.MAIN_HAND, held);
+        };
         ServerBehaviorScheduler.clear();
         try {
             ServerConfig.AMBIENT_BEHAVIORS.set(false);
@@ -669,27 +718,26 @@ public final class BehaviorSchedulerGameTestsLogic {
 
             ServerConfig.GROW_ON_MILK.set(false);
             milk(player, cow);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 1L),
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 1L),
                     Component.literal("growOnMilk=false suppresses the milking grow"));
-            advance(3);
-
-            ServerConfig.GROW_ON_MILK.set(true);
-            milk(player, cow);
-            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3, 2L),
-                    Component.literal("milking a cow plays grow"));
-            milk(player, mooshroom);
-            helper.assertTrue(!ServerBehaviorScheduler.trigger(mooshroom, EyeBehavior.BLINK, 3, 3L),
-                    Component.literal("milking a mooshroom plays grow"));
-            milk(player, goat);
-            helper.assertTrue(!ServerBehaviorScheduler.trigger(goat, EyeBehavior.BLINK, 3, 4L),
-                    Component.literal("milking a goat plays grow"));
-        } finally {
-            ServerBehaviorScheduler.clear();
-            ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
-            ServerConfig.GROW_ON_MILK.set(onMilk);
-            player.setItemInHand(InteractionHand.MAIN_HAND, held);
+            after(helper, EyeBehavior.BLINK.defaultDuration(), restore, () -> {
+                ServerConfig.GROW_ON_MILK.set(true);
+                milk(player, cow);
+                helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 2L),
+                        Component.literal("milking a cow plays grow"));
+                milk(player, mooshroom);
+                helper.assertTrue(!ServerBehaviorScheduler.trigger(mooshroom, EyeBehavior.BLINK, 3L),
+                        Component.literal("milking a mooshroom plays grow"));
+                milk(player, goat);
+                helper.assertTrue(!ServerBehaviorScheduler.trigger(goat, EyeBehavior.BLINK, 4L),
+                        Component.literal("milking a goat plays grow"));
+                restore.run();
+                helper.succeed();
+            });
+        } catch (RuntimeException | Error failure) {
+            restore.run();
+            throw failure;
         }
-        helper.succeed();
     }
 
     /**
@@ -700,6 +748,10 @@ public final class BehaviorSchedulerGameTestsLogic {
      */
     public static void oneBehaviorAtATimeUntilItElapses(GameTestHelper helper, ServerPlayer player) {
         boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
+        Runnable restore = () -> {
+            ServerBehaviorScheduler.clear();
+            ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
+        };
         ServerBehaviorScheduler.clear();
         try {
             ServerConfig.AMBIENT_BEHAVIORS.set(false);
@@ -707,18 +759,24 @@ public final class BehaviorSchedulerGameTestsLogic {
             EyeState.setHasEyes(cow, true);
             ServerBehaviorScheduler.onStartTracking(cow, player);
 
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.STARE, 10, 1L),
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.STARE, 1L),
                     Component.literal("the first trigger starts"));
-            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 10, 2L),
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 2L),
                     Component.literal("a second trigger is dropped while one is playing"));
-            advance(10);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 10, 3L),
-                    Component.literal("once the active behavior elapses a new trigger starts"));
-        } finally {
-            ServerBehaviorScheduler.clear();
-            ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
+            after(helper, EyeBehavior.STARE.defaultDuration() - 1, restore, () -> {
+                helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3L),
+                        Component.literal("a trigger on the active behavior's last tick is still dropped"));
+                after(helper, 1, restore, () -> {
+                    helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 3L),
+                            Component.literal("once the active behavior elapses a new trigger starts"));
+                    restore.run();
+                    helper.succeed();
+                });
+            });
+        } catch (RuntimeException | Error failure) {
+            restore.run();
+            throw failure;
         }
-        helper.succeed();
     }
 
     /** A fresh mock player with the given handedness, holding {@code weapon} in {@code hand}. */
@@ -766,31 +824,31 @@ public final class BehaviorSchedulerGameTestsLogic {
         HeadInfo info = headInfo(helper, zombie);
         try {
             ClientEyeRuntime.onLevelChanged();
-            ClientEyeRuntime.setBehavior(zombie, EyeBehavior.SWIRL, 12, 42L, 3);
+            ClientEyeRuntime.setBehavior(zombie, EyeBehavior.SWIRL, 42L, 3);
             helper.assertTrue(ClientEyeRuntime.peek(zombie) == null, Component.literal("receipt must not create a drawing cache"));
-            ClientEyeRuntime.tick(helper.getLevel(), true);
+            ClientEyeRuntime.tick(helper.getLevel(), true, null);
             GooglyTracker first = ClientEyeRuntime.get(zombie, info);
             helper.assertTrue(first.active != null && first.active.age == 4,
                     Component.literal("first render catches up a previously received expression"));
             ClientEyeRuntime.clear();
-            ClientEyeRuntime.tick(helper.getLevel(), true);
+            ClientEyeRuntime.tick(helper.getLevel(), true, null);
             GooglyTracker rebuilt = ClientEyeRuntime.get(zombie, info);
             helper.assertTrue(rebuilt != first && rebuilt.active != null && rebuilt.active.age == 5,
                     Component.literal("replacing a render tracker preserves expression progress"));
-            ClientEyeRuntime.tick(helper.getLevel(), false);
+            ClientEyeRuntime.tick(helper.getLevel(), false, null);
             helper.assertTrue(ClientEyeRuntime.get(zombie, info).active.age == 5,
                     Component.literal("paused client ticks do not advance expression time"));
             ClientEyeRuntime.clear();
-            for (int tick = 0; tick < 7; tick++) {
-                ClientEyeRuntime.tick(helper.getLevel(), true);
+            for (int tick = 0; tick < EyeBehavior.SWIRL.defaultDuration() - 5; tick++) {
+                ClientEyeRuntime.tick(helper.getLevel(), true, null);
             }
             helper.assertTrue(ClientEyeRuntime.get(zombie, info).active == null,
                     Component.literal("unrendered expressions expire without a tracker"));
-            ClientEyeRuntime.setBehavior(zombie, EyeBehavior.BLINK, 8, 7L, 0);
+            ClientEyeRuntime.setBehavior(zombie, EyeBehavior.BLINK, 7L, 0);
             ClientEyeRuntime.onEntityRemoved(zombie);
             helper.assertTrue(ClientEyeRuntime.get(zombie, info).active == null,
                     Component.literal("entity unloading removes received expression state"));
-            ClientEyeRuntime.setBehavior(zombie, EyeBehavior.BLINK, 8, 7L, 0);
+            ClientEyeRuntime.setBehavior(zombie, EyeBehavior.BLINK, 7L, 0);
             ClientEyeRuntime.onLevelChanged();
             helper.assertTrue(ClientEyeRuntime.get(zombie, info).active == null,
                     Component.literal("world replacement removes received expression state"));
@@ -813,16 +871,16 @@ public final class BehaviorSchedulerGameTestsLogic {
             Piglin piglin = helper.spawnWithNoFreeWill(EntityType.PIGLIN, new BlockPos(3, 2, 1));
             Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(1, 2, 3));
 
-            helper.assertTrue(!ServerBehaviorScheduler.isAngry(golem), Component.literal("a calm golem isn't angry"));
+            helper.assertTrue(!OngoingBehavior.ANGER.serverAngry(golem), Component.literal("a calm golem isn't angry"));
             golem.setRemainingPersistentAngerTime(100);
-            helper.assertTrue(ServerBehaviorScheduler.isAngry(golem), Component.literal("a provoked golem is angry"));
-            helper.assertTrue(!ServerBehaviorScheduler.isAngry(piglin), Component.literal("a calm piglin isn't angry"));
+            helper.assertTrue(OngoingBehavior.ANGER.serverAngry(golem), Component.literal("a provoked golem is angry"));
+            helper.assertTrue(!OngoingBehavior.ANGER.serverAngry(piglin), Component.literal("a calm piglin isn't angry"));
             piglin.getBrain().setMemory(MemoryModuleType.ANGRY_AT, cow.getUUID());
-            helper.assertTrue(ServerBehaviorScheduler.isAngry(piglin), Component.literal("a piglin with an anger target is angry"));
-            helper.assertTrue(!ServerBehaviorScheduler.isAngry(cow), Component.literal("a cow is never angry"));
+            helper.assertTrue(OngoingBehavior.ANGER.serverAngry(piglin), Component.literal("a piglin with an anger target is angry"));
+            helper.assertTrue(!OngoingBehavior.ANGER.serverAngry(cow), Component.literal("a cow is never angry"));
 
             ServerConfig.ANGRY_EYES.set(false);
-            helper.assertTrue(!ServerBehaviorScheduler.isAngry(golem) && !ServerBehaviorScheduler.isAngry(piglin),
+            helper.assertTrue(!OngoingBehavior.ANGER.serverAngry(golem) && !OngoingBehavior.ANGER.serverAngry(piglin),
                     Component.literal("angryEyes=false shares no anger"));
         } finally {
             ServerConfig.ANGRY_EYES.set(angryEyes);
@@ -856,13 +914,13 @@ public final class BehaviorSchedulerGameTestsLogic {
             ServerConfig.GROW_ON_SHEAR.set(false);
             shear(player, quiet);
             helper.assertTrue(quiet.isSheared(), Component.literal("the shears sheared the first sheep"));
-            helper.assertTrue(ServerBehaviorScheduler.trigger(quiet, EyeBehavior.BLINK, 3, 1L),
+            helper.assertTrue(ServerBehaviorScheduler.trigger(quiet, EyeBehavior.BLINK, 1L),
                     Component.literal("growOnShear=false suppresses the shearing grow"));
 
             ServerConfig.GROW_ON_SHEAR.set(true);
             shear(player, bulging);
             helper.assertTrue(bulging.isSheared(), Component.literal("the shears sheared the second sheep"));
-            helper.assertTrue(!ServerBehaviorScheduler.trigger(bulging, EyeBehavior.BLINK, 3, 2L),
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(bulging, EyeBehavior.BLINK, 2L),
                     Component.literal("shearing a sheep plays grow"));
         } finally {
             ServerBehaviorScheduler.clear();
@@ -901,9 +959,18 @@ public final class BehaviorSchedulerGameTestsLogic {
         boolean onHeal = ServerConfig.SWIRL_ON_HEAL.get();
         boolean onTrade = ServerConfig.SWIRL_ON_TRADE.get();
         boolean onAffection = ServerConfig.LOVE_ON_AFFECTION.get();
+        Runnable restore = () -> {
+            ServerBehaviorScheduler.clear();
+            ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
+            ServerConfig.AMBIENT_MIN_TICKS.set(ambientMin);
+            ServerConfig.AMBIENT_MAX_TICKS.set(ambientMax);
+            ServerConfig.SWIRL_ON_HEAL.set(onHeal);
+            ServerConfig.SWIRL_ON_TRADE.set(onTrade);
+            ServerConfig.LOVE_ON_AFFECTION.set(onAffection);
+        };
         ServerBehaviorScheduler.clear();
         try {
-            // Ambient on with a one-tick cooldown, so every advanced tick tries an ambient roll.
+            // Ambient on with a one-tick cooldown, so every tick in between tries an ambient roll.
             ServerConfig.AMBIENT_BEHAVIORS.set(true);
             ServerConfig.AMBIENT_MIN_TICKS.set(ServerConfig.TICKS_MIN);
             ServerConfig.AMBIENT_MAX_TICKS.set(ServerConfig.TICKS_MIN);
@@ -913,27 +980,25 @@ public final class BehaviorSchedulerGameTestsLogic {
             Villager villager = eyedTrackedMob(helper, player, EntityType.VILLAGER, new BlockPos(2, 2, 2));
             sleepInBed(helper, villager, new BlockPos(2, 2, 2));
 
-            helper.assertTrue(!ServerBehaviorScheduler.trigger(villager, EyeBehavior.STARE, 3, 1L),
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(villager, EyeBehavior.STARE, 1L),
                     Component.literal("a trigger on a sleeping mob is dropped"));
             villager.setHealth(1F);
-            ServerBehaviorScheduler.onHealed(villager);
-            ServerBehaviorScheduler.onTrade(villager);
+            villager.heal(1F);
+            trade(player, villager);
             helper.getLevel().broadcastEntityEvent(villager, EntityEvent.LOVE_HEARTS);
-            advance(5);
-
-            villager.stopSleeping();
-            helper.assertTrue(ServerBehaviorScheduler.trigger(villager, EyeBehavior.BLINK, 3, 2L),
-                    Component.literal("no heal, trade, affection, or ambient behavior started while the mob slept"));
-        } finally {
-            ServerBehaviorScheduler.clear();
-            ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
-            ServerConfig.AMBIENT_MIN_TICKS.set(ambientMin);
-            ServerConfig.AMBIENT_MAX_TICKS.set(ambientMax);
-            ServerConfig.SWIRL_ON_HEAL.set(onHeal);
-            ServerConfig.SWIRL_ON_TRADE.set(onTrade);
-            ServerConfig.LOVE_ON_AFFECTION.set(onAffection);
+            after(helper, 5, restore, () -> {
+                // Ambient off before waking, so the next roll can't occupy the mob before the probe.
+                ServerConfig.AMBIENT_BEHAVIORS.set(false);
+                villager.stopSleeping();
+                helper.assertTrue(ServerBehaviorScheduler.trigger(villager, EyeBehavior.BLINK, 2L),
+                        Component.literal("no heal, trade, affection, or ambient behavior started while the mob slept"));
+                restore.run();
+                helper.succeed();
+            });
+        } catch (RuntimeException | Error failure) {
+            restore.run();
+            throw failure;
         }
-        helper.succeed();
     }
 
     /**
@@ -998,7 +1063,7 @@ public final class BehaviorSchedulerGameTestsLogic {
      */
     private static boolean receivedBehaviorPlays(LivingEntity living, HeadInfo headInfo) {
         try {
-            ClientEyeRuntime.setBehavior(living, EyeBehavior.BLINK, EyeBehavior.BLINK.defaultDuration(), 1L, 0);
+            ClientEyeRuntime.setBehavior(living, EyeBehavior.BLINK, 1L, 0);
             return ClientEyeRuntime.get(living, headInfo).active != null;
         } finally {
             ClientEyeRuntime.onEntityRemoved(living);
@@ -1183,11 +1248,8 @@ public final class BehaviorSchedulerGameTestsLogic {
             Villager villager = helper.spawnWithNoFreeWill(EntityType.VILLAGER, new BlockPos(2, 2, 2));
             EyeState.setHasEyes(villager, true);
             ServerBehaviorScheduler.onStartTracking(villager, player);
-            villager.setTradingPlayer(player);
-
-            villager.notifyTrade(new MerchantOffer(
-                    new ItemCost(Items.EMERALD), new ItemStack(Items.BREAD), 1, 1, 0.05F));
-            helper.assertTrue(!ServerBehaviorScheduler.trigger(villager, EyeBehavior.BLINK, 5, 1L),
+            trade(player, villager);
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(villager, EyeBehavior.BLINK, 1L),
                     Component.literal("the completed trade starts a swirl"));
         } finally {
             ServerBehaviorScheduler.clear();
@@ -1216,7 +1278,7 @@ public final class BehaviorSchedulerGameTestsLogic {
                 ServerBehaviorScheduler.onStartTracking(target, attacker);
                 helper.assertTrue(target.hurtServer(helper.getLevel(), helper.getLevel().damageSources().playerAttack(attacker), 1F),
                         Component.literal("the hit lands"));
-                helper.assertTrue(!ServerBehaviorScheduler.trigger(target, EyeBehavior.BLINK, 3, 1L),
+                helper.assertTrue(!ServerBehaviorScheduler.trigger(target, EyeBehavior.BLINK, 1L),
                         Component.literal("the hit starts the grow, so another behavior can't start"));
             }
         } finally {
@@ -1234,6 +1296,11 @@ public final class BehaviorSchedulerGameTestsLogic {
     public static void healAtFullHealthPlaysNoSwirl(GameTestHelper helper, ServerPlayer player) {
         boolean ambient = ServerConfig.AMBIENT_BEHAVIORS.get();
         boolean onHeal = ServerConfig.SWIRL_ON_HEAL.get();
+        Runnable restore = () -> {
+            ServerBehaviorScheduler.clear();
+            ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
+            ServerConfig.SWIRL_ON_HEAL.set(onHeal);
+        };
         ServerBehaviorScheduler.clear();
         try {
             ServerConfig.AMBIENT_BEHAVIORS.set(false);
@@ -1242,20 +1309,20 @@ public final class BehaviorSchedulerGameTestsLogic {
             EyeState.setHasEyes(cow, true);
             ServerBehaviorScheduler.onStartTracking(cow, player);
 
-            ServerBehaviorScheduler.onHealed(cow);
-            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 1, 1L),
+            cow.heal(1F);
+            helper.assertTrue(ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 1L),
                     Component.literal("a heal at full health starts nothing"));
-            advance(1);
-
-            cow.setHealth(1F);
-            ServerBehaviorScheduler.onHealed(cow);
-            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 1, 2L),
-                    Component.literal("a heal of a hurt mob swirls, so the one at full health left its cooldown unspent"));
-        } finally {
-            ServerBehaviorScheduler.clear();
-            ServerConfig.AMBIENT_BEHAVIORS.set(ambient);
-            ServerConfig.SWIRL_ON_HEAL.set(onHeal);
+            after(helper, EyeBehavior.BLINK.defaultDuration(), restore, () -> {
+                cow.setHealth(1F);
+                cow.heal(1F);
+                helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 2L),
+                        Component.literal("a heal of a hurt mob swirls, so the one at full health left its cooldown unspent"));
+                restore.run();
+                helper.succeed();
+            });
+        } catch (RuntimeException | Error failure) {
+            restore.run();
+            throw failure;
         }
-        helper.succeed();
     }
 }

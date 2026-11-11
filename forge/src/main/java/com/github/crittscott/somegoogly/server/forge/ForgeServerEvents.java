@@ -8,7 +8,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraftforge.common.util.Result;
 import net.minecraftforge.event.OnDatapackSyncEvent;
@@ -80,9 +79,7 @@ public final class ForgeServerEvents {
     }
 
     private static void onLivingDamage(LivingDamageEvent event) {
-        if (event.getSource().getEntity() instanceof Player) {
-            ServerBehaviorScheduler.onPlayerHurt(event.getEntity());
-        }
+        ServerBehaviorScheduler.onHurt(event.getEntity(), event.getSource());
     }
 
     private static void onLivingDrops(LivingDropsEvent event) {
@@ -99,10 +96,7 @@ public final class ForgeServerEvents {
     }
 
     private static void onLivingHeal(LivingHealEvent event) {
-        LivingEntity living = event.getEntity();
-        if (!living.level().isClientSide()) {
-            ServerBehaviorScheduler.onHealed(living);
-        }
+        ServerBehaviorScheduler.onHealed(event.getEntity());
     }
 
     /** Respawning or leaving the End replaces the player. */

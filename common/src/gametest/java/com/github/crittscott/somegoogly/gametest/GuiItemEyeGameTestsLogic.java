@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.gametest;
 
-import com.github.crittscott.somegoogly.client.GuiItemEyes;
+import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
+import com.github.crittscott.somegoogly.client.PresentationEyes;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
@@ -16,6 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 import java.util.List;
+import java.util.UUID;
 
 /** GUI ownership and clock tests; actual icon drawing and atlas behavior need the client checklist. */
 public final class GuiItemEyeGameTestsLogic {
@@ -37,9 +39,9 @@ public final class GuiItemEyeGameTestsLogic {
      * to pause; the icon keeps blinking while mobs behind the menu stand still.
      */
     public static void guiEyesAdvanceWithoutWorldTicks(GameTestHelper helper) {
-        GuiItemEyes.Simulations cache = new GuiItemEyes.Simulations();
+        TestEyeRuntime.GuiCache cache = new TestEyeRuntime.GuiCache();
         Object view = new Object();
-        var key = new GuiItemEyes.Key(view, GuiItemEyes.Kind.SLOT, 0, 0, 0);
+        var key = new ClientEyeRuntime.GuiKey(view, ClientEyeRuntime.GuiKind.SLOT, 0, 0, 0);
         ItemStack stack = eye();
         var presentation = cache.get(key, stack);
         BehaviorSettings defaults = TestBehaviorSettings.DEFAULTS;
@@ -61,8 +63,8 @@ public final class GuiItemEyeGameTestsLogic {
      * moves again, starting from rest.
      */
     public static void guiEyesHonorEligibilityAndSwitch(GameTestHelper helper) {
-        GuiItemEyes.Simulations cache = new GuiItemEyes.Simulations();
-        var key = new GuiItemEyes.Key(new Object(), GuiItemEyes.Kind.SLOT, 0, 0, 0);
+        TestEyeRuntime.GuiCache cache = new TestEyeRuntime.GuiCache();
+        var key = new ClientEyeRuntime.GuiKey(new Object(), ClientEyeRuntime.GuiKind.SLOT, 0, 0, 0);
         var first = cache.get(key, eye());
         cache.clear();
         var restored = cache.get(key, eye());
@@ -81,8 +83,8 @@ public final class GuiItemEyeGameTestsLogic {
      * slot's pupil keeps moving smoothly instead of jumping back to rest.
      */
     public static void guiEyesKeepPresentationIdentity(GameTestHelper helper) {
-        GuiItemEyes.Simulations cache = new GuiItemEyes.Simulations();
-        var key = new GuiItemEyes.Key(new Object(), GuiItemEyes.Kind.SLOT, 3, 0, 0);
+        TestEyeRuntime.GuiCache cache = new TestEyeRuntime.GuiCache();
+        var key = new ClientEyeRuntime.GuiKey(new Object(), ClientEyeRuntime.GuiKind.SLOT, 3, 0, 0);
         ItemStack stack = eye();
         var first = cache.get(key, stack);
         ItemStack copy = stack.copy();
@@ -100,8 +102,8 @@ public final class GuiItemEyeGameTestsLogic {
      * then replace it with a dyed or glowing one; the icon shows the new color or glow at once.
      */
     public static void guiEyesReplaceChangedContents(GameTestHelper helper) {
-        GuiItemEyes.Simulations cache = new GuiItemEyes.Simulations();
-        var key = new GuiItemEyes.Key(new Object(), GuiItemEyes.Kind.SLOT, 0, 0, 0);
+        TestEyeRuntime.GuiCache cache = new TestEyeRuntime.GuiCache();
+        var key = new ClientEyeRuntime.GuiKey(new Object(), ClientEyeRuntime.GuiKind.SLOT, 0, 0, 0);
         ItemStack stack = eye();
         var first = cache.get(key, stack);
         EyeItemProperties.set(stack, AppearanceOverride.EMPTY.withGlow(true));
@@ -117,10 +119,10 @@ public final class GuiItemEyeGameTestsLogic {
      * screens, and creative entries scrolled out of view leave no state behind.
      */
     public static void guiEyesRetireClosedAndHiddenViews(GameTestHelper helper) {
-        GuiItemEyes.Simulations cache = new GuiItemEyes.Simulations();
+        TestEyeRuntime.GuiCache cache = new TestEyeRuntime.GuiCache();
         Object view = new Object();
-        var screenKey = new GuiItemEyes.Key(view, GuiItemEyes.Kind.SLOT, 0, 0, 0);
-        var hudKey = new GuiItemEyes.Key(GuiItemEyes.HUD, GuiItemEyes.Kind.POSITION, 0, 0, 0);
+        var screenKey = new ClientEyeRuntime.GuiKey(view, ClientEyeRuntime.GuiKind.SLOT, 0, 0, 0);
+        var hudKey = new ClientEyeRuntime.GuiKey(ClientEyeRuntime.HUD, ClientEyeRuntime.GuiKind.POSITION, 0, 0, 0);
         var screen = cache.get(screenKey, eye());
         var hud = cache.get(hudKey, eye());
         cache.tick(new Object(), BehaviorSettings.NONE);
@@ -146,16 +148,16 @@ public final class GuiItemEyeGameTestsLogic {
      * expressions as you drag it across the occupied slots.
      */
     public static void guiEyesSeparateSlotsAndCursor(GameTestHelper helper) {
-        GuiItemEyes.Simulations cache = new GuiItemEyes.Simulations();
+        TestEyeRuntime.GuiCache cache = new TestEyeRuntime.GuiCache();
         Object view = new Object();
-        var first = cache.get(new GuiItemEyes.Key(view, GuiItemEyes.Kind.SLOT, 0, 0, 0), eye());
-        var second = cache.get(new GuiItemEyes.Key(view, GuiItemEyes.Kind.SLOT, 1, 0, 0), eye());
-        var cursorKey = new GuiItemEyes.Key(view, GuiItemEyes.Kind.CURSOR, 0, 0, 0);
+        var first = cache.get(new ClientEyeRuntime.GuiKey(view, ClientEyeRuntime.GuiKind.SLOT, 0, 0, 0), eye());
+        var second = cache.get(new ClientEyeRuntime.GuiKey(view, ClientEyeRuntime.GuiKind.SLOT, 1, 0, 0), eye());
+        var cursorKey = new ClientEyeRuntime.GuiKey(view, ClientEyeRuntime.GuiKind.CURSOR, 0, 0, 0);
         var cursor = cache.get(cursorKey, eye());
         helper.assertTrue(first != second && cursor != first, Component.literal("presentations do not share pupils"));
         helper.assertTrue(cache.get(cursorKey, eye().copy()) == cursor,
                 Component.literal("the cursor simulation is independent of its moving coordinates"));
-        var hotbarKey = new GuiItemEyes.Key(GuiItemEyes.HUD, GuiItemEyes.Kind.HOTBAR, 1, 0, 0);
+        var hotbarKey = new ClientEyeRuntime.GuiKey(ClientEyeRuntime.HUD, ClientEyeRuntime.GuiKind.HOTBAR, 1, 0, 0);
         var hotbar = cache.get(hotbarKey, eye());
         cache.tick(view, BehaviorSettings.NONE);
         helper.assertTrue(cache.get(hotbarKey, eye()) == hotbar,
@@ -177,9 +179,9 @@ public final class GuiItemEyeGameTestsLogic {
         try {
             ClientEyeConfigs.replaceAll(ServerEyeConfigs.all());
             ClientEyeConfigs.applySettings(true, TestBehaviorSettings.DEFAULTS);
-            GuiItemEyes.Simulations cache = new GuiItemEyes.Simulations();
+            TestEyeRuntime.GuiCache cache = new TestEyeRuntime.GuiCache();
             Object view = new Object();
-            var key = new GuiItemEyes.Key(view, GuiItemEyes.Kind.SLOT, 0, 0, 0);
+            var key = new ClientEyeRuntime.GuiKey(view, ClientEyeRuntime.GuiKind.SLOT, 0, 0, 0);
             ItemStack head = new ItemStack(Items.SKELETON_SKULL);
             SkullEyeState.stampItem(head, new Snapshot(true, 0F, AppearanceOverride.EMPTY.withGlow(true)));
             var presentation = cache.get(key, head);
@@ -205,5 +207,57 @@ public final class GuiItemEyeGameTestsLogic {
             ClientEyeConfigs.replaceAll(definitions);
             ClientEyeConfigs.applySettings(enabled, behaviors);
         }
+    }
+
+    /**
+     * One nested draw context carries GUI identity, the selected animation, and the item being drawn; closing an
+     * inner scope restores the enclosing one. A GUI item's animation is selected inside its slot's scope while its
+     * render state is filled, and the state carries that selection to its later draw, which no GUI scope encloses.
+     * In game: put eyed heads and Googly Eyes in inventory slots, the hotbar, and item frames; each animates on its
+     * own and a head drawn inside another item's slot keeps its eyes.
+     */
+    public static void nestedDrawContextsRestoreOuterSelection(GameTestHelper helper) {
+        Object view = new Object();
+        PresentationEyes eyes = PresentationEyes.create(new UUID(1L, 2L), eye());
+        PresentationEyes.Draw stored;
+        ClientEyeRuntime.beginGuiPresentation(view, ClientEyeRuntime.GuiKind.SLOT, 3);
+        try {
+            ClientEyeRuntime.beginItemDraw(new PresentationEyes.Draw(eyes, 0.5F));
+            try {
+                stored = ClientEyeRuntime.itemDraw(eye());
+                helper.assertTrue(stored.eyes() == eyes && ClientEyeRuntime.currentDraw().guiKey().view() == view,
+                        Component.literal("the slot's item draw selects its animation while the render state is filled"));
+            } finally {
+                ClientEyeRuntime.endItemDraw();
+            }
+            helper.assertTrue(ClientEyeRuntime.currentDraw().guiKey().x() == 3
+                    && ClientEyeRuntime.currentDraw().draw().eyes() == null,
+                    Component.literal("closing the item restores its slot's scope"));
+        } finally {
+            ClientEyeRuntime.endItemDraw();
+        }
+        helper.assertTrue(ClientEyeRuntime.currentDraw().guiKey() == null, Component.literal("closing the GUI scope restores the outside"));
+
+        ItemStack stack = eye();
+        ClientEyeRuntime.beginItemState(stack, stored);
+        try {
+            ItemStack head = new ItemStack(Items.SKELETON_SKULL);
+            ClientEyeRuntime.beginItemState(head, PresentationEyes.Draw.NONE);
+            try {
+                ClientEyeRuntime.DrawContext context = ClientEyeRuntime.currentDraw();
+                helper.assertTrue(context.item() == head && context.draw().eyes() == null,
+                        Component.literal("a nested item state carries its own stack and extracted animation"));
+            } finally {
+                ClientEyeRuntime.endItemDraw();
+            }
+            ClientEyeRuntime.DrawContext context = ClientEyeRuntime.currentDraw();
+            helper.assertTrue(context.item() == stack && context.draw().eyes() == eyes && context.guiKey() == null,
+                    Component.literal("the deferred draw keeps the animation selected at extraction"));
+        } finally {
+            ClientEyeRuntime.endItemDraw();
+        }
+        helper.assertTrue(ClientEyeRuntime.currentDraw().item() == null
+                && ClientEyeRuntime.currentDraw().draw().eyes() == null, Component.literal("closing the draw restores the outside"));
+        helper.succeed();
     }
 }

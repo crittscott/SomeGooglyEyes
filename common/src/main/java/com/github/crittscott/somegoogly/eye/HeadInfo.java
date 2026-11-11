@@ -2,7 +2,6 @@ package com.github.crittscott.somegoogly.eye;
 
 import com.github.crittscott.somegoogly.config.EyeConfigModel.HeadConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
-import com.github.crittscott.somegoogly.eye.state.EyeAppearance;
 import java.util.List;
 
 /**

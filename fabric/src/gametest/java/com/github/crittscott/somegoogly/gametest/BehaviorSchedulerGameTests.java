@@ -12,7 +12,7 @@ public final class BehaviorSchedulerGameTests {
 
     private static final String TEMPLATE = "somegoogly:empty";
 
-    @GameTest(structure = TEMPLATE, maxTicks = 100)
+    @GameTest(structure = TEMPLATE, maxTicks = 400, environment = "somegoogly:affection_events_play_love")
     public void affectionEventsPlayLove(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.affectionEventsPlayLove(
                 helper, FakePlayer.get(helper.getLevel()));
@@ -49,25 +49,25 @@ public final class BehaviorSchedulerGameTests {
                 helper, FakePlayer.get(helper.getLevel()));
     }
 
-    @GameTest(structure = TEMPLATE, maxTicks = 100)
+    @GameTest(structure = TEMPLATE, maxTicks = 400, environment = "somegoogly:game_event_triggers_respect_config")
     public void gameEventTriggersRespectConfig(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.gameEventTriggersRespectConfig(
                 helper, FakePlayer.get(helper.getLevel()));
     }
 
-    @GameTest(structure = TEMPLATE, maxTicks = 100)
+    @GameTest(structure = TEMPLATE, maxTicks = 400, environment = "somegoogly:heal_swirl_is_rate_limited")
     public void healSwirlIsRateLimited(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.healSwirlIsRateLimited(
                 helper, FakePlayer.get(helper.getLevel()));
     }
 
-    @GameTest(structure = TEMPLATE, maxTicks = 100)
+    @GameTest(structure = TEMPLATE, maxTicks = 400, environment = "somegoogly:milking_plays_grow")
     public void milkingPlaysGrow(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.milkingPlaysGrow(
                 helper, FakePlayer.get(helper.getLevel()));
     }
 
-    @GameTest(structure = TEMPLATE, maxTicks = 100)
+    @GameTest(structure = TEMPLATE, maxTicks = 400, environment = "somegoogly:one_behavior_at_a_time_until_it_elapses")
     public void oneBehaviorAtATimeUntilItElapses(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.oneBehaviorAtATimeUntilItElapses(
                 helper, FakePlayer.get(helper.getLevel()));
@@ -89,7 +89,7 @@ public final class BehaviorSchedulerGameTests {
                 helper, FakePlayer.get(helper.getLevel()));
     }
 
-    @GameTest(structure = TEMPLATE, maxTicks = 100)
+    @GameTest(structure = TEMPLATE, maxTicks = 400, environment = "somegoogly:sleeping_mob_plays_no_behaviors")
     public void sleepingMobPlaysNoBehaviors(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.sleepingMobPlaysNoBehaviors(
                 helper, FakePlayer.get(helper.getLevel()));
@@ -115,7 +115,7 @@ public final class BehaviorSchedulerGameTests {
         BehaviorSchedulerGameTestsLogic.receivedExpressionsOutliveRenderTrackers(helper);
     }
 
-    @GameTest(structure = TEMPLATE, maxTicks = 60)
+    @GameTest(structure = TEMPLATE, maxTicks = 400, environment = "somegoogly:disabled_eyes_suspend_automatic_behaviors")
     public void disabledEyesSuspendAutomaticBehaviors(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.disabledEyesSuspendAutomaticBehaviors(helper, FakePlayer.get(helper.getLevel()));
     }
@@ -125,7 +125,7 @@ public final class BehaviorSchedulerGameTests {
         BehaviorSchedulerGameTestsLogic.completedTradeSwirlsEyes(helper, FakePlayer.get(helper.getLevel()));
     }
 
-    @GameTest(structure = TEMPLATE, maxTicks = 40)
+    @GameTest(structure = TEMPLATE, maxTicks = 400, environment = "somegoogly:heal_at_full_health_plays_no_swirl")
     public void healAtFullHealthPlaysNoSwirl(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.healAtFullHealthPlaysNoSwirl(helper, FakePlayer.get(helper.getLevel()));
     }

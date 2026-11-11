@@ -14,7 +14,7 @@ import net.minecraft.server.level.ServerPlayer;
  * arrival; each loader registers from {@link #CLIENTBOUND} and {@link #SERVERBOUND} in list order. Clientbound
  * handlers reach {@link ClientNetworkHandler} only inside lambda bodies, so a dedicated server never links it.
  * Sends go straight through the loader bridges, {@link com.github.crittscott.somegoogly.platform.Networking} and
- * {@link com.github.crittscott.somegoogly.platform.ClientNetworking}.
+ * {@link com.github.crittscott.somegoogly.client.platform.ClientNetworking}.
  */
 public final class NetworkProtocol {
 
@@ -32,7 +32,7 @@ public final class NetworkProtocol {
                     packet -> ClientNetworkHandler.handleAnger(packet)));
 
     /** Bumped whenever any payload becomes wire-incompatible. */
-    public static final String NETWORK_VERSION = "18";
+    public static final String NETWORK_VERSION = "19";
 
     /** Every payload a client sends, with its server-thread handler, which re-checks the sender's authority. */
     public static final List<Serverbound<?>> SERVERBOUND = List.of(

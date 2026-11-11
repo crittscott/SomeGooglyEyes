@@ -74,7 +74,7 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<Js
         Map<Fallback, Integer> fallbacks = new LinkedHashMap<>();
         for (Map.Entry<ResourceLocation, JsonElement> entry : files.entrySet()) {
             // Hard exclusion, not config: no config for the dragon may ever load, from any datapack.
-            if (entry.getKey().equals(ServerEyeConfigs.ENDER_DRAGON)) {
+            if (ServerEyeConfigs.isExcluded(entry.getKey())) {
                 SomeGooglyCommon.LOGGER.warn(
                         "Ignoring eye config {}; the ender dragon is hard-excluded from googly eyes", entry.getKey());
                 continue;

@@ -26,7 +26,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootTable;
 
@@ -89,11 +88,8 @@ public final class FabricServerEvents {
                 ServerServices.onConverted(previous, converted));
         // Respawning or leaving the End replaces the player.
         ServerPlayerEvents.COPY_FROM.register(ServerServices::onPlayerCloned);
-        ServerLivingEntityEvents.AFTER_DAMAGE.register((entity, source, baseDamage, damageTaken, blocked) -> {
-            if (source.getEntity() instanceof Player) {
-                ServerBehaviorScheduler.onPlayerHurt(entity);
-            }
-        });
+        ServerLivingEntityEvents.AFTER_DAMAGE.register((entity, source, baseDamage, damageTaken, blocked) ->
+                ServerBehaviorScheduler.onHurt(entity, source));
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) ->
                 ServerServices.onPlayerLeft(handler.player));
         // Sent with the rest of the joining player's game data, ahead of their own eye state.

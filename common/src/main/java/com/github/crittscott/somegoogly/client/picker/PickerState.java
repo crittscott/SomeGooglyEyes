@@ -8,7 +8,7 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
 import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.network.PickerFreezePacket;
-import com.github.crittscott.somegoogly.platform.ClientNetworking;
+import com.github.crittscott.somegoogly.client.platform.ClientNetworking;
 import com.github.crittscott.somegoogly.picker.PickerFreezeService;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;

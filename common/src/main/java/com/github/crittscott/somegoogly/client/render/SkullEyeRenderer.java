@@ -22,9 +22,10 @@ import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import javax.annotation.Nullable;
 
 /**
- * Draws the eyes of placed mob heads and head items. Mixins bracket a placed head's draw with {@link #begin}
- * and a head item's with {@link #beginItem}, both ending in {@link #end}, and call {@link #render} right after
- * the head model is drawn, in the model's space. A placed head's eyes are live ({@link PresentationEyes}); GUI, hand, and framed head items use
+ * Draws the eyes of placed mob heads and head items. Mixins bracket a placed head's draw with
+ * {@link ClientEyeRuntime#beginHead} and an item render state's with {@link ClientEyeRuntime#beginItemState}, both
+ * closed by {@link ClientEyeRuntime#endItemDraw}, and call {@link #render} right after the head model is drawn, in
+ * the model's space. A placed head's eyes are live ({@link PresentationEyes}); GUI, hand, and framed head items use
  * their presentation's pupils and expressions; other items rest. Worn heads share the model draw without
  * either bracket, so they draw no eyes.
  *
@@ -33,14 +34,6 @@ import javax.annotation.Nullable;
  * {@code googlyEyesEnabled} switch.
  */
 public final class SkullEyeRenderer {
-
-    /** The placed head being drawn, or {@code null} outside a placed head's draw. */
-    @Nullable
-    private static SkullBlockEntity current;
-    /** The head item being drawn, or {@code null} outside a head item's draw. */
-    @Nullable
-    private static ItemStack currentItem;
-    private static float partialTick;
 
     private SkullEyeRenderer() {
     }
@@ -53,23 +46,6 @@ public final class SkullEyeRenderer {
         ItemStack somegoogly$item();
 
         void somegoogly$setItem(@Nullable ItemStack stack);
-    }
-
-    /** A placed head's draw starts. */
-    public static void begin(SkullBlockEntity skull, float partialTick) {
-        current = skull;
-        SkullEyeRenderer.partialTick = partialTick;
-    }
-
-    /** An item's draw starts; any but a head item's is ignored, since it never reaches {@link #render}. */
-    public static void beginItem(@Nullable ItemStack stack) {
-        currentItem = stack;
-    }
-
-    /** The placed head's or head item's draw ends. */
-    public static void end() {
-        current = null;
-        currentItem = null;
     }
 
     /** The head part of a model eyes can attach to, or {@code null} for any other head model (the dragon's). */
@@ -98,8 +74,9 @@ public final class SkullEyeRenderer {
         if (head == null) {
             return;
         }
-        SkullBlockEntity skull = current;
-        ItemStack stack = currentItem;
+        ClientEyeRuntime.DrawContext draw = ClientEyeRuntime.currentDraw();
+        SkullBlockEntity skull = draw.block();
+        ItemStack stack = draw.item();
         if (skull != null) {
             ResourceLocation entity = SkullEyeState.entityFor(skull.getBlockState().getBlock());
             if (!SkullEyeState.hasEyes(skull) || !mayShow(entity)) {
@@ -109,14 +86,14 @@ public final class SkullEyeRenderer {
             if (eyes != null) {
                 eyes.markRendered(ClientEyeRuntime.clientTicks());
                 renderEyes(pose, bufferSource, packedLight, head, eyes.helper, eyes.parts, eyes.eyes,
-                        eyes.snapshot.properties(), partialTick);
+                        eyes.snapshot.properties(), draw.partialTick());
             }
         } else if (stack != null) {
             ResourceLocation entity = SkullEyeState.entityFor(stack);
             if (!mayShow(entity)) {
                 return;
             }
-            PresentationEyes.Draw itemDraw = ClientEyeRuntime.itemDraw();
+            PresentationEyes.Draw itemDraw = draw.draw();
             PresentationEyes framed = itemDraw.eyes();
             if (framed != null) {
                 renderEyes(pose, bufferSource, packedLight, head, framed.helper, framed.parts, framed.eyes,

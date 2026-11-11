@@ -297,7 +297,7 @@ public final class EyeItemService {
         }
         ItemStack weapon = player.getMainHandItem();
         if (!weapon.is(ModContent.SHEARS)
-                || mob.getRandom().nextInt(ServerConfig.PERCENT_MAX) >= ServerConfig.HARVEST_ON_KILL_PERCENT.get()) {
+                || !ServerConfig.roll(mob.getRandom(), ServerConfig.HARVEST_ON_KILL_PERCENT.get())) {
             return;
         }
         HeadInfo helper = helperFor(mob);

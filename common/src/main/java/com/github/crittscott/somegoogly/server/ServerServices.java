@@ -57,7 +57,7 @@ public final class ServerServices {
         if (!(living instanceof Player) && ServerConfig.GOOGLY_EYES_ENABLED.get()
                 && ServerEyeConfigs.canEverWearEyes(living)) {
             int percent = ServerConfig.percentFor(entityType);
-            hasGooglyEyes = random.nextFloat() < (percent / (float) ServerConfig.PERCENT_MAX);
+            hasGooglyEyes = ServerConfig.roll(random, percent);
         }
 
         EyeState.initialize(living, hasGooglyEyes, random.nextFloat());
