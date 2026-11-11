@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.gametest;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.command.MaybeFloatArgumentType;
 import com.github.crittscott.somegoogly.config.EyeConfigLimits;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.HeadConfig;
@@ -21,7 +22,6 @@ import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket;
 import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.github.crittscott.somegoogly.network.EyeSettingsPacket;
 import com.github.crittscott.somegoogly.network.EyeStatePacket;
-import com.github.crittscott.somegoogly.network.NetworkProtocol;
 import com.github.crittscott.somegoogly.network.PickerExportPacket;
 import com.github.crittscott.somegoogly.network.PickerFreezePacket;
 import com.google.gson.JsonArray;
@@ -69,9 +69,9 @@ public final class SerializationGameTestsLogic {
         helper.assertTrue(Set.copyOf(typedPayloads).size() == typedPayloads.size(),
                 Component.literal("every gameplay payload must have a unique channel id"));
         List<ResourceLocation> established = List.of(
-                NetworkProtocol.id("eye_state"), NetworkProtocol.id("eye_config"), NetworkProtocol.id("eye_settings"),
-                NetworkProtocol.id("eye_behavior"), NetworkProtocol.id("eye_anger"),
-                NetworkProtocol.id("picker_freeze"), NetworkProtocol.id("picker_export"));
+                SomeGooglyCommon.id("eye_state"), SomeGooglyCommon.id("eye_config"), SomeGooglyCommon.id("eye_settings"),
+                SomeGooglyCommon.id("eye_behavior"), SomeGooglyCommon.id("eye_anger"),
+                SomeGooglyCommon.id("picker_freeze"), SomeGooglyCommon.id("picker_export"));
         helper.assertTrue(typedPayloads.equals(established),
                 Component.literal("the native payload types must preserve every established wire id"));
         helper.succeed();

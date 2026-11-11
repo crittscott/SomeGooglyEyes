@@ -17,11 +17,10 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SkullBlock;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.level.storage.loot.functions.CopyComponentsFunction;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Map;
 import javax.annotation.Nullable;
 
@@ -81,24 +80,6 @@ public final class SkullEyeState {
         return false;
     }
 
-    /**
-     * Copy an eyed head block's snapshot onto its generated head items. The Forge and NeoForge
-     * {@code HeadEyesLootModifier}s call this; Fabric's counterpart is the {@code copy_components} function its
-     * loot-table event adds.
-     */
-    public static void copyToLoot(LootContext context, Collection<ItemStack> generatedLoot) {
-        if (context.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof SkullBlockEntity skull) {
-            Snapshot state = snapshot(skull);
-            if (state.hasEyes()) {
-                for (ItemStack stack : generatedLoot) {
-                    if (entityFor(stack) != null) {
-                        stampItem(stack, state);
-                    }
-                }
-            }
-        }
-    }
-
     /** The placed head's eye-state compound, or {@code null} if it has none; read it, don't write it. */
     @Nullable
     public static CompoundTag data(SkullBlockEntity skull) {
@@ -143,6 +124,15 @@ public final class SkullEyeState {
     }
 
     /**
+     * The loot function that copies a placed head's eye state onto its dropped item, as the
+     * {@link ModContent#HEAD_EYES} component the block entity reports. Every loader's head loot uses it.
+     */
+    public static LootItemFunction.Builder headLootCopy() {
+        return CopyComponentsFunction.copyComponents(CopyComponentsFunction.Source.BLOCK_ENTITY)
+                .include(ModContent.HEAD_EYES.get());
+    }
+
+    /**
      * The indexes of {@code helper}'s heads that a head shows, in order: those attached to the model's head part
      * (an attachment token whose last segment is {@value EyeConfigModel#PART_HEAD}).
      */
@@ -159,7 +149,7 @@ public final class SkullEyeState {
 
     /** Whether eyes attached at {@code token} sit on the model's head part, the part a head shows. */
     private static boolean isHeadPart(String token) {
-        return token.substring(token.lastIndexOf('/') + 1).equals(EyeConfigModel.PART_HEAD);
+        return EyeConfigModel.lastAttachmentSegment(token).equals(EyeConfigModel.PART_HEAD);
     }
 
     /** Whether a head item's eye state has eyes; safe on any item. */

@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.client.render.resolver;
 
 import net.minecraft.client.model.EntityModel;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -33,6 +34,17 @@ public final class Resolvers {
     );
 
     private Resolvers() {
+    }
+
+    /** The log names of the reflected model families whose library this client found and could bind to. */
+    public static List<String> availableFamilies() {
+        List<String> families = new ArrayList<>();
+        for (EyeAttachmentResolver r : SPECIALIZED) {
+            if (r instanceof ReflectedBoxResolver reflected && reflected.available()) {
+                families.add(reflected.familyLabel());
+            }
+        }
+        return families;
     }
 
     /**

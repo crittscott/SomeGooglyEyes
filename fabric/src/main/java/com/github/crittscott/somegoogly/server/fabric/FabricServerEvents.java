@@ -4,7 +4,6 @@ import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.command.GooglyServerCommands;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
-import com.github.crittscott.somegoogly.registry.ModContent;
 import com.github.crittscott.somegoogly.item.EyeItemService;
 import com.github.crittscott.somegoogly.server.ServerServices;
 import java.util.HashSet;
@@ -30,7 +29,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.functions.CopyComponentsFunction;
 
 /** Fabric event wiring for the loader-neutral authoritative server services. */
 public final class FabricServerEvents {
@@ -40,7 +38,7 @@ public final class FabricServerEvents {
      * callbacks can veto before either action mutates state.
      */
     private static final ResourceLocation LATE_PHASE =
-            ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "after_protection");
+            SomeGooglyCommon.id("after_protection");
 
     /** The loot tables of the heads that can have eyes, gathered on first use, once blocks are registered. */
     @Nullable
@@ -76,9 +74,7 @@ public final class FabricServerEvents {
         // The Forge and NeoForge counterpart is HeadEyesLootModifier.
         LootTableEvents.MODIFY.register((key, tableBuilder, source, registries) -> {
             if (headLootTables().contains(key)) {
-                tableBuilder.modifyPools(pool -> pool.apply(
-                        CopyComponentsFunction.copyComponents(CopyComponentsFunction.Source.BLOCK_ENTITY)
-                                .include(ModContent.HEAD_EYES.get())));
+                tableBuilder.modifyPools(pool -> pool.apply(SkullEyeState.headLootCopy()));
             }
         });
         UseItemCallback.EVENT.addPhaseOrdering(Event.DEFAULT_PHASE, LATE_PHASE);

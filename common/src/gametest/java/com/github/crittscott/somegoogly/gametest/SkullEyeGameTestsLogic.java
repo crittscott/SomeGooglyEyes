@@ -236,7 +236,8 @@ public final class SkullEyeGameTestsLogic {
     /**
      * Breaking an eyed head drops a head item carrying its eyes, and placing that item restores them. In game: give
      * a skeleton skull purple eyes, break it in survival, and hover the dropped skull; its tooltip lists googly eyes
-     * and the iris color. Place it again; it shows the same purple eyes in the same arrangement.
+     * and the iris color. Place it again; it shows the same purple eyes in the same arrangement. Remove the eyes
+     * and break it again; the plain dropped skull carries no eye component and stacks with ordinary skulls.
      */
     public static void brokenHeadKeepsItsEyes(GameTestHelper helper, Player player) {
         SkullBlockEntity skull = placeHead(helper, Blocks.SKELETON_SKULL);
@@ -252,6 +253,14 @@ public final class SkullEyeGameTestsLogic {
         SkullBlockEntity placed = placeHead(helper, Blocks.SKELETON_SKULL);
         placed.applyComponentsFromItemStack(item);
         helper.assertTrue(eyes.equals(SkullEyeState.snapshot(placed)), Component.literal("placing the head restores its eyes"));
+
+        heads.get(0).discard();
+        SkullEyeState.set(placed, Snapshot.NONE);
+        helper.getLevel().destroyBlock(helper.absolutePos(HEAD), true);
+        List<ItemEntity> plainHeads = drops(helper, HEAD, Items.SKELETON_SKULL);
+        helper.assertTrue(plainHeads.size() == 1, Component.literal("a plain head still drops itself"));
+        helper.assertTrue(!plainHeads.get(0).getItem().has(ModContent.HEAD_EYES.get()),
+                Component.literal("copying absent eyes must not put an eye component on a plain drop"));
         helper.succeed();
     }
 

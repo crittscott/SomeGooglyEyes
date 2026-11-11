@@ -1,7 +1,6 @@
 accessWidener	v2	named
 
 accessible	field	net/minecraft/client/renderer/entity/LivingEntityRenderer	layers	Ljava/util/List;
-accessible	method	net/minecraft/client/renderer/entity/LivingEntityRenderer	addLayer	(Lnet/minecraft/client/renderer/entity/layers/RenderLayer;)Z
 
 accessible	method	net/minecraft/client/renderer/RenderType	create	(Ljava/lang/String;IZZLcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/client/renderer/RenderType$CompositeState;)Lnet/minecraft/client/renderer/RenderType$CompositeRenderType;
 

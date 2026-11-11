@@ -19,7 +19,7 @@ import javax.annotation.Nullable;
  */
 public record SlimyEyeIrisTint() implements ItemTintSource {
 
-    public static final ResourceLocation ID = ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "slimy_eye_iris");
+    public static final ResourceLocation ID = SomeGooglyCommon.id("slimy_eye_iris");
     public static final MapCodec<SlimyEyeIrisTint> MAP_CODEC = MapCodec.unit(new SlimyEyeIrisTint());
 
     @Override

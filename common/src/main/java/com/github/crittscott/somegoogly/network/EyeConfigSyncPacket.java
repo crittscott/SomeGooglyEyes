@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.network;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.EyeConfigLimits;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import io.netty.buffer.Unpooled;
@@ -26,7 +27,7 @@ import javax.annotation.Nullable;
 public class EyeConfigSyncPacket implements CustomPacketPayload {
 
     public static final int MAX_PAYLOAD_BYTES = 900 * 1024;
-    public static final ResourceLocation ID = NetworkProtocol.id("eye_config");
+    public static final ResourceLocation ID = SomeGooglyCommon.id("eye_config");
     public static final CustomPacketPayload.Type<EyeConfigSyncPacket> TYPE = new CustomPacketPayload.Type<>(ID);
     public static final StreamCodec<RegistryFriendlyByteBuf, EyeConfigSyncPacket> STREAM_CODEC =
             StreamCodec.ofMember(EyeConfigSyncPacket::write, EyeConfigSyncPacket::read);

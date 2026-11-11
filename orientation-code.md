@@ -26,7 +26,7 @@ Common uses adapters and `@ExpectPlatform`; no loader imports.
 
 The server owns gameplay and authorization; the client owns rendering and picker UI.
 
-`ModContent` binds content through loader `ContentRegistrar`s. Slimy Eye uses vanilla `crafting_transmute`; Optometrist and `self_shear` are data-driven.
+`ModContent` registers content through the `@ExpectPlatform` `Registration`. Slimy Eye uses vanilla `crafting_transmute`; Optometrist and `self_shear` are data-driven.
 
 ## Configuration and eye definitions
 
@@ -48,7 +48,7 @@ Eye items carry `AppearanceOverride` in the synced `somegoogly:eye_properties` c
 
 Saved data from the 1.21.4 release is already in current form; nothing migrates.
 
-`EyeItemService` owns eye application, harvest, and the eligibility verdict shared with the inspector. Loader hooks honor protection listeners and item-use denials. The service excludes spectators, respects PvP and teams for other-player changes, and checks the clicked head for adventure restrictions. Successful use records item statistics and the head-use advancement trigger. Death harvest honors `doMobLoot`. Forge and NeoForge stamp head drops at `LOWEST` and use loot modifiers for placed heads. Fabric stamps drops at `spawnAtLocation` and adds `copy_components` to head loot. Plain-shears self-damage uses the attacker-less `self_shear` type.
+`EyeItemService` owns eye application, harvest, and the eligibility verdict shared with the inspector. Loader hooks honor protection listeners and item-use denials. The service excludes spectators, respects PvP and teams for other-player changes, and checks the clicked head for adventure restrictions. Successful use records item statistics and the head-use advancement trigger. Death harvest honors `doMobLoot`. Forge and NeoForge stamp head drops at `LOWEST`; Fabric at `spawnAtLocation`. Placed-head loot copies the state with `SkullEyeState.headLootCopy` (Forge/NeoForge loot modifiers, Fabric loot-table event). Plain-shears self-damage uses the attacker-less `self_shear` type.
 
 Successful Slimy Eye applications emit `GameEvent.ENTITY_INTERACT` (`BLOCK_CHANGE` on a head), successful harvests `GameEvent.SHEAR`; refusals emit neither.
 
@@ -72,7 +72,7 @@ GeckoLib links only after detection; attach failures cannot block loading.
 
 ## Networking
 
-Seven play payloads carry definitions, settings, entity eye state, expressions, anger, picker freeze, and export. Stable IDs live on payload types. Forge and NeoForge require native protocol version `18`. Fabric exchanges the version during configuration.
+Seven play payloads carry definitions, settings, entity eye state, expressions, anger, picker freeze, and export. `NetworkProtocol` holds the payload table every loader registers from. Forge and NeoForge require native protocol version `18`. Fabric exchanges the version during configuration.
 
 A joining player receives definitions and settings. After config apply or reload, `ServerServices.broadcastEyeSyncIfChanged` broadcasts each independently when it changes. Only a definition change resets simulations. Behavior triggers carry a compact entity ID and an explicit behavior ID.
 

@@ -62,6 +62,8 @@ public final class SomeGooglyGameTestMod {
         functions.register("configgametests/released_config_survives_native_correction", () -> ConfigGameTests::releasedConfigSurvivesNativeCorrection);
         functions.register("configgametests/reload_falls_back_to_nearest_generation", () -> ConfigGameTests::reloadFallsBackToNearestGeneration);
         functions.register("configgametests/reload_hard_excludes_ender_dragon", () -> ConfigGameTests::reloadHardExcludesEnderDragon);
+        functions.register("configgametests/list_setting_with_no_valid_entry_uses_default", () -> ConfigGameTests::listSettingWithNoValidEntryUsesDefault);
+        functions.register("configgametests/reload_rejects_file_with_malformed_entry", () -> ConfigGameTests::reloadRejectsFileWithMalformedEntry);
         functions.register("configgametests/reload_replaces_configs_only_on_content_change", () -> ConfigGameTests::reloadReplacesConfigsOnlyOnContentChange);
         functions.register("configgametests/reload_tolerates_bad_files_and_duplicates", () -> ConfigGameTests::reloadToleratesBadFilesAndDuplicates);
         functions.register("configgametests/spawn_all_defaults_off", () -> ConfigGameTests::spawnAllDefaultsOff);

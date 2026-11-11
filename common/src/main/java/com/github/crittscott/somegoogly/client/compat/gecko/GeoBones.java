@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.client.compat.gecko;
 
 import com.github.crittscott.somegoogly.client.render.resolver.EyeAttachmentResolver;
+import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.github.crittscott.somegoogly.client.render.resolver.ModelMemo;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
@@ -84,7 +85,7 @@ public final class GeoBones {
     @Nullable
     private static GeoBone search(GeoBone bone, String parentPath, String token) {
         String name = bone.getName() == null ? "" : bone.getName();
-        String path = parentPath.isEmpty() ? name : parentPath + "/" + name;
+        String path = EyeConfigModel.attachmentPath(parentPath, name);
         if (EyeAttachmentResolver.pathMatches(token, path)) {
             return bone;
         }

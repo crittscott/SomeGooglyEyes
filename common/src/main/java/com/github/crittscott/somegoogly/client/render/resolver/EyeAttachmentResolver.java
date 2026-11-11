@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.client.render.resolver;
 
 import com.github.crittscott.somegoogly.client.compat.ThirdPartyModelWraps;
+import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.EntityModel;
 
@@ -74,7 +75,7 @@ public interface EyeAttachmentResolver extends ModelMemo.Resolver<EntityModel<?>
      */
     static List<String> segments(String token) {
         List<String> out = new ArrayList<>();
-        for (String part : token.split("/")) {
+        for (String part : EyeConfigModel.attachmentSegments(token)) {
             String n = normalize(part);
             if (!n.isEmpty()) {
                 out.add(n);

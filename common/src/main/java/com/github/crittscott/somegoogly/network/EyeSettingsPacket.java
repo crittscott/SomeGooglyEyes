@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.network;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -14,7 +15,7 @@ import net.minecraft.resources.ResourceLocation;
  */
 public record EyeSettingsPacket(boolean googlyEyesEnabled, BehaviorSettings behaviors) implements CustomPacketPayload {
 
-    public static final ResourceLocation ID = NetworkProtocol.id("eye_settings");
+    public static final ResourceLocation ID = SomeGooglyCommon.id("eye_settings");
     public static final CustomPacketPayload.Type<EyeSettingsPacket> TYPE = new CustomPacketPayload.Type<>(ID);
     public static final StreamCodec<RegistryFriendlyByteBuf, EyeSettingsPacket> STREAM_CODEC =
             StreamCodec.ofMember(EyeSettingsPacket::write, EyeSettingsPacket::read);

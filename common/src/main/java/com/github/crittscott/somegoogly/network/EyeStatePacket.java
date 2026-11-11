@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.network;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import io.netty.handler.codec.DecoderException;
@@ -18,7 +19,7 @@ import net.minecraft.resources.ResourceLocation;
  */
 public record EyeStatePacket(int entityId, EyeState.Snapshot snapshot) implements CustomPacketPayload {
 
-    public static final ResourceLocation ID = NetworkProtocol.id("eye_state");
+    public static final ResourceLocation ID = SomeGooglyCommon.id("eye_state");
     public static final CustomPacketPayload.Type<EyeStatePacket> TYPE = new CustomPacketPayload.Type<>(ID);
     public static final StreamCodec<RegistryFriendlyByteBuf, EyeStatePacket> STREAM_CODEC =
             StreamCodec.ofMember(EyeStatePacket::write, EyeStatePacket::new);

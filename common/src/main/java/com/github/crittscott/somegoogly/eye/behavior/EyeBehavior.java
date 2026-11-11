@@ -252,7 +252,7 @@ public enum EyeBehavior {
     private final int wireId;
 
     EyeBehavior(String name, int wireId, int defaultDuration) {
-        this.id = ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, name);
+        this.id = SomeGooglyCommon.id(name);
         this.wireId = wireId;
         this.defaultDuration = defaultDuration;
     }

@@ -17,7 +17,6 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.special.SpecialModelRenderers;
 import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.client.event.AddGuiOverlayLayersEvent;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
@@ -29,6 +28,7 @@ import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 /** Physical-client registration kept out of the dedicated-server entry point. */
@@ -40,7 +40,7 @@ public final class ForgeClientBootstrap {
     /** Appended without an anchor, so the picker HUD draws after every vanilla HUD layer. */
     private static void addGuiLayers(AddGuiOverlayLayersEvent event) {
         event.getLayeredDraw().add(
-                ResourceLocation.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "picker"),
+                SomeGooglyCommon.id("picker"),
                 (graphics, deltaTracker) -> PickerHud.render(graphics, graphics.guiWidth()));
     }
 
@@ -60,6 +60,10 @@ public final class ForgeClientBootstrap {
                 ClientRenderLayers.install(renderer);
             }
         }
+    }
+
+    private static void onClientSetup(FMLClientSetupEvent event) {
+        ClientLifecycle.logStartup();
     }
 
     private static void onClientTick(TickEvent.ClientTickEvent.Post event) {
@@ -93,6 +97,7 @@ public final class ForgeClientBootstrap {
         ForgeClientConfig.register(context);
         registerItemModelTypes();
 
+        FMLClientSetupEvent.getBus(modBusGroup).addListener(ForgeClientBootstrap::onClientSetup);
         EntityRenderersEvent.AddLayers.getBus(modBusGroup).addListener(ForgeClientBootstrap::addRendererLayers);
         AddGuiOverlayLayersEvent.getBus(modBusGroup).addListener(ForgeClientBootstrap::addGuiLayers);
         RegisterKeyMappingsEvent.getBus(modBusGroup).addListener(ForgeClientBootstrap::registerKeyMappings);
@@ -106,7 +111,6 @@ public final class ForgeClientBootstrap {
         if (GeckoCompat.isLoaded()) {
             ForgeGeckoLayers.register();
         }
-        ClientLifecycle.logStartup();
     }
 
     private static void registerClientCommands(RegisterClientCommandsEvent event) {

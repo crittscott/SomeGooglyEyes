@@ -1,12 +1,14 @@
 package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.config.ClientConfig;
+import com.github.crittscott.somegoogly.config.ConfigValue;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
 import com.github.crittscott.somegoogly.config.ModVersionLookup;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
+import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -228,6 +230,52 @@ public final class ConfigGameTestsLogic {
                     Component.literal("the ender dragon config is refused at reload"));
             helper.assertTrue(usable(ServerEyeConfigs.get(zombie, false)),
                     Component.literal("other entities in the same batch still load"));
+        } finally {
+            TestEyeConfigs.install(original);
+        }
+        helper.succeed();
+    }
+
+    /**
+     * A list setting drops its invalid entries, and a list with no valid entry means the default, on every
+     * loader. In game: set {@code ambientBehaviorPool = ["not a behavior"]} in the server config and restart;
+     * eyed mobs still blink, cross their eyes, side-eye, and stare, and on Fabric the log says the key has no
+     * valid entries.
+     */
+    public static void listSettingWithNoValidEntryUsesDefault(GameTestHelper helper) {
+        ConfigValue.Parsed<?> pool = ServerConfig.AMBIENT_BEHAVIOR_POOL;
+        List<String> original = pool.get();
+        String blink = EyeBehavior.BLINK.id().toString();
+        try {
+            pool.set(List.of("not a behavior", blink));
+            helper.assertTrue(pool.get().equals(List.of(blink)),
+                    Component.literal("a valid entry is kept and an invalid one dropped"));
+            pool.set(List.of("not a behavior"));
+            helper.assertTrue(pool.get().equals(pool.defaultValue()),
+                    Component.literal("a list with no valid entry must use the default, got " + pool.get()));
+            pool.set(List.of());
+            helper.assertTrue(pool.get().isEmpty(), Component.literal("an explicitly empty list stays empty"));
+        } finally {
+            pool.set(original);
+        }
+        helper.succeed();
+    }
+
+    /**
+     * A file with one entry the codec cannot decode is rejected whole, not loaded without that entry. In
+     * game: add a datapack whose {@code zombie.json} has a valid adult entry for the running version beside
+     * an entry with no {@code "version"} field, and run {@code /reload}; the log names the file as invalid,
+     * the summary counts it as failed to parse, and new zombies spawn without eyes.
+     */
+    public static void reloadRejectsFileWithMalformedEntry(GameTestHelper helper) {
+        ResourceLocation zombie = ResourceLocation.fromNamespaceAndPath("minecraft", "zombie");
+        String noVersion = "{ \"age\": \"adult\", \"enabled\": true, \"variants\": [] }";
+        Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
+        try {
+            new TestReloadListener().applyFiles(Map.of(
+                    zombie, fileJson(entryJson(running(), "adult", 1.0), noVersion)));
+            helper.assertTrue(ServerEyeConfigs.get(zombie, false) == null,
+                    Component.literal("a file with an undecodable entry must not load its other entries"));
         } finally {
             TestEyeConfigs.install(original);
         }

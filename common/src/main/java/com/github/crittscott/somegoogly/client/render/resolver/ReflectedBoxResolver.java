@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.client.render.resolver;
 
 import com.github.crittscott.somegoogly.client.compat.ClientIntegrationFailures;
+import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.EntityModel;
 
@@ -162,7 +163,7 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
     private Map<Object, String> fallbackNames(EntityModel<?> model, List<Object> parts) {
         Map<Object, String> names = new IdentityHashMap<>();
         for (int i = 0; i < parts.size(); i++) {
-            names.put(parts.get(i), "#" + i);
+            names.put(parts.get(i), EyeConfigModel.attachmentIndex(i));
         }
         for (Class<?> c = model.getClass(); c != Object.class; c = c.getSuperclass()) {
             for (Field field : c.getDeclaredFields()) {
@@ -215,7 +216,7 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
                 segments.addFirst(segment);
             }
         }
-        return String.join("/", segments);
+        return EyeConfigModel.attachmentPath(segments);
     }
 
     private String segmentName(Object box, Map<Object, String> fallbackNames) {
