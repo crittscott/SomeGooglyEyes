@@ -170,8 +170,9 @@ public final class EligibilityGameTestsLogic {
     }
 
     /**
-     * An already-eyed mob refuses a Slimy Eye and keeps its look. In game: right-click a cow with red-iris eyes
-     * using a blue-iris Slimy Eye; nothing happens, the item is kept, and the cow's eyes stay red and in place.
+     * An already-eyed mob refuses a Slimy Eye, keeps its look, and gets the click for its own use. In game:
+     * right-click a cow with red-iris eyes using a blue-iris Slimy Eye; the item is kept and the cow's eyes stay
+     * red and in place. Right-click an eyed horse with a Slimy Eye in hand; you mount it.
      */
     public static void slimyEyeRefusesAnAlreadyEyedTarget(GameTestHelper helper, Player player) {
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
@@ -188,9 +189,12 @@ public final class EligibilityGameTestsLogic {
             float roll = EyeState.getVariantRoll(cow);
 
             ItemStack stack = slimyEye(AppearanceOverride.EMPTY.withIrisColor(new EyeColor(0F, 0F, 1F)), 1);
-            InteractionResult refused = EyeItemService.applySlimyEye(stack, (ServerPlayer) player, cow);
+            player.setItemInHand(InteractionHand.MAIN_HAND, stack);
+            InteractionResult refused = EyeItemService.interact(player, helper.getLevel(), InteractionHand.MAIN_HAND,
+                    cow);
 
-            helper.assertTrue(!refused.consumesAction(), Component.literal("an already-eyed target should refuse the apply"));
+            helper.assertTrue(refused == InteractionResult.PASS,
+                    Component.literal("an already-eyed target should pass the click on to its own use"));
             helper.assertTrue(stack.getCount() == 1, Component.literal("a refused apply should not consume the eye"));
             helper.assertTrue(EyeState.hasEyes(cow), Component.literal("a refusal should leave the eyes on"));
             helper.assertTrue(red.equals(EyeState.readProperties(cow).iris().orElse(null)),

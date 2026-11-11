@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
+import com.github.crittscott.somegoogly.platform.EntityPersistentData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
@@ -41,17 +42,30 @@ public final class SpawnGatingGameTestsLogic {
     }
 
     /**
-     * Every spawned mob stores a placement roll, with or without eyes. In game: set {@code globalPercent = 0},
-     * spawn a pig, and on NeoForge or Forge {@code /data get entity <pig>} shows a
-     * {@code somegoogly:eyeVariantRoll} key in {@code NeoForgeData} or {@code ForgeData}. Aiming at it and running
-     * {@code /sg admin eyes true} gives it the placement that stored roll selects.
+     * Only a mob that gets eyes stores a placement roll, and one switched on later draws its own. In game: set
+     * {@code globalPercent = 0}, spawn a pig, and on NeoForge or Forge {@code /data get entity <pig>} shows no
+     * {@code somegoogly:eyeVariantRoll} key in {@code NeoForgeData} or {@code ForgeData}. Aiming at it and
+     * running {@code /sg admin eyes true} gives it eyes and the key.
      */
-    public static void spawnAlwaysAssignsAVariantRoll(GameTestHelper helper) {
-        // Independent of the has-eyes roll, a variant roll in [0,1) is always stored so a later
-        // /sg admin eyes true uses this mob's own arrangement.
-        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
-        float roll = EyeState.getVariantRoll(cow);
-        helper.assertTrue(roll >= 0.0F && roll < 1.0F, Component.literal("variant roll should be in [0, 1), got " + roll));
+    public static void onlyEyedMobsStoreAVariantRoll(GameTestHelper helper) {
+        int original = ServerConfig.GLOBAL_PERCENT.get();
+        try {
+            ServerConfig.GLOBAL_PERCENT.set(0);
+            Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+            helper.assertTrue(!EntityPersistentData.get(cow).contains(EyeState.VARIANT_ROLL),
+                    Component.literal("an eyeless spawn should store no variant roll"));
+            EyeState.setHasEyes(cow, true);
+            helper.assertTrue(EntityPersistentData.get(cow).contains(EyeState.VARIANT_ROLL),
+                    Component.literal("switching eyes on should draw a variant roll"));
+            float roll = EyeState.getVariantRoll(cow);
+            helper.assertTrue(roll >= 0.0F && roll < 1.0F, Component.literal("variant roll should be in [0, 1), got " + roll));
+            EyeState.setHasEyes(cow, false);
+            EyeState.setHasEyes(cow, true);
+            helper.assertTrue(EyeState.getVariantRoll(cow) == roll,
+                    Component.literal("switching eyes back on should keep the roll"));
+        } finally {
+            ServerConfig.GLOBAL_PERCENT.set(original);
+        }
         helper.succeed();
     }
 }

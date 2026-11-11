@@ -5,6 +5,7 @@ import com.github.crittscott.somegoogly.client.forge.ForgeClientBootstrap;
 import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
 import com.github.crittscott.somegoogly.config.forge.ForgeServerConfig;
 import com.github.crittscott.somegoogly.network.forge.ForgeNetworkTransport;
+import com.github.crittscott.somegoogly.registry.ModContent;
 import com.github.crittscott.somegoogly.registry.forge.ForgeContentRegistrar;
 import com.github.crittscott.somegoogly.server.forge.ForgeServerEvents;
 import com.github.crittscott.somegoogly.server.forge.HeadEyesLootModifier;
@@ -24,7 +25,7 @@ public final class SomeGooglyForge {
         // to clients (EyeConfigSyncPacket); nothing to load at construction time.
         BusGroup modBusGroup = context.getModBusGroup();
         ForgeContentRegistrar registrar = new ForgeContentRegistrar();
-        SomeGooglyCommon.init(registrar);
+        ModContent.register(registrar);
         registrar.register(modBusGroup);
         HeadEyesLootModifier.register(modBusGroup);
         ForgeNetworkTransport.register();

@@ -40,7 +40,11 @@ import java.util.Map;
  * spawn chance is 5% — costs one map entry and nothing per tick. {@link #onEyesGained} promotes a mob
  * into {@link #ACTIVE} the moment its eyes turn on (natural spawn already tracked, or a mid-life slimy
  * eye / admin toggle), called from {@link EyeState}. A promoted mob that loses its eyes leaves {@link #ACTIVE}
- * when its next ambient roll finds them gone.
+ * at once ({@link #onEyesLost}), or when the behavior it is playing retires.
+ *
+ * <p>A player never tracks themself, yet sees their own eyes in third person, so each player counts as one of
+ * their own watchers from the moment they join a level ({@link #onPlayerJoined}) until they leave or are
+ * replaced ({@link #onPlayerLeft}).
  *
  * <p>State is per (integrated-or-dedicated) server lifetime; {@link #clear()} is called on server stop so
  * a single-player JVM doesn't carry one world's mobs into the next.
@@ -67,8 +71,9 @@ public final class ServerBehaviorScheduler {
         int ambientCooldown;          // idle ticks remaining before the next ambient roll
         long busyUntil;               // scheduler tick the active behavior ends (0 = idle)
         long healSwirlReadyAt;        // earliest scheduler tick a heal may trigger another swirl (0 = ready)
+        boolean self;                 // a player counted as their own watcher
         long startedAt;               // scheduler tick the active behavior started (for mid-join catch-up)
-        int trackers;                 // how many players are watching this mob
+        int trackers;                 // how many players are watching this mob, a player included
     }
 
     /** {@code mob}'s playing behavior for a viewer joining it partway through. */
@@ -88,7 +93,8 @@ public final class ServerBehaviorScheduler {
     /**
      * The server broadcast vanilla entity event {@code eventId} for {@code entity} to its viewers. The
      * affection events (an animal entering love mode, villagers breeding, an iron golem offering a
-     * flower, an ocelot gaining trust) play 'love' if enabled; every other event is ignored.
+     * flower, an ocelot gaining trust, a pet or horse being tamed) play 'love' if enabled; every other event is
+     * ignored.
      */
     public static void onEntityEvent(Entity entity, byte eventId) {
         if (!(entity instanceof LivingEntity mob)) {
@@ -96,7 +102,7 @@ public final class ServerBehaviorScheduler {
         }
         boolean affection = switch (eventId) {
             case EntityEvent.IN_LOVE_HEARTS, EntityEvent.LOVE_HEARTS, EntityEvent.OFFER_FLOWER,
-                 EntityEvent.TRUSTING_SUCCEEDED -> true;
+                 EntityEvent.TAMING_SUCCEEDED, EntityEvent.TRUSTING_SUCCEEDED -> true;
             default -> false;
         };
         if (affection && ServerConfig.LOVE_ON_AFFECTION.get()) {
@@ -114,6 +120,20 @@ public final class ServerBehaviorScheduler {
         MobState state = STATES.get(mob);
         if (state != null) {
             ACTIVE.putIfAbsent(mob, state);
+        }
+    }
+
+    /**
+     * {@code mob} no longer has eyes ({@link EyeState} synchronized an eyeless state). An idle mob stops being
+     * walked each tick at once; one still playing a behavior leaves when that behavior retires.
+     */
+    public static void onEyesLost(LivingEntity mob) {
+        MobState state = STATES.get(mob);
+        if (state != null && state.busyUntil == 0) {
+            ACTIVE.remove(mob);
+            if (state.trackers <= 0) {
+                STATES.remove(mob);
+            }
         }
     }
 
@@ -177,6 +197,31 @@ public final class ServerBehaviorScheduler {
     }
 
     /**
+     * {@code player} joined a level (login, respawn, or dimension change): count them as a watcher of their own
+     * eyes, once however many levels they pass through.
+     */
+    public static void onPlayerJoined(ServerPlayer player) {
+        MobState state = stateFor(player);
+        if (state.self) {
+            return;
+        }
+        state.self = true;
+        state.trackers++;
+        if (EyeState.hasEyes(player)) {
+            ACTIVE.putIfAbsent(player, state);
+        }
+    }
+
+    /** {@code player} logged out or was replaced by a respawned copy: they no longer watch their own eyes. */
+    public static void onPlayerLeft(ServerPlayer player) {
+        MobState state = STATES.get(player);
+        if (state != null && state.self) {
+            state.self = false;
+            removeWatcher(player, state);
+        }
+    }
+
+    /**
      * A player started tracking {@code mob}. Always creates a {@link #STATES} entry (needed for the
      * {@code trackers} count regardless of eye state) and promotes into {@link #ACTIVE} immediately if
      * the mob already has eyes; a mid-life gain while already tracked comes through {@link
@@ -211,9 +256,13 @@ public final class ServerBehaviorScheduler {
     /** A player stopped tracking {@code mob} (including on its death/unload). Drops state when unwatched. */
     public static void onStopTracking(LivingEntity mob) {
         MobState state = STATES.get(mob);
-        if (state == null) {
-            return;
+        if (state != null) {
+            removeWatcher(mob, state);
         }
+    }
+
+    /** One of {@code mob}'s watchers is gone; drop its state when none is left. */
+    private static void removeWatcher(LivingEntity mob, MobState state) {
         if (--state.trackers <= 0) {
             STATES.remove(mob);
             ACTIVE.remove(mob);
@@ -268,10 +317,17 @@ public final class ServerBehaviorScheduler {
                 STATES.remove(mob);
                 continue;
             }
-            // Retire a finished behavior back to idle.
+            // Retire a finished behavior back to idle; a mob that lost its eyes meanwhile stops being walked.
             if (state.busyUntil != 0 && now >= state.busyUntil) {
                 state.busyUntil = 0;
                 state.activeBehavior = null;
+                if (!EyeState.hasEyes(mob)) {
+                    it.remove();
+                    if (state.trackers <= 0) {
+                        STATES.remove(mob);
+                    }
+                    continue;
+                }
             }
             // Evict idle entries no player is watching. Tracked entries are removed by onStopTracking;
             // this catches states created by trigger() (the admin command) on untracked mobs, which
@@ -296,15 +352,9 @@ public final class ServerBehaviorScheduler {
                 state.angry = angry;
                 Networking.sendTrackingAndSelf(mob, new EyeAngerPacket(mob.getId(), angry));
             }
-            // Idle + ambient enabled → count down, and only at expiry check whether the mob still has
-            // eyes; one that lost them stops being walked until onEyesGained promotes it again.
+            // Idle + ambient enabled → count down to the next ambient roll.
             if (ambient && state.busyUntil == 0 && --state.ambientCooldown <= 0) {
-                if (EyeState.hasEyes(mob)) {
-                    rollAmbient(mob, state);
-                } else {
-                    state.ambientCooldown = nextCooldown();
-                    it.remove();
-                }
+                rollAmbient(mob, state);
             }
         }
     }

@@ -60,8 +60,8 @@ public final class FramedEyeGameTestsLogic {
      * In game: right-click a wall-mounted eye to rotate it; its pupil still falls toward the ground.
      */
     public static void framedEyeFollowsMountedGravity(GameTestHelper helper) {
-        PresentationEyes left = new PresentationEyes(FIRST_FRAME);
-        PresentationEyes right = new PresentationEyes(FIRST_FRAME);
+        PresentationEyes left = PresentationEyes.create(FIRST_FRAME, new ItemStack(ModContent.GOOGLY_EYE.get()));
+        PresentationEyes right = PresentationEyes.create(FIRST_FRAME, new ItemStack(ModContent.GOOGLY_EYE.get()));
         left.eye.gravX = -1F;
         right.eye.gravX = 1F;
         left.eye.gravY = right.eye.gravY = 0F;
@@ -82,7 +82,7 @@ public final class FramedEyeGameTestsLogic {
      */
     public static void framedEyeHandlesShortIntervalsAndTimeJumps(GameTestHelper helper) {
         BehaviorSettings shortSlots = settings(true, 1, List.of(EyeBehavior.BLINK));
-        PresentationEyes eye = new PresentationEyes(FIRST_FRAME);
+        PresentationEyes eye = PresentationEyes.create(FIRST_FRAME, new ItemStack(ModContent.GOOGLY_EYE.get()));
         eye.tick(0L, shortSlots);
         BehaviorInstance first = eye.active;
         helper.assertTrue(first != null && first.age == 0, Component.literal("first short slot starts a blink"));
@@ -105,7 +105,7 @@ public final class FramedEyeGameTestsLogic {
      * when settings change. In game: reload each setting and observe that the framed eye stops expressing.
      */
     public static void framedEyeHonorsAmbientSettings(GameTestHelper helper) {
-        PresentationEyes eye = new PresentationEyes(FIRST_FRAME);
+        PresentationEyes eye = PresentationEyes.create(FIRST_FRAME, new ItemStack(ModContent.GOOGLY_EYE.get()));
         eye.tick(0L, settings(true, 1, List.of(EyeBehavior.BLINK)));
         helper.assertTrue(eye.active != null, Component.literal("begin with an active expression"));
         List<BehaviorSettings> inactive = List.of(
@@ -127,7 +127,7 @@ public final class FramedEyeGameTestsLogic {
      */
     public static void framedEyePlaysSingleEyeExpressions(GameTestHelper helper) {
         BehaviorSettings settings = settings(true, SLOT_TICKS, List.of(EyeBehavior.CROSS_EYE, EyeBehavior.BLINK));
-        PresentationEyes eye = new PresentationEyes(FIRST_FRAME);
+        PresentationEyes eye = PresentationEyes.create(FIRST_FRAME, new ItemStack(ModContent.GOOGLY_EYE.get()));
         boolean winked = false;
         for (int tick = 0; tick < OBSERVATION_TICKS; tick++) {
             eye.tick(tick, settings);
@@ -148,12 +148,12 @@ public final class FramedEyeGameTestsLogic {
     public static void framedEyeReconstructsExpressions(GameTestHelper helper) {
         BehaviorSettings settings = settings(true, SLOT_TICKS,
                 List.of(EyeBehavior.SIDE_EYE, EyeBehavior.COLOR_CHANGE, EyeBehavior.BLINK));
-        PresentationEyes original = new PresentationEyes(FIRST_FRAME);
+        PresentationEyes original = PresentationEyes.create(FIRST_FRAME, new ItemStack(ModContent.GOOGLY_EYE.get()));
         boolean reconstructed = false;
         for (int tick = 0; tick < OBSERVATION_TICKS; tick++) {
             original.tick(tick, settings);
             if (original.active != null && original.active.age > 0) {
-                PresentationEyes arriving = new PresentationEyes(FIRST_FRAME);
+                PresentationEyes arriving = PresentationEyes.create(FIRST_FRAME, new ItemStack(ModContent.GOOGLY_EYE.get()));
                 arriving.tick(tick, settings);
                 BehaviorInstance a = original.active;
                 BehaviorInstance b = arriving.active;
@@ -174,7 +174,7 @@ public final class FramedEyeGameTestsLogic {
      */
     public static void framedEyeReleasesExpressionOverlays(GameTestHelper helper) {
         BehaviorSettings settings = settings(true, SLOT_TICKS, List.of(EyeBehavior.BLINK));
-        PresentationEyes eye = new PresentationEyes(FIRST_FRAME);
+        PresentationEyes eye = PresentationEyes.create(FIRST_FRAME, new ItemStack(ModContent.GOOGLY_EYE.get()));
         boolean played = false;
         boolean released = false;
         for (int tick = 0; tick < OBSERVATION_TICKS; tick++) {
@@ -196,8 +196,8 @@ public final class FramedEyeGameTestsLogic {
      */
     public static void framedEyeUsesIndependentSchedules(GameTestHelper helper) {
         BehaviorSettings settings = settings(true, SLOT_TICKS, List.of(EyeBehavior.SIDE_EYE, EyeBehavior.BLINK));
-        PresentationEyes first = new PresentationEyes(FIRST_FRAME);
-        PresentationEyes second = new PresentationEyes(SECOND_FRAME);
+        PresentationEyes first = PresentationEyes.create(FIRST_FRAME, new ItemStack(ModContent.GOOGLY_EYE.get()));
+        PresentationEyes second = PresentationEyes.create(SECOND_FRAME, new ItemStack(ModContent.GOOGLY_EYE.get()));
         boolean differed = false;
         for (int tick = 0; tick < OBSERVATION_TICKS; tick++) {
             first.tick(tick, settings);
@@ -267,7 +267,7 @@ public final class FramedEyeGameTestsLogic {
                             && PresentationEyes.create(FIRST_FRAME, new ItemStack(Items.SKELETON_SKULL)) == null,
                     Component.literal("a plain skull has no animated eyes"));
             helper.assertTrue(!frame.matches(new ItemStack(ModContent.GOOGLY_EYE.get()))
-                            && !new PresentationEyes(FIRST_FRAME).matches(stack),
+                            && !PresentationEyes.create(FIRST_FRAME, new ItemStack(ModContent.GOOGLY_EYE.get())).matches(stack),
                     Component.literal("head and loose-eye simulations cannot be reused for each other"));
             helper.succeed();
         });
@@ -346,7 +346,7 @@ public final class FramedEyeGameTestsLogic {
         boolean enabled = ClientEyeConfigs.googlyEyesEnabled();
         try {
             ClientEyeConfigs.replaceAll(ServerEyeConfigs.all());
-            ClientEyeConfigs.applySettings(true, BehaviorSettings.DEFAULTS);
+            ClientEyeConfigs.applySettings(true, TestBehaviorSettings.DEFAULTS);
             test.run();
         } finally {
             ClientEyeConfigs.replaceAll(definitions);

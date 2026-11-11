@@ -190,7 +190,7 @@ public final class SomeGooglyGameTestMod {
         functions.register("somegooglygametests/spawn_commands_refuse_dragon_players_and_excluded_types", () -> SomeGooglyGameTests::spawnCommandsRefuseDragonPlayersAndExcludedTypes);
         functions.register("somegooglygametests/real_shears_kills_harvest_an_eye", () -> SomeGooglyGameTests::realShearsKillsHarvestAnEye);
         functions.register("spawngatinggametests/full_percent_grants_eyes_and_zero_denies_them", () -> SpawnGatingGameTests::fullPercentGrantsEyesAndZeroDeniesThem);
-        functions.register("spawngatinggametests/spawn_always_assigns_a_variant_roll", () -> SpawnGatingGameTests::spawnAlwaysAssignsAVariantRoll);
+        functions.register("spawngatinggametests/only_eyed_mobs_store_a_variant_roll", () -> SpawnGatingGameTests::onlyEyedMobsStoreAVariantRoll);
         functions.register("variantselectiongametests/cumulative_weight_boundaries_pick_expected_variant", () -> VariantSelectionGameTests::cumulativeWeightBoundariesPickExpectedVariant);
         functions.register("variantselectiongametests/degenerate_configs_fall_to_first_variant", () -> VariantSelectionGameTests::degenerateConfigsFallToFirstVariant);
         functions.register("versionrangegametests/exact_version_matches_only_itself", () -> VersionRangeGameTests::exactVersionMatchesOnlyItself);

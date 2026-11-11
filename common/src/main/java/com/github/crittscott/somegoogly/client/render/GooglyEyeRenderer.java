@@ -221,7 +221,7 @@ public final class GooglyEyeRenderer {
         boolean drew = false;
         int eyeCount = helper.getEyeCount(head);
         for (int eye = 0; eye < eyeCount; eye++) {
-            if (helper.getEyeScale(head, eye) > 0F) {
+            if (helper.placementAt(head, eye).eyeScale() > 0F) {
                 renderEye(pose, bufferSource, packedLight, overlay, row == null ? REST : row[eye], helper, overrides,
                         head, eye, partialTicks);
                 drew = true;

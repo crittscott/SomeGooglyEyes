@@ -197,11 +197,6 @@ public class ServerConfig {
         return setting;
     }
 
-    /** The expressions the default {@link #AMBIENT_BEHAVIOR_POOL} names. */
-    public static List<EyeBehavior> defaultBehaviors() {
-        return parseBehaviorPool(AMBIENT_BEHAVIOR_POOL.defaultValue());
-    }
-
     private static List<EyeBehavior> parseBehaviorPool(List<String> pool) {
         Set<String> enabled = new LinkedHashSet<>(pool);
         List<EyeBehavior> result = new ArrayList<>();

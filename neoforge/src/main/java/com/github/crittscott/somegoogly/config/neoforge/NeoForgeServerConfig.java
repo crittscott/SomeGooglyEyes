@@ -70,6 +70,11 @@ public final class NeoForgeServerConfig {
         modBus.addListener(NeoForgeServerConfig::onConfigChanged);
     }
 
+    private static void applyValues() {
+        COPY_VALUES.run();
+        ServerServices.onServerConfigApplied();
+    }
+
     private static void onConfigChanged(ModConfigEvent event) {
         if (event.getConfig().getSpec() != SPEC) {
             return;
@@ -78,12 +83,16 @@ public final class NeoForgeServerConfig {
             ServerConfig.resetDefaults();
             return;
         }
-        COPY_VALUES.run();
-        ServerServices.onServerConfigApplied();
-        // Only a reload can find clients connected; it arrives off the server thread from the file watcher.
+        // A reload arrives off the server thread from the file watcher, and can find clients connected, so the
+        // whole change is handed to the server thread: no tick sees it half copied.
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
         if (event instanceof ModConfigEvent.Reloading && server != null) {
-            server.execute(() -> ServerServices.broadcastEyeSyncIfChanged(server));
+            server.execute(() -> {
+                applyValues();
+                ServerServices.broadcastEyeSyncIfChanged(server);
+            });
+        } else {
+            applyValues();
         }
     }
 }

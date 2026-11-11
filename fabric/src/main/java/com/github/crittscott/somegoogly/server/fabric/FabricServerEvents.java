@@ -3,7 +3,6 @@ package com.github.crittscott.somegoogly.server.fabric;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.command.GooglyServerCommands;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
-import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import com.github.crittscott.somegoogly.registry.ModContent;
 import com.github.crittscott.somegoogly.item.EyeItemService;
@@ -91,13 +90,9 @@ public final class FabricServerEvents {
             }
         });
         ServerLivingEntityEvents.MOB_CONVERSION.register((previous, converted, context) ->
-                EyeState.copy(previous, converted));
-        // Leaving the End replaces the player; eyes applied to a player are still lost on death.
-        ServerPlayerEvents.COPY_FROM.register((oldPlayer, newPlayer, alive) -> {
-            if (alive) {
-                EyeState.copy(oldPlayer, newPlayer);
-            }
-        });
+                ServerServices.onConverted(previous, converted));
+        // Respawning or leaving the End replaces the player.
+        ServerPlayerEvents.COPY_FROM.register(ServerServices::onPlayerCloned);
         ServerLivingEntityEvents.AFTER_DAMAGE.register((entity, source, baseDamage, damageTaken, blocked) -> {
             if (source.getEntity() instanceof Player) {
                 ServerBehaviorScheduler.onPlayerHurt(entity);

@@ -7,7 +7,6 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
-import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -23,6 +22,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -55,14 +55,14 @@ import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_BABY;
  */
 public final class PickerExportService {
 
-    private static final String PACK_MCMETA = """
+    private static final String PACK_MCMETA = String.format(Locale.ROOT, """
             {
               "pack": {
                 "pack_format": %d,
                 "description": {"translate": "somegoogly.pack.picker_description"}
               }
             }
-            """.formatted(SharedConstants.getCurrentVersion().packVersion(PackType.SERVER_DATA));
+            """, SharedConstants.getCurrentVersion().packVersion(PackType.SERVER_DATA));
     private static final String PACK_NAME = "somegoogly-picker";
 
     private PickerExportService() {
@@ -149,16 +149,9 @@ public final class PickerExportService {
     private static Component syncRefusal(ResourceLocation typeId, String age, RuntimeConfig authored) {
         Map<ResourceLocation, RuntimeConfigSet> next = new HashMap<>(ServerEyeConfigs.all());
         next.put(typeId, withAge(next.get(typeId), age, authored));
-        EyeConfigLimits.Issue limitsError = EyeConfigLimits.validateSync(next);
-        if (limitsError != null) {
-            return Component.translatable("somegoogly.command.picker.export_rejected_unsafe_payload", limitsError.message());
-        }
-        int wireSize = EyeConfigSyncPacket.wireSize(ServerEyeConfigs.encode(next));
-        if (wireSize > EyeConfigSyncPacket.MAX_PAYLOAD_BYTES) {
-            return Component.translatable("somegoogly.command.picker.export_rejected_unsafe_payload",
-                    Component.translatable("somegoogly.validation.sync_size", wireSize, EyeConfigSyncPacket.MAX_PAYLOAD_BYTES));
-        }
-        return null;
+        EyeConfigLimits.Issue refusal = ServerEyeConfigs.packetFor(next).refusal();
+        return refusal == null ? null
+                : Component.translatable("somegoogly.command.picker.export_rejected_unsafe_payload", refusal.message());
     }
 
     /** {@code base} with its adult or baby config replaced by {@code authored}. */

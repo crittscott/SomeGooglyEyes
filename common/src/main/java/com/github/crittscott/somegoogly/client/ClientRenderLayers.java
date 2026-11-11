@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.client;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
+import com.github.crittscott.somegoogly.client.compat.GeckoCompat;
 import com.github.crittscott.somegoogly.client.render.LayerGooglyEyes;
 import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
 import java.util.Collections;
@@ -50,6 +51,7 @@ public final class ClientRenderLayers {
     public static void clearCaches() {
         ClientEyeRuntime.clear();
         Resolvers.clearCaches();
+        GeckoCompat.clearCaches();
     }
 
     /**

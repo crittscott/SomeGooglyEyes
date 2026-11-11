@@ -25,7 +25,7 @@ Eyed mobs occasionally blink, stare, look aside, or go cross-eyed. They may also
 - damaged by a player: 20 percent default chance to bulge;
 - milked (cow, mooshroom, goat): bulge;
 - sheared (sheep): bulge;
-- showing affection (love mode, villagers breeding, a golem's flower, an ocelot's trust): pupils swell to twice their size;
+- showing affection (love mode, villagers breeding, a golem's flower, an ocelot's trust, taming): pupils swell to twice their size;
 - completing a villager or wandering-trader trade: swirl;
 - healed: swirl, 200-tick default cooldown.
 
@@ -64,7 +64,7 @@ Craft an eye with a slimeball to make a Slimy Eye retaining its appearance and n
 
 Eyed or ineligible mobs refuse application; harvest before restyling. Sneak-use on air applies to yourself. Applying or harvesting another player's eyes requires server PvP and team permission. Spectators cannot change eyes.
 
-To take your own eyes off, sneak and right-click the air with shears. Optometrist shears do it cleanly; plain shears also cost a melee hit's worth of health, even with PvP off. Either way one Googly Eye drops, the shears lose one durability, and the shearing sound plays.
+To take your own eyes off, sneak and right-click the air with shears. Optometrist shears do it cleanly; plain shears also cost a bare-handed hit of health, even with PvP off. Either way one Googly Eye drops, the shears lose one durability, and the shearing sound plays.
 
 ## Mob heads
 
