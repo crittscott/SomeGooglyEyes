@@ -9,7 +9,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.common.util.TriState;
@@ -84,9 +83,7 @@ public final class NeoForgeServerEvents {
     }
 
     private static void onLivingDamage(LivingDamageEvent.Post event) {
-        if (event.getSource().getEntity() instanceof Player) {
-            ServerBehaviorScheduler.onPlayerHurt(event.getEntity());
-        }
+        ServerBehaviorScheduler.onHurt(event.getEntity(), event.getSource());
     }
 
     private static void onLivingDrops(LivingDropsEvent event) {
@@ -103,10 +100,7 @@ public final class NeoForgeServerEvents {
     }
 
     private static void onLivingHeal(LivingHealEvent event) {
-        LivingEntity living = event.getEntity();
-        if (!living.level().isClientSide()) {
-            ServerBehaviorScheduler.onHealed(living);
-        }
+        ServerBehaviorScheduler.onHealed(event.getEntity());
     }
 
     /** Respawning or leaving the End replaces the player. */

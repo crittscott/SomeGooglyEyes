@@ -22,6 +22,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.player.Player;
@@ -30,20 +31,14 @@ import net.minecraft.world.level.GameType;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
- * {@link RuntimeConfig#isUsable} is the single eligibility predicate behind the slimy eye's targeting,
- * the at-spawn gate, and the client's held-eye inspect indicator, so its endpoints — and
- * {@link EyeItemService#verdictFor} reading it — are what keep those three in agreement.
- * The delegation test swaps the config store via {@link TestEyeConfigs} (restored afterwards, the same
- * force-and-restore pattern as {@code SpawnGatingGameTests}) rather than depending on which configs
- * happen to ship.
- *
- * <p>{@link #slimyEyeAppliesOnlyToEligibleTargets}, {@link #slimyEyeRefusesAnAlreadyEyedTarget}, and
- * {@link #slimyEyeRerollsThePlacementVariant} then pin the apply verb
- * ({@link EyeItemService#applySlimyEye}): an eyeless, configured mob gains eyes carrying the stack's
- * appearance on a freshly drawn variant roll and one eye is consumed; an unconfigured or already-eyed
- * mob is refused with nothing consumed and nothing touched.
+ * Which mobs can get eyes. The natural eye decision is tested through a real spawn, and the Slimy Eye's apply verb
+ * ({@link EyeItemService#applySlimyEye}) through its refusals and acceptance: an eyeless, configured mob gains eyes
+ * carrying the stack's appearance on a freshly drawn variant roll and one eye is consumed; an unconfigured, disabled,
+ * or already-eyed mob is refused with nothing consumed and nothing touched. Tests swap the config store via
+ * {@link TestEyeConfigs} and restore it afterwards rather than depending on which configs happen to ship.
  */
 public final class EligibilityGameTestsLogic {
 
@@ -67,56 +62,11 @@ public final class EligibilityGameTestsLogic {
         return config;
     }
 
-    /**
-     * A definition is usable only when present, enabled, and holding a variant. In game: add a datapack whose
-     * {@code data/minecraft/eyes/cow.json} entry has {@code "enabled": false} and run {@code /reload}; sneaking
-     * with a Googly Eye at an eyeless cow reports no configuration, and a Slimy Eye no longer applies to cows.
-     */
-    public static void usablePredicateEndpoints(GameTestHelper helper) {
-        helper.assertTrue(!RuntimeConfig.isUsable(null), "a missing config should not be usable");
-
-        RuntimeConfig noVariants = new RuntimeConfig();
-        noVariants.variants = List.of();
-        helper.assertTrue(!RuntimeConfig.isUsable(noVariants), "a config with no variants should not be usable");
-
-        RuntimeConfig usable = usableConfig();
-        helper.assertTrue(RuntimeConfig.isUsable(usable), "an enabled config with a variant should be usable");
-
-        usable.enabled = false;
-        helper.assertTrue(!RuntimeConfig.isUsable(usable), "enabled:false should be a hard disable");
-        helper.succeed();
-    }
-
-    /**
-     * Server eligibility follows that same predicate. In game: with the {@code "enabled": false} cow datapack
-     * from {@link #usablePredicateEndpoints}, no new cow spawns with eyes even at
-     * {@code entityOverrides = ["minecraft:cow,100"]}; remove the datapack and {@code /reload}, and they do.
-     */
-    public static void eligibilityFollowsTheSharedPredicate(GameTestHelper helper) {
-        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
-        ResourceLocation cowId = BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW);
-
-        Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
-        try {
-            RuntimeConfigSet set = new RuntimeConfigSet();
-            set.any = usableConfig();
-            TestEyeConfigs.install(Map.of(cowId, set));
-            helper.assertTrue(EyeItemService.verdictFor(cow) != EyeItemService.Verdict.CANNOT,
-                    "a cow with a usable config should be eligible");
-
-            TestEyeConfigs.install(Map.of());
-            helper.assertTrue(EyeItemService.verdictFor(cow) == EyeItemService.Verdict.CANNOT,
-                    "a cow with no config should not be eligible");
-        } finally {
-            TestEyeConfigs.install(original);
-        }
-        helper.succeed();
-    }
 
     /**
      * A Slimy Eye applies only to an eligible, eyeless mob, and only while the mod is enabled. In game, in
      * survival, craft a red-iris Slimy Eye (Googly Eye plus red dye, then plus a slimeball) and right-click:
-     * a cow disabled by the {@code "enabled": false} datapack from {@link #usablePredicateEndpoints} (refused,
+     * a cow disabled by a datapack whose {@code data/minecraft/eyes/cow.json} entry has {@code "enabled": false} (refused,
      * item kept); an eyeless cow with {@code googlyEyesEnabled = false} (refused, item kept); and an eyeless
      * cow with it {@code true} (the cow gains red-iris eyes and one Slimy Eye is used).
      */
@@ -140,6 +90,14 @@ public final class EligibilityGameTestsLogic {
             helper.assertTrue(!refused.consumesAction(), "an ineligible target should refuse the apply");
             helper.assertTrue(!EyeState.hasEyes(cow), "an ineligible target should not gain eyes");
             helper.assertTrue(stack.getCount() == 2, "a refused apply should not consume the eye");
+
+            RuntimeConfigSet disabledSet = new RuntimeConfigSet();
+            disabledSet.any = usableConfig();
+            disabledSet.any.enabled = false;
+            TestEyeConfigs.install(Map.of(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW), disabledSet));
+            helper.assertTrue(EyeItemService.applySlimyEye(stack, player, cow) == InteractionResult.PASS
+                            && stack.getCount() == 2 && !EyeState.hasEyes(cow),
+                    "an explicitly disabled definition refuses use without consuming the eye");
 
             // Configured but the master switch is off: still refused, nothing consumed.
             RuntimeConfigSet set = new RuntimeConfigSet();
@@ -236,35 +194,54 @@ public final class EligibilityGameTestsLogic {
     }
 
     /**
-     * {@link ServerEyeConfigs#canEverWearEyes} consults <b>both</b> age buckets, so the at-spawn roll is
-     * offered to a mob that only has a config for the life stage it is not currently in — otherwise it
+     * A cow with a definition only for the life stage it is not in still takes the natural eye roll when it joins
+     * the level, and keeps those eyes as it ages; a missing or disabled definition never wins the roll. The at-spawn
+     * roll is offered to a mob that only has a config for the life stage it is not currently in — otherwise it
      * would store {@code hasGooglyEyes=false} for life and never gain eyes on aging. In game: add a
      * datapack whose {@code data/minecraft/eyes/cow.json} has only an {@code "adult"} entry, run
      * {@code /reload}, set {@code entityOverrides = ["minecraft:cow,100"]}, and use a cow spawn egg on an
      * adult cow; the calf has no eyes, and once it grows up it does.
      */
     public static void canEverWearEyesSpansBothAgeBuckets(GameTestHelper helper) {
-        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
-        ResourceLocation cowId = BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW);
         Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
+        List<String> overrides = ServerConfig.ENTITY_OVERRIDES.get();
+        boolean enabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
+        ResourceLocation cowId = BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW);
         try {
-            RuntimeConfigSet adultOnly = new RuntimeConfigSet();
-            adultOnly.adult = usableConfig();
-            TestEyeConfigs.install(Map.of(cowId, adultOnly));
-            helper.assertTrue(ServerEyeConfigs.canEverWearEyes(cow),
-                    "an adult-only config still lets the entity roll at spawn");
-
-            RuntimeConfigSet babyOnly = new RuntimeConfigSet();
-            babyOnly.baby = usableConfig();
-            TestEyeConfigs.install(Map.of(cowId, babyOnly));
-            helper.assertTrue(ServerEyeConfigs.canEverWearEyes(cow),
-                    "a baby-only config also lets an adult roll, so both buckets are consulted");
-
-            TestEyeConfigs.install(Map.of());
-            helper.assertTrue(!ServerEyeConfigs.canEverWearEyes(cow),
-                    "an unconfigured entity can never wear eyes");
+            ServerConfig.GOOGLY_EYES_ENABLED.set(true);
+            ServerConfig.ENTITY_OVERRIDES.set(List.of(cowId + "," + ServerConfig.PERCENT_MAX));
+            for (boolean baby : List.of(true, false)) {
+                RuntimeConfigSet set = new RuntimeConfigSet();
+                if (baby) {
+                    set.adult = usableConfig();
+                } else {
+                    set.baby = usableConfig();
+                }
+                TestEyeConfigs.install(Map.of(cowId, set));
+                // Age is set before the cow joins the level, where the natural eye decision is made.
+                Cow cow = Objects.requireNonNull(EntityType.COW.create(helper.getLevel(), EntitySpawnReason.NATURAL));
+                cow.setBaby(baby);
+                cow.moveTo(helper.absolutePos(new BlockPos(2, 2, 2)), 0F, 0F);
+                helper.assertTrue(helper.getLevel().addFreshEntity(cow), "the configured cow joins the level");
+                helper.assertTrue(EyeState.hasEyes(cow), "the other age's definition permits the natural eye roll");
+                float roll = EyeState.getVariantRoll(cow);
+                cow.setBaby(!baby);
+                helper.assertTrue(EyeState.hasEyes(cow) && EyeState.getVariantRoll(cow) == roll,
+                        "aging reveals the layout without rerolling the stored eyes");
+                cow.discard();
+            }
+            for (boolean missing : List.of(false, true)) {
+                RuntimeConfigSet disabled = new RuntimeConfigSet();
+                disabled.any = usableConfig();
+                disabled.any.enabled = false;
+                TestEyeConfigs.install(missing ? Map.of() : Map.of(cowId, disabled));
+                Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+                helper.assertTrue(!EyeState.hasEyes(cow), "a missing or disabled definition never wins a natural roll");
+            }
         } finally {
             TestEyeConfigs.install(original);
+            ServerConfig.ENTITY_OVERRIDES.set(overrides);
+            ServerConfig.GOOGLY_EYES_ENABLED.set(enabled);
         }
         helper.succeed();
     }

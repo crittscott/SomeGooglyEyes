@@ -136,6 +136,23 @@ public final class TomlConfig {
         return fallback;
     }
 
+    /**
+     * Load {@code settings} from the TOML file at {@code path}, writing the defaults there if it is absent and adding
+     * any keys it lacks. Returns whether it loaded; a failure is logged and leaves the values in effect.
+     */
+    public static boolean load(Path path, List<ConfigValue<?>> settings) {
+        try {
+            String defaults = render(settings);
+            CommentedConfig document = readOrCreate(path, defaults);
+            apply(document, settings);
+            completeIfMissing(path, document, defaults);
+            return true;
+        } catch (IOException | IllegalArgumentException failure) {
+            SomeGooglyCommon.LOGGER.error("Could not load config {}; keeping the values already in effect", path, failure);
+            return false;
+        }
+    }
+
     private static CommentedConfig parse(String source) throws IOException {
         CommentedConfig config = TomlFormat.newConfig(LinkedHashMap::new);
         try {

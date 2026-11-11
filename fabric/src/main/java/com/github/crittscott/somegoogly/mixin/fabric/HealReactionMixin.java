@@ -13,9 +13,6 @@ abstract class HealReactionMixin {
 
     @Inject(method = "heal", at = @At("HEAD"))
     private void somegoogly$beforeHeal(float amount, CallbackInfo callback) {
-        LivingEntity self = (LivingEntity) (Object) this;
-        if (!self.level().isClientSide()) {
-            ServerBehaviorScheduler.onHealed(self);
-        }
+        ServerBehaviorScheduler.onHealed((LivingEntity) (Object) this);
     }
 }

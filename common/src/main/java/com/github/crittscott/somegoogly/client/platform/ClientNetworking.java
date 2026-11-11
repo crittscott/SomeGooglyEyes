@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.platform;
+package com.github.crittscott.somegoogly.client.platform;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;

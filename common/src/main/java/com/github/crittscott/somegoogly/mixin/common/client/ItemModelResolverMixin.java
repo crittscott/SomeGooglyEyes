@@ -1,7 +1,6 @@
 package com.github.crittscott.somegoogly.mixin.common.client;
 
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
-import com.github.crittscott.somegoogly.client.HandItemEyes;
 import com.github.crittscott.somegoogly.client.PresentationEyes;
 import com.github.crittscott.somegoogly.client.render.SkullEyeRenderer;
 import net.minecraft.client.renderer.item.ItemModelResolver;
@@ -30,6 +29,6 @@ abstract class ItemModelResolverMixin {
                                        @Nullable LivingEntity entity, int seed, CallbackInfo callback) {
         ((SkullEyeRenderer.ItemHolder) renderState).somegoogly$setItem(stack);
         ((PresentationEyes.Holder) renderState).somegoogly$setDraw(displayContext == ItemDisplayContext.GUI
-                ? ClientEyeRuntime.itemDraw(stack) : HandItemEyes.context(entity, stack, displayContext));
+                ? ClientEyeRuntime.itemDraw(stack) : ClientEyeRuntime.handContext(entity, stack, displayContext));
     }
 }

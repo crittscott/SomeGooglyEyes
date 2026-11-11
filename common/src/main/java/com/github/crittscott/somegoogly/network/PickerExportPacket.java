@@ -16,15 +16,18 @@ import net.minecraft.server.level.ServerPlayer;
 
 import java.util.UUID;
 
+import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ADULT;
+import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_BABY;
+
 /**
  * Client → server: "write this authored eye config for {@code entityTypeId} into the world datapack
  * and reload" — the wire half of {@code /sg export}. The config travels as codec-encoded NBT (the
- * same {@code RuntimeConfig.CODEC} the sync packet uses in the other direction); all validation,
+ * same {@code RuntimeConfig.CODEC} the sync packet uses in the other direction); semantic config validation,
  * path construction, the export cooldown, the file write, and the {@code /reload} live in
  * {@link PickerExportService}. It requires {@link PickerGate#authorized}.
  *
- * <p>The client refuses to send a packet that fails {@link #fitsServerbound()}, so a malformed or
- * oversized packet only comes from a misbehaving client and fails decoding the way vanilla's do.
+ * <p>The decoder requires an adult or baby age and a config compound. Server-dependent validation stays in
+ * the export service and reports refusals to the author. The client checks {@link #fitsServerbound()} before sending.
  */
 public class PickerExportPacket implements CustomPacketPayload {
 
@@ -52,6 +55,9 @@ public class PickerExportPacket implements CustomPacketPayload {
     private PickerExportPacket(FriendlyByteBuf buffer) {
         this.typeId = buffer.readResourceLocation();
         this.age = buffer.readUtf(MAX_AGE_LENGTH);
+        if (!AGE_ADULT.equals(age) && !AGE_BABY.equals(age)) {
+            throw new DecoderException("Invalid picker export age");
+        }
         CompoundTag configNbt = buffer.readNbt();
         if (configNbt == null) {
             throw new DecoderException("Picker export packet has no config");

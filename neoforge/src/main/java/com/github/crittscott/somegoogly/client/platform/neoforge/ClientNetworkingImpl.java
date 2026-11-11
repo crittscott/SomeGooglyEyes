@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.platform.neoforge;
+package com.github.crittscott.somegoogly.client.platform.neoforge;
 
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.PacketDistributor;

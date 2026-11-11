@@ -44,8 +44,9 @@ import java.util.stream.Stream;
  * {@link EyeItemService#interact} (the Optometrist right-click harvest) and
  * {@link EyeItemService#selfRemoveWithShears} (sneak + shears on air). The shears-on-kill harvest and
  * the Slimy Eye application verb are covered by {@link SomeGooglyGameTestsLogic} and
- * {@link EligibilityGameTestsLogic}. The loader adapters' protection-mod / PvP gating around these calls
- * stays source-verified — it needs live listener ordering.
+ * {@link EligibilityGameTestsLogic}. {@link LoaderInteractionGameTestsLogic} drives the same uses through each
+ * loader's own events or callbacks, including refusal by a protection listener on NeoForge and Forge; Fabric's
+ * protection-listener ordering is checked by hand.
  *
  * <p>For the in-game steps below, get Optometrist shears from an Optometrist book in an anvil, or with
  * {@code /give @s shears[enchantments={levels:{"somegoogly:optometrist":1}}]}.

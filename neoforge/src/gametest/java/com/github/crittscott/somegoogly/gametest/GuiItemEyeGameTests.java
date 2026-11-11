@@ -53,4 +53,9 @@ public final class GuiItemEyeGameTests {
     public static void guiHeadUsesConfiguredLayout(GameTestHelper helper) {
         GuiItemEyeGameTestsLogic.guiHeadUsesConfiguredLayout(helper);
     }
+
+    @GameTest(template = TEMPLATE)
+    public static void nestedDrawContextsRestoreOuterSelection(GameTestHelper helper) {
+        GuiItemEyeGameTestsLogic.nestedDrawContextsRestoreOuterSelection(helper);
+    }
 }

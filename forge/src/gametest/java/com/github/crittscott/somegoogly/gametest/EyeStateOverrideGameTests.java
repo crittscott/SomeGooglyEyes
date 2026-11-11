@@ -18,32 +18,17 @@ public final class EyeStateOverrideGameTests {
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void clearingTintRemovesOnlyThatField(GameTestHelper helper) {
-        EyeStateOverrideGameTestsLogic.clearingTintRemovesOnlyThatField(helper);
+    public static void adminAppearanceCommands(GameTestHelper helper) {
+        EyeStateOverrideGameTestsLogic.adminAppearanceCommands(helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void glowOverrideCanBeSetAndDropped(GameTestHelper helper) {
-        EyeStateOverrideGameTestsLogic.glowOverrideCanBeSetAndDropped(helper);
+    public static void adminCommandsRefuseUnauthorizedOrInvalidUse(GameTestHelper helper) {
+        EyeStateOverrideGameTestsLogic.adminCommandsRefuseUnauthorizedOrInvalidUse(helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void settingOneFieldLeavesOthersAbsent(GameTestHelper helper) {
-        EyeStateOverrideGameTestsLogic.settingOneFieldLeavesOthersAbsent(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void clearingEveryFieldRemovesTheCompound(GameTestHelper helper) {
-        EyeStateOverrideGameTestsLogic.clearingEveryFieldRemovesTheCompound(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void clearingTintsPreservesGlow(GameTestHelper helper) {
-        EyeStateOverrideGameTestsLogic.clearingTintsPreservesGlow(helper);
-    }
-
-    @GameTest(template = TEMPLATE, timeoutTicks = 40)
-    public static void snapshotAppliesAllFieldsTogether(GameTestHelper helper) {
-        EyeStateOverrideGameTestsLogic.snapshotAppliesAllFieldsTogether(helper);
+    public static void adminEyesAndBehaviorCommands(GameTestHelper helper) {
+        EyeStateOverrideGameTestsLogic.adminEyesAndBehaviorCommands(helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
 }

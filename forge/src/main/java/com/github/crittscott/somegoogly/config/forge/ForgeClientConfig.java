@@ -15,7 +15,7 @@ public final class ForgeClientConfig {
 
     static {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
-        COPY_VALUES = ForgeServerConfig.define(builder, ClientConfig.settings());
+        COPY_VALUES = ForgeConfig.define(builder, ClientConfig.settings());
         SPEC = builder.build();
     }
 

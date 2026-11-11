@@ -17,7 +17,7 @@ public final class BehaviorSchedulerGameTests {
     private BehaviorSchedulerGameTests() {
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    @GameTest(template = TEMPLATE, timeoutTicks = 400, batch = "somegoogly_affectioneventsplaylove")
     public static void affectionEventsPlayLove(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.affectionEventsPlayLove(
                 helper, helper.makeMockServerPlayerInLevel());
@@ -54,25 +54,25 @@ public final class BehaviorSchedulerGameTests {
                 helper, helper.makeMockServerPlayerInLevel());
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    @GameTest(template = TEMPLATE, timeoutTicks = 400, batch = "somegoogly_gameeventtriggersrespectconfig")
     public static void gameEventTriggersRespectConfig(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.gameEventTriggersRespectConfig(
                 helper, helper.makeMockServerPlayerInLevel());
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    @GameTest(template = TEMPLATE, timeoutTicks = 400, batch = "somegoogly_healswirlisratelimited")
     public static void healSwirlIsRateLimited(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.healSwirlIsRateLimited(
                 helper, helper.makeMockServerPlayerInLevel());
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    @GameTest(template = TEMPLATE, timeoutTicks = 400, batch = "somegoogly_milkingplaysgrow")
     public static void milkingPlaysGrow(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.milkingPlaysGrow(
                 helper, helper.makeMockServerPlayerInLevel());
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    @GameTest(template = TEMPLATE, timeoutTicks = 400, batch = "somegoogly_onebehavioratatimeuntilitelapses")
     public static void oneBehaviorAtATimeUntilItElapses(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.oneBehaviorAtATimeUntilItElapses(
                 helper, helper.makeMockServerPlayerInLevel());
@@ -94,7 +94,7 @@ public final class BehaviorSchedulerGameTests {
                 helper, helper.makeMockServerPlayerInLevel());
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    @GameTest(template = TEMPLATE, timeoutTicks = 400, batch = "somegoogly_sleepingmobplaysnobehaviors")
     public static void sleepingMobPlaysNoBehaviors(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.sleepingMobPlaysNoBehaviors(
                 helper, helper.makeMockServerPlayerInLevel());
@@ -120,7 +120,7 @@ public final class BehaviorSchedulerGameTests {
         BehaviorSchedulerGameTestsLogic.receivedExpressionsOutliveRenderTrackers(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 60)
+    @GameTest(template = TEMPLATE, timeoutTicks = 400, batch = "somegoogly_disabledeyessuspendautomaticbehaviors")
     public static void disabledEyesSuspendAutomaticBehaviors(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.disabledEyesSuspendAutomaticBehaviors(helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
@@ -130,7 +130,7 @@ public final class BehaviorSchedulerGameTests {
         BehaviorSchedulerGameTestsLogic.completedTradeSwirlsEyes(helper, helper.makeMockServerPlayerInLevel());
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 100)
+    @GameTest(template = TEMPLATE, timeoutTicks = 400, batch = "somegoogly_healatfullhealthplaysnoswirl")
     public static void healAtFullHealthPlaysNoSwirl(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.healAtFullHealthPlaysNoSwirl(helper, helper.makeMockServerPlayerInLevel());
     }
