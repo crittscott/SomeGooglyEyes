@@ -1,7 +1,8 @@
 com.github.crittscott.somegoogly.client.fabric
+com.github.crittscott.somegoogly.client.network.fabric
+com.github.crittscott.somegoogly.client.platform.fabric
 com.github.crittscott.somegoogly.config.fabric
 com.github.crittscott.somegoogly.fabric
 com.github.crittscott.somegoogly.network.fabric
 com.github.crittscott.somegoogly.platform.fabric
-com.github.crittscott.somegoogly.registry.fabric
 com.github.crittscott.somegoogly.server.fabric

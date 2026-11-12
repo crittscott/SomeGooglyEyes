@@ -280,9 +280,8 @@ optional mod installed (say version 4.12.4), run <code>/sg exportall</code>; tha
 <h3>longSegmentsCompareAsNumbers</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">longSegmentsCompareAsNumbers</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">A segment of any length compares as a number, so a date-stamped build sorts after an older one. In game:
-entries <code>"[1.0.202601010000,1.0.202701010000)"</code> (blue) and <code>"[1.1,1.2)"</code> (red) for a mod at
-version <code>1.0.202606010000</code>; its mob spawns with blue irises.</div>
+<div class="block">A segment of any length compares as a number, so a date-stamped build sorts after an older one. No in-game
+form with stock mods; guards version ordering for mods with date-stamped versions.</div>
 </div>
 </section>
 </li>
@@ -291,9 +290,8 @@ version <code>1.0.202606010000</code>; its mob spawns with blue irises.</div>
 <h3>loaderNamesDoNotChangeAVersion</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">loaderNamesDoNotChangeAVersion</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">A loader name in a version says nothing about its age, so <code>1.0.0-forge</code> is <code>1.0.0</code>. In game:
-entries <code>"[1.0.0,1.1)"</code> (blue) and <code>"[0.9,1.0)"</code> (red) for a mod at version
-<code>1.0.0-forge</code>; its mob spawns with blue irises and the log reports no fallback.</div>
+<div class="block">A loader name in a version says nothing about its age, so <code>1.0.0-forge</code> is <code>1.0.0</code>. No in-game
+form with stock mods; guards version ordering for mods with loader-suffixed versions.</div>
 </div>
 </section>
 </li>

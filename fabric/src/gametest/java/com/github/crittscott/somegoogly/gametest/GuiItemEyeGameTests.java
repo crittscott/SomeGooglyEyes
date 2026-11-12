@@ -45,4 +45,9 @@ public final class GuiItemEyeGameTests {
     public void guiHeadUsesConfiguredLayout(GameTestHelper helper) {
         GuiItemEyeGameTestsLogic.guiHeadUsesConfiguredLayout(helper);
     }
+
+    @GameTest(structure = TEMPLATE, maxTicks = 40)
+    public void nestedDrawContextsRestoreOuterSelection(GameTestHelper helper) {
+        GuiItemEyeGameTestsLogic.nestedDrawContextsRestoreOuterSelection(helper);
+    }
 }

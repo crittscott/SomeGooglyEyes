@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.eye.state;
 
+import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.network.EyeStatePacket;
 import com.github.crittscott.somegoogly.platform.EntityPersistentData;
@@ -77,10 +78,17 @@ public final class EyeState {
                     AppearanceOverride.fromNbt(overridesTag(data)));
         }
 
-        /** Write every state key into {@code data}, removing the overrides compound when there are none. */
+        /**
+         * Write every state key into {@code data}, removing the overrides compound when there are none and the
+         * placement roll when there are no eyes to place.
+         */
         public void write(CompoundTag data) {
             data.putBoolean(HAS_EYES, hasEyes);
-            data.putFloat(VARIANT_ROLL, variantRoll);
+            if (hasEyes) {
+                data.putFloat(VARIANT_ROLL, variantRoll);
+            } else {
+                data.remove(VARIANT_ROLL);
+            }
             writeProperties(data, properties);
         }
     }
@@ -105,10 +113,13 @@ public final class EyeState {
      * Carry the whole eye state from an entity Minecraft is replacing to its replacement (a mob conversion,
      * or a player leaving the End), so the replacement keeps its eyes instead of rolling fresh. Copying
      * before or after the replacement joins its level both work: an initialized target is never re-rolled,
-     * and the broadcast reaches whoever already tracks it.
+     * and the broadcast reaches whoever already tracks it. A source that never had a chance at eyes (eyeless,
+     * no appearance, and a type with no usable definition, such as a tadpole growing into a frog) has no
+     * decision worth carrying, so the target keeps its own spawn roll.
      */
     public static void copy(LivingEntity source, LivingEntity target) {
-        if (!isInitialized(source)) {
+        if (!isInitialized(source)
+                || isDefaultState(source) && !ServerEyeConfigs.canEverWearEyes(source)) {
             return;
         }
         snapshot(source).write(EntityPersistentData.get(target));
@@ -123,19 +134,24 @@ public final class EyeState {
         sync(entity);
     }
 
+    /** A fresh placement roll for {@code entity}, drawn from its own random source. */
+    private static float drawRoll(Entity entity) {
+        return (entity instanceof LivingEntity living ? living.getRandom() : entity.level().getRandom()).nextFloat();
+    }
+
     /** Apply a portable appearance, reroll placement, and enable eyes with one synchronization. */
     public static void enableWithProperties(Entity entity, AppearanceOverride properties) {
         CompoundTag data = EntityPersistentData.get(entity);
-        float roll = (entity instanceof LivingEntity living ? living.getRandom() : entity.level().getRandom()).nextFloat();
-        data.putFloat(VARIANT_ROLL, roll);
+        data.putFloat(VARIANT_ROLL, drawRoll(entity));
         writeProperties(data, properties);
         data.putBoolean(HAS_EYES, true);
         sync(entity);
     }
 
     /**
-     * The mob's stored placement-variant roll (0..1), assigned at first join and redrawn when a
-     * slimy-eye application turns eyes on. Maps onto the current age config's weighted variants.
+     * The mob's stored placement-variant roll (0..1), drawn when its eyes first turn on (at first join, or
+     * by an admin toggle) and redrawn when a slimy-eye application turns eyes on; an eyeless mob stores none.
+     * Maps onto the current age config's weighted variants.
      * Defaults to 0 (the first variant) when unset. A stored value outside 0..1 (an edited save) reads
      * clamped into range, and a non-finite one as 0.
      */
@@ -151,15 +167,16 @@ public final class EyeState {
     }
 
     /**
-     * Store the one-time natural-eye decision and placement roll. Broadcasts to current trackers only when
-     * the decision turned eyes on, since an eyeless entity already matches every client's default; later
-     * trackers get the state from the start-tracking sync.
+     * Store the one-time natural-eye decision, with {@code variantRoll} only when it turned eyes on: most entities
+     * never get eyes, and every one of them would otherwise carry an unused roll in the save. Broadcasts to
+     * current trackers only when eyes turned on, since an eyeless entity already matches every client's default;
+     * later trackers get the state from the start-tracking sync.
      */
     public static void initialize(Entity entity, boolean hasEyes, float variantRoll) {
         CompoundTag data = EntityPersistentData.get(entity);
         data.putBoolean(HAS_EYES, hasEyes);
-        data.putFloat(VARIANT_ROLL, variantRoll);
         if (hasEyes) {
+            data.putFloat(VARIANT_ROLL, variantRoll);
             sync(entity);
         }
     }
@@ -185,13 +202,6 @@ public final class EyeState {
         return data.getCompound(EYE_OVERRIDES).orElse(null);
     }
 
-    /** The overrides compound, or {@code null} if absent. */
-    @Nullable
-    public static CompoundTag overridesTagOrNull(Entity entity) {
-        CompoundTag data = EntityPersistentData.find(entity);
-        return data == null ? null : overridesTag(data);
-    }
-
     private static EyeStatePacket packet(Entity entity) {
         return new EyeStatePacket(entity.getId(), snapshot(entity));
     }
@@ -202,7 +212,8 @@ public final class EyeState {
      * carries, so item↔mob transfer is a straight property copy.
      */
     public static AppearanceOverride readProperties(Entity entity) {
-        return AppearanceOverride.fromNbt(overridesTagOrNull(entity));
+        CompoundTag data = EntityPersistentData.find(entity);
+        return AppearanceOverride.fromNbt(data == null ? null : overridesTag(data));
     }
 
     /**
@@ -225,9 +236,16 @@ public final class EyeState {
         setProperties(entity, readProperties(entity).withGlow(glow));
     }
 
-    /** Flip the on/off flag alone and broadcast, leaving the variant roll and appearance overrides untouched. */
+    /**
+     * Flip the on/off flag and broadcast, leaving the appearance overrides and any stored variant roll untouched;
+     * turning eyes on for an entity that never had a roll draws one.
+     */
     public static void setHasEyes(Entity entity, boolean hasEyes) {
-        EntityPersistentData.get(entity).putBoolean(HAS_EYES, hasEyes);
+        CompoundTag data = EntityPersistentData.get(entity);
+        data.putBoolean(HAS_EYES, hasEyes);
+        if (hasEyes && !data.contains(VARIANT_ROLL)) {
+            data.putFloat(VARIANT_ROLL, drawRoll(entity));
+        }
         sync(entity);
     }
 
@@ -250,10 +268,14 @@ public final class EyeState {
         return Snapshot.read(EntityPersistentData.get(entity));
     }
 
-    /** Tell the scheduler an eyed mob now has eyes, then send every viewer the state; every write ends here. */
+    /** Tell the scheduler whether a living entity has eyes, then send every viewer the state; every write ends here. */
     private static void sync(Entity entity) {
-        if (entity instanceof LivingEntity living && hasEyes(living)) {
-            ServerBehaviorScheduler.onEyesGained(living);
+        if (entity instanceof LivingEntity living) {
+            if (hasEyes(living)) {
+                ServerBehaviorScheduler.onEyesGained(living);
+            } else {
+                ServerBehaviorScheduler.onEyesLost(living);
+            }
         }
         Networking.sendTrackingAndSelf(entity, packet(entity));
     }

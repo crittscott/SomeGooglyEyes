@@ -83,7 +83,8 @@ shipped data uses. Two entry points:
       <code>PickerExportPacket</code>; the authorization-gated server handler validates it, writes
       <code>world/datapacks/somegoogly-picker/data/&lt;ns&gt;/eyes/&lt;entity&gt;.json</code>, and <code>/reload</code>s
       so it persists and re-syncs through the normal path. Works from a remote client; the result
-      arrives as a server chat message (rate-limited server-side to one export per 10 seconds).</li>
+      arrives as a server chat message (rate-limited server-side by
+      <a href="../../picker/PickerGate.html#EXPORT_COOLDOWN_TICKS"><code>PickerGate.EXPORT_COOLDOWN_TICKS</code></a>).</li>
   <li><a href="#exportAll()"><code>exportAll()</code></a> — a purely client-side dump of <i>every</i> eye config into
       <code>&lt;gameDir&gt;/somegoogly-export/data/…</code>: the synced runtime state (<a href="../../config/ClientEyeConfigs.html" title="class in com.github.crittscott.somegoogly.config"><code>ClientEyeConfigs</code></a>)
       for untouched entities, overlaid with the picker's per-entity drafts

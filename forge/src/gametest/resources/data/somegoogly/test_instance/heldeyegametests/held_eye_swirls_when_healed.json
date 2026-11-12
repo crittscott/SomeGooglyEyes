@@ -1,7 +1,7 @@
 {
   "type": "minecraft:function",
   "function": "somegoogly:heldeyegametests/held_eye_swirls_when_healed",
-  "environment": "minecraft:default",
+  "environment": "somegoogly:held_eye_swirls_when_healed",
   "structure": "somegoogly:empty",
-  "max_ticks": 100
+  "max_ticks": 400
 }

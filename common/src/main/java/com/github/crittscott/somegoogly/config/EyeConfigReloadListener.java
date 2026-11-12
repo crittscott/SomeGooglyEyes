@@ -8,8 +8,8 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.VersionedEntry;
 import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.google.gson.JsonElement;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
@@ -43,7 +43,7 @@ import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_BABY;
 public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<JsonElement> {
 
     /** The listener's identity for loaders that key reload listeners by id. */
-    public static final Identifier ID = Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "eye_configs");
+    public static final Identifier ID = SomeGooglyCommon.id("eye_configs");
 
     /** Where eye definitions live inside a data pack: {@code data/<namespace>/eyes/<path>.json}. */
     public static final FileToIdConverter EYE_FILES = FileToIdConverter.json("eyes");
@@ -74,7 +74,7 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<Js
         Map<Fallback, Integer> fallbacks = new LinkedHashMap<>();
         for (Map.Entry<Identifier, JsonElement> entry : files.entrySet()) {
             // Hard exclusion, not config: no config for the dragon may ever load, from any datapack.
-            if (entry.getKey().equals(ServerEyeConfigs.ENDER_DRAGON)) {
+            if (ServerEyeConfigs.isExcluded(entry.getKey())) {
                 SomeGooglyCommon.LOGGER.warn(
                         "Ignoring eye config {}; the ender dragon is hard-excluded from googly eyes", entry.getKey());
                 continue;
@@ -86,33 +86,29 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<Js
                 skippedModNotInstalled++;
                 continue;
             }
-            try {
-                // Every field is required, so a typo'd datapack fails to parse rather than quietly
-                // decoding to defaults — say which file and which field rather than dropping it silently.
-                ConfigFile file = ConfigFile.CODEC.parse(JsonOps.INSTANCE, entry.getValue())
-                        .resultOrPartial(error -> SomeGooglyCommon.LOGGER.error(
-                                "Invalid eye config {}: {}", entry.getKey(), error))
-                        .orElse(null);
-                if (file == null) {
-                    failedParse++;
-                    continue;
-                }
-                RuntimeConfigSet config = selectForLoadedVersion(entry.getKey(), file, loadedVersion.get(), fallbacks);
-                if (!config.hasAnyConfig()) {
-                    SomeGooglyCommon.LOGGER.warn("Ignoring eye config {}: no usable entry", entry.getKey());
-                    rejected++;
-                    continue;
-                }
-                EyeConfigLimits.Issue error = EyeConfigLimits.validateSync(Map.of(entry.getKey(), config));
-                if (error == null) {
-                    selected.put(entry.getKey(), config);
-                } else {
-                    rejected++;
-                    SomeGooglyCommon.LOGGER.error("Ignoring unsafe eye config {}: {}", entry.getKey(), error.diagnostic());
-                }
-            } catch (Exception e) {
+            // Every field is required, so a typo'd datapack fails to parse rather than quietly
+            // decoding to defaults. Any decode error rejects the whole file: a partial result would
+            // silently drop the bad entry, eye, or variant and load the rest.
+            DataResult<ConfigFile> parsed = ConfigFile.CODEC.parse(JsonOps.INSTANCE, entry.getValue());
+            ConfigFile file = parsed.result().orElse(null);
+            if (file == null) {
+                SomeGooglyCommon.LOGGER.error("Ignoring invalid eye config {}: {}",
+                        entry.getKey(), parsed.error().orElseThrow().message());
                 failedParse++;
-                SomeGooglyCommon.LOGGER.error("Failed to parse eye config {}", entry.getKey(), e);
+                continue;
+            }
+            RuntimeConfigSet config = selectForLoadedVersion(entry.getKey(), file, loadedVersion.get(), fallbacks);
+            if (!config.hasAnyConfig()) {
+                SomeGooglyCommon.LOGGER.warn("Ignoring eye config {}: no usable entry", entry.getKey());
+                rejected++;
+                continue;
+            }
+            EyeConfigLimits.Issue error = EyeConfigLimits.validateSync(Map.of(entry.getKey(), config));
+            if (error == null) {
+                selected.put(entry.getKey(), config);
+            } else {
+                rejected++;
+                SomeGooglyCommon.LOGGER.error("Ignoring unsafe eye config {}: {}", entry.getKey(), error.diagnostic());
             }
         }
         int fallbackTotal = 0;
@@ -124,22 +120,15 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<Js
                             + " Placement may be off.",
                     fallback.getValue(), key.namespace(), key.installed(), key.used());
         }
-        EyeConfigLimits.Issue aggregateError = EyeConfigLimits.validateSync(selected);
-        if (aggregateError != null) {
+        EyeConfigSyncPacket packet = ServerEyeConfigs.packetFor(selected);
+        EyeConfigLimits.Issue refusal = packet.refusal();
+        if (refusal != null) {
             SomeGooglyCommon.LOGGER.error(
-                    "Eye config reload exceeds synchronized work limits; keeping the previous configs: {}",
-                    aggregateError.diagnostic());
+                    "Eye config reload exceeds the limits clients accept; keeping the previous configs: {}",
+                    refusal.diagnostic());
             return;
         }
-        Map<Identifier, CompoundTag> encoded = ServerEyeConfigs.encode(selected);
-        int wireSize = EyeConfigSyncPacket.wireSize(encoded);
-        if (wireSize > EyeConfigSyncPacket.MAX_PAYLOAD_BYTES) {
-            SomeGooglyCommon.LOGGER.error(
-                    "Eye config reload encodes to {} bytes, exceeding the {}-byte sync limit; keeping the previous configs",
-                    wireSize, EyeConfigSyncPacket.MAX_PAYLOAD_BYTES);
-            return;
-        }
-        boolean changed = ServerEyeConfigs.replaceIfChanged(selected, encoded);
+        boolean changed = ServerEyeConfigs.replaceIfChanged(packet);
         SomeGooglyCommon.LOGGER.info(
                 "Eye config reload {}: {} selected eye configs from {} files ({} skipped: mod not installed,"
                         + " {} failed to parse, {} rejected: no usable entry or unsafe; {} using another version's entry)",

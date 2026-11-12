@@ -10,7 +10,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-/** Puts the frame's animation on its contained item's render state, whose own draw then scopes it. */
+/**
+ * Puts the frame's animation and identity on its contained item's render state, whose own {@code submit} then
+ * scopes it. The Forge and NeoForge frame-item render events fire before the item is submitted with no matching
+ * event after it, and Fabric has none, so one hook serves every loader.
+ */
 @Mixin(ItemFrameRenderer.class)
 abstract class ItemFrameRendererMixin {
 

@@ -69,6 +69,8 @@ loadScripts(document, 'script');</script>
 <li><a href="#exactMinecraftGenerationIsSelected(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">exactMinecraftGenerationIsSelected(GameTestHelper)</a></li>
 <li><a href="#percentForResolvesWildcardsInListOrder(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">percentForResolvesWildcardsInListOrder(GameTestHelper)</a></li>
 <li><a href="#reloadHardExcludesEnderDragon(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">reloadHardExcludesEnderDragon(GameTestHelper)</a></li>
+<li><a href="#listSettingWithNoValidEntryUsesDefault(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">listSettingWithNoValidEntryUsesDefault(GameTestHelper)</a></li>
+<li><a href="#reloadRejectsFileWithMalformedEntry(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">reloadRejectsFileWithMalformedEntry(GameTestHelper)</a></li>
 <li><a href="#reloadToleratesBadFilesAndDuplicates(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">reloadToleratesBadFilesAndDuplicates(GameTestHelper)</a></li>
 <li><a href="#reloadFallsBackToNearestGeneration(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">reloadFallsBackToNearestGeneration(GameTestHelper)</a></li>
 <li><a href="#reloadReplacesConfigsOnlyOnContentChange(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">reloadReplacesConfigsOnlyOnContentChange(GameTestHelper)</a></li>
@@ -132,16 +134,22 @@ Fabric's config files.</div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#exactMinecraftGenerationIsSelected(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">exactMinecraftGenerationIsSelected</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#percentForResolvesExactBeforeWildcard(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">percentForResolvesExactBeforeWildcard</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#listSettingWithNoValidEntryUsesDefault(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">listSettingWithNoValidEntryUsesDefault</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#percentForResolvesWildcardsInListOrder(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">percentForResolvesWildcardsInListOrder</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#percentForResolvesExactBeforeWildcard(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">percentForResolvesExactBeforeWildcard</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#reloadFallsBackToNearestGeneration(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadFallsBackToNearestGeneration</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#percentForResolvesWildcardsInListOrder(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">percentForResolvesWildcardsInListOrder</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#reloadHardExcludesEnderDragon(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadHardExcludesEnderDragon</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#reloadFallsBackToNearestGeneration(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadFallsBackToNearestGeneration</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#reloadHardExcludesEnderDragon(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadHardExcludesEnderDragon</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#reloadRejectsFileWithMalformedEntry(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadRejectsFileWithMalformedEntry</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#reloadReplacesConfigsOnlyOnContentChange(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadReplacesConfigsOnlyOnContentChange</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
@@ -268,6 +276,26 @@ uses the integer default for a value of the wrong type.</div>
 <div class="member-signature"><span class="annotations">@GameTest(structure="somegoogly:empty",
           maxTicks=60)
 </span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">reloadHardExcludesEnderDragon</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="listSettingWithNoValidEntryUsesDefault(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>listSettingWithNoValidEntryUsesDefault</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="annotations">@GameTest(structure="somegoogly:empty",
+          maxTicks=60)
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">listSettingWithNoValidEntryUsesDefault</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="reloadRejectsFileWithMalformedEntry(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>reloadRejectsFileWithMalformedEntry</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="annotations">@GameTest(structure="somegoogly:empty",
+          maxTicks=60)
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">reloadRejectsFileWithMalformedEntry</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 </div>
 </section>
 </li>

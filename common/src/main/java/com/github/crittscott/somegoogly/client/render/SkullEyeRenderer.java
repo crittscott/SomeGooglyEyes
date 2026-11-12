@@ -24,25 +24,18 @@ import org.jspecify.annotations.Nullable;
 /**
  * Submits the eyes of placed mob heads and head items. A placed head's eyes are chosen while its render state
  * is extracted ({@link #extract}) and kept on that state ({@link PlacedHolder}). Mixins bracket a placed head's
- * submission with {@link #begin} and a head item's with {@link #beginItem}, both ending in {@link #end}, and
- * call {@link #render} right after the head model is submitted, in the model's space. A placed head's eyes are
- * live ({@link PresentationEyes}). Head items in the GUI, in third-person hands, or in frames have independent
- * pupils and ambient expressions. Unanimated items have centered pupils. Worn heads share the model submission
- * outside both brackets, so they draw no eyes.
+ * submission with {@link ClientEyeRuntime#beginHead} and an item render state's with
+ * {@link ClientEyeRuntime#beginItemState}, both closed by {@link ClientEyeRuntime#endItemDraw}, and call
+ * {@link #render} as the head model is submitted, in the model's space; it reads that draw context while the head
+ * is submitted, never later. A placed head's eyes are live ({@link PresentationEyes}). Head items in the GUI, in
+ * third-person hands, or in frames have independent pupils and ambient expressions. Unanimated items have
+ * centered pupils. Worn heads share the model submission outside both brackets, so they draw no eyes.
  *
  * <p>The eyes attach to the model's head part, which a vanilla head model shares with its mob, so the mob's
  * definition places them as they are. Honors the client display settings by the head's mob and the server's
  * {@code googlyEyesEnabled} switch.
  */
 public final class SkullEyeRenderer {
-
-    /** The placed head's eyes being submitted, or {@code null} outside a placed head's submission. */
-    @Nullable
-    private static PresentationEyes current;
-    /** The head item being drawn, or {@code null} outside a head item's draw. */
-    @Nullable
-    private static ItemStack currentItem;
-    private static float partialTick;
 
     private SkullEyeRenderer() {
     }
@@ -86,23 +79,6 @@ public final class SkullEyeRenderer {
         return eyes;
     }
 
-    /** A placed head's submission starts. */
-    public static void begin(PlacedHolder state) {
-        current = state.somegoogly$eyes();
-        partialTick = state.somegoogly$partialTick();
-    }
-
-    /** An item's submission starts; any but a head item's is ignored, since it never reaches {@link #render}. */
-    public static void beginItem(@Nullable ItemStack stack) {
-        currentItem = stack;
-    }
-
-    /** The placed head's or head item's submission ends. */
-    public static void end() {
-        current = null;
-        currentItem = null;
-    }
-
     /** The head part of a model eyes can attach to, or {@code null} for any other head model (the dragon's). */
     @Nullable
     private static ModelPart headPart(SkullModelBase model) {
@@ -131,21 +107,22 @@ public final class SkullEyeRenderer {
         if (head == null) {
             return;
         }
-        PresentationEyes eyes = current;
-        ItemStack stack = currentItem;
+        ClientEyeRuntime.DrawContext draw = ClientEyeRuntime.currentDraw();
+        PresentationEyes eyes = draw.head();
+        ItemStack stack = draw.item();
         if (eyes == null && stack == null) {
             return;
         }
         model.setupAnim(modelState);
         if (eyes != null) {
             renderEyes(pose, collector, packedLight, head, eyes.helper, eyes.parts, eyes.eyes,
-                    eyes.snapshot.properties(), partialTick);
+                    eyes.snapshot.properties(), draw.partialTick());
         } else {
             Identifier entity = SkullEyeState.entityFor(stack);
             if (!mayShow(entity)) {
                 return;
             }
-            PresentationEyes.Draw itemDraw = ClientEyeRuntime.itemDraw(stack);
+            PresentationEyes.Draw itemDraw = draw.draw();
             PresentationEyes animated = itemDraw.eyes();
             if (animated != null) {
                 renderEyes(pose, collector, packedLight, head, animated.helper, animated.parts, animated.eyes,
