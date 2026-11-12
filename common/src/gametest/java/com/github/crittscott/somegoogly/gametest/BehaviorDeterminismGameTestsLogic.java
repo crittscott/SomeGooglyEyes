@@ -19,7 +19,7 @@ import java.util.Arrays;
 /**
  * Every behavior must animate identically given the same seed — the contract that keeps all viewers of
  * one mob (and a mid-effect joiner catching up by age) in lock-step, since only the trigger (id,
- * duration, seed) crosses the wire. Drives the server-loadable half of a behavior ({@code onStart} plus
+ * seed, elapsed ticks) crosses the wire. Drives the server-loadable half of a behavior ({@code onStart} plus
  * {@code influence}, which is a pure function of age + seeded params) on a {@link BehaviorInstance}. A
  * cow supplies a real {@link HeadInfo} so per-eye behaviors (blink's mask) have geometry to resolve
  * against.

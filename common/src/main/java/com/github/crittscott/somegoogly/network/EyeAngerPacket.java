@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.network;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -14,7 +15,7 @@ import net.minecraft.resources.Identifier;
  */
 public record EyeAngerPacket(int entityId, boolean angry) implements CustomPacketPayload {
 
-    public static final Identifier ID = NetworkProtocol.id("eye_anger");
+    public static final Identifier ID = SomeGooglyCommon.id("eye_anger");
     public static final CustomPacketPayload.Type<EyeAngerPacket> TYPE = new CustomPacketPayload.Type<>(ID);
     public static final StreamCodec<RegistryFriendlyByteBuf, EyeAngerPacket> STREAM_CODEC =
             StreamCodec.ofMember(EyeAngerPacket::write, EyeAngerPacket::new);

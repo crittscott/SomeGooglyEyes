@@ -1,134 +1,131 @@
 package com.github.crittscott.somegoogly.gametest;
 
+import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
+import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
-import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.cow.Cow;
 
 /**
- * The {@link EyeState} appearance-override mutations behind {@code /sg admin}: sparse overrides, atomic
- * tint clearing, snapshot installation, and {@code setGlow(null)} dropping the override so eyes fall back
- * to per-eye config glow. Each mutation also sends an {@code EyeStatePacket}, which reaches no one here
- * because the test has no tracking players.
- *
- * <p>The in-game steps below run as a creative operator (permission level 2) looking at a cow that
- * already has eyes (for example, after {@code /sg admin eyes true}).
+ * The visual {@code /sg admin} commands, run through the server's command dispatcher by a player looking at an eyed
+ * cow. In game: as a creative operator, look at an eyed cow and run the commands each test names.
  */
 public final class EyeStateOverrideGameTestsLogic {
 
     private EyeStateOverrideGameTestsLogic() {
     }
 
-    private static Cow spawnCow(GameTestHelper helper) {
-        return helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
-    }
-
     /**
-     * Removing one color override leaves the other in place. No in-game form, since
-     * {@code /sg admin tint clear} removes both colors at once; guards that edits to one appearance field
-     * never disturb another.
+     * Tint and glow commands set the looked-at mob's appearance; {@code tint clear} drops both tints but keeps the
+     * glow, and {@code glow config} then drops the last override. In game: run {@code /sg admin tint iris 1 0 0},
+     * {@code /sg admin tint cornea 0 0 1}, and {@code /sg admin glow on}; the eyes turn red and blue and glow. Run
+     * {@code /sg admin tint clear}; the colors return to the definition's but the glow stays. Run
+     * {@code /sg admin glow config}; the eyes look as the definition says.
      */
-    public static void clearingTintRemovesOnlyThatField(GameTestHelper helper) {
-        Cow cow = spawnCow(helper);
-        EyeState.setIrisTint(cow, new EyeColor(0.1F, 0.2F, 0.3F));
-        EyeState.setCorneaTint(cow, new EyeColor(0.4F, 0.5F, 0.6F));
-
-        EyeState.setProperties(cow, EyeState.readProperties(cow).withIrisColor(null));
-        AppearanceOverride after = EyeState.readProperties(cow);
-        helper.assertTrue(after.iris().isEmpty(), Component.literal("iris should be cleared"));
-        helper.assertTrue(after.cornea().isPresent(), Component.literal("cornea should be untouched when clearing iris"));
+    public static void adminAppearanceCommands(GameTestHelper helper, ServerPlayer template) {
+        ServerPlayer player = TestPlayers.create(template, true, TestPlayers.GAMEMASTER);
+        Cow cow = target(helper, player);
+        try {
+            helper.assertTrue(command(player, "tint iris 1 0 0") > 0 && command(player, "tint cornea 0 0 1") > 0
+                    && command(player, "glow on") > 0, Component.literal("the dispatcher accepts the appearance commands"));
+            AppearanceOverride set = EyeState.readProperties(cow);
+            helper.assertTrue(set.iris().orElseThrow().r() == 1F && set.cornea().orElseThrow().b() == 1F
+                    && set.glow().orElse(false), Component.literal("the looked-at cow takes the chosen iris, cornea, and glow"));
+            AppearanceOverride cleared = command(player, "tint clear") > 0 ? EyeState.readProperties(cow) : null;
+            helper.assertTrue(cleared != null && cleared.iris().isEmpty() && cleared.cornea().isEmpty()
+                    && cleared.glow().orElse(false), Component.literal("tint clear keeps the glow"));
+            helper.assertTrue(command(player, "glow config") > 0 && EyeState.readProperties(cow).isEmpty(),
+                    Component.literal("glow config removes the last override"));
+        } finally {
+            cow.discard();
+            player.discard();
+        }
         helper.succeed();
     }
 
     /**
-     * A glow override can be set and then dropped back to the definition's glow. In game: run
-     * {@code /sg admin glow on} and the cow's eyes glow; run {@code /sg admin glow config} and they return to
-     * the glow its eye definition specifies (none, for the bundled cow).
+     * Admin commands refuse a survival operator, a creative non-operator, invalid arguments, and no looked-at target,
+     * changing nothing. In game: try {@code /sg admin eyes false} while looking at an eyed cow in survival, then as a
+     * creative player without operator status; then, as a creative operator, try {@code /sg admin tint iris nope 0 0}
+     * and {@code /sg admin eyes false} looking at nothing. Each fails and the cow keeps its eyes.
      */
-    public static void glowOverrideCanBeSetAndDropped(GameTestHelper helper) {
-        Cow cow = spawnCow(helper);
-
-        EyeState.setGlow(cow, true);
-        helper.assertTrue(EyeState.readProperties(cow).glow().orElse(false), Component.literal("glow override should be set true"));
-
-        // null clears the override so the eye falls back to its per-eye config glow.
-        EyeState.setGlow(cow, null);
-        helper.assertTrue(EyeState.readProperties(cow).glow().isEmpty(), Component.literal("setGlow(null) should drop the glow override"));
+    public static void adminCommandsRefuseUnauthorizedOrInvalidUse(GameTestHelper helper, ServerPlayer template) {
+        for (boolean creative : new boolean[]{false, true}) {
+            ServerPlayer player = TestPlayers.create(template, creative, creative ? TestPlayers.NO_PERMISSIONS : TestPlayers.GAMEMASTER);
+            Cow cow = target(helper, player);
+            EyeState.Snapshot before = EyeState.snapshot(cow);
+            try {
+                helper.assertTrue(command(player, "eyes false") == 0 && EyeState.snapshot(cow).equals(before),
+                        Component.literal("source permission alone does not bypass the player's own authorization"));
+            } finally {
+                cow.discard();
+                player.discard();
+            }
+        }
+        ServerPlayer player = TestPlayers.create(template, true, TestPlayers.GAMEMASTER);
+        Cow cow = target(helper, player);
+        try {
+            EyeState.Snapshot before = EyeState.snapshot(cow);
+            helper.assertTrue(command(player, "tint iris nope 0 0") == 0 && EyeState.snapshot(cow).equals(before),
+                    Component.literal("bad arguments leave the target unchanged"));
+            cow.discard();
+            helper.assertTrue(command(player, "eyes false") == 0, Component.literal("no looked-at target fails"));
+        } finally {
+            player.discard();
+        }
         helper.succeed();
     }
 
     /**
-     * Setting one color leaves every other field at the definition's value. In game:
-     * {@code /sg admin tint iris 1 0 0} turns only the irises red; the corneas keep their default color and
-     * the eyes do not start glowing.
+     * {@code eyes false}/{@code eyes true} take and give the looked-at mob's eyes, and {@code behavior swirl} starts a
+     * swirl that a second behavior command can't interrupt. In game: run {@code /sg admin eyes false} and
+     * {@code /sg admin eyes true} at an eyed cow, then {@code /sg admin behavior swirl} and, while it swirls,
+     * {@code /sg admin behavior blink}; the blink is reported dropped.
      */
-    public static void settingOneFieldLeavesOthersAbsent(GameTestHelper helper) {
-        Cow cow = spawnCow(helper);
-        EyeState.setIrisTint(cow, new EyeColor(0.25F, 0.5F, 0.75F));
-
-        AppearanceOverride override = EyeState.readProperties(cow);
-        helper.assertTrue(override.iris().isPresent(), Component.literal("iris override should be present"));
-        helper.assertTrue(override.cornea().isEmpty(), Component.literal("cornea should stay absent (sparse override)"));
-        helper.assertTrue(override.glow().isEmpty(), Component.literal("glow should stay absent (sparse override)"));
-        helper.assertTrue(EyeState.overridesTagOrNull(cow) != null, Component.literal("an override compound should exist on the entity"));
+    public static void adminEyesAndBehaviorCommands(GameTestHelper helper, ServerPlayer template) {
+        ServerPlayer player = TestPlayers.create(template, true, TestPlayers.GAMEMASTER);
+        Cow cow = target(helper, player);
+        ServerBehaviorScheduler.clear();
+        try {
+            helper.assertTrue(command(player, "eyes false") > 0 && !EyeState.hasEyes(cow), Component.literal("eyes false reaches the target"));
+            helper.assertTrue(command(player, "eyes true") > 0 && EyeState.hasEyes(cow), Component.literal("eyes true restores the eyes"));
+            helper.assertTrue(command(player, "behavior swirl") > 0, Component.literal("the command starts a swirl"));
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.BLINK, 42L),
+                    Component.literal("the commanded swirl occupies the schedule"));
+            command(player, "behavior blink");
+            helper.assertTrue(!ServerBehaviorScheduler.trigger(cow, EyeBehavior.STARE, 43L),
+                    Component.literal("another command cannot interrupt it"));
+        } finally {
+            ServerBehaviorScheduler.clear();
+            cow.discard();
+            player.discard();
+        }
         helper.succeed();
     }
 
-    /**
-     * Clearing the last override removes the override data entirely. In game:
-     * {@code /sg admin tint iris 1 0 0}, then {@code /sg admin tint clear}; the eyes look as they did before,
-     * and on NeoForge or Forge {@code /data get entity <cow>} shows no {@code somegoogly:eyeOverrides} key in
-     * {@code NeoForgeData} or {@code ForgeData}.
-     */
-    public static void clearingEveryFieldRemovesTheCompound(GameTestHelper helper) {
-        Cow cow = spawnCow(helper);
-        EyeState.setIrisTint(cow, new EyeColor(0.25F, 0.5F, 0.75F));
-        EyeState.setProperties(cow, EyeState.readProperties(cow).withIrisColor(null));
-
-        helper.assertTrue(EyeState.readProperties(cow).isEmpty(), Component.literal("override should be empty once its only field is cleared"));
-        helper.assertTrue(EyeState.overridesTagOrNull(cow) == null, Component.literal("the override compound should be removed when empty"));
-        helper.succeed();
+    /** Run {@code /sg admin <text>} as {@code player}; the command's result, or 0 when it doesn't parse. */
+    private static int command(ServerPlayer player, String text) {
+        try {
+            return player.level().getServer().getCommands().getDispatcher().execute("sg admin " + text,
+                    player.createCommandSourceStack().withPermission(TestPlayers.GAMEMASTER).withSuppressedOutput());
+        } catch (CommandSyntaxException refusal) {
+            return 0;
+        }
     }
 
-    /**
-     * Clearing colors keeps a glow override. In game: {@code /sg admin tint iris 1 0 0},
-     * {@code /sg admin tint cornea 0 0 1}, and {@code /sg admin glow on}; then {@code /sg admin tint clear}
-     * restores the default colors while the eyes keep glowing.
-     */
-    public static void clearingTintsPreservesGlow(GameTestHelper helper) {
-        Cow cow = spawnCow(helper);
-        EyeState.setIrisTint(cow, new EyeColor(0.1F, 0.2F, 0.3F));
-        EyeState.setCorneaTint(cow, new EyeColor(0.4F, 0.5F, 0.6F));
-        EyeState.setGlow(cow, true);
-
-        EyeState.clearTints(cow);
-        AppearanceOverride after = EyeState.readProperties(cow);
-        helper.assertTrue(after.iris().isEmpty(), Component.literal("iris should be cleared"));
-        helper.assertTrue(after.cornea().isEmpty(), Component.literal("cornea should be cleared"));
-        helper.assertTrue(after.glow().orElse(false), Component.literal("clearing tints should preserve glow"));
-        helper.succeed();
-    }
-
-    /**
-     * A full eye-state snapshot applies eyes, variant, and appearance together, as a client does when it
-     * receives one. In game: give the cow a red iris and {@code /sg admin glow on}, walk far enough away that
-     * it unloads from view, and come back; it reappears with the same eyes, red irises, and glow at once.
-     */
-    public static void snapshotAppliesAllFieldsTogether(GameTestHelper helper) {
-        Cow cow = spawnCow(helper);
-        AppearanceOverride properties = AppearanceOverride.EMPTY
-                .withIrisColor(new EyeColor(0.1F, 0.2F, 0.3F))
-                .withGlow(true);
-
-        EyeState.applySnapshot(cow, new EyeState.Snapshot(true, 0.75F, properties));
-        EyeState.Snapshot after = EyeState.snapshot(cow);
-        helper.assertTrue(after.hasEyes(), Component.literal("snapshot should apply the has-eyes flag"));
-        helper.assertTrue(after.variantRoll() == 0.75F, Component.literal("snapshot should apply the variant roll"));
-        helper.assertTrue(after.properties().equals(properties), Component.literal("snapshot should apply appearance properties"));
-        helper.succeed();
+    /** An eyed cow in front of {@code player}, who is turned to look at it. */
+    private static Cow target(GameTestHelper helper, ServerPlayer player) {
+        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 4));
+        player.snapTo(helper.absolutePos(new BlockPos(2, 2, 1)), 0F, 0F);
+        player.lookAt(EntityAnchorArgument.Anchor.EYES, cow.getEyePosition());
+        EyeState.setHasEyes(cow, true);
+        return cow;
     }
 }

@@ -1,14 +1,7 @@
 package com.github.crittscott.somegoogly.network.fabric;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
-import com.github.crittscott.somegoogly.network.EyeAngerPacket;
-import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket;
-import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
-import com.github.crittscott.somegoogly.network.EyeSettingsPacket;
-import com.github.crittscott.somegoogly.network.EyeStatePacket;
 import com.github.crittscott.somegoogly.network.NetworkProtocol;
-import com.github.crittscott.somegoogly.network.PickerExportPacket;
-import com.github.crittscott.somegoogly.network.PickerFreezePacket;
 import io.netty.buffer.ByteBuf;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerConfigurationConnectionEvents;
@@ -38,7 +31,7 @@ public final class FabricNetworkTransport {
      */
     public record Handshake() implements CustomPacketPayload {
         public static final CustomPacketPayload.Type<Handshake> TYPE =
-                new CustomPacketPayload.Type<>(NetworkProtocol.id("handshake"));
+                new CustomPacketPayload.Type<>(SomeGooglyCommon.id("handshake"));
         public static final StreamCodec<FriendlyByteBuf, Handshake> STREAM_CODEC = StreamCodec.unit(new Handshake());
 
         @Override
@@ -50,7 +43,7 @@ public final class FabricNetworkTransport {
     /** The client's network version, which must equal the server's. */
     public record HandshakeReply(String version) implements CustomPacketPayload {
         public static final CustomPacketPayload.Type<HandshakeReply> TYPE =
-                new CustomPacketPayload.Type<>(NetworkProtocol.id("handshake_reply"));
+                new CustomPacketPayload.Type<>(SomeGooglyCommon.id("handshake_reply"));
         public static final StreamCodec<ByteBuf, HandshakeReply> STREAM_CODEC = ByteBufCodecs.stringUtf8(MAX_VERSION_LENGTH)
                 .map(HandshakeReply::new, HandshakeReply::version);
 
@@ -62,7 +55,7 @@ public final class FabricNetworkTransport {
 
     /** Holds the player in the configuration phase until the client's {@link HandshakeReply} arrives. */
     private record HandshakeTask() implements ConfigurationTask {
-        static final ConfigurationTask.Type TYPE = new ConfigurationTask.Type(NetworkProtocol.id("handshake").toString());
+        static final ConfigurationTask.Type TYPE = new ConfigurationTask.Type(SomeGooglyCommon.id("handshake").toString());
 
         @Override
         public void start(Consumer<Packet<?>> sender) {
@@ -82,41 +75,45 @@ public final class FabricNetworkTransport {
     public static void register() {
         PayloadTypeRegistry.configurationS2C().register(Handshake.TYPE, Handshake.STREAM_CODEC);
         PayloadTypeRegistry.configurationC2S().register(HandshakeReply.TYPE, HandshakeReply.STREAM_CODEC);
-        PayloadTypeRegistry.playS2C().register(EyeStatePacket.TYPE, EyeStatePacket.STREAM_CODEC);
-        PayloadTypeRegistry.playS2C().register(EyeConfigSyncPacket.TYPE, EyeConfigSyncPacket.STREAM_CODEC);
-        PayloadTypeRegistry.playS2C().register(EyeSettingsPacket.TYPE, EyeSettingsPacket.STREAM_CODEC);
-        PayloadTypeRegistry.playS2C().register(EyeBehaviorTriggerPacket.TYPE, EyeBehaviorTriggerPacket.STREAM_CODEC);
-        PayloadTypeRegistry.playS2C().register(EyeAngerPacket.TYPE, EyeAngerPacket.STREAM_CODEC);
-        PayloadTypeRegistry.playC2S().register(PickerFreezePacket.TYPE, PickerFreezePacket.STREAM_CODEC);
-        PayloadTypeRegistry.playC2S().register(PickerExportPacket.TYPE, PickerExportPacket.STREAM_CODEC);
+        for (NetworkProtocol.Clientbound<?> payload : NetworkProtocol.CLIENTBOUND) {
+            registerType(payload);
+        }
+        for (NetworkProtocol.Serverbound<?> payload : NetworkProtocol.SERVERBOUND) {
+            registerType(payload);
+            registerReceiver(payload);
+        }
 
         // Refuse a client without this network version before it joins the world.
         ServerConfigurationConnectionEvents.CONFIGURE.register((handler, server) -> {
             if (ServerConfigurationNetworking.canSend(handler, Handshake.TYPE)) {
                 handler.addTask(new HandshakeTask());
             } else {
-                SomeGooglyCommon.LOGGER.info("Refusing {}: client lacks {}",
-                        handler.getOwner().name(), SomeGooglyCommon.MOD_NAME);
                 handler.disconnect(requiredClientMessage());
             }
         });
         ServerConfigurationNetworking.registerGlobalReceiver(HandshakeReply.TYPE,
                 (payload, context) -> checkVersion(context.networkHandler(), payload.version()));
-
-        ServerPlayNetworking.registerGlobalReceiver(PickerFreezePacket.TYPE,
-                (payload, context) -> PickerFreezePacket.handle(payload, context.player()));
-        ServerPlayNetworking.registerGlobalReceiver(PickerExportPacket.TYPE,
-                (payload, context) -> PickerExportPacket.handle(payload, context.player()));
     }
 
     private static void checkVersion(ServerConfigurationPacketListenerImpl handler, String version) {
         if (version.equals(NetworkProtocol.NETWORK_VERSION)) {
             handler.completeTask(HandshakeTask.TYPE);
         } else {
-            SomeGooglyCommon.LOGGER.info("Refusing {}: client runs {} network version {}, server runs {}",
-                    handler.getOwner().name(), SomeGooglyCommon.MOD_NAME, version, NetworkProtocol.NETWORK_VERSION);
             handler.disconnect(versionMismatchMessage(version));
         }
+    }
+
+    private static <T extends CustomPacketPayload> void registerReceiver(NetworkProtocol.Serverbound<T> payload) {
+        ServerPlayNetworking.registerGlobalReceiver(payload.type(),
+                (packet, context) -> payload.handler().accept(packet, context.player()));
+    }
+
+    private static <T extends CustomPacketPayload> void registerType(NetworkProtocol.Clientbound<T> payload) {
+        PayloadTypeRegistry.playS2C().register(payload.type(), payload.codec());
+    }
+
+    private static <T extends CustomPacketPayload> void registerType(NetworkProtocol.Serverbound<T> payload) {
+        PayloadTypeRegistry.playC2S().register(payload.type(), payload.codec());
     }
 
     /** A refusal that also reads right to a client lacking our language file; Fabric API loads it on the server. */

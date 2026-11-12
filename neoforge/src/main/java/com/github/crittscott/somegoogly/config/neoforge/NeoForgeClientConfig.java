@@ -16,7 +16,7 @@ public final class NeoForgeClientConfig {
 
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
-        COPY_VALUES = NeoForgeServerConfig.define(builder, ClientConfig.settings());
+        COPY_VALUES = NeoForgeConfig.define(builder, ClientConfig.settings());
         SPEC = builder.build();
     }
 

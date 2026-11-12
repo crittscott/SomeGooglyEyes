@@ -15,8 +15,8 @@ public final class SpawnGatingGameTests {
         SpawnGatingGameTestsLogic.fullPercentGrantsEyesAndZeroDeniesThem(helper);
     }
 
-    public static void spawnAlwaysAssignsAVariantRoll(GameTestHelper helper) {
-        SpawnGatingGameTestsLogic.spawnAlwaysAssignsAVariantRoll(helper);
+    public static void onlyEyedMobsStoreAVariantRoll(GameTestHelper helper) {
+        SpawnGatingGameTestsLogic.onlyEyedMobsStoreAVariantRoll(helper);
     }
 }
 

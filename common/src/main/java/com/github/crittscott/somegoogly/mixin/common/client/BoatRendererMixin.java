@@ -14,7 +14,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-/** Carries boat eyes through extraction and draws before the composed hull pose is restored. */
+/**
+ * Carries a boat's eyes through render-state extraction and submits them in {@code submit} before vanilla restores
+ * the composed hull pose. No loader has a render event for non-living entities that exposes that pose, and a render
+ * layer exists only for living entities.
+ */
 @Mixin(AbstractBoatRenderer.class)
 abstract class BoatRendererMixin {
 

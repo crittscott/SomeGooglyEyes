@@ -12,11 +12,11 @@ import com.github.crittscott.somegoogly.client.picker.PickerInput;
 import com.github.crittscott.somegoogly.client.command.GooglyClientCommands;
 import com.github.crittscott.somegoogly.config.neoforge.NeoForgeClientConfig;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
-import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.PlayerModelType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
@@ -70,10 +70,15 @@ public final class NeoForgeClient {
         ClientLifecycle.onDisconnect();
     }
 
+    private static void onClientSetup(FMLClientSetupEvent event) {
+        ClientLifecycle.logStartup();
+    }
+
     /** Register the client config and every client-side NeoForge listener. */
     public static void register(IEventBus modBus, IEventBus gameBus, ModContainer modContainer) {
         NeoForgeClientConfig.register(modBus, modContainer);
 
+        modBus.addListener(NeoForgeClient::onClientSetup);
         modBus.addListener(NeoForgeClient::addRendererLayers);
         modBus.addListener(NeoForgeClient::registerItemTintSources);
         modBus.addListener(NeoForgeClient::registerSpecialModelRenderers);
@@ -89,7 +94,6 @@ public final class NeoForgeClient {
         if (GeckoCompat.isLoaded()) {
             NeoForgeGeckoLayers.register(gameBus);
         }
-        ClientLifecycle.logStartup();
     }
 
     private static void registerClientCommands(RegisterClientCommandsEvent event) {
@@ -98,7 +102,7 @@ public final class NeoForgeClient {
 
     private static void registerGuiLayers(RegisterGuiLayersEvent event) {
         event.registerAboveAll(
-                Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "picker"),
+                SomeGooglyCommon.id("picker"),
                 (graphics, partialTick) -> PickerHud.render(graphics, graphics.guiWidth()));
     }
 
@@ -108,10 +112,7 @@ public final class NeoForgeClient {
 
     private static void registerKeyMappings(RegisterKeyMappingsEvent event) {
         event.registerCategory(PickerInput.CATEGORY);
-        event.register(PickerInput.LOCK);
-        event.register(PickerInput.PART_NEXT);
-        event.register(PickerInput.PART_PREV);
-        event.register(PickerInput.TOGGLE);
+        PickerInput.KEYS.forEach(event::register);
     }
 
     private static void registerSpecialModelRenderers(RegisterSpecialModelRendererEvent event) {

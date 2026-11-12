@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.mixin.common.client;
 
+import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.github.crittscott.somegoogly.client.render.SkullEyeRenderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.object.skull.SkullModelBase;
@@ -21,8 +22,9 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * No loader has a block-entity renderer hook, so placed heads' eyes ride vanilla's head renderer: their eyes are
- * chosen as the head's render state is extracted, and the placed-head submission is bracketed for
- * {@link SkullEyeRenderer}, which submits the eyes right after the shared model submission.
+ * chosen as the head's render state is extracted, and the placed-head submission is bracketed with a
+ * {@link ClientEyeRuntime} draw context carrying them for {@link SkullEyeRenderer}, which submits the eyes right after
+ * the shared model submission.
  */
 @Mixin(SkullBlockRenderer.class)
 abstract class SkullBlockRendererMixin {
@@ -50,13 +52,14 @@ abstract class SkullBlockRendererMixin {
             at = @At("RETURN"))
     private void somegoogly$endHead(SkullBlockRenderState state, PoseStack pose, SubmitNodeCollector collector,
                                     CameraRenderState camera, CallbackInfo callback) {
-        SkullEyeRenderer.end();
+        ClientEyeRuntime.endItemDraw();
     }
 
     @Inject(method = "submit(Lnet/minecraft/client/renderer/blockentity/state/SkullBlockRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/CameraRenderState;)V",
             at = @At("HEAD"))
     private void somegoogly$beginHead(SkullBlockRenderState state, PoseStack pose, SubmitNodeCollector collector,
                                       CameraRenderState camera, CallbackInfo callback) {
-        SkullEyeRenderer.begin((SkullEyeRenderer.PlacedHolder) state);
+        SkullEyeRenderer.PlacedHolder placed = (SkullEyeRenderer.PlacedHolder) state;
+        ClientEyeRuntime.beginHead(placed.somegoogly$eyes(), placed.somegoogly$partialTick());
     }
 }

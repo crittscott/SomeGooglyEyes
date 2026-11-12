@@ -96,10 +96,10 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">EyeConfigSyncPacket</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
 implements net.minecraft.network.protocol.common.custom.CustomPacketPayload</span></div>
-<div class="block">Server-to-client synchronization of the complete resolved eye-definition set. The server builds it from
- the installed set and that set's precomputed NBT (<a href="../config/ServerEyeConfigs.html#encoded()"><code>ServerEyeConfigs.encoded()</code></a>), which was
- validated when installed, so writing it to each connection only copies tags. The client decodes and
- re-validates everything it receives.</div>
+<div class="block">Server-to-client synchronization of the complete resolved eye-definition set, with the set's NBT encoding. The
+ server builds one per candidate set (<a href="../config/ServerEyeConfigs.html#packetFor(java.util.Map)"><code>ServerEyeConfigs.packetFor(java.util.Map&lt;net.minecraft.resources.Identifier, com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet&gt;)</code></a>),
+ checks it with <a href="#refusal()"><code>refusal()</code></a>, and installs it, so construction serializes once and every joining or
+ reloading connection copies those bytes. The client decodes and re-validates everything it receives.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -157,7 +157,7 @@ implements net.minecraft.network.protocol.common.custom.CustomPacketPayload</spa
 <section class="method-summary" id="method-summary">
 <h2>Method Summary</h2>
 <div id="method-summary-table">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab1" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab1', 3)" class="table-tab">Static Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button></div>
 <div id="method-summary-table.tabpanel" role="tabpanel">
 <div class="summary-table three-column-summary" aria-labelledby="method-summary-table-tab0">
 <div class="table-header col-first">Modifier and Type</div>
@@ -166,16 +166,22 @@ implements net.minecraft.network.protocol.common.custom.CustomPacketPayload</spa
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a><wbr>&lt;net.minecraft.resources.Identifier,<wbr><a href="../config/EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#configs()" class="member-name-link">configs</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">The resolved eye definitions, by entity type.</div>
+<div class="block">The resolved eye definitions, by entity type; read-only, values included.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a><wbr>&lt;net.minecraft.resources.Identifier,<wbr>net.minecraft.nbt.CompoundTag&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#encoded()" class="member-name-link">encoded</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block"><code>configs</code> encoded through <a href="../config/EyeConfigModel.RuntimeConfigSet.html#CODEC"><code>EyeConfigModel.RuntimeConfigSet.CODEC</code></a>; read-only.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>@Nullable <a href="../config/EyeConfigLimits.Issue.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigLimits.Issue</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#refusal()" class="member-name-link">refusal</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Why clients would refuse this packet, or <code>null</code> if they accept it: the work its definitions ask of a
+ client, then its size.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>net.minecraft.network.protocol.common.custom.CustomPacketPayload.Type<wbr>&lt;? extends net.minecraft.network.protocol.common.custom.CustomPacketPayload&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#type()" class="member-name-link">type</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#wireSize(java.util.Map)" class="member-name-link">wireSize</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.Identifier,<wbr>net.minecraft.nbt.CompoundTag&gt;&nbsp;encoded)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The packet size of <code>encoded</code>.</div>
-</div>
 </div>
 </div>
 </div>
@@ -250,17 +256,26 @@ implements net.minecraft.network.protocol.common.custom.CustomPacketPayload</spa
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="wireSize(java.util.Map)">
-<h3>wireSize</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">wireSize</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.Identifier,<wbr>net.minecraft.nbt.CompoundTag&gt;&nbsp;encoded)</span></div>
-<div class="block">The packet size of <code>encoded</code>.</div>
-</section>
-</li>
-<li>
 <section class="detail" id="configs()">
 <h3>configs</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.Identifier,<wbr><a href="../config/EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;</span>&nbsp;<span class="element-name">configs</span>()</div>
-<div class="block">The resolved eye definitions, by entity type.</div>
+<div class="block">The resolved eye definitions, by entity type; read-only, values included.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="encoded()">
+<h3>encoded</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.Identifier,<wbr>net.minecraft.nbt.CompoundTag&gt;</span>&nbsp;<span class="element-name">encoded</span>()</div>
+<div class="block"><code>configs</code> encoded through <a href="../config/EyeConfigModel.RuntimeConfigSet.html#CODEC"><code>EyeConfigModel.RuntimeConfigSet.CODEC</code></a>; read-only.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="refusal()">
+<h3>refusal</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="../config/EyeConfigLimits.Issue.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigLimits.Issue</a></span>&nbsp;<span class="element-name">refusal</span>()</div>
+<div class="block">Why clients would refuse this packet, or <code>null</code> if they accept it: the work its definitions ask of a
+ client, then its size. Shared by reload and picker export, so an export is checked exactly as the reload it
+ triggers will be.</div>
 </section>
 </li>
 <li>

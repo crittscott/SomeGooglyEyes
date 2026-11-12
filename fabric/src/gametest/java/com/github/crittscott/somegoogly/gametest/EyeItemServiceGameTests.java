@@ -25,6 +25,11 @@ public final class EyeItemServiceGameTests {
     }
 
     @GameTest(structure = TEMPLATE, maxTicks = 40)
+    public void optometristRollsOnlyOntoShearsAndBooks(GameTestHelper helper) {
+        EyeItemServiceGameTestsLogic.optometristRollsOnlyOntoShearsAndBooks(helper);
+    }
+
+    @GameTest(structure = TEMPLATE, maxTicks = 40)
     public void selfRemoveWithShearsDropsAnEyeAndCostsDurability(GameTestHelper helper) {
         EyeItemServiceGameTestsLogic.selfRemoveWithShearsDropsAnEyeAndCostsDurability(
                 helper, FakePlayer.get(helper.getLevel()));

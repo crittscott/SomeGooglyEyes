@@ -1,7 +1,7 @@
 {
   "type": "minecraft:function",
   "function": "somegoogly:behaviorschedulergametests/sleeping_mob_plays_no_behaviors",
-  "environment": "minecraft:default",
+  "environment": "somegoogly:sleeping_mob_plays_no_behaviors",
   "structure": "somegoogly:empty",
-  "max_ticks": 100
+  "max_ticks": 400
 }

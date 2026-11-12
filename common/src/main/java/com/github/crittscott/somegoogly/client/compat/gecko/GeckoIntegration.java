@@ -37,6 +37,11 @@ public final class GeckoIntegration {
         return baked == null ? List.of() : GeoBones.enumerate(baked);
     }
 
+    /** Drop the GeckoLib bone cache along with the vanilla-side model caches. */
+    public static void clearCaches() {
+        GeoBones.clear();
+    }
+
     /**
      * Add the googly-eye layer from a loader's GeckoLib entity compile-render-layers event, which fires once per
      * renderer. A failure is logged once and leaves that renderer without eyes rather than breaking rendering.

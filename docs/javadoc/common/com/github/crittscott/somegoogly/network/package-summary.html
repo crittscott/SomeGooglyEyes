@@ -83,7 +83,7 @@ loadScripts(document, 'script');</script>
 </li>
 <li>
 <div id="class-summary">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="class-summary-tab0" role="tab" aria-selected="true" aria-controls="class-summary.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary', 2)" class="active-table-tab">All Classes and Interfaces</button><button id="class-summary-tab2" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab2', 2)" class="table-tab">Classes</button><button id="class-summary-tab4" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab4', 2)" class="table-tab">Record Classes</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="class-summary-tab0" role="tab" aria-selected="true" aria-controls="class-summary.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary', 2)" class="active-table-tab">All Classes and Interfaces</button><button id="class-summary-tab2" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab2', 2)" class="table-tab">Classes</button><button id="class-summary-tab3" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab3', 2)" class="table-tab">Enum Classes</button><button id="class-summary-tab4" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab4', 2)" class="table-tab">Record Classes</button></div>
 <div id="class-summary.tabpanel" role="tabpanel">
 <div class="summary-table two-column-summary" aria-labelledby="class-summary-tab0">
 <div class="table-header col-first">Class</div>
@@ -94,37 +94,49 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab4"><a href="EyeBehaviorTriggerPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeBehaviorTriggerPacket</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab4">
-<div class="block">Server → client: "play <code>behavior</code> on entity <code>entityId</code> for <code>duration</code>
- ticks, seeded with <code>seed</code>." Sent to a mob's trackers when the server scheduler starts a behavior
- (and to a newly-tracking player mid-effect, with the full duration and the ticks already <code>elapsed</code>),
- so every viewer animates the
- same thing in lock-step.</div>
+<div class="block">Server → client: "play <code>behavior</code> on the eyes of entity <code>entityId</code>, or on the loose Googly Eye in
+ one of its hands, seeded with <code>seed</code>." Sent to the viewers of the entity when the server scheduler starts
+ an expression, and to a newly tracking player mid-effect with the ticks already <code>elapsed</code>, so every
+ viewer animates the same thing in lock-step.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="EyeConfigSyncPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeConfigSyncPacket</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">
-<div class="block">Server-to-client synchronization of the complete resolved eye-definition set.</div>
+<div class="col-first even-row-color class-summary class-summary-tab3"><a href="EyeBehaviorTriggerPacket.Target.html" title="enum class in com.github.crittscott.somegoogly.network">EyeBehaviorTriggerPacket.Target</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab3">
+<div class="block">Which eyes play the expression: those applied to the entity, or a loose Googly Eye in one of its hands.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab4"><a href="EyeSettingsPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeSettingsPacket</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab4">
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="EyeConfigSyncPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeConfigSyncPacket</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="block">Server-to-client synchronization of the complete resolved eye-definition set, with the set's NBT encoding.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab4"><a href="EyeSettingsPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeSettingsPacket</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab4">
 <div class="block">Server → client: the <code>googlyEyesEnabled</code> master switch and the behavior settings clients run behaviors
  from.</div>
 </div>
-<div class="col-first even-row-color class-summary class-summary-tab4"><a href="EyeStatePacket.html" title="class in com.github.crittscott.somegoogly.network">EyeStatePacket</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab4">
+<div class="col-first odd-row-color class-summary class-summary-tab4"><a href="EyeStatePacket.html" title="class in com.github.crittscott.somegoogly.network">EyeStatePacket</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab4">
 <div class="block">Server → client sync of a single entity's full eye state: the <code>hasGooglyEyes</code> flag, the chosen
  placement-variant roll, plus the optional per-mob appearance overrides (see <a href="../eye/state/EyeState.html" title="class in com.github.crittscott.somegoogly.eye.state"><code>EyeState</code></a>).</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="NetworkProtocol.html" title="class in com.github.crittscott.somegoogly.network">NetworkProtocol</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">
-<div class="block">The mod's network version and the namespace of its payload ids.</div>
-</div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="PickerExportPacket.html" title="class in com.github.crittscott.somegoogly.network">PickerExportPacket</a></div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="NetworkProtocol.html" title="class in com.github.crittscott.somegoogly.network">NetworkProtocol</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">The mod's network version and the one declaration of every payload, its direction, and what handles it on
+ arrival; each loader registers from <a href="NetworkProtocol.html#CLIENTBOUND"><code>NetworkProtocol.CLIENTBOUND</code></a> and <a href="NetworkProtocol.html#SERVERBOUND"><code>NetworkProtocol.SERVERBOUND</code></a> in list order.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab4"><a href="NetworkProtocol.Clientbound.html" title="class in com.github.crittscott.somegoogly.network">NetworkProtocol.Clientbound</a>&lt;T extends net.minecraft.network.protocol.common.custom.CustomPacketPayload&gt;</div>
+<div class="col-last odd-row-color class-summary class-summary-tab4">
+<div class="block">A payload the server sends.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab4"><a href="NetworkProtocol.Serverbound.html" title="class in com.github.crittscott.somegoogly.network">NetworkProtocol.Serverbound</a>&lt;T extends net.minecraft.network.protocol.common.custom.CustomPacketPayload&gt;</div>
+<div class="col-last even-row-color class-summary class-summary-tab4">
+<div class="block">A payload a client sends.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="PickerExportPacket.html" title="class in com.github.crittscott.somegoogly.network">PickerExportPacket</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
 <div class="block">Client → server: "write this authored eye config for <code>entityTypeId</code> into the world datapack
  and reload" — the wire half of <code>/sg export</code>.</div>
 </div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="PickerFreezePacket.html" title="class in com.github.crittscott.somegoogly.network">PickerFreezePacket</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="PickerFreezePacket.html" title="class in com.github.crittscott.somegoogly.network">PickerFreezePacket</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">Client → server: "freeze the mob I'm editing" (or release it).</div>
 </div>
 </div>

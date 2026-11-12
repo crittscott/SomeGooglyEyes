@@ -2,11 +2,15 @@ package com.github.crittscott.somegoogly.server.neoforge;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
+import com.google.common.base.Suppliers;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
@@ -14,11 +18,13 @@ import net.neoforged.neoforge.common.loot.LootModifier;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
+import java.util.function.Supplier;
+
 /**
  * Breaking an eyed head copies its eye state onto the dropped head item, where placing it restores it. Applied
  * to every loot table through {@code data/neoforge/loot_modifiers/global_loot_modifiers.json}; it acts only on
  * loot generated for a head block entity that has eyes, so it reaches other mods' heads, such as the Heads mod's.
- * Its data files live in this loader's resources.
+ * Its data files live in this loader's resources. It copies only a head's eyes onto that head's item.
  */
 public final class HeadEyesLootModifier extends LootModifier {
 
@@ -26,6 +32,9 @@ public final class HeadEyesLootModifier extends LootModifier {
             codecStart(instance).apply(instance, HeadEyesLootModifier::new));
     private static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> SERIALIZERS =
             DeferredRegister.create(NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, SomeGooglyCommon.MOD_ID);
+    /** Built on first use: the function names the eye-state component, which is not registered at class load. */
+    private static final Supplier<LootItemFunction> COPY_EYES =
+            Suppliers.memoize(() -> SkullEyeState.headLootCopy().build());
 
     public HeadEyesLootModifier(LootItemCondition[] conditions) {
         super(conditions);
@@ -44,7 +53,15 @@ public final class HeadEyesLootModifier extends LootModifier {
 
     @Override
     protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
-        SkullEyeState.copyToLoot(context, generatedLoot);
+        if (context.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof SkullBlockEntity skull
+                && SkullEyeState.hasEyes(skull)) {
+            for (int index = 0; index < generatedLoot.size(); index++) {
+                ItemStack stack = generatedLoot.get(index);
+                if (SkullEyeState.entityFor(stack) != null) {
+                    generatedLoot.set(index, COPY_EYES.get().apply(stack, context));
+                }
+            }
+        }
         return generatedLoot;
     }
 }

@@ -13,6 +13,11 @@ loom {
     accessWidenerPath = project(':common').loom.accessWidenerPath
 
     forge {
+        // Forge reads access transformers, not wideners: remapping converts common's widener into the
+        // production JAR's accesstransformer.cfg. Development runs apply the widener directly.
+        convertAccessWideners = true
+        extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
+
         mixinConfig 'somegoogly-common.mixins.json'
     }
 
@@ -121,6 +126,4 @@ shadowJar {
 
 remapJar {
     inputFile.set shadowJar.archiveFile
-    // Forge reads access transformers, not wideners; dev runs apply the widener directly.
-    atAccessWideners.add loom.accessWidenerPath.get().asFile.name
 }

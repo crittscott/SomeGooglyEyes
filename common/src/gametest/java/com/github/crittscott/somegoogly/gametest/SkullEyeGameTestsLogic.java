@@ -13,7 +13,7 @@ import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
-import com.github.crittscott.somegoogly.eye.state.EyeAppearance;
+import com.github.crittscott.somegoogly.eye.EyeAppearance;
 import java.util.Set;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
@@ -130,8 +130,9 @@ public final class SkullEyeGameTestsLogic {
 
     /**
      * A native item-use denial prevents both applying and harvesting head eyes, without consuming the
-     * item, damaging shears, or spawning a drop. In game: deny item use on a placed skull with a protection
-     * listener while leaving the event uncanceled, then try a Slimy Eye and Optometrist shears.
+     * item, damaging shears, or spawning a drop. No in-game form without a protection mod that denies item use while
+     * leaving the click event uncanceled; guards that such a denial leaves the head, the item, and the shears as
+     * they were.
      */
     public static void deniedItemUseLeavesHeadsUntouched(GameTestHelper helper, Player player,
                                                          BiConsumer<BlockHitResult, Boolean> interact) {
@@ -176,7 +177,8 @@ public final class SkullEyeGameTestsLogic {
 
         ItemStack second = purpleSlimyEye();
         player.setItemInHand(InteractionHand.MAIN_HAND, second);
-        helper.assertTrue(use(helper, player, skull) == InteractionResult.FAIL, Component.literal("an eyed head refuses another eye"));
+        helper.assertTrue(use(helper, player, skull) == InteractionResult.PASS,
+                Component.literal("an eyed head refuses another eye, leaving the click to the block"));
         helper.assertTrue(second.getCount() == 1, Component.literal("a refused application keeps the Slimy Eye"));
         helper.succeed();
     }
@@ -191,14 +193,14 @@ public final class SkullEyeGameTestsLogic {
         player.setItemInHand(InteractionHand.MAIN_HAND, slimy);
 
         SkullBlockEntity dragon = placeHead(helper, Blocks.DRAGON_HEAD);
-        helper.assertTrue(use(helper, player, dragon) == InteractionResult.FAIL, Component.literal("a dragon head refuses eyes"));
+        helper.assertTrue(use(helper, player, dragon) == InteractionResult.PASS, Component.literal("a dragon head refuses eyes"));
         helper.assertTrue(!SkullEyeState.hasEyes(dragon), Component.literal("the dragon head stays eyeless"));
 
         SkullBlockEntity skull = placeHead(helper, Blocks.SKELETON_SKULL);
         boolean originalEnabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
         try {
             ServerConfig.GOOGLY_EYES_ENABLED.set(false);
-            helper.assertTrue(use(helper, player, skull) == InteractionResult.FAIL,
+            helper.assertTrue(use(helper, player, skull) == InteractionResult.PASS,
                     Component.literal("googlyEyesEnabled=false refuses the application"));
             helper.assertTrue(!SkullEyeState.hasEyes(skull), Component.literal("the head stays eyeless"));
         } finally {
@@ -237,7 +239,8 @@ public final class SkullEyeGameTestsLogic {
     /**
      * Breaking an eyed head drops a head item carrying its eyes, and placing that item restores them. In game: give
      * a skeleton skull purple eyes, break it in survival, and hover the dropped skull; its tooltip lists googly eyes
-     * and the iris color. Place it again; it shows the same purple eyes in the same arrangement.
+     * and the iris color. Place it again; it shows the same purple eyes in the same arrangement. Remove the eyes
+     * and break it again; the plain dropped skull carries no eye component and stacks with ordinary skulls.
      */
     public static void brokenHeadKeepsItsEyes(GameTestHelper helper, Player player) {
         SkullBlockEntity skull = placeHead(helper, Blocks.SKELETON_SKULL);
@@ -253,6 +256,14 @@ public final class SkullEyeGameTestsLogic {
         SkullBlockEntity placed = placeHead(helper, Blocks.SKELETON_SKULL);
         placed.applyComponentsFromItemStack(item);
         helper.assertTrue(eyes.equals(SkullEyeState.snapshot(placed)), Component.literal("placing the head restores its eyes"));
+
+        heads.get(0).discard();
+        SkullEyeState.set(placed, Snapshot.NONE);
+        helper.getLevel().destroyBlock(helper.absolutePos(HEAD), true);
+        List<ItemEntity> plainHeads = drops(helper, HEAD, Items.SKELETON_SKULL);
+        helper.assertTrue(plainHeads.size() == 1, Component.literal("a plain head still drops itself"));
+        helper.assertTrue(!plainHeads.get(0).getItem().has(ModContent.HEAD_EYES.get()),
+                Component.literal("copying absent eyes must not put an eye component on a plain drop"));
         helper.succeed();
     }
 

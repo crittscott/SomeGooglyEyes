@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.client;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
+import com.github.crittscott.somegoogly.client.compat.GeckoCompat;
 import com.github.crittscott.somegoogly.client.render.LayerGooglyEyes;
 import com.github.crittscott.somegoogly.client.render.SkullEyeRenderer;
 import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
@@ -44,7 +45,7 @@ public final class ClientRenderLayers {
                 return;
             }
         }
-        renderer.addLayer(eyes);
+        layers.add(eyes);
     }
 
     /** Clear the attachment caches once per renderer rebuild; they are keyed by model, so before or after it. */
@@ -52,6 +53,7 @@ public final class ClientRenderLayers {
         ClientEyeRuntime.clear();
         Resolvers.clearCaches();
         SkullEyeRenderer.clearCaches();
+        GeckoCompat.clearCaches();
     }
 
     /**

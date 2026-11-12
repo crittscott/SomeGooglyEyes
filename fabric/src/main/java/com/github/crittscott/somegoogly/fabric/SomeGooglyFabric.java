@@ -3,7 +3,7 @@ package com.github.crittscott.somegoogly.fabric;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
 import com.github.crittscott.somegoogly.config.fabric.FabricServerConfig;
-import com.github.crittscott.somegoogly.registry.fabric.FabricContentRegistrar;
+import com.github.crittscott.somegoogly.registry.ModContent;
 import com.github.crittscott.somegoogly.network.fabric.FabricNetworkTransport;
 import com.github.crittscott.somegoogly.platform.fabric.EntityPersistentDataImpl;
 import com.github.crittscott.somegoogly.server.fabric.FabricServerEvents;
@@ -17,7 +17,7 @@ import net.minecraft.server.packs.PackType;
 public final class SomeGooglyFabric implements ModInitializer {
     @Override
     public void onInitialize() {
-        SomeGooglyCommon.init(new FabricContentRegistrar());
+        ModContent.init();
         EntityPersistentDataImpl.register();
         FabricNetworkTransport.register();
         FabricServerConfig.register();
