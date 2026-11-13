@@ -6,6 +6,8 @@
 
 ## Project shape
 
+## Where decisions live
+
 ## Configuration and eye definitions
 
 ## Entity and item state
