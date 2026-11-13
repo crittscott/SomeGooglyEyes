@@ -102,7 +102,7 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public enum </span><span class="element-name type-name-label">EyeBehavior</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Enum.html" title="class or interface in java.lang" class="external-link">Enum</a>&lt;<a href="EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a>&gt;</span></div>
-<div class="block">The eight named one-shot eye expressions a mob can play, keyed by a <code>Identifier</code> id; the
+<div class="block">The named one-shot eye expressions a mob can play, keyed by a <code>Identifier</code> id; the
 behaviors that last as long as a mob stays in some state are the <a href="OngoingBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior"><code>OngoingBehavior</code></a>s. These are
 code-defined client animations, and both sides only need the ids to agree: the server names a
 behavior by its <code>wireId</code> in the trigger packet and the client looks it up to play. All per-play
@@ -200,7 +200,7 @@ effect ends.</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#defaultDuration()" class="member-name-link">defaultDuration</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Default length in ticks when triggered without an explicit duration (ambient uses this).</div>
+<div class="block">Length in ticks of one play of this expression, whether ambient or triggered; no play sets its own.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>net.minecraft.resources.Identifier</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#id()" class="member-name-link">id</a>()</code></div>
@@ -419,7 +419,7 @@ not permitted.)</div>
 <h3>defaultDuration</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">defaultDuration</span>()</div>
-<div class="block">Default length in ticks when triggered without an explicit duration (ambient uses this).</div>
+<div class="block">Length in ticks of one play of this expression, whether ambient or triggered; no play sets its own.</div>
 </div>
 </section>
 </li>

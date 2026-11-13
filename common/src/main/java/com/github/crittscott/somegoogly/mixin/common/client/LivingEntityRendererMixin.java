@@ -9,7 +9,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-/** Takes each living entity's eye decision while its render state is extracted. */
+/**
+ * Takes each living entity's eye decision while its render state is extracted, the last point that sees the entity
+ * itself. No loader has an event for render-state extraction.
+ */
 @Mixin(LivingEntityRenderer.class)
 abstract class LivingEntityRendererMixin {
 

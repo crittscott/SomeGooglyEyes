@@ -1,7 +1,7 @@
 {
   "type": "minecraft:function",
   "function": "somegoogly:behaviorschedulergametests/disabled_eyes_suspend_automatic_behaviors",
-  "environment": "minecraft:default",
+  "environment": "somegoogly:disabled_eyes_suspend_automatic_behaviors",
   "structure": "somegoogly:empty",
-  "max_ticks": 60
+  "max_ticks": 400
 }

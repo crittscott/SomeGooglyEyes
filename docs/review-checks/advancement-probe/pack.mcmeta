@@ -1,0 +1,13 @@
+{
+  "pack": {
+    "description": "Some Googly Eyes interaction advancement probe",
+    "min_format": [
+      121,
+      0
+    ],
+    "max_format": [
+      121,
+      0
+    ]
+  }
+}

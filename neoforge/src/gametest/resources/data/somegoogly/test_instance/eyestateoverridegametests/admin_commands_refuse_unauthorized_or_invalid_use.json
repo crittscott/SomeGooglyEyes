@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "somegoogly:eyestateoverridegametests/admin_commands_refuse_unauthorized_or_invalid_use",
+  "environment": "minecraft:default",
+  "structure": "somegoogly:empty",
+  "max_ticks": 40
+}

@@ -10,7 +10,7 @@ import com.github.crittscott.somegoogly.client.picker.PickerState;
 import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
-import com.github.crittscott.somegoogly.eye.state.EyeAppearance;
+import com.github.crittscott.somegoogly.eye.EyeAppearance;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -231,7 +231,7 @@ public final class GooglyEyeRenderer {
                                   AppearanceOverride overrides, int head, float partialTicks) {
         int eyeCount = helper.getEyeCount(head);
         for (int eye = 0; eye < eyeCount; eye++) {
-            if (helper.getEyeScale(head, eye) > 0F) {
+            if (helper.placementAt(head, eye).eyeScale() > 0F) {
                 renderEye(pose, collector, packedLight, overlay, row == null ? REST : row[eye], helper, overrides,
                         head, eye, partialTicks);
             }

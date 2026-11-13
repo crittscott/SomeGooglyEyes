@@ -7,7 +7,6 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
-import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -23,6 +22,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -30,7 +30,6 @@ import java.util.function.UnaryOperator;
 import org.jspecify.annotations.Nullable;
 
 import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ADULT;
-import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_BABY;
 
 /**
  * Server-side half of {@code /sg export} (reached via {@code PickerExportPacket}): validates a
@@ -41,7 +40,7 @@ import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_BABY;
  * <p>The payload is <b>never trusted</b>: the entity id must parse and exist in the entity registry
  * (clients cannot supply an arbitrary unregistered id). Identifier syntax itself does not guarantee
  * filesystem containment; {@link EyeConfigReloadListener#eyeFile} constructs a path without checking it.
- * The ender dragon is refused (mirroring the reload listener's hard exclusion), and the config must
+ * Renderer-excluded entity kinds are refused, and the config must
  * decode through {@code RuntimeConfig.CODEC} — whose fields are all required, so a malformed or
  * wrong-typed payload is rejected outright rather than decoding to an empty config — and contain at
  * least one usable eye. The declared version is resolved from the <b>server's</b> loaded mod version
@@ -59,7 +58,7 @@ public final class PickerExportService {
             SharedConstants.getCurrentVersion().packVersion(PackType.SERVER_DATA).major();
     private static final int PACK_FORMAT_MINOR =
             SharedConstants.getCurrentVersion().packVersion(PackType.SERVER_DATA).minor();
-    private static final String PACK_MCMETA = """
+    private static final String PACK_MCMETA = String.format(Locale.ROOT, """
             {
               "pack": {
                 "min_format": [%d, %d],
@@ -67,7 +66,7 @@ public final class PickerExportService {
                 "description": {"translate": "somegoogly.pack.picker_description"}
               }
             }
-            """.formatted(PACK_FORMAT_MAJOR, PACK_FORMAT_MINOR, PACK_FORMAT_MAJOR, PACK_FORMAT_MINOR);
+            """, PACK_FORMAT_MAJOR, PACK_FORMAT_MINOR, PACK_FORMAT_MAJOR, PACK_FORMAT_MINOR);
     private static final String PACK_NAME = "somegoogly-picker";
 
     private PickerExportService() {
@@ -87,11 +86,8 @@ public final class PickerExportService {
             return Component.translatable(
                     "somegoogly.command.picker.export_rejected_unknown_type", typeId.toString());
         }
-        if (typeId.equals(ServerEyeConfigs.ENDER_DRAGON)) {
+        if (ServerEyeConfigs.isExcluded(typeId)) {
             return Component.translatable("somegoogly.command.picker.export_rejected_ender_dragon");
-        }
-        if (!AGE_ADULT.equals(age) && !AGE_BABY.equals(age)) {
-            return Component.translatable("somegoogly.command.picker.export_rejected_malformed_payload");
         }
         RuntimeConfig config = RuntimeConfig.CODEC.parse(NbtOps.INSTANCE, configNbt).result().orElse(null);
         if (config == null) {
@@ -154,16 +150,9 @@ public final class PickerExportService {
     private static Component syncRefusal(Identifier typeId, String age, RuntimeConfig authored) {
         Map<Identifier, RuntimeConfigSet> next = new HashMap<>(ServerEyeConfigs.all());
         next.put(typeId, withAge(next.get(typeId), age, authored));
-        EyeConfigLimits.Issue limitsError = EyeConfigLimits.validateSync(next);
-        if (limitsError != null) {
-            return Component.translatable("somegoogly.command.picker.export_rejected_unsafe_payload", limitsError.message());
-        }
-        int wireSize = EyeConfigSyncPacket.wireSize(ServerEyeConfigs.encode(next));
-        if (wireSize > EyeConfigSyncPacket.MAX_PAYLOAD_BYTES) {
-            return Component.translatable("somegoogly.command.picker.export_rejected_unsafe_payload",
-                    Component.translatable("somegoogly.validation.sync_size", wireSize, EyeConfigSyncPacket.MAX_PAYLOAD_BYTES));
-        }
-        return null;
+        EyeConfigLimits.Issue refusal = ServerEyeConfigs.packetFor(next).refusal();
+        return refusal == null ? null
+                : Component.translatable("somegoogly.command.picker.export_rejected_unsafe_payload", refusal.message());
     }
 
     /** {@code base} with its adult or baby config replaced by {@code authored}. */

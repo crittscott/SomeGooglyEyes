@@ -46,6 +46,14 @@ public final class ConfigGameTests {
         ConfigGameTestsLogic.reloadHardExcludesEnderDragon(helper);
     }
 
+    public static void listSettingWithNoValidEntryUsesDefault(GameTestHelper helper) {
+        ConfigGameTestsLogic.listSettingWithNoValidEntryUsesDefault(helper);
+    }
+
+    public static void reloadRejectsFileWithMalformedEntry(GameTestHelper helper) {
+        ConfigGameTestsLogic.reloadRejectsFileWithMalformedEntry(helper);
+    }
+
     public static void reloadToleratesBadFilesAndDuplicates(GameTestHelper helper) {
         ConfigGameTestsLogic.reloadToleratesBadFilesAndDuplicates(helper);
     }

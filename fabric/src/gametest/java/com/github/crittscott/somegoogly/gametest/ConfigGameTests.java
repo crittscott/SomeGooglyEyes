@@ -59,6 +59,16 @@ public final class ConfigGameTests {
     }
 
     @GameTest(structure = TEMPLATE, maxTicks = 60)
+    public void listSettingWithNoValidEntryUsesDefault(GameTestHelper helper) {
+        ConfigGameTestsLogic.listSettingWithNoValidEntryUsesDefault(helper);
+    }
+
+    @GameTest(structure = TEMPLATE, maxTicks = 60)
+    public void reloadRejectsFileWithMalformedEntry(GameTestHelper helper) {
+        ConfigGameTestsLogic.reloadRejectsFileWithMalformedEntry(helper);
+    }
+
+    @GameTest(structure = TEMPLATE, maxTicks = 60)
     public void reloadToleratesBadFilesAndDuplicates(GameTestHelper helper) {
         ConfigGameTestsLogic.reloadToleratesBadFilesAndDuplicates(helper);
     }

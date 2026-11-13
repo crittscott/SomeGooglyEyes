@@ -3,11 +3,11 @@ package com.github.crittscott.somegoogly.client.picker;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.picker.PickerGate;
 import com.mojang.blaze3d.platform.InputConstants;
+import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
 
 /**
  * The picker's keybindings, all rebindable in Options → Controls, and the routing of their presses to
@@ -20,13 +20,14 @@ import net.minecraft.resources.Identifier;
  */
 public final class PickerInput {
 
-    public static final KeyMapping.Category CATEGORY =
-            new KeyMapping.Category(Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "picker"));
+    public static final KeyMapping.Category CATEGORY = new KeyMapping.Category(SomeGooglyCommon.id("picker"));
 
     public static final KeyMapping LOCK = key("lock", InputConstants.KEY_V);
     public static final KeyMapping PART_NEXT = key("part_next", InputConstants.KEY_RBRACKET);
     public static final KeyMapping PART_PREV = key("part_prev", InputConstants.KEY_LBRACKET);
     public static final KeyMapping TOGGLE = key("toggle", InputConstants.KEY_K);
+    /** Every picker key, in the order their presses are handled; each loader registers exactly these. */
+    public static final List<KeyMapping> KEYS = List.of(TOGGLE, LOCK, PART_PREV, PART_NEXT); // after the keys it lists
 
     private PickerInput() {
     }
@@ -44,24 +45,17 @@ public final class PickerInput {
 
     /** Drain each picker key's click queue, routing presses to {@link #handle}. Call once per client tick. */
     public static void consumePendingKeys() {
-        while (TOGGLE.consumeClick()) {
-            handle(TOGGLE);
-        }
-        while (LOCK.consumeClick()) {
-            handle(LOCK);
-        }
-        while (PART_PREV.consumeClick()) {
-            handle(PART_PREV);
-        }
-        while (PART_NEXT.consumeClick()) {
-            handle(PART_NEXT);
+        for (KeyMapping key : KEYS) {
+            while (key.consumeClick()) {
+                handle(key);
+            }
         }
     }
 
     /** Act on one picker key press, unless a screen is open. */
-    public static void handle(KeyMapping key) {
-        // InputEvent.Key fires even while a screen is open; ignore keys when one is (e.g. typing the
-        // /sg CLI in chat) so picker bindings don't fire while the player is interacting with a GUI.
+    private static void handle(KeyMapping key) {
+        // A queued press is drained here, apart from when it was pressed, so a screen may have opened in between
+        // (e.g. chat, to type the /sg CLI); picker actions are ignored while one is open.
         if (Minecraft.getInstance().gui.screen() != null) {
             return;
         }

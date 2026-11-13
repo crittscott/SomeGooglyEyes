@@ -134,8 +134,11 @@ public final class PickerGate {
         source.sendFailure(prefixed(Component.translatable(key, args)));
     }
 
-    /** Report a result to the command's sender alone, under the shared picker prefix. */
-    public static void tellSuccess(CommandSourceStack source, String key, Object... args) {
-        source.sendSuccess(() -> prefixed(Component.translatable(key, args)), false);
+    /**
+     * Report a result to the command's sender under the shared picker prefix; {@code broadcast} also tells other
+     * operators and the console, as vanilla does for commands that change the world.
+     */
+    public static void tellSuccess(CommandSourceStack source, boolean broadcast, String key, Object... args) {
+        source.sendSuccess(() -> prefixed(Component.translatable(key, args)), broadcast);
     }
 }
