@@ -116,15 +116,20 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#enumerate(software.bernie.geckolib.cache.object.BakedGeoModel)" class="member-name-link">enumerate</a><wbr>(software.bernie.geckolib.cache.object.BakedGeoModel&nbsp;model)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#clear()" class="member-name-link">clear</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Drop every cached bone; GeckoLib rebakes its models on each resource reload.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#enumerate(software.bernie.geckolib.cache.object.BakedGeoModel)" class="member-name-link">enumerate</a><wbr>(software.bernie.geckolib.cache.object.BakedGeoModel&nbsp;model)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Every bone name in <code>model</code>, depth first.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static software.bernie.geckolib.cache.object.GeoBone</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#findBone(software.bernie.geckolib.cache.object.BakedGeoModel,java.lang.String)" class="member-name-link">findBone</a><wbr>(software.bernie.geckolib.cache.object.BakedGeoModel&nbsp;model,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static software.bernie.geckolib.cache.object.GeoBone</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#findBone(software.bernie.geckolib.cache.object.BakedGeoModel,java.lang.String)" class="member-name-link">findBone</a><wbr>(software.bernie.geckolib.cache.object.BakedGeoModel&nbsp;model,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;token)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">First bone (depth-first, so a stable order) whose root→bone name path suffix-matches
  <code>token</code> per <a href="../../render/resolver/EyeAttachmentResolver.html#pathMatches(java.lang.String,java.lang.String)"><code>EyeAttachmentResolver.pathMatches(java.lang.String, java.lang.String)</code></a>, or <code>null</code>.</div>
 </div>
@@ -145,6 +150,13 @@ loadScripts(document, 'script');</script>
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="clear()">
+<h3>clear</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">clear</span>()</div>
+<div class="block">Drop every cached bone; GeckoLib rebakes its models on each resource reload.</div>
+</section>
+</li>
 <li>
 <section class="detail" id="enumerate(software.bernie.geckolib.cache.object.BakedGeoModel)">
 <h3>enumerate</h3>

@@ -119,12 +119,13 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#behaviorTriggerPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">behaviorTriggerPacketRoundTrips</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The behavior trigger survives the wire, and every behavior has its own wire id.</div>
+<div class="block">The behavior trigger survives the wire for every behavior on the entity's eyes and every reaction in either
+ hand, at the start, middle, and end of its lifetime.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#configSyncPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">configSyncPacketRoundTrips</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The eye-definition sync survives the wire, and the reload budget measures it exactly.</div>
+<div class="block">The eye-definition sync survives the wire, and a decoded packet writes the bytes it was sent.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#configSyncRejectsOversizedAndUnsafePayloads(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">configSyncRejectsOversizedAndUnsafePayloads</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
@@ -173,7 +174,8 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#pickerExportPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">pickerExportPacketRoundTrips</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The picker export request survives the wire, and a request with no definition is refused on decode.</div>
+<div class="block">The picker export request survives the wire for both ages, and a request with no definition or an
+ unsupported age is refused on decode.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#pickerFreezePacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">pickerFreezePacketRoundTrips</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
@@ -228,8 +230,10 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="behaviorTriggerPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>behaviorTriggerPacketRoundTrips</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">behaviorTriggerPacketRoundTrips</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">The behavior trigger survives the wire, and every behavior has its own wire id. No in-game form; guards
- that every client sees the expression the server started and refuses a number it doesn't know.</div>
+<div class="block">The behavior trigger survives the wire for every behavior on the entity's eyes and every reaction in either
+ hand, at the start, middle, and end of its lifetime. No in-game form; guards that every client sees the
+ expression the server started and refuses an unknown behavior or target number, a non-reaction on a held eye,
+ or an elapsed time outside the expression's lifetime.</div>
 </section>
 </li>
 <li>
@@ -244,7 +248,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="configSyncPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>configSyncPacketRoundTrips</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">configSyncPacketRoundTrips</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">The eye-definition sync survives the wire, and the reload budget measures it exactly. No in-game form;
+<div class="block">The eye-definition sync survives the wire, and a decoded packet writes the bytes it was sent. No in-game form;
  guards that joining clients draw the same eyes the server's datapacks define.</div>
 </section>
 </li>
@@ -314,8 +318,9 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="pickerExportPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>pickerExportPacketRoundTrips</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">pickerExportPacketRoundTrips</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">The picker export request survives the wire, and a request with no definition is refused on decode. No
- in-game form; guards that <code>/sg export</code> delivers exactly the definition the client authored.</div>
+<div class="block">The picker export request survives the wire for both ages, and a request with no definition or an
+ unsupported age is refused on decode. No in-game form; guards that <code>/sg export</code> delivers exactly the
+ definition the client authored.</div>
 </section>
 </li>
 <li>

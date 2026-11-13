@@ -98,8 +98,9 @@ loadScripts(document, 'script');</script>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Memoizes a value per (model instance, attach token), misses included. An entry stays valid for as long
  as its model lives, so a datapack reload never clears anything here; <a href="#clear()"><code>clear()</code></a> drops every entry
- when models are replaced. Keys are weak, but an entry whose value refers back to its own model (Citadel
- and LLibrary boxes) is reclaimed only by <a href="#clear()"><code>clear()</code></a>.
+ when models are replaced, which is also the only way an entry goes. Models are matched by identity: the
+ cached values are parts of that very instance, and GeckoLib's baked models are records that compare equal
+ to any model of the same structure, including the one a resource reload replaces.
 
  <p>Client main thread only.</div>
 </section>

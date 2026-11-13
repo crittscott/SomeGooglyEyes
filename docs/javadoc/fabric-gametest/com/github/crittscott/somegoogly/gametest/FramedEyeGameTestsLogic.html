@@ -109,63 +109,67 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#framedEyeFiltersItems(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">framedEyeFiltersItems</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Empty slots, Slimy Eyes, and ordinary items are ineligible.</div>
+<div class="block">Only a Googly Eye in a frame gets a moving pupil; a Slimy Eye, an ordinary item, and an empty frame get none.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#framedEyeFollowsMountedGravity(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">framedEyeFollowsMountedGravity</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Mounted pupils follow supplied gravity instead of always falling along the item's own down.</div>
+<div class="block">A framed eye's pupil falls toward the ground however the frame or the item in it is turned.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#framedEyeHandlesShortIntervalsAndTimeJumps(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">framedEyeHandlesShortIntervalsAndTimeJumps</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Short ambient intervals cannot overlap expressions; a time jump reconstructs the current slot.</div>
+<div class="block">Expressions never overlap, even with the shortest ambient interval, and an eye seen again after a long absence
+ joins the expression now playing.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#framedEyeHonorsAmbientSettings(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">framedEyeHonorsAmbientSettings</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Ambient-off, empty, and partner-only pools suppress expressions, including one already active
- when settings change.</div>
+<div class="block">A framed eye stops expressing, even mid-expression, when ambient expressions are off, the pool is empty, or the
+ pool holds only expressions that need a second eye.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#framedEyePlaysSingleEyeExpressions(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">framedEyePlaysSingleEyeExpressions</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Removing cross-eye from a mixed pool still leaves lone-eye expressions available.</div>
+<div class="block">A lone eye skips expressions that need a partner and still plays the rest.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#framedEyeReconstructsExpressions(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">framedEyeReconstructsExpressions</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">A newly created tracker joins a running expression with identical age and seeded parameters.</div>
+<div class="block">A player who starts watching a frame mid-expression sees the same expression at the same point as everyone else.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#framedEyeReleasesExpressionOverlays(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">framedEyeReleasesExpressionOverlays</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Expressions finish, leaving neutral overlays between slots.</div>
+<div class="block">Each expression ends fully, leaving the eye as it was.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#framedEyeUsesIndependentSchedules(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">framedEyeUsesIndependentSchedules</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Frames use independent UUID schedules.</div>
+<div class="block">Each frame keeps its own expression schedule, even when frames hold identical eyes.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#framedHeadAllowsPairedExpressions(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">framedHeadAllowsPairedExpressions</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Two head pupils can cross; the same pool is suppressed for a lone loose eye.</div>
+<div class="block">A framed eyed head's two eyes can cross toward each other; a lone Googly Eye under the same settings cannot.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#framedHeadInvalidatesChangedItems(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">framedHeadInvalidatesChangedItems</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Species, variant, and appearance changes invalidate a head tracker; plain heads have no tracker.</div>
+<div class="block">A framed head's eyes follow what the frame now holds: a different species, eye arrangement, or appearance gets a
+ fresh layout, and a plain head or a loose eye shows nothing of the head before it.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#framedHeadReconstructsExpressions(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">framedHeadReconstructsExpressions</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Newly arriving viewers reconstruct a head's expression and blink participation.</div>
+<div class="block">A player who starts watching a framed head mid-blink sees the same eyes blinking at the same point as everyone
+ else.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#framedHeadUsesConfiguredLayout(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">framedHeadUsesConfiguredLayout</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Eyed heads carry their mob's configured head parts and pupil arrays, including mounted gravity.</div>
+<div class="block">A framed eyed head shows its mob's eyes where they sit on the placed head, with its stored appearance, and its
+ pupils fall toward the ground.</div>
 </div>
 </div>
 </div>
@@ -188,98 +192,114 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="framedEyeFiltersItems(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>framedEyeFiltersItems</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">framedEyeFiltersItems</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Empty slots, Slimy Eyes, and ordinary items are ineligible. In game: replace a framed Googly Eye
- with a Slimy Eye, a diamond, and nothing; only the Googly Eye has a simulated pupil.</div>
+<div class="block">Only a Googly Eye in a frame gets a moving pupil; a Slimy Eye, an ordinary item, and an empty frame get none. In
+ game: frame a Googly Eye, then replace it with a Slimy Eye, then a diamond, then nothing; only the Googly Eye's
+ pupil moves.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="framedEyeFollowsMountedGravity(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>framedEyeFollowsMountedGravity</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">framedEyeFollowsMountedGravity</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Mounted pupils follow supplied gravity instead of always falling along the item's own down.
- In game: right-click a wall-mounted eye to rotate it; its pupil still falls toward the ground.</div>
+<div class="block">A framed eye's pupil falls toward the ground however the frame or the item in it is turned. In game: frame a
+ Googly Eye on a wall and right-click it to rotate it through each position; its pupil always settles at the
+ bottom.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="framedEyeHandlesShortIntervalsAndTimeJumps(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>framedEyeHandlesShortIntervalsAndTimeJumps</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">framedEyeHandlesShortIntervalsAndTimeJumps</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Short ambient intervals cannot overlap expressions; a time jump reconstructs the current slot.
- In game: set ambient min/max to their minimum and pool to blink; framed eyes keep blinking cleanly.</div>
+<div class="block">Expressions never overlap, even with the shortest ambient interval, and an eye seen again after a long absence
+ joins the expression now playing. In game: set <code>ambientMinTicks = 1</code> and <code>ambientMaxTicks = 1</code> and
+ <code>ambientBehaviorPool = ["somegoogly:blink"]</code> in <code>somegoogly-server.toml</code>, then <code>/reload</code>; a
+ framed Googly Eye blinks back to back, each blink finishing before the next starts.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="framedEyeHonorsAmbientSettings(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>framedEyeHonorsAmbientSettings</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">framedEyeHonorsAmbientSettings</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Ambient-off, empty, and partner-only pools suppress expressions, including one already active
- when settings change. In game: reload each setting and observe that the framed eye stops expressing.</div>
+<div class="block">A framed eye stops expressing, even mid-expression, when ambient expressions are off, the pool is empty, or the
+ pool holds only expressions that need a second eye. In game: with <code>ambientMinTicks = 1</code> and <code>
+ ambientMaxTicks = 1</code> and <code>ambientBehaviorPool = ["somegoogly:blink"]</code> in <code>somegoogly-server.toml</code>,
+ watch a framed Googly Eye blink. Then set each in turn and <code>/reload</code>: <code>ambientBehaviors = false</code>;
+ <code>ambientBehaviorPool = []</code>; <code>ambientBehaviorPool = ["somegoogly:cross_eye"]</code>. Each time the eye stops
+ blinking and plays nothing.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="framedEyePlaysSingleEyeExpressions(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>framedEyePlaysSingleEyeExpressions</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">framedEyePlaysSingleEyeExpressions</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Removing cross-eye from a mixed pool still leaves lone-eye expressions available. In game: use
- ambient pool [cross_eye, blink]; the framed eye winks but never tries to cross toward another eye.</div>
+<div class="block">A lone eye skips expressions that need a partner and still plays the rest. In game: set <code>
+ ambientBehaviorPool = ["somegoogly:cross_eye", "somegoogly:blink"]</code> in <code>somegoogly-server.toml</code> and <code>
+ /reload</code>; a framed Googly Eye winks from time to time and never tries to cross.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="framedEyeReconstructsExpressions(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>framedEyeReconstructsExpressions</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">framedEyeReconstructsExpressions</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">A newly created tracker joins a running expression with identical age and seeded parameters.
- In game: two players view one frame, with the second arriving mid-expression; both see its same phase.</div>
+<div class="block">A player who starts watching a frame mid-expression sees the same expression at the same point as everyone else.
+ In game: with two players, have one watch a framed Googly Eye while the other approaches from out of render
+ range; when it comes into view, both see the same expression at the same moment.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="framedEyeReleasesExpressionOverlays(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>framedEyeReleasesExpressionOverlays</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">framedEyeReleasesExpressionOverlays</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Expressions finish, leaving neutral overlays between slots. In game: restrict ambient pool to
- blink and watch the frame reopen fully before its next wink.</div>
+<div class="block">Each expression ends fully, leaving the eye as it was. In game: set <code>ambientBehaviorPool =
+ ["somegoogly:blink"]</code> in <code>somegoogly-server.toml</code> and <code>/reload</code>; between blinks a framed Googly Eye
+ opens fully to its normal size.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="framedEyeUsesIndependentSchedules(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>framedEyeUsesIndependentSchedules</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">framedEyeUsesIndependentSchedules</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Frames use independent UUID schedules. In game: fill several neighboring frames with copies of
- one eye; they express independently even though their displayed items match.</div>
+<div class="block">Each frame keeps its own expression schedule, even when frames hold identical eyes. In game: fill several
+ neighboring frames with Googly Eyes from one stack; they blink and glance at different times.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="framedHeadAllowsPairedExpressions(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>framedHeadAllowsPairedExpressions</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">framedHeadAllowsPairedExpressions</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Two head pupils can cross; the same pool is suppressed for a lone loose eye. In game: set the
- ambient pool to cross_eye and frame an eyed skull beside a Googly Eye; only the skull crosses.</div>
+<div class="block">A framed eyed head's two eyes can cross toward each other; a lone Googly Eye under the same settings cannot. In
+ game: set <code>ambientBehaviorPool = ["somegoogly:cross_eye"]</code> and <code>ambientMinTicks = 1</code> and <code>
+ ambientMaxTicks = 1</code> in <code>somegoogly-server.toml</code> and <code>/reload</code>, then frame an eyed skeleton skull
+ beside a Googly Eye; the skull's pupils cross and the lone eye stays still.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="framedHeadInvalidatesChangedItems(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>framedHeadInvalidatesChangedItems</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">framedHeadInvalidatesChangedItems</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Species, variant, and appearance changes invalidate a head tracker; plain heads have no tracker.
- In game: replace an eyed framed head with another species, another eye color/glow, then a plain
- head and a loose eye. No former head layout or expression remains attached to the new contents.</div>
+<div class="block">A framed head's eyes follow what the frame now holds: a different species, eye arrangement, or appearance gets a
+ fresh layout, and a plain head or a loose eye shows nothing of the head before it. In game: frame an eyed
+ skeleton skull, then swap in an eyed creeper head, an eyed skeleton skull with glowing eyes, a plain skull, and a
+ Googly Eye; each shows only its own eyes, if any.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="framedHeadReconstructsExpressions(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>framedHeadReconstructsExpressions</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">framedHeadReconstructsExpressions</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Newly arriving viewers reconstruct a head's expression and blink participation. In game: join
- another player's framed-head display mid-blink; the same eyes blink at the same expression age.</div>
+<div class="block">A player who starts watching a framed head mid-blink sees the same eyes blinking at the same point as everyone
+ else. In game: with two players and <code>ambientBehaviorPool = ["somegoogly:blink"]</code> in <code>
+ somegoogly-server.toml</code>, have one watch a framed eyed skeleton skull while the other approaches from out of
+ render range; both see each blink together.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="framedHeadUsesConfiguredLayout(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>framedHeadUsesConfiguredLayout</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">framedHeadUsesConfiguredLayout</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Eyed heads carry their mob's configured head parts and pupil arrays, including mounted gravity.
- In game: frame an eyed skeleton skull and a supported Heads-mod head; their eyes retain their
- normal positions, colors, and sizes while their pupils animate.</div>
+<div class="block">A framed eyed head shows its mob's eyes where they sit on the placed head, with its stored appearance, and its
+ pupils fall toward the ground. In game: frame an eyed skeleton skull; it shows its eyes in the same places,
+ colors, and sizes as when placed, and the pupils move.</div>
 </section>
 </li>
 </ul>

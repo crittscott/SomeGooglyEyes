@@ -99,10 +99,11 @@ loadScripts(document, 'script');</script>
  <p>Robustness, in layers:
  <ul>
    <li><b>Live records</b> — one per editing player (<code>FROZEN_BY_PLAYER</code>); freezing a new mob
-       releases the player's previous one, logout (<a href="#onPlayerLoggedOut(net.minecraft.server.level.ServerPlayer)"><code>onPlayerLoggedOut(net.minecraft.server.level.ServerPlayer)</code></a>) releases it too, and
+       releases the player's previous one, logout (<a href="#unfreeze(net.minecraft.server.MinecraftServer,java.util.UUID)"><code>unfreeze(net.minecraft.server.MinecraftServer, java.util.UUID)</code></a>) releases it too, and
        server stop (<a href="#onServerStopping(net.minecraft.server.MinecraftServer)"><code>onServerStopping(net.minecraft.server.MinecraftServer)</code></a>) restores everything synchronously before the final
        save. A mob already frozen by another player is refused, since a second capture would read the
-       forced value as the original.</li>
+       forced value as the original. A frozen mob that converts into another (<a href="#onConverted(net.minecraft.world.entity.LivingEntity,net.minecraft.world.entity.LivingEntity)"><code>onConverted(net.minecraft.world.entity.LivingEntity, net.minecraft.world.entity.LivingEntity)</code></a>)
+       hands its record and marker to its replacement.</li>
    <li><b>Persistent marker</b> — <a href="#PREV_NO_AI_TAG"><code>PREV_NO_AI_TAG</code></a> on the mob holds the pre-picker value for
        as long as the freeze is live, so an autosave + hard crash (or the mob's chunk unloading
        mid-edit) can't strand the forced <code>NoAi</code>: on the mob's next join
@@ -157,16 +158,19 @@ loadScripts(document, 'script');</script>
 <div class="block">The mob <code>playerId</code> currently has frozen, or <code>null</code> if they have none.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onMobJoin(net.minecraft.world.entity.Mob)" class="member-name-link">onMobJoin</a><wbr>(net.minecraft.world.entity.Mob&nbsp;mob)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onConverted(net.minecraft.world.entity.LivingEntity,net.minecraft.world.entity.LivingEntity)" class="member-name-link">onConverted</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;source,
+ net.minecraft.world.entity.LivingEntity&nbsp;target)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block"><code>source</code>, about to be replaced by <code>target</code> (lightning, curing, a mooshroom's shearing),
+ hands its freeze to the replacement: vanilla carries the forced <code>NoAi</code> across but not the marker,
+ and the record names the source's UUID, so otherwise the replacement could never be released.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onMobJoin(net.minecraft.world.entity.Mob)" class="member-name-link">onMobJoin</a><wbr>(net.minecraft.world.entity.Mob&nbsp;mob)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">A mob (re)joined a server level carrying the freeze marker: if some player's live record still
  claims it, re-assert the freeze (its chunk reloaded mid-edit); otherwise the marker is stale
  (crash, or an unfreeze that found it unloaded) — restore the pre-picker value and strip it.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onPlayerLoggedOut(net.minecraft.server.level.ServerPlayer)" class="member-name-link">onPlayerLoggedOut</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The disappearing-client hook: a leaving player's frozen mob is always released.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onServerStopping(net.minecraft.server.MinecraftServer)" class="member-name-link">onServerStopping</a><wbr>(net.minecraft.server.MinecraftServer&nbsp;server)</code></div>
@@ -229,9 +233,9 @@ loadScripts(document, 'script');</script>
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;mobId)</span></div>
 <div class="block">Freeze <code>mobId</code> in <code>level</code> for <code>playerId</code>, releasing any mob that player had
- frozen before. Returns localized error feedback when the mob is already being edited by someone
- else, or <code>null</code> on success — including the silent no-op cases (not found in this level, or
- not a <code>Mob</code>; non-mob living entities have no AI to freeze).</div>
+ frozen before. Returns localized error feedback, and keeps the player's current freeze, when the mob is
+ already being edited by someone else; otherwise <code>null</code> — including the silent no-op cases (not
+ found in this level, or not a <code>Mob</code>; non-mob living entities have no AI to freeze).</div>
 </section>
 </li>
 <li>
@@ -251,19 +255,23 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="onConverted(net.minecraft.world.entity.LivingEntity,net.minecraft.world.entity.LivingEntity)">
+<h3>onConverted</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onConverted</span><wbr><span class="parameters">(net.minecraft.world.entity.LivingEntity&nbsp;source,
+ net.minecraft.world.entity.LivingEntity&nbsp;target)</span></div>
+<div class="block"><code>source</code>, about to be replaced by <code>target</code> (lightning, curing, a mooshroom's shearing),
+ hands its freeze to the replacement: vanilla carries the forced <code>NoAi</code> across but not the marker,
+ and the record names the source's UUID, so otherwise the replacement could never be released. A
+ replacement that isn't a <code>Mob</code> has no AI to hold, so the freeze simply ends.</div>
+</section>
+</li>
+<li>
 <section class="detail" id="onMobJoin(net.minecraft.world.entity.Mob)">
 <h3>onMobJoin</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onMobJoin</span><wbr><span class="parameters">(net.minecraft.world.entity.Mob&nbsp;mob)</span></div>
 <div class="block">A mob (re)joined a server level carrying the freeze marker: if some player's live record still
  claims it, re-assert the freeze (its chunk reloaded mid-edit); otherwise the marker is stale
  (crash, or an unfreeze that found it unloaded) — restore the pre-picker value and strip it.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="onPlayerLoggedOut(net.minecraft.server.level.ServerPlayer)">
-<h3>onPlayerLoggedOut</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onPlayerLoggedOut</span><wbr><span class="parameters">(net.minecraft.server.level.ServerPlayer&nbsp;player)</span></div>
-<div class="block">The disappearing-client hook: a leaving player's frozen mob is always released.</div>
 </section>
 </li>
 <li>
