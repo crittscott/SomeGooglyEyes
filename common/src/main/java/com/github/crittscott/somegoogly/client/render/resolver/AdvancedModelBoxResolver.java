@@ -84,7 +84,7 @@ public class AdvancedModelBoxResolver extends ReflectedBoxResolver {
 
     @Override
     protected boolean available() {
-        return api.available() && !integrationFailed();
+        return api.available();
     }
 
     @Override
@@ -94,7 +94,7 @@ public class AdvancedModelBoxResolver extends ReflectedBoxResolver {
 
     @Override
     public boolean handles(EntityModel<?> model) {
-        return available() && api.modelClass().isInstance(model);
+        return available() && api.modelClass().isInstance(model) && !failed(model);
     }
 
     @Override

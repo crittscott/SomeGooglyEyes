@@ -7,7 +7,7 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
 import com.github.crittscott.somegoogly.network.PickerExportPacket;
-import com.github.crittscott.somegoogly.platform.ClientNetworking;
+import com.github.crittscott.somegoogly.client.platform.ClientNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -31,7 +31,8 @@ import java.util.function.UnaryOperator;
  *       {@code PickerExportPacket}; the authorization-gated server handler validates it, writes
  *       {@code world/datapacks/somegoogly-picker/data/<ns>/eyes/<entity>.json}, and {@code /reload}s
  *       so it persists and re-syncs through the normal path. Works from a remote client; the result
- *       arrives as a server chat message (rate-limited server-side to one export per 10 seconds).</li>
+ *       arrives as a server chat message (rate-limited server-side by
+ *       {@link com.github.crittscott.somegoogly.picker.PickerGate#EXPORT_COOLDOWN_TICKS}).</li>
  *   <li>{@link #exportAll()} — a purely client-side dump of <i>every</i> eye config into
  *       {@code <gameDir>/somegoogly-export/data/…}: the synced runtime state ({@link ClientEyeConfigs})
  *       for untouched entities, overlaid with the picker's per-entity drafts

@@ -78,7 +78,7 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">ClientNetworkHandler</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Applies the five server-to-client payloads on the client game thread. Loader payload registration runs on
+<div class="block">Applies the server-to-client payloads on the client game thread. Loader payload registration runs on
 both distributions, so it reaches these handlers only from inside lambda bodies, which link this class when a
 payload arrives rather than when the handler is registered.</div>
 </div>
@@ -104,7 +104,7 @@ payload arrives rather than when the handler is registered.</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#handleBehavior(com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket)" class="member-name-link">handleBehavior</a><wbr>(<a href="../network/EyeBehaviorTriggerPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeBehaviorTriggerPacket</a>&nbsp;packet)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Retain a behavior for a known entity, including one that has not rendered yet.</div>
+<div class="block">Retain a behavior for a known entity or one of its hands, including one that has not rendered yet.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#handleEyeConfigSync(com.github.crittscott.somegoogly.network.EyeConfigSyncPacket)" class="member-name-link">handleEyeConfigSync</a><wbr>(<a href="../network/EyeConfigSyncPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeConfigSyncPacket</a>&nbsp;packet)</code></div>
@@ -152,7 +152,7 @@ payload arrives rather than when the handler is registered.</div>
 <h3>handleBehavior</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">handleBehavior</span><wbr><span class="parameters">(<a href="../network/EyeBehaviorTriggerPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeBehaviorTriggerPacket</a>&nbsp;packet)</span></div>
-<div class="block">Retain a behavior for a known entity, including one that has not rendered yet.</div>
+<div class="block">Retain a behavior for a known entity or one of its hands, including one that has not rendered yet.</div>
 </div>
 </section>
 </li>

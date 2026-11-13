@@ -1,7 +1,6 @@
 package com.github.crittscott.somegoogly;
 
-import com.github.crittscott.somegoogly.registry.ContentRegistrar;
-import com.github.crittscott.somegoogly.registry.ModContent;
+import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,8 +16,8 @@ public final class SomeGooglyCommon {
     private SomeGooglyCommon() {
     }
 
-    /** Register content shared by every loader. Called once from each loader's entry point. */
-    public static void init(ContentRegistrar registrar) {
-        ModContent.register(registrar);
+    /** An internal resource identifier in this mod's namespace. */
+    public static Identifier id(String path) {
+        return Identifier.fromNamespaceAndPath(MOD_ID, path);
     }
 }

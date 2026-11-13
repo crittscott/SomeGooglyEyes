@@ -1,7 +1,7 @@
 {
   "type": "minecraft:function",
   "function": "somegoogly:behaviorschedulergametests/affection_events_play_love",
-  "environment": "minecraft:default",
+  "environment": "somegoogly:affection_events_play_love",
   "structure": "somegoogly:empty",
-  "max_ticks": 100
+  "max_ticks": 400
 }

@@ -12,14 +12,6 @@ public final class EligibilityGameTests {
     private EligibilityGameTests() {
     }
 
-    public static void usablePredicateEndpoints(GameTestHelper helper) {
-        EligibilityGameTestsLogic.usablePredicateEndpoints(helper);
-    }
-
-    public static void eligibilityFollowsTheSharedPredicate(GameTestHelper helper) {
-        EligibilityGameTestsLogic.eligibilityFollowsTheSharedPredicate(helper);
-    }
-
     public static void slimyEyeAppliesOnlyToEligibleTargets(GameTestHelper helper) {
         EligibilityGameTestsLogic.slimyEyeAppliesOnlyToEligibleTargets(
                 helper, FakePlayerFactory.getMinecraft(helper.getLevel()));

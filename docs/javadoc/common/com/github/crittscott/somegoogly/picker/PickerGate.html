@@ -74,7 +74,7 @@ loadScripts(document, 'script');</script>
 <li><a href="#onServerStopping()" tabindex="0">onServerStopping()</a></li>
 <li><a href="#tell(net.minecraft.server.level.ServerPlayer,net.minecraft.network.chat.Component)" tabindex="0">tell(ServerPlayer, Component)</a></li>
 <li><a href="#tellFailure(net.minecraft.commands.CommandSourceStack,java.lang.String,java.lang.Object...)" tabindex="0">tellFailure(CommandSourceStack, String, Object...)</a></li>
-<li><a href="#tellSuccess(net.minecraft.commands.CommandSourceStack,java.lang.String,java.lang.Object...)" tabindex="0">tellSuccess(CommandSourceStack, String, Object...)</a></li>
+<li><a href="#tellSuccess(net.minecraft.commands.CommandSourceStack,boolean,java.lang.String,java.lang.Object...)" tabindex="0">tellSuccess(CommandSourceStack, boolean, String, Object...)</a></li>
 </ol>
 </li>
 </ol>
@@ -200,11 +200,13 @@ the next (single-player) world and a stale large tick would read as a far-future
 <div class="block">Report a refusal to the command's sender, under the shared picker prefix.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tellSuccess(net.minecraft.commands.CommandSourceStack,java.lang.String,java.lang.Object...)" class="member-name-link">tellSuccess</a><wbr>(net.minecraft.commands.CommandSourceStack&nbsp;source,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tellSuccess(net.minecraft.commands.CommandSourceStack,boolean,java.lang.String,java.lang.Object...)" class="member-name-link">tellSuccess</a><wbr>(net.minecraft.commands.CommandSourceStack&nbsp;source,
+ boolean&nbsp;broadcast,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Report a result to the command's sender alone, under the shared picker prefix.</div>
+<div class="block">Report a result to the command's sender under the shared picker prefix; <code>broadcast</code> also tells other
+operators and the console, as vanilla does for commands that change the world.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable net.minecraft.network.chat.Component</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tryExport(net.minecraft.server.MinecraftServer,java.util.UUID)" class="member-name-link">tryExport</a><wbr>(net.minecraft.server.MinecraftServer&nbsp;server,
@@ -385,13 +387,15 @@ may proceed, or the feedback explaining why it may not.</div>
 </section>
 </li>
 <li>
-<section class="detail" id="tellSuccess(net.minecraft.commands.CommandSourceStack,java.lang.String,java.lang.Object...)">
+<section class="detail" id="tellSuccess(net.minecraft.commands.CommandSourceStack,boolean,java.lang.String,java.lang.Object...)">
 <h3>tellSuccess</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">tellSuccess</span><wbr><span class="parameters">(net.minecraft.commands.CommandSourceStack&nbsp;source,
+ boolean&nbsp;broadcast,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</span></div>
-<div class="block">Report a result to the command's sender alone, under the shared picker prefix.</div>
+<div class="block">Report a result to the command's sender under the shared picker prefix; <code>broadcast</code> also tells other
+operators and the console, as vanilla does for commands that change the world.</div>
 </div>
 </section>
 </li>

@@ -45,6 +45,7 @@ public final class BoatEyeLayout {
                 ? RAFT : HULL;
     }
 
+    /** Whether {@code boat} is a supported hull and {@code config} has a usable variant with eyes on its attachment. */
     public static boolean isEligible(AbstractBoat boat, @Nullable RuntimeConfig config) {
         return supports(boat) && RuntimeConfig.isUsable(config)
                 && config.variants.stream().anyMatch(variant -> matches(variant, attachment(boat)));

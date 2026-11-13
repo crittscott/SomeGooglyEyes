@@ -62,12 +62,12 @@ loadScripts(document, 'script');</script>
 <li><a href="#PART_NEXT" tabindex="0">PART_NEXT</a></li>
 <li><a href="#PART_PREV" tabindex="0">PART_PREV</a></li>
 <li><a href="#TOGGLE" tabindex="0">TOGGLE</a></li>
+<li><a href="#KEYS" tabindex="0">KEYS</a></li>
 </ol>
 </li>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
 <li><a href="#consumePendingKeys()" tabindex="0">consumePendingKeys()</a></li>
-<li><a href="#handle(net.minecraft.client.KeyMapping)" tabindex="0">handle(KeyMapping)</a></li>
 </ol>
 </li>
 </ol>
@@ -108,18 +108,23 @@ parts. All eye editing (position, rotation, properties, save/delete, export) is 
 <div class="col-first even-row-color"><code>static final net.minecraft.client.KeyMapping.Category</code></div>
 <div class="col-second even-row-color"><code><a href="#CATEGORY" class="member-name-link">CATEGORY</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>static final net.minecraft.client.KeyMapping</code></div>
-<div class="col-second odd-row-color"><code><a href="#LOCK" class="member-name-link">LOCK</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;net.minecraft.client.KeyMapping&gt;</code></div>
+<div class="col-second odd-row-color"><code><a href="#KEYS" class="member-name-link">KEYS</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">Every picker key, in the order their presses are handled; each loader registers exactly these.</div>
+</div>
 <div class="col-first even-row-color"><code>static final net.minecraft.client.KeyMapping</code></div>
-<div class="col-second even-row-color"><code><a href="#PART_NEXT" class="member-name-link">PART_NEXT</a></code></div>
+<div class="col-second even-row-color"><code><a href="#LOCK" class="member-name-link">LOCK</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 <div class="col-first odd-row-color"><code>static final net.minecraft.client.KeyMapping</code></div>
-<div class="col-second odd-row-color"><code><a href="#PART_PREV" class="member-name-link">PART_PREV</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#PART_NEXT" class="member-name-link">PART_NEXT</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
 <div class="col-first even-row-color"><code>static final net.minecraft.client.KeyMapping</code></div>
-<div class="col-second even-row-color"><code><a href="#TOGGLE" class="member-name-link">TOGGLE</a></code></div>
+<div class="col-second even-row-color"><code><a href="#PART_PREV" class="member-name-link">PART_PREV</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
+<div class="col-first odd-row-color"><code>static final net.minecraft.client.KeyMapping</code></div>
+<div class="col-second odd-row-color"><code><a href="#TOGGLE" class="member-name-link">TOGGLE</a></code></div>
+<div class="col-last odd-row-color">&nbsp;</div>
 </div>
 </section>
 </li>
@@ -137,12 +142,7 @@ parts. All eye editing (position, rotation, properties, save/delete, export) is 
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#consumePendingKeys()" class="member-name-link">consumePendingKeys</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Drain each picker key's click queue, routing presses to <a href="#handle(net.minecraft.client.KeyMapping)"><code>handle(KeyMapping)</code></a>.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#handle(net.minecraft.client.KeyMapping)" class="member-name-link">handle</a><wbr>(net.minecraft.client.KeyMapping&nbsp;key)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Act on one picker key press, unless a screen is open.</div>
+<div class="block">Drain each picker key's click queue, routing presses to <code>handle(KeyMapping)</code>.</div>
 </div>
 </div>
 </div>
@@ -201,6 +201,15 @@ parts. All eye editing (position, rotation, properties, save/delete, export) is 
 </div>
 </section>
 </li>
+<li>
+<section class="detail" id="KEYS">
+<h3>KEYS</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;net.minecraft.client.KeyMapping&gt;</span>&nbsp;<span class="element-name">KEYS</span></div>
+<div class="block">Every picker key, in the order their presses are handled; each loader registers exactly these.</div>
+</div>
+</section>
+</li>
 </ul>
 </section>
 </li>
@@ -214,16 +223,7 @@ parts. All eye editing (position, rotation, properties, save/delete, export) is 
 <h3>consumePendingKeys</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">consumePendingKeys</span>()</div>
-<div class="block">Drain each picker key's click queue, routing presses to <a href="#handle(net.minecraft.client.KeyMapping)"><code>handle(KeyMapping)</code></a>. Call once per client tick.</div>
-</div>
-</section>
-</li>
-<li>
-<section class="detail" id="handle(net.minecraft.client.KeyMapping)">
-<h3>handle</h3>
-<div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">handle</span><wbr><span class="parameters">(net.minecraft.client.KeyMapping&nbsp;key)</span></div>
-<div class="block">Act on one picker key press, unless a screen is open.</div>
+<div class="block">Drain each picker key's click queue, routing presses to <code>handle(KeyMapping)</code>. Call once per client tick.</div>
 </div>
 </section>
 </li>

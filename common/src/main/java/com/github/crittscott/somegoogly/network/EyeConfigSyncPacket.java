@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.network;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.EyeConfigLimits;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import io.netty.buffer.Unpooled;
@@ -13,36 +14,74 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import org.jspecify.annotations.Nullable;
 
 /**
- * Server-to-client synchronization of the complete resolved eye-definition set. The server builds it from
- * the installed set and that set's precomputed NBT ({@link com.github.crittscott.somegoogly.config.ServerEyeConfigs#encoded}), which was
- * validated when installed, so writing it to each connection only copies tags. The client decodes and
- * re-validates everything it receives.
+ * Server-to-client synchronization of the complete resolved eye-definition set, with the set's NBT encoding. The
+ * server builds one per candidate set ({@link com.github.crittscott.somegoogly.config.ServerEyeConfigs#packetFor}),
+ * checks it with {@link #refusal}, and installs it, so construction serializes once and every joining or
+ * reloading connection copies those bytes. The client decodes and re-validates everything it receives.
  */
 public class EyeConfigSyncPacket implements CustomPacketPayload {
 
     public static final int MAX_PAYLOAD_BYTES = 900 * 1024;
-    public static final Identifier ID = NetworkProtocol.id("eye_config");
+    public static final Identifier ID = SomeGooglyCommon.id("eye_config");
     public static final CustomPacketPayload.Type<EyeConfigSyncPacket> TYPE = new CustomPacketPayload.Type<>(ID);
     public static final StreamCodec<RegistryFriendlyByteBuf, EyeConfigSyncPacket> STREAM_CODEC =
-            StreamCodec.ofMember(EyeConfigSyncPacket::write, EyeConfigSyncPacket::new);
+            StreamCodec.ofMember(EyeConfigSyncPacket::write, EyeConfigSyncPacket::read);
 
+    private final byte[] body;
     private final Map<Identifier, RuntimeConfigSet> configs;
     private final Map<Identifier, CompoundTag> encoded;
 
     /** {@code encoded} must hold exactly {@code configs}, each encoded through {@link RuntimeConfigSet#CODEC}. */
     public EyeConfigSyncPacket(Map<Identifier, RuntimeConfigSet> configs,
                                Map<Identifier, CompoundTag> encoded) {
-        this.configs = configs;
-        this.encoded = encoded;
+        this(configs, encoded, body(encoded));
     }
 
-    private EyeConfigSyncPacket(FriendlyByteBuf buffer) {
+    private EyeConfigSyncPacket(Map<Identifier, RuntimeConfigSet> configs,
+                                Map<Identifier, CompoundTag> encoded, byte[] body) {
+        this.configs = Map.copyOf(configs);
+        this.encoded = Map.copyOf(encoded);
+        this.body = body;
+    }
+
+    private static byte[] body(Map<Identifier, CompoundTag> encoded) {
+        FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
+        try {
+            buffer.writeVarInt(encoded.size());
+            for (Map.Entry<Identifier, CompoundTag> entry : encoded.entrySet()) {
+                buffer.writeIdentifier(entry.getKey());
+                buffer.writeNbt(entry.getValue());
+            }
+            byte[] bytes = new byte[buffer.readableBytes()];
+            buffer.readBytes(bytes);
+            return bytes;
+        } finally {
+            buffer.release();
+        }
+    }
+
+    /** The resolved eye definitions, by entity type; read-only, values included. */
+    public Map<Identifier, RuntimeConfigSet> configs() {
+        return configs;
+    }
+
+    /** {@link #configs} encoded through {@link RuntimeConfigSet#CODEC}; read-only. */
+    public Map<Identifier, CompoundTag> encoded() {
+        return encoded;
+    }
+
+    /** Decode and validate a received payload. */
+    private static EyeConfigSyncPacket read(FriendlyByteBuf buffer) {
         if (buffer.readableBytes() > MAX_PAYLOAD_BYTES) {
             throw new DecoderException("Eye config sync payload exceeds network limit");
         }
+        byte[] body = new byte[buffer.readableBytes()];
+        buffer.getBytes(buffer.readerIndex(), body);
         int size = buffer.readVarInt();
         if (size < 0 || size > EyeConfigLimits.MAX_CONFIGS_PER_SYNC) {
             throw new DecoderException("Eye config count exceeds network limit: " + size);
@@ -67,40 +106,30 @@ public class EyeConfigSyncPacket implements CustomPacketPayload {
         if (error != null) {
             throw new DecoderException("Unsafe synced eye config: " + error.diagnostic());
         }
-        this.configs = configs;
-        this.encoded = encoded;
+        return new EyeConfigSyncPacket(configs, encoded, body);
     }
 
-    /** The packet size of {@code encoded}. */
-    public static int wireSize(Map<Identifier, CompoundTag> encoded) {
-        FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
-        try {
-            writeBody(buffer, encoded);
-            return buffer.writerIndex();
-        } finally {
-            buffer.release();
+    /**
+     * Why clients would refuse this packet, or {@code null} if they accept it: the work its definitions ask of a
+     * client, then its size. Shared by reload and picker export, so an export is checked exactly as the reload it
+     * triggers will be.
+     */
+    public EyeConfigLimits.@Nullable Issue refusal() {
+        EyeConfigLimits.Issue limits = EyeConfigLimits.validateSync(configs);
+        if (limits != null) {
+            return limits;
         }
-    }
-
-    private static void writeBody(FriendlyByteBuf buffer, Map<Identifier, CompoundTag> encoded) {
-        buffer.writeVarInt(encoded.size());
-        for (Map.Entry<Identifier, CompoundTag> entry : encoded.entrySet()) {
-            buffer.writeIdentifier(entry.getKey());
-            buffer.writeNbt(entry.getValue());
-        }
-    }
-
-    private void write(FriendlyByteBuf buffer) {
-        writeBody(buffer, encoded);
-    }
-
-    /** The resolved eye definitions, by entity type. */
-    public Map<Identifier, RuntimeConfigSet> configs() {
-        return configs;
+        return body.length > MAX_PAYLOAD_BYTES ? new EyeConfigLimits.Issue("somegoogly.validation.sync_size",
+                List.of(body.length, MAX_PAYLOAD_BYTES),
+                "Eye config sync size " + body.length + " exceeds " + MAX_PAYLOAD_BYTES + " bytes") : null;
     }
 
     @Override
     public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
         return TYPE;
+    }
+
+    private void write(FriendlyByteBuf buffer) {
+        buffer.writeBytes(body);
     }
 }

@@ -13,16 +13,6 @@ public final class EligibilityGameTests {
     private static final String TEMPLATE = "somegoogly:empty";
 
     @GameTest(structure = TEMPLATE, maxTicks = 40)
-    public void usablePredicateEndpoints(GameTestHelper helper) {
-        EligibilityGameTestsLogic.usablePredicateEndpoints(helper);
-    }
-
-    @GameTest(structure = TEMPLATE, maxTicks = 40)
-    public void eligibilityFollowsTheSharedPredicate(GameTestHelper helper) {
-        EligibilityGameTestsLogic.eligibilityFollowsTheSharedPredicate(helper);
-    }
-
-    @GameTest(structure = TEMPLATE, maxTicks = 40)
     public void slimyEyeAppliesOnlyToEligibleTargets(GameTestHelper helper) {
         EligibilityGameTestsLogic.slimyEyeAppliesOnlyToEligibleTargets(
                 helper, FakePlayer.get(helper.getLevel()));

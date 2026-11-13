@@ -2,14 +2,12 @@ package com.github.crittscott.somegoogly.server.forge;
 
 import com.github.crittscott.somegoogly.command.GooglyServerCommands;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
-import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.item.EyeItemService;
 import com.github.crittscott.somegoogly.server.ServerServices;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.util.Result;
 import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -71,13 +69,11 @@ public final class ForgeServerEvents {
     }
 
     private static void onLivingConversion(LivingConversionEvent.Post event) {
-        EyeState.copy(event.getEntity(), event.getOutcome());
+        ServerServices.onConverted(event.getEntity(), event.getOutcome());
     }
 
     private static void onLivingDamage(LivingDamageEvent event) {
-        if (event.getSource().getEntity() instanceof Player) {
-            ServerBehaviorScheduler.onPlayerHurt(event.getEntity());
-        }
+        ServerBehaviorScheduler.onHurt(event.getEntity(), event.getSource());
     }
 
     private static void onLivingDrops(LivingDropsEvent event) {
@@ -94,17 +90,13 @@ public final class ForgeServerEvents {
     }
 
     private static void onLivingHeal(LivingHealEvent event) {
-        LivingEntity living = event.getEntity();
-        if (!living.level().isClientSide()) {
-            ServerBehaviorScheduler.onHealed(living);
-        }
+        ServerBehaviorScheduler.onHealed(event.getEntity());
     }
 
-    /** Leaving the End replaces the player; eyes applied to a player are still lost on death. */
+    /** Respawning or leaving the End replaces the player. */
     private static void onPlayerClone(PlayerEvent.Clone event) {
-        if (!event.isWasDeath()) {
-            EyeState.copy(event.getOriginal(), event.getEntity());
-        }
+        ServerServices.onPlayerCloned((ServerPlayer) event.getOriginal(), (ServerPlayer) event.getEntity(),
+                !event.isWasDeath());
     }
 
     private static void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {

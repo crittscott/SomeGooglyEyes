@@ -16,7 +16,6 @@ import net.minecraft.client.color.item.ItemTintSources;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.special.SpecialModelRenderers;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.PlayerModelType;
 import net.minecraftforge.client.event.AddGuiOverlayLayersEvent;
@@ -28,6 +27,8 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.level.LevelEvent;
+import net.minecraftforge.eventbus.api.bus.BusGroup;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 /** Physical-client registration kept out of the dedicated-server entry point. */
@@ -39,7 +40,7 @@ public final class ForgeClientBootstrap {
     /** Appended without an anchor, so the picker HUD draws after every vanilla HUD layer. */
     private static void addGuiLayers(AddGuiOverlayLayersEvent event) {
         event.getLayeredDraw().add(
-                Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "picker"),
+                SomeGooglyCommon.id("picker"),
                 (graphics, deltaTracker) -> PickerHud.render(graphics, graphics.guiWidth()));
     }
 
@@ -86,9 +87,15 @@ public final class ForgeClientBootstrap {
         ClientLifecycle.onDisconnect();
     }
 
+    private static void onClientSetup(FMLClientSetupEvent event) {
+        ClientLifecycle.logStartup();
+    }
+
     /** Register the client config and every client-side Forge listener. */
     public static void register(FMLJavaModLoadingContext context) {
+        BusGroup modBusGroup = context.getModBusGroup();
         ForgeClientConfig.register(context);
+        FMLClientSetupEvent.getBus(modBusGroup).addListener(ForgeClientBootstrap::onClientSetup);
         registerItemModelTypes();
 
         EntityRenderersEvent.AddLayers.BUS.addListener(ForgeClientBootstrap::addRendererLayers);
@@ -101,7 +108,6 @@ public final class ForgeClientBootstrap {
         EntityLeaveLevelEvent.BUS.addListener(ForgeClientBootstrap::onEntityLeaveLevel);
         ItemTooltipEvent.BUS.addListener(ForgeClientBootstrap::onItemTooltip);
         LevelEvent.Unload.BUS.addListener(ForgeClientBootstrap::onLevelUnload);
-        ClientLifecycle.logStartup();
     }
 
     private static void registerClientCommands(RegisterClientCommandsEvent event) {
@@ -120,9 +126,6 @@ public final class ForgeClientBootstrap {
 
     private static void registerKeyMappings(RegisterKeyMappingsEvent event) {
         KeyMapping.Category.register(PickerInput.CATEGORY.id());
-        event.register(PickerInput.LOCK);
-        event.register(PickerInput.PART_NEXT);
-        event.register(PickerInput.PART_PREV);
-        event.register(PickerInput.TOGGLE);
+        PickerInput.KEYS.forEach(event::register);
     }
 }

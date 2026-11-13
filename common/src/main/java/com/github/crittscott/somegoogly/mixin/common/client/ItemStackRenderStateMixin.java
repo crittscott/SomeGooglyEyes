@@ -32,8 +32,7 @@ abstract class ItemStackRenderStateMixin implements SkullEyeRenderer.ItemHolder,
     @Inject(method = "submit", at = @At("HEAD"))
     private void somegoogly$beginItem(PoseStack pose, SubmitNodeCollector collector, int packedLight,
                                       int packedOverlay, int outlineColor, CallbackInfo callback) {
-        ClientEyeRuntime.beginItemDraw(somegoogly$draw);
-        SkullEyeRenderer.beginItem(somegoogly$item);
+        ClientEyeRuntime.beginItemState(somegoogly$item, somegoogly$draw);
     }
 
     @Inject(method = "clear", at = @At("TAIL"))
@@ -45,7 +44,6 @@ abstract class ItemStackRenderStateMixin implements SkullEyeRenderer.ItemHolder,
     @Inject(method = "submit", at = @At("RETURN"))
     private void somegoogly$endItem(PoseStack pose, SubmitNodeCollector collector, int packedLight,
                                     int packedOverlay, int outlineColor, CallbackInfo callback) {
-        SkullEyeRenderer.end();
         ClientEyeRuntime.endItemDraw();
     }
 

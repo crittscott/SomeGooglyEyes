@@ -48,7 +48,7 @@ public abstract class ConfigValue<T> {
         return values -> {
             List<String> accepted = new ArrayList<>();
             for (String value : values) {
-                if (value != null && valid.test(value)) {
+                if (valid.test(value)) {
                     accepted.add(value);
                 }
             }
@@ -135,9 +135,16 @@ public abstract class ConfigValue<T> {
             parsed = parser.apply(get());
         }
 
+        /**
+         * Assign {@code value}, dropping its invalid entries. A non-empty list with no valid entry falls back to
+         * the default rather than to an empty list, which is how Forge's and NeoForge's own list correction treat it.
+         */
         @Override
         public void set(List<String> value) {
             super.set(value);
+            if (get().isEmpty() && !value.isEmpty()) {
+                super.reset();
+            }
             parsed = parser.apply(get());
         }
 

@@ -22,6 +22,13 @@ public final class GeckoCompat {
     private GeckoCompat() {
     }
 
+    /** Drop the GeckoLib model caches, if GeckoLib is present; called whenever the models are replaced. */
+    public static void clearCaches() {
+        if (LOADED) {
+            GeckoIntegration.clearCaches();
+        }
+    }
+
     /** Bone names for a GeckoLib mob, or an empty list when GeckoLib is unavailable. */
     public static List<String> enumerate(EntityRenderer<?, ?> renderer, LivingEntity living) {
         if (!LOADED) {

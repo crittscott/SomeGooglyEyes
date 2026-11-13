@@ -8,7 +8,7 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
 import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.network.PickerFreezePacket;
-import com.github.crittscott.somegoogly.platform.ClientNetworking;
+import com.github.crittscott.somegoogly.client.platform.ClientNetworking;
 import com.github.crittscott.somegoogly.picker.PickerFreezeService;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -277,7 +277,6 @@ public final class PickerState {
 
     /** The variant currently being edited (never null; the list always holds at least one). */
     public static DraftVariant currentVariant() {
-        variantIndex = Math.max(0, Math.min(variantIndex, variants.size() - 1));
         return variants.get(variantIndex);
     }
 
@@ -311,7 +310,18 @@ public final class PickerState {
         unlock();
     }
 
-    /** The CLI {@code delete <n>} op (1-based): remove an eye from the current variant. */
+    /** Flat cross target {@code target} once the eye at {@code deleted} is gone. */
+    private static int crossTargetAfterDelete(int target, int deleted) {
+        if (target == deleted) {
+            return EyePlacement.NO_CROSS_TARGET;
+        }
+        return target > deleted ? target - 1 : target;
+    }
+
+    /**
+     * The CLI {@code delete <n>} op (1-based): remove an eye from the current variant. Cross targets are flat list
+     * indexes, so every later eye's target moves down one and a target on the deleted eye is cleared.
+     */
     public static boolean delete(int oneBased) {
         List<ListedEye> eyes = currentEyes();
         int idx = oneBased - 1;
@@ -319,6 +329,12 @@ public final class PickerState {
             return false;
         }
         eyes.remove(idx);
+        for (ListedEye listed : eyes) {
+            listed.eye.crossTarget = crossTargetAfterDelete(listed.eye.crossTarget, idx);
+        }
+        if (currentEye != null) {
+            currentEye.crossTarget = crossTargetAfterDelete(currentEye.crossTarget, idx);
+        }
         if (selectedIndex == idx) {
             clearDraft(); // the edited eye is gone; return to no-draft rather than a phantom
         } else if (selectedIndex > idx) {
@@ -455,7 +471,7 @@ public final class PickerState {
     /**
      * Reset picker state to its construction state on disconnect, <b>without sending anything</b> — the
      * connection may already be gone, and the server's own logout handling
-     * ({@link PickerFreezeService#onPlayerLoggedOut}) releases any frozen mob regardless.
+     * ({@link PickerFreezeService#unfreeze}) releases any frozen mob regardless.
      *
      * <p>The authored drafts go too, along with {@link #targetType()}. They were authored against — and
      * seeded from — the server we're leaving, and {@code export} would happily send them to the next
@@ -605,14 +621,14 @@ public final class PickerState {
         return true;
     }
 
-    /** Thickness multiplier along the look axis (1 = standard; clamped >= 0). */
+    /** Thickness multiplier along the look axis (1 = standard). */
     public static void setDepth(float v) {
-        currentEye.depth = Math.max(0, v);
+        currentEye.depth = v;
     }
 
-    /** Set the current draft eye's overall scale, clamped to {@code >= 0}. */
+    /** Set the current draft eye's overall scale. */
     public static void setEyeScale(float v) {
-        currentEye.eyeScale = Math.max(0, v);
+        currentEye.eyeScale = v;
     }
 
     /** Set whether the current draft eye renders full-bright. */
@@ -625,9 +641,9 @@ public final class PickerState {
         currentEye.irisColors = new float[]{r, g, b};
     }
 
-    /** Set the current draft eye's iris scale, clamped to {@code >= 0}. */
+    /** Set the current draft eye's iris scale. */
     public static void setIrisScale(float v) {
-        currentEye.irisScale = Math.max(0, v);
+        currentEye.irisScale = v;
     }
 
     /**
@@ -670,9 +686,9 @@ public final class PickerState {
         azimuth.ifPresent(v -> currentEye.azimuth = v);
     }
 
-    /** The CLI {@code variant weight <w>} op: set the current variant's relative weight (clamped >= 0). */
+    /** The CLI {@code variant weight <w>} op: set the current variant's relative weight. */
     public static void setVariantWeight(double w) {
-        currentVariant().weight = Math.max(0, w);
+        currentVariant().weight = w;
     }
 
     private static void syncPartIndex() {
