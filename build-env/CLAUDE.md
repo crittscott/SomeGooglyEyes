@@ -1,4 +1,4 @@
-###### v20
+###### v21
 
 YOU ARE NOT TO DECOMPILE OR UNARCHIVE ANYTHING, EVER. NO EXCEPTIONS. YOU ARE NOT TO TREAT EVERY TASK AS OF WORLD-ENDING IMPORTANCE TO GET RIGHT. YOU ARE NOT TO SEARCH THE ENTIRE INTERNET IN AN ATTEMPT TO MAKE SURE YOU HAVE AN IRREFUTABLE PROOF THAT EVERY WORD OF YOUR AS YET UNWRITTEN ANSWER IS PERFECTLY CORRECT. DO NOT CHECK EVERY THING YOU DID MULTIPLE TIMES. DO IT AND MOVE ON.
 
@@ -85,6 +85,9 @@ These are part of writing the change, not a second audit.
 
 - After a rename, move, removal, or signature change, search production code, tests, loader implementations, comments, docs, and data for affected references and descriptions. Include string-based Mixin declarations and Architectury implementation names.
 - On a multi-loader change, follow the path on each loader from the trigger to the shared code. Do not assume the second loader matches the first.
+- Search for the vanilla, loader, and mod calls your new code makes. If other code makes the same calls for the same purpose, the change is not finished: move the decision to one place and have both call it.
+- A brief for an agent that will write code names the owning methods, from the "Where decisions live" table in `orientation-code.md`, for whatever it will touch.
+- When several agents work in one checkout at once, each owns a separate set of files. Before editing a file another agent may have changed, read its current text; never write a file back from an earlier copy.
 - In your report, name any recalled API fact the change depends on and anything only an in-game check can confirm. Distinguish source inspection, successful compilation, passing automated tests, and manual verification. Report owner-supplied results as such; do not infer checks that were not reported.
 
 # Version Control and Commit Messages
