@@ -63,14 +63,16 @@ loadScripts(document, 'script');</script>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
 <li><a href="#all()" tabindex="0">all()</a></li>
-<li><a href="#encoded()" tabindex="0">encoded()</a></li>
 <li><a href="#canEverWearEyes(net.minecraft.world.entity.LivingEntity)" tabindex="0">canEverWearEyes(LivingEntity)</a></li>
+<li><a href="#isExcluded(net.minecraft.resources.Identifier)" tabindex="0">isExcluded(Identifier)</a></li>
 <li><a href="#get(net.minecraft.resources.Identifier,boolean)" tabindex="0">get(Identifier, boolean)</a></li>
 <li><a href="#resolve(net.minecraft.resources.Identifier,boolean,float)" tabindex="0">resolve(Identifier, boolean, float)</a></li>
 <li><a href="#resolveHead(net.minecraft.resources.Identifier,float)" tabindex="0">resolveHead(Identifier, float)</a></li>
 <li><a href="#encode(java.util.Map)" tabindex="0">encode(Map)</a></li>
-<li><a href="#replaceIfChanged(java.util.Map,java.util.Map)" tabindex="0">replaceIfChanged(Map, Map)</a></li>
+<li><a href="#replaceIfChanged(com.github.crittscott.somegoogly.network.EyeConfigSyncPacket)" tabindex="0">replaceIfChanged(EyeConfigSyncPacket)</a></li>
 <li><a href="#onServerStopping()" tabindex="0">onServerStopping()</a></li>
+<li><a href="#packet()" tabindex="0">packet()</a></li>
+<li><a href="#packetFor(java.util.Map)" tabindex="0">packetFor(Map)</a></li>
 </ol>
 </li>
 </ol>
@@ -93,10 +95,10 @@ loadScripts(document, 'script');</script>
 (see <a href="../server/ServerServices.html#onLivingEntityLoaded(net.minecraft.world.entity.LivingEntity)"><code>ServerServices.onLivingEntityLoaded(LivingEntity)</code></a>) and to build the sync payload sent to clients.
 
 <p>Kept separate from <a href="ClientEyeConfigs.html" title="class in com.github.crittscott.somegoogly.config"><code>ClientEyeConfigs</code></a> so the integrated server and client don't share
-one static map in single-player. Installed maps are immutable snapshots; their mutable model
-values are owned by this store and must be treated as read-only after installation. Each snapshot
-carries its sets' NBT encoding, which is both the sync payload content and the identity a reload
-compares to decide whether anything changed.</div>
+one static map in single-player. The installed set is held as the immutable sync packet built for it; its
+mutable model values are owned by this store and must be treated as read-only after installation. The packet
+carries the sets' NBT encoding, which is the identity a reload compares to decide whether anything changed,
+and its already-serialized bytes, which every joining player and every broadcast reuses.</div>
 </div>
 </section>
 <section class="summary">
@@ -146,25 +148,34 @@ walkable part tree, so eyes can never render on it.</div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Encode each set through <a href="EyeConfigModel.RuntimeConfigSet.html#CODEC"><code>EyeConfigModel.RuntimeConfigSet.CODEC</code></a> as NBT.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a><wbr>&lt;net.minecraft.resources.Identifier, net.minecraft.nbt.CompoundTag&gt;</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#encoded()" class="member-name-link">encoded</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The installed sets encoded through <a href="EyeConfigModel.RuntimeConfigSet.html#CODEC"><code>EyeConfigModel.RuntimeConfigSet.CODEC</code></a>; read-only, like <a href="#all()"><code>all()</code></a>.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable <a href="EyeConfigModel.RuntimeConfig.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfig</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#get(net.minecraft.resources.Identifier,boolean)" class="member-name-link">get</a><wbr>(net.minecraft.resources.Identifier&nbsp;entity,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable <a href="EyeConfigModel.RuntimeConfig.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfig</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#get(net.minecraft.resources.Identifier,boolean)" class="member-name-link">get</a><wbr>(net.minecraft.resources.Identifier&nbsp;entity,
  boolean&nbsp;baby)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Return the entity's config for the requested age, including the age-independent fallback.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#isExcluded(net.minecraft.resources.Identifier)" class="member-name-link">isExcluded</a><wbr>(net.minecraft.resources.Identifier&nbsp;type)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Entity kinds for which the renderer cannot display eyes.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onServerStopping()" class="member-name-link">onServerStopping</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Drop the installed set so nothing carries over to the next world.</div>
 </div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../network/EyeConfigSyncPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeConfigSyncPacket</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#packet()" class="member-name-link">packet</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">The installed set as the packet every client receives.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../network/EyeConfigSyncPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeConfigSyncPacket</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#packetFor(java.util.Map)" class="member-name-link">packetFor</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.Identifier, <a href="EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;&nbsp;configs)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">The sync packet for <code>configs</code>, serialized once, to check and then install.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#replaceIfChanged(java.util.Map,java.util.Map)" class="member-name-link">replaceIfChanged</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.Identifier, <a href="EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;&nbsp;next,
- <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.Identifier, net.minecraft.nbt.CompoundTag&gt;&nbsp;nextEncoded)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#replaceIfChanged(com.github.crittscott.somegoogly.network.EyeConfigSyncPacket)" class="member-name-link">replaceIfChanged</a><wbr>(<a href="../network/EyeConfigSyncPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeConfigSyncPacket</a>&nbsp;next)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Datapack-reload entry point: install <code>next</code> only when its encoding differs from the installed
 set's, so a <code>/reload</code> for an unrelated datapack leaves the installed snapshot, and therefore
@@ -231,15 +242,6 @@ mutate its <a href="EyeConfigModel.RuntimeConfigSet.html" title="class in com.gi
 </section>
 </li>
 <li>
-<section class="detail" id="encoded()">
-<h3>encoded</h3>
-<div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.Identifier, net.minecraft.nbt.CompoundTag&gt;</span>&nbsp;<span class="element-name">encoded</span>()</div>
-<div class="block">The installed sets encoded through <a href="EyeConfigModel.RuntimeConfigSet.html#CODEC"><code>EyeConfigModel.RuntimeConfigSet.CODEC</code></a>; read-only, like <a href="#all()"><code>all()</code></a>.</div>
-</div>
-</section>
-</li>
-<li>
 <section class="detail" id="canEverWearEyes(net.minecraft.world.entity.LivingEntity)">
 <h3>canEverWearEyes</h3>
 <div class="horizontal-scroll">
@@ -249,6 +251,15 @@ roll (<a href="../server/ServerServices.html#onLivingEntityLoaded(net.minecraft.
 that only has an adult config must still be allowed to roll — otherwise it stores
 <code>hasGooglyEyes=false</code> and never re-rolls, locking it out of eyes forever even after it
 grows up. The client swaps in the age-appropriate geometry as the mob ages.</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="isExcluded(net.minecraft.resources.Identifier)">
+<h3>isExcluded</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isExcluded</span><wbr><span class="parameters">(net.minecraft.resources.Identifier&nbsp;type)</span></div>
+<div class="block">Entity kinds for which the renderer cannot display eyes.</div>
 </div>
 </section>
 </li>
@@ -293,11 +304,10 @@ grows up. The client swaps in the age-appropriate geometry as the mob ages.</div
 </section>
 </li>
 <li>
-<section class="detail" id="replaceIfChanged(java.util.Map,java.util.Map)">
+<section class="detail" id="replaceIfChanged(com.github.crittscott.somegoogly.network.EyeConfigSyncPacket)">
 <h3>replaceIfChanged</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">replaceIfChanged</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.Identifier, <a href="EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;&nbsp;next,
- <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.Identifier, net.minecraft.nbt.CompoundTag&gt;&nbsp;nextEncoded)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">replaceIfChanged</span><wbr><span class="parameters">(<a href="../network/EyeConfigSyncPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeConfigSyncPacket</a>&nbsp;next)</span></div>
 <div class="block">Datapack-reload entry point: install <code>next</code> only when its encoding differs from the installed
 set's, so a <code>/reload</code> for an unrelated datapack leaves the installed snapshot, and therefore
 every client's copy, alone. Returns whether a swap happened.</div>
@@ -310,6 +320,24 @@ every client's copy, alone. Returns whether a swap happened.</div>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onServerStopping</span>()</div>
 <div class="block">Drop the installed set so nothing carries over to the next world.</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="packet()">
+<h3>packet</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../network/EyeConfigSyncPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeConfigSyncPacket</a></span>&nbsp;<span class="element-name">packet</span>()</div>
+<div class="block">The installed set as the packet every client receives.</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="packetFor(java.util.Map)">
+<h3>packetFor</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../network/EyeConfigSyncPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeConfigSyncPacket</a></span>&nbsp;<span class="element-name">packetFor</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.Identifier, <a href="EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;&nbsp;configs)</span></div>
+<div class="block">The sync packet for <code>configs</code>, serialized once, to check and then install.</div>
 </div>
 </section>
 </li>

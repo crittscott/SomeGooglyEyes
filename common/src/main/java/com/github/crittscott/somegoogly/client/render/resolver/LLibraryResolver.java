@@ -59,7 +59,12 @@ public class LLibraryResolver extends ReflectedBoxResolver {
 
     @Override
     protected boolean available() {
-        return HANDLES.available() && !integrationFailed();
+        return HANDLES.available();
+    }
+
+    @Override
+    protected String familyLabel() {
+        return "LLibrary";
     }
 
     @Override
@@ -69,7 +74,7 @@ public class LLibraryResolver extends ReflectedBoxResolver {
 
     @Override
     public boolean handles(EntityModel<?> model) {
-        return available() && HANDLES.modelClass().isInstance(model);
+        return available() && HANDLES.modelClass().isInstance(model) && !failed(model);
     }
 
     @Override

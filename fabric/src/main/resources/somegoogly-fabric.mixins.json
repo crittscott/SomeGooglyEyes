@@ -6,8 +6,8 @@
   "mixins": [
     "AbstractVillagerTradeMixin",
     "EntityHeadDropMixin",
-    "LivingEntityDeathLootMixin",
-    "LivingEntityReactionMixin"
+    "HealReactionMixin",
+    "LivingEntityDeathLootMixin"
   ],
   "injectors": {
     "defaultRequire": 1

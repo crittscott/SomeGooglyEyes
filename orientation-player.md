@@ -25,7 +25,7 @@ Eyed mobs occasionally blink, stare, look aside, or go cross-eyed. They may also
 - damaged by a player: 20 percent default chance to bulge;
 - milked (cow, mooshroom, goat): bulge;
 - sheared (sheep): bulge;
-- showing affection (love mode, villagers breeding, a golem's flower, an ocelot's trust): pupils swell to twice their size;
+- showing affection (love mode, villagers breeding, a golem's flower, an ocelot's trust, taming): pupils swell to twice their size;
 - completing a villager or wandering-trader trade: swirl;
 - healed: swirl, 200-tick default cooldown.
 
@@ -45,7 +45,7 @@ Harvested eyes keep effective iris/cornea colors and glow, not species or placem
 
 ## Googly Eyes and Slimy Eyes
 
-First-person loose eyes react to movement/hurt/heal; third-person eyes use world gravity and holder motion. Frames, GUI, and third-person hands animate independently; paired heads may cross-eye. GUI runs while paused. Frame eyes are 3x. Ambient-off keeps physics; global switches gate animation.
+Held loose eyes react to movement and the holder's hurt/heal, seen by every viewer; first and third person share each hand's eye. Frames, GUI, and hands animate independently; paired heads may cross-eye. GUI runs while paused. Frame eyes are 3x. Ambient-off keeps physics; global switches gate animation.
 
 Worlds saved by the 26.1.2 release open with their eyed mobs, eye items, and settings intact. Worlds from earlier versions must first be opened with the 26.1.2 release.
 
@@ -64,7 +64,7 @@ Picking up a Googly Eye unlocks the Slimy Eye recipe. Craft an eye with a slimeb
 
 Harvest before restyling. Sneak-use on air applies to yourself. Applying or taking another player’s eyes requires level PvP and team permission.
 
-To take your own eyes off, sneak and right-click the air with shears. Optometrist shears do it cleanly; plain shears also cost a melee hit's worth of health, even with PvP off. Either way one Googly Eye drops, the shears lose one durability, and the shearing sound plays.
+To take your own eyes off, sneak and right-click the air with shears. Optometrist shears do it cleanly; plain shears also cost a bare-handed hit of health, even with PvP off. Either way one Googly Eye drops, the shears lose one durability, and the shearing sound plays.
 
 ## Mob heads
 
@@ -83,7 +83,7 @@ While holding either eye item, sneak and aim at a living entity, vanilla boat, o
 - supports eyes only at another life stage; or
 - has no configuration.
 
-The check reaches about 16 blocks. Client settings that hide eyes do not affect the result.
+The check answers for the crosshair target within reach. Client settings that hide eyes do not affect the result.
 
 ## Creative tab
 

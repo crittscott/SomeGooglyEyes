@@ -102,6 +102,7 @@ public class LayerGooglyEyes<S extends LivingEntityRenderState, M extends Entity
         for (PickerState.ListedEye listed : PickerState.previewEyes()) {
             poseStack.pushPose();
             if (resolver.toAttachmentSpace(poseStack, model, listed.part, state.isBaby)) {
+                insetShearedSheepBody(poseStack, state, listed.part);
                 GooglyEyeRenderer.renderPreviewEye(poseStack, collector, packedLight, overlay, listed.eye);
             }
             poseStack.popPose();
@@ -112,6 +113,7 @@ public class LayerGooglyEyes<S extends LivingEntityRenderState, M extends Entity
         if (token != null) {
             poseStack.pushPose();
             if (resolver.toAttachmentSpace(poseStack, model, token, state.isBaby)) {
+                insetShearedSheepBody(poseStack, state, token);
                 GooglyEyeRenderer.renderPreviewPlacement(poseStack, collector, packedLight, overlay);
             }
             poseStack.popPose();

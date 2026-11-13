@@ -98,7 +98,7 @@ loadScripts(document, 'script');</script>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Server-side coverage for <code>ServerBehaviorScheduler</code> — the authority for which behavior a mob is
 playing and when. <a href="BehaviorDeterminismGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest"><code>BehaviorDeterminismGameTestsLogic</code></a> covers the client's animation derivation;
-this drives the server clock by hand (<code>serverTick()</code>) and probes the schedule through
+this lets the server clock run (waiting real ticks where time matters) and probes the schedule through
 <code>trigger()</code>'s return (a dropped trigger means the mob is busy or asleep). Every test forces the
 scheduler to a clean slate with <code>clear()</code> and force-and-restores the behavior config it touches;
 ambient play is disabled so only the events under test can move the schedule, except where ambient
@@ -179,7 +179,7 @@ ready to resume.</div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#eyelessTrackedMobIgnoresGameEvents(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">eyelessTrackedMobIgnoresGameEvents</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.server.level.ServerPlayer&nbsp;player)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">A tracked mob with no eyes is not an event target: heal and trade triggers no-op.</div>
+<div class="block">A tracked mob with no eyes is not an event target: a real heal and a real completed trade start nothing.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#gameEventTriggersRespectConfig(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">gameEventTriggersRespectConfig</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
@@ -384,9 +384,9 @@ back on; no hidden expression is waiting, and later milking starts a new grow no
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">eyelessTrackedMobIgnoresGameEvents</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.server.level.ServerPlayer&nbsp;player)</span></div>
-<div class="block">A tracked mob with no eyes is not an event target: heal and trade triggers no-op. No in-game form,
-since an eyeless mob has nothing to show; guards that heal and trade hooks send nothing for eyeless
-mobs.</div>
+<div class="block">A tracked mob with no eyes is not an event target: a real heal and a real completed trade start nothing.
+No in-game form, since an eyeless mob has nothing to show; guards that the heal and trade hooks send
+nothing for eyeless mobs.</div>
 </div>
 </section>
 </li>

@@ -1,0 +1,12 @@
+{
+  "criteria": {
+    "use": {
+      "trigger": "minecraft:player_interacted_with_entity",
+      "conditions": {
+        "item": {
+          "items": "somegoogly:slimy_eye"
+        }
+      }
+    }
+  }
+}

@@ -38,6 +38,8 @@ public final class FabricClientEvents {
 
     /** Register the client's Fabric event callbacks. */
     public static void register() {
+        // Not helper.register: it appends after a slime's outer jelly layer, hiding the eyes behind it, so the
+        // shared installer inserts into the renderer's layer list itself.
         LivingEntityRenderLayerRegistrationCallback.EVENT.register(
                 (entityType, renderer, helper, context) ->
                         ClientRenderLayers.install(renderer));
@@ -45,14 +47,11 @@ public final class FabricClientEvents {
             FabricGeckoLayers.register();
         }
         ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(
-                Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "attachment_caches"),
+                SomeGooglyCommon.id("attachment_caches"),
                 (ResourceManagerReloadListener) manager -> ClientRenderLayers.clearCaches());
 
         KeyMapping.Category.register(PickerInput.CATEGORY.id());
-        KeyMappingHelper.registerKeyMapping(PickerInput.LOCK);
-        KeyMappingHelper.registerKeyMapping(PickerInput.PART_NEXT);
-        KeyMappingHelper.registerKeyMapping(PickerInput.PART_PREV);
-        KeyMappingHelper.registerKeyMapping(PickerInput.TOGGLE);
+        PickerInput.KEYS.forEach(KeyMappingHelper::registerKeyMapping);
 
         ClientEntityEvents.ENTITY_UNLOAD.register((entity, level) -> {
             ClientEyeRuntime.onEntityRemoved(entity);

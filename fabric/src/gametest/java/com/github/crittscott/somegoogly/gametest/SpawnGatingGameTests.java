@@ -17,7 +17,7 @@ public final class SpawnGatingGameTests {
     }
 
     @GameTest(structure = TEMPLATE, maxTicks = 40)
-    public void spawnAlwaysAssignsAVariantRoll(GameTestHelper helper) {
-        SpawnGatingGameTestsLogic.spawnAlwaysAssignsAVariantRoll(helper);
+    public void onlyEyedMobsStoreAVariantRoll(GameTestHelper helper) {
+        SpawnGatingGameTestsLogic.onlyEyedMobsStoreAVariantRoll(helper);
     }
 }

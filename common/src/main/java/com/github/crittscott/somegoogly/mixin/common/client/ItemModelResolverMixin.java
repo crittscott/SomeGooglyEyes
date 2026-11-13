@@ -2,7 +2,6 @@ package com.github.crittscott.somegoogly.mixin.common.client;
 
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.github.crittscott.somegoogly.client.PresentationEyes;
-import com.github.crittscott.somegoogly.client.HandItemEyes;
 import com.github.crittscott.somegoogly.client.render.SkullEyeRenderer;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.registry.ModContent;
@@ -37,7 +36,9 @@ abstract class ItemModelResolverMixin {
         PresentationEyes.Draw draw = PresentationEyes.Draw.NONE;
         if (PresentationEyes.supports(stack)) {
             draw = displayContext == ItemDisplayContext.GUI
-                    ? ClientEyeRuntime.itemDraw(stack) : HandItemEyes.context(owner instanceof LivingEntity living ? living : null, stack, displayContext);
+                    ? ClientEyeRuntime.itemDraw(stack)
+                    : ClientEyeRuntime.handContext(owner instanceof LivingEntity living ? living : null, stack,
+                    displayContext);
         }
         ((PresentationEyes.Holder) renderState).somegoogly$setDraw(draw);
         if (displayContext == ItemDisplayContext.GUI && draw.eyes() != null) {

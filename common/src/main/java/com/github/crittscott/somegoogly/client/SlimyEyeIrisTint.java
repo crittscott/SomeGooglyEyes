@@ -19,7 +19,7 @@ import org.jspecify.annotations.Nullable;
  */
 public record SlimyEyeIrisTint() implements ItemTintSource {
 
-    public static final Identifier ID = Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "slimy_eye_iris");
+    public static final Identifier ID = SomeGooglyCommon.id("slimy_eye_iris");
     public static final MapCodec<SlimyEyeIrisTint> MAP_CODEC = MapCodec.unit(new SlimyEyeIrisTint());
 
     @Override

@@ -40,6 +40,10 @@ public final class EyeItemServiceGameTests {
                 helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
 
+    public static void optometristRollsOnlyOntoShearsAndBooks(GameTestHelper helper) {
+        EyeItemServiceGameTestsLogic.optometristRollsOnlyOntoShearsAndBooks(helper);
+    }
+
     public static void selfRemoveWithShearsDropsAnEyeAndCostsDurability(GameTestHelper helper) {
         EyeItemServiceGameTestsLogic.selfRemoveWithShearsDropsAnEyeAndCostsDurability(
                 helper, SomeGooglyGameTests.survivalPlayer(helper));

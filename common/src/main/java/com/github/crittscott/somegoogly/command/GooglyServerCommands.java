@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.command;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.ServerConfig;
+import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
@@ -65,12 +66,6 @@ public final class GooglyServerCommands {
     private static final String SPAWN_ALL = "spawnall";
     /** The branches this tree owns under {@link #ROOT}, which Fabric's client forwards to the server. */
     public static final List<String> SERVER_BRANCHES = List.of(ADMIN, MOB, SPAWN, SPAWN_ALL);
-
-    /**
-     * {@code /sg mob rot} azimuth is measured from +X toward +Z; vanilla yaw 0 faces +Z, so
-     * yaw = azimuth - this offset.
-     */
-    private static final float AZIMUTH_TO_YAW_OFFSET = 90.0F;
 
     private static final float MAX_MOB_MOVE = 20.0F;
     private static final double MAX_MOB_MOVE_SQUARED = (double) MAX_MOB_MOVE * MAX_MOB_MOVE;
@@ -204,7 +199,7 @@ public final class GooglyServerCommands {
             return 0;
         }
         living.teleportTo(living.getX() + dx, living.getY() + dy, living.getZ() + dz);
-        PickerGate.tellSuccess(source, "somegoogly.command.picker.mob_moved",
+        PickerGate.tellSuccess(source, true, "somegoogly.command.picker.mob_moved",
                 compact(living.getX()), compact(living.getY()),
                 compact(living.getZ()));
         return 1;
@@ -221,11 +216,11 @@ public final class GooglyServerCommands {
             return 0;
         }
         float azimuth = FloatArgumentType.getFloat(ctx, "azimuth");
-        float yaw = Mth.wrapDegrees(azimuth - AZIMUTH_TO_YAW_OFFSET);
+        float yaw = Mth.wrapDegrees(azimuth - EyePlacement.AZIMUTH_TO_YAW_OFFSET);
         living.setYRot(yaw);
         living.setYHeadRot(yaw);
         living.setYBodyRot(yaw);
-        PickerGate.tellSuccess(source, "somegoogly.command.picker.mob_rotated", angle(azimuth));
+        PickerGate.tellSuccess(source, true, "somegoogly.command.picker.mob_rotated", angle(azimuth));
         return 1;
     }
 
@@ -263,7 +258,7 @@ public final class GooglyServerCommands {
             EyeBehavior[] pool = EyeBehavior.values();
             behavior = pool[target.getRandom().nextInt(pool.length)];
         } else {
-            Identifier key = Identifier.tryParse(SomeGooglyCommon.MOD_ID + ":" + id);
+            Identifier key = Identifier.tryBuild(SomeGooglyCommon.MOD_ID, id);
             behavior = key == null ? null : EyeBehavior.byId(key);
         }
         if (behavior == null) {
@@ -271,8 +266,7 @@ public final class GooglyServerCommands {
             return 0;
         }
 
-        boolean started = ServerBehaviorScheduler.trigger(
-                target, behavior, behavior.defaultDuration(), target.getRandom().nextLong());
+        boolean started = ServerBehaviorScheduler.trigger(target, behavior, target.getRandom().nextLong());
         return feedback(ctx, started
                 ? Component.translatable("somegoogly.command.admin.behavior_playing", behavior.id().getPath())
                 : Component.translatable("somegoogly.command.admin.behavior_dropped", behavior.id().getPath()));

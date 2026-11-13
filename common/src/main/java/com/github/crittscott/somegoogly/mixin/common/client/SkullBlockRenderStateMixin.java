@@ -8,7 +8,10 @@ import org.spongepowered.asm.mixin.Unique;
 
 import org.jspecify.annotations.Nullable;
 
-/** Carries a placed head's eyes from render-state extraction to its submission. */
+/**
+ * Carries a placed head's eyes from render-state extraction to its submission. Vanilla render states have no slot
+ * for another mod's data, and no loader offers one, so the eyes ride the state as mixin fields.
+ */
 @Mixin(SkullBlockRenderState.class)
 abstract class SkullBlockRenderStateMixin implements SkullEyeRenderer.PlacedHolder {
 

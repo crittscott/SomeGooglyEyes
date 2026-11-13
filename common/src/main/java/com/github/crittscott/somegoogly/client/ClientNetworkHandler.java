@@ -14,7 +14,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
 /**
- * Applies the five server-to-client payloads on the client game thread. Loader payload registration runs on
+ * Applies the server-to-client payloads on the client game thread. Loader payload registration runs on
  * both distributions, so it reaches these handlers only from inside lambda bodies, which link this class when a
  * payload arrives rather than when the handler is registered.
  */
@@ -31,11 +31,16 @@ public final class ClientNetworkHandler {
         }
     }
 
-    /** Retain a behavior for a known entity, including one that has not rendered yet. */
+    /** Retain a behavior for a known entity or one of its hands, including one that has not rendered yet. */
     public static void handleBehavior(EyeBehaviorTriggerPacket packet) {
         LivingEntity living = living(packet.entityId());
         if (living != null) {
-            ClientEyeRuntime.setBehavior(living, packet.behavior(), packet.duration(), packet.seed(), packet.elapsed());
+            if (packet.target() == EyeBehaviorTriggerPacket.Target.ENTITY) {
+                ClientEyeRuntime.setBehavior(living, packet.behavior(), packet.seed(), packet.elapsed());
+            } else {
+                ClientEyeRuntime.setHandBehavior(living, packet.target().hand(), packet.behavior(), packet.seed(),
+                        packet.elapsed());
+            }
         }
     }
 

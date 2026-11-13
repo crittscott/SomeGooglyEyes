@@ -99,12 +99,12 @@ loadScripts(document, 'script');</script>
 implements net.minecraft.network.protocol.common.custom.CustomPacketPayload</span></div>
 <div class="block">Client → server: "write this authored eye config for <code>entityTypeId</code> into the world datapack
 and reload" — the wire half of <code>/sg export</code>. The config travels as codec-encoded NBT (the
-same <code>RuntimeConfig.CODEC</code> the sync packet uses in the other direction); all validation,
-path construction, the 10-second cooldown, the file write, and the <code>/reload</code> live in
+same <code>RuntimeConfig.CODEC</code> the sync packet uses in the other direction); semantic config validation,
+path construction, the export cooldown, the file write, and the <code>/reload</code> live in
 <a href="../picker/PickerExportService.html" title="class in com.github.crittscott.somegoogly.picker"><code>PickerExportService</code></a>. It requires <a href="../picker/PickerGate.html#authorized(net.minecraft.server.level.ServerPlayer)"><code>PickerGate.authorized(ServerPlayer)</code></a>.
 
-<p>The client refuses to send a packet that fails <a href="#fitsServerbound()"><code>fitsServerbound()</code></a>, so a malformed or
-oversized packet only comes from a misbehaving client and fails decoding the way vanilla's do.</div>
+<p>The decoder requires an adult or baby age and a config compound. Server-dependent validation stays in
+the export service and reports refusals to the author. The client checks <a href="#fitsServerbound()"><code>fitsServerbound()</code></a> before sending.</div>
 </div>
 </section>
 <section class="summary">

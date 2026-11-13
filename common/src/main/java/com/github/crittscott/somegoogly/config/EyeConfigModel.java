@@ -38,8 +38,30 @@ public final class EyeConfigModel {
     public static final String PART_BODY = "body";
     public static final String PART_HEAD = "head";
     public static final String PART_ROOT = "root";
+    private static final String ATTACHMENT_INDEX_PREFIX = "#";
+    private static final String ATTACHMENT_SEPARATOR = "/";
 
     private EyeConfigModel() {
+    }
+
+    /** A positional name for a model part with no stable named segment. */
+    public static String attachmentIndex(int index) {
+        return ATTACHMENT_INDEX_PREFIX + index;
+    }
+
+    /** Join raw model-part segments in their root-to-leaf order. */
+    public static String attachmentPath(Iterable<String> segments) {
+        return String.join(ATTACHMENT_SEPARATOR, segments);
+    }
+
+    /** Append a raw model-part name, preserving an empty root prefix. */
+    public static String attachmentPath(String prefix, String name) {
+        return prefix.isEmpty() ? name : prefix + ATTACHMENT_SEPARATOR + name;
+    }
+
+    /** Split an authored path before resolver-specific normalization. */
+    public static String[] attachmentSegments(String token) {
+        return token.split(ATTACHMENT_SEPARATOR);
     }
 
     /** Resolve a stable 0..1 roll through a runtime config's cumulative variant weights. */
@@ -79,6 +101,11 @@ public final class EyeConfigModel {
             }
         }
         return last;
+    }
+
+    /** The raw final segment of an authored attachment path. */
+    public static String lastAttachmentSegment(String token) {
+        return token.substring(token.lastIndexOf(ATTACHMENT_SEPARATOR) + ATTACHMENT_SEPARATOR.length());
     }
 
     /** Raw datapack file structure (one file per entity). */

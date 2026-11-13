@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.network;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.picker.PickerFreezeService;
 import com.github.crittscott.somegoogly.picker.PickerGate;
 import net.minecraft.network.FriendlyByteBuf;
@@ -25,7 +26,7 @@ import java.util.UUID;
  */
 public class PickerFreezePacket implements CustomPacketPayload {
 
-    public static final Identifier ID = NetworkProtocol.id("picker_freeze");
+    public static final Identifier ID = SomeGooglyCommon.id("picker_freeze");
     public static final CustomPacketPayload.Type<PickerFreezePacket> TYPE = new CustomPacketPayload.Type<>(ID);
     public static final StreamCodec<RegistryFriendlyByteBuf, PickerFreezePacket> STREAM_CODEC =
             StreamCodec.ofMember(PickerFreezePacket::write, PickerFreezePacket::new);
