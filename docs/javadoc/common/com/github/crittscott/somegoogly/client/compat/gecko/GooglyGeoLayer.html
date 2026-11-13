@@ -82,7 +82,7 @@ loadScripts(document, 'script');</script>
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
 <div class="sub-title"><span class="package-label-in-type">Package</span>&nbsp;<a href="package-summary.html">com.github.crittscott.somegoogly.client.compat.gecko</a></div>
-<h1 title="Class GooglyGeoLayer" class="title">Class GooglyGeoLayer&lt;T extends net.minecraft.world.entity.LivingEntity &amp; software.bernie.geckolib.animatable.GeoAnimatable&gt;</h1>
+<h1 title="Class GooglyGeoLayer" class="title">Class GooglyGeoLayer&lt;T extends net.minecraft.world.entity.Entity &amp; software.bernie.geckolib.animatable.GeoAnimatable&gt;</h1>
 </div>
 <div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
 <div class="inheritance">software.bernie.geckolib.renderer.layer.GeoRenderLayer&lt;T&gt;
@@ -91,7 +91,7 @@ loadScripts(document, 'script');</script>
 </div>
 <section class="class-description" id="class-description">
 <hr>
-<div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">GooglyGeoLayer&lt;T extends net.minecraft.world.entity.LivingEntity &amp; software.bernie.geckolib.animatable.GeoAnimatable&gt;</span>
+<div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">GooglyGeoLayer&lt;T extends net.minecraft.world.entity.Entity &amp; software.bernie.geckolib.animatable.GeoAnimatable&gt;</span>
 <span class="extends-implements">extends software.bernie.geckolib.renderer.layer.GeoRenderLayer&lt;T&gt;</span></div>
 <div class="block">GeckoLib render layer that draws googly eyes on named bones (the GeckoLib counterpart of
  <code>LayerGooglyEyes</code>). Handles both normal rendering (from synced config,
@@ -103,6 +103,9 @@ loadScripts(document, 'script');</script>
  <a href="#renderForBone(com.mojang.blaze3d.vertex.PoseStack,T,software.bernie.geckolib.cache.object.GeoBone,net.minecraft.client.renderer.RenderType,net.minecraft.client.renderer.MultiBufferSource,com.mojang.blaze3d.vertex.VertexConsumer,float,int,int,int)"><code>renderForBone(com.mojang.blaze3d.vertex.PoseStack, T, software.bernie.geckolib.cache.object.GeoBone, net.minecraft.client.renderer.RenderType, net.minecraft.client.renderer.MultiBufferSource, com.mojang.blaze3d.vertex.VertexConsumer, float, int, int, int)</code></a> sees a pose actually positioned at the animated bone. Per-entity gating and
  bone lookup happen once in <a href="#preRender(com.mojang.blaze3d.vertex.PoseStack,T,software.bernie.geckolib.cache.object.BakedGeoModel,net.minecraft.client.renderer.RenderType,net.minecraft.client.renderer.MultiBufferSource,com.mojang.blaze3d.vertex.VertexConsumer,float,int,int,int)"><code>preRender(com.mojang.blaze3d.vertex.PoseStack, T, software.bernie.geckolib.cache.object.BakedGeoModel, net.minecraft.client.renderer.RenderType, net.minecraft.client.renderer.MultiBufferSource, com.mojang.blaze3d.vertex.VertexConsumer, float, int, int, int)</code></a>; <a href="#renderForBone(com.mojang.blaze3d.vertex.PoseStack,T,software.bernie.geckolib.cache.object.GeoBone,net.minecraft.client.renderer.RenderType,net.minecraft.client.renderer.MultiBufferSource,com.mojang.blaze3d.vertex.VertexConsumer,float,int,int,int)"><code>renderForBone(com.mojang.blaze3d.vertex.PoseStack, T, software.bernie.geckolib.cache.object.GeoBone, net.minecraft.client.renderer.RenderType, net.minecraft.client.renderer.MultiBufferSource, com.mojang.blaze3d.vertex.VertexConsumer, float, int, int, int)</code></a> draws on the matching bones;
  <a href="#render(com.mojang.blaze3d.vertex.PoseStack,T,software.bernie.geckolib.cache.object.BakedGeoModel,net.minecraft.client.renderer.RenderType,net.minecraft.client.renderer.MultiBufferSource,com.mojang.blaze3d.vertex.VertexConsumer,float,int,int,int)"><code>render(com.mojang.blaze3d.vertex.PoseStack, T, software.bernie.geckolib.cache.object.BakedGeoModel, net.minecraft.client.renderer.RenderType, net.minecraft.client.renderer.MultiBufferSource, com.mojang.blaze3d.vertex.VertexConsumer, float, int, int, int)</code></a> (which GeckoLib calls last) just clears the per-render state.
+
+ <p>GeckoLib's layer event reaches every entity renderer, projectiles and vehicles included, so the layer is
+ typed on any entity and draws nothing on one that isn't living.
 
  <p>Only loaded when GeckoLib is present (referenced via <code>GeckoCompat</code>).</div>
 </section>
@@ -213,7 +216,7 @@ loadScripts(document, 'script');</script>
 <ul class="member-list">
 <li>
 <section class="detail" id="preRender(com.mojang.blaze3d.vertex.PoseStack,T,software.bernie.geckolib.cache.object.BakedGeoModel,net.minecraft.client.renderer.RenderType,net.minecraft.client.renderer.MultiBufferSource,com.mojang.blaze3d.vertex.VertexConsumer,float,int,int,int)">
-<h3 id="preRender(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.world.entity.LivingEntity,software.bernie.geckolib.cache.object.BakedGeoModel,net.minecraft.client.renderer.RenderType,net.minecraft.client.renderer.MultiBufferSource,com.mojang.blaze3d.vertex.VertexConsumer,float,int,int,int)">preRender</h3>
+<h3 id="preRender(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.world.entity.Entity,software.bernie.geckolib.cache.object.BakedGeoModel,net.minecraft.client.renderer.RenderType,net.minecraft.client.renderer.MultiBufferSource,com.mojang.blaze3d.vertex.VertexConsumer,float,int,int,int)">preRender</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">preRender</span><wbr><span class="parameters">(com.mojang.blaze3d.vertex.PoseStack&nbsp;poseStack,
  <a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">T</a>&nbsp;animatable,
  software.bernie.geckolib.cache.object.BakedGeoModel&nbsp;bakedModel,
@@ -226,13 +229,13 @@ loadScripts(document, 'script');</script>
  int&nbsp;renderColor)</span></div>
 <dl class="notes">
 <dt>Overrides:</dt>
-<dd><code>preRender</code>&nbsp;in class&nbsp;<code>software.bernie.geckolib.renderer.layer.GeoRenderLayer&lt;<a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">T</a> extends net.minecraft.world.entity.LivingEntity &amp; software.bernie.geckolib.animatable.GeoAnimatable&gt;</code></dd>
+<dd><code>preRender</code>&nbsp;in class&nbsp;<code>software.bernie.geckolib.renderer.layer.GeoRenderLayer&lt;<a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">T</a> extends net.minecraft.world.entity.Entity &amp; software.bernie.geckolib.animatable.GeoAnimatable&gt;</code></dd>
 </dl>
 </section>
 </li>
 <li>
 <section class="detail" id="renderForBone(com.mojang.blaze3d.vertex.PoseStack,T,software.bernie.geckolib.cache.object.GeoBone,net.minecraft.client.renderer.RenderType,net.minecraft.client.renderer.MultiBufferSource,com.mojang.blaze3d.vertex.VertexConsumer,float,int,int,int)">
-<h3 id="renderForBone(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.world.entity.LivingEntity,software.bernie.geckolib.cache.object.GeoBone,net.minecraft.client.renderer.RenderType,net.minecraft.client.renderer.MultiBufferSource,com.mojang.blaze3d.vertex.VertexConsumer,float,int,int,int)">renderForBone</h3>
+<h3 id="renderForBone(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.world.entity.Entity,software.bernie.geckolib.cache.object.GeoBone,net.minecraft.client.renderer.RenderType,net.minecraft.client.renderer.MultiBufferSource,com.mojang.blaze3d.vertex.VertexConsumer,float,int,int,int)">renderForBone</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">renderForBone</span><wbr><span class="parameters">(com.mojang.blaze3d.vertex.PoseStack&nbsp;poseStack,
  <a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">T</a>&nbsp;animatable,
  software.bernie.geckolib.cache.object.GeoBone&nbsp;bone,
@@ -245,13 +248,13 @@ loadScripts(document, 'script');</script>
  int&nbsp;renderColor)</span></div>
 <dl class="notes">
 <dt>Overrides:</dt>
-<dd><code>renderForBone</code>&nbsp;in class&nbsp;<code>software.bernie.geckolib.renderer.layer.GeoRenderLayer&lt;<a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">T</a> extends net.minecraft.world.entity.LivingEntity &amp; software.bernie.geckolib.animatable.GeoAnimatable&gt;</code></dd>
+<dd><code>renderForBone</code>&nbsp;in class&nbsp;<code>software.bernie.geckolib.renderer.layer.GeoRenderLayer&lt;<a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">T</a> extends net.minecraft.world.entity.Entity &amp; software.bernie.geckolib.animatable.GeoAnimatable&gt;</code></dd>
 </dl>
 </section>
 </li>
 <li>
 <section class="detail" id="render(com.mojang.blaze3d.vertex.PoseStack,T,software.bernie.geckolib.cache.object.BakedGeoModel,net.minecraft.client.renderer.RenderType,net.minecraft.client.renderer.MultiBufferSource,com.mojang.blaze3d.vertex.VertexConsumer,float,int,int,int)">
-<h3 id="render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.world.entity.LivingEntity,software.bernie.geckolib.cache.object.BakedGeoModel,net.minecraft.client.renderer.RenderType,net.minecraft.client.renderer.MultiBufferSource,com.mojang.blaze3d.vertex.VertexConsumer,float,int,int,int)">render</h3>
+<h3 id="render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.world.entity.Entity,software.bernie.geckolib.cache.object.BakedGeoModel,net.minecraft.client.renderer.RenderType,net.minecraft.client.renderer.MultiBufferSource,com.mojang.blaze3d.vertex.VertexConsumer,float,int,int,int)">render</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">render</span><wbr><span class="parameters">(com.mojang.blaze3d.vertex.PoseStack&nbsp;poseStack,
  <a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">T</a>&nbsp;animatable,
  software.bernie.geckolib.cache.object.BakedGeoModel&nbsp;bakedModel,
@@ -264,7 +267,7 @@ loadScripts(document, 'script');</script>
  int&nbsp;renderColor)</span></div>
 <dl class="notes">
 <dt>Overrides:</dt>
-<dd><code>render</code>&nbsp;in class&nbsp;<code>software.bernie.geckolib.renderer.layer.GeoRenderLayer&lt;<a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">T</a> extends net.minecraft.world.entity.LivingEntity &amp; software.bernie.geckolib.animatable.GeoAnimatable&gt;</code></dd>
+<dd><code>render</code>&nbsp;in class&nbsp;<code>software.bernie.geckolib.renderer.layer.GeoRenderLayer&lt;<a href="GooglyGeoLayer.html" title="type parameter in GooglyGeoLayer">T</a> extends net.minecraft.world.entity.Entity &amp; software.bernie.geckolib.animatable.GeoAnimatable&gt;</code></dd>
 </dl>
 </section>
 </li>

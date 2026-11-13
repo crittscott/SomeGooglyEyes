@@ -55,6 +55,27 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Build a three-member command-spawn chain from the loader's finalize-spawn listener.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/EyeStateOverrideGameTests.html#adminAppearanceCommands(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">adminAppearanceCommands(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/EyeStateOverrideGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">EyeStateOverrideGameTests</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/EyeStateOverrideGameTestsLogic.html#adminAppearanceCommands(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">adminAppearanceCommands(GameTestHelper, ServerPlayer)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/EyeStateOverrideGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">EyeStateOverrideGameTestsLogic</a></dt>
+<dd>
+<div class="block">Tint and glow commands set the looked-at mob's appearance; <code>tint clear</code> drops both tints but keeps the
+ glow, and <code>glow config</code> then drops the last override.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/EyeStateOverrideGameTests.html#adminCommandsRefuseUnauthorizedOrInvalidUse(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">adminCommandsRefuseUnauthorizedOrInvalidUse(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/EyeStateOverrideGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">EyeStateOverrideGameTests</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/EyeStateOverrideGameTestsLogic.html#adminCommandsRefuseUnauthorizedOrInvalidUse(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">adminCommandsRefuseUnauthorizedOrInvalidUse(GameTestHelper, ServerPlayer)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/EyeStateOverrideGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">EyeStateOverrideGameTestsLogic</a></dt>
+<dd>
+<div class="block">Admin commands refuse a survival operator, a creative non-operator, invalid arguments, and no looked-at target,
+ changing nothing.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/EyeStateOverrideGameTests.html#adminEyesAndBehaviorCommands(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">adminEyesAndBehaviorCommands(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/EyeStateOverrideGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">EyeStateOverrideGameTests</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/EyeStateOverrideGameTestsLogic.html#adminEyesAndBehaviorCommands(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">adminEyesAndBehaviorCommands(GameTestHelper, ServerPlayer)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/EyeStateOverrideGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">EyeStateOverrideGameTestsLogic</a></dt>
+<dd>
+<div class="block"><code>eyes false</code>/<code>eyes true</code> take and give the looked-at mob's eyes, and <code>behavior swirl</code> starts a
+ swirl that a second behavior command can't interrupt.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTests.html#adventureCanPlaceOnReadsTheClickedHead(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">adventureCanPlaceOnReadsTheClickedHead(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">SkullEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTestsLogic.html#adventureCanPlaceOnReadsTheClickedHead(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">adventureCanPlaceOnReadsTheClickedHead(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">SkullEyeGameTestsLogic</a></dt>
@@ -143,8 +164,11 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/SerializationGameTestsLogic.html#behaviorTriggerPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">behaviorTriggerPacketRoundTrips(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SerializationGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">SerializationGameTestsLogic</a></dt>
 <dd>
-<div class="block">The behavior trigger survives the wire, and every behavior has its own wire id.</div>
+<div class="block">The behavior trigger survives the wire for every behavior on the entity's eyes and every reaction in either
+ hand, at the start, middle, and end of its lifetime.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/TestEyeRuntime.BoatCache.html#%3Cinit%3E()" class="member-name-link">BoatCache()</a> - Constructor for class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/TestEyeRuntime.BoatCache.html" title="class in com.github.crittscott.somegoogly.gametest">TestEyeRuntime.BoatCache</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTests.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.gametest">BoatEyeGameTests</a> - Class in <a href="com/github/crittscott/somegoogly/gametest/package-summary.html">com.github.crittscott.somegoogly.gametest</a></dt>
 <dd>
 <div class="block">Loader entry points for boat state, application, and ambient animation checks.</div>
@@ -157,79 +181,88 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTestsLogic.html#boatsBeginEyelessAndSelectGeometry(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">boatsBeginEyelessAndSelectGeometry(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">BoatEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">In game: place every wood's boat and chest boat; they start eyeless and retain eyes only after application.</div>
+<div class="block">Every wood's boat and chest boat starts without eyes and has a bundled definition; a bamboo raft takes its eyes
+ on its raft attachment and every other wood on its hull.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTests.html#boatsCrossOnlyWithConfiguredPartners(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">boatsCrossOnlyWithConfiguredPartners(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">BoatEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTestsLogic.html#boatsCrossOnlyWithConfiguredPartners(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">boatsCrossOnlyWithConfiguredPartners(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">BoatEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">In game: a datapack's paired eyes cross; the bundled opposite-side eyes and unpaired eyes never cross.</div>
+<div class="block">Boat eyes cross only with a partner their definition names; the bundled eyes, one on each side of the hull, never
+ do, nor does a lone eye.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTests.html#boatsEvictIdleSimulations(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">boatsEvictIdleSimulations(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">BoatEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTestsLogic.html#boatsEvictIdleSimulations(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">boatsEvictIdleSimulations(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">BoatEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">In game: pause beside an eyed boat, look away, then return; pause retains pupils and unseen boats retire.</div>
+<div class="block">A boat's pupils are simulated only while it is drawn.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTests.html#boatsFollowGravityAndOwnerMotion(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">boatsFollowGravityAndOwnerMotion(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">BoatEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTestsLogic.html#boatsFollowGravityAndOwnerMotion(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">boatsFollowGravityAndOwnerMotion(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">BoatEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">In game: with ambient expressions off, row and turn an eyed boat; its pupils lag motion and settle under gravity.</div>
+<div class="block">Boat pupils fall toward world-down and react to the boat's movement and turning.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTests.html#boatsHarvestOneEye(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">boatsHarvestOneEye(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">BoatEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTestsLogic.html#boatsHarvestOneEye(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">boatsHarvestOneEye(GameTestHelper, Player)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">BoatEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">In game: Optometrist shears remove a boat's eyes, drop their appearance, and cost one durability.</div>
+<div class="block">Optometrist shears take a boat's eyes as one Googly Eye that keeps their appearance, for one durability, without
+ opening a chest boat.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTests.html#boatsHaveIndependentAmbientAndPhysics(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">boatsHaveIndependentAmbientAndPhysics(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">BoatEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTestsLogic.html#boatsHaveIndependentAmbientAndPhysics(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">boatsHaveIndependentAmbientAndPhysics(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">BoatEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">In game: let two eyed boats blink, pause, then resume after hiding one; pupils remain independent.</div>
+<div class="block">Each boat's pupils and expressions are its own, expressions follow world time without catching up on missed ones,
+ and turning ambient expressions off stops them but not the pupils' physics.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTests.html#boatsHonorCreativeConsumption(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">boatsHonorCreativeConsumption(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">BoatEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTestsLogic.html#boatsHonorCreativeConsumption(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">boatsHonorCreativeConsumption(GameTestHelper, Player)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">BoatEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">In game: apply eyes in creative; the Slimy Eye remains in your hand.</div>
+<div class="block">Giving a boat eyes in creative spends no Slimy Eye.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTests.html#boatsHonorInteractionGates(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">boatsHonorInteractionGates(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">BoatEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTestsLogic.html#boatsHonorInteractionGates(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">boatsHonorInteractionGates(GameTestHelper, Player)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">BoatEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">In game: turn off the mod or disable the boat definition; using eyes or plain shears leaves the boat alone.</div>
+<div class="block">With the mod switched off, or with no boat definition loaded, a Slimy Eye leaves a boat to its vanilla use and is
+ not spent; plain shears never take a boat's eyes.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTests.html#boatsReceiveAppearanceAndRefuseRestyling(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">boatsReceiveAppearanceAndRefuseRestyling(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">BoatEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTestsLogic.html#boatsReceiveAppearanceAndRefuseRestyling(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">boatsReceiveAppearanceAndRefuseRestyling(GameTestHelper, Player)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">BoatEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">In game: apply a dyed, glowing Slimy Eye in either hand, then try another; only the first is consumed.</div>
+<div class="block">A Slimy Eye in either hand gives a boat or chest boat eyes with the eye's whole appearance and is spent once; an
+ eyed boat refuses another and keeps its vanilla use.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTests.html#boatsRefuseSpectatorMutation(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">boatsRefuseSpectatorMutation(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">BoatEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTestsLogic.html#boatsRefuseSpectatorMutation(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">boatsRefuseSpectatorMutation(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">BoatEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">In game: try Slimy Eyes and Optometrist shears in spectator mode; the boat, tools, and stacks stay unchanged.</div>
+<div class="block">Spectators can't give a boat eyes or take them.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTests.html#boatsReplaceAndClearSimulations(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">boatsReplaceAndClearSimulations(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">BoatEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTestsLogic.html#boatsReplaceAndClearSimulations(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">boatsReplaceAndClearSimulations(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">BoatEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">In game: nearby boats keep separate simulations; restyling, hiding, resource reload, and unloading retire old pupils.</div>
+<div class="block">A boat keeps its pupils while nothing about it changes and starts afresh when its appearance or wood changes, it
+ unloads, resources reload, or the world changes; an invisible boat, and every boat while the mod is switched off,
+ shows no eyes.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTests.html#boatsRequireMatchingEnabledAttachments(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">boatsRequireMatchingEnabledAttachments(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">BoatEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTestsLogic.html#boatsRequireMatchingEnabledAttachments(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">boatsRequireMatchingEnabledAttachments(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">BoatEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">In game: switch boat definitions between hull/raft-only and disabled; only configured geometry accepts eyes.</div>
+<div class="block">A boat takes eyes only when its definition is enabled and puts eyes on the boat's own attachment: <code>raft</code>
+ for bamboo, <code>hull</code> for other woods.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTests.html#boatsSaveAndSynchronizeSnapshots(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">boatsSaveAndSynchronizeSnapshots(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">BoatEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTestsLogic.html#boatsSaveAndSynchronizeSnapshots(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">boatsSaveAndSynchronizeSnapshots(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BoatEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">BoatEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">In game: eyed boats retain their layout and appearance through saving and chunk reload, including disabled worlds.</div>
+<div class="block">A boat's eyes, placement, and appearance survive saving and reach clients unchanged.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTests.html#brokenHeadKeepsItsEyes(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">brokenHeadKeepsItsEyes(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">SkullEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
@@ -254,9 +287,8 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/EligibilityGameTestsLogic.html#canEverWearEyesSpansBothAgeBuckets(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">canEverWearEyesSpansBothAgeBuckets(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/EligibilityGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">EligibilityGameTestsLogic</a></dt>
 <dd>
-<div class="block"><code>ServerEyeConfigs.canEverWearEyes(net.minecraft.world.entity.LivingEntity)</code> consults <b>both</b> age buckets, so the at-spawn roll is
- offered to a mob that only has a config for the life stage it is not currently in — otherwise it
- would store <code>hasGooglyEyes=false</code> for life and never gain eyes on aging.</div>
+<div class="block">A cow with a definition only for the life stage it is not in still takes the natural eye roll when it joins
+ the level, and keeps those eyes as it ages; a missing or disabled definition never wins the roll.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/PickerExportGameTests.html#canonicalJsonWritesDefaultValuedFields(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">canonicalJsonWritesDefaultValuedFields(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/PickerExportGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">PickerExportGameTests</a></dt>
 <dd>&nbsp;</dd>
@@ -265,24 +297,12 @@ loadScripts(document, 'script');</script>
 <div class="block">The written form pins values that equal their defaults rather than eliding them, so a file's
  meaning can't drift with the code.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/gametest/EyeStateOverrideGameTests.html#clearingEveryFieldRemovesTheCompound(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">clearingEveryFieldRemovesTheCompound(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/EyeStateOverrideGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">EyeStateOverrideGameTests</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/gametest/TestEyeRuntime.BoatCache.html#clear()" class="member-name-link">clear()</a> - Method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/TestEyeRuntime.BoatCache.html" title="class in com.github.crittscott.somegoogly.gametest">TestEyeRuntime.BoatCache</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/gametest/EyeStateOverrideGameTestsLogic.html#clearingEveryFieldRemovesTheCompound(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">clearingEveryFieldRemovesTheCompound(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/EyeStateOverrideGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">EyeStateOverrideGameTestsLogic</a></dt>
-<dd>
-<div class="block">Clearing the last override removes the override data entirely.</div>
-</dd>
-<dt><a href="com/github/crittscott/somegoogly/gametest/EyeStateOverrideGameTests.html#clearingTintRemovesOnlyThatField(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">clearingTintRemovesOnlyThatField(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/EyeStateOverrideGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">EyeStateOverrideGameTests</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/gametest/TestEyeRuntime.GuiCache.html#clear()" class="member-name-link">clear()</a> - Method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/TestEyeRuntime.GuiCache.html" title="class in com.github.crittscott.somegoogly.gametest">TestEyeRuntime.GuiCache</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/gametest/EyeStateOverrideGameTestsLogic.html#clearingTintRemovesOnlyThatField(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">clearingTintRemovesOnlyThatField(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/EyeStateOverrideGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">EyeStateOverrideGameTestsLogic</a></dt>
-<dd>
-<div class="block">Removing one color override leaves the other in place.</div>
-</dd>
-<dt><a href="com/github/crittscott/somegoogly/gametest/EyeStateOverrideGameTests.html#clearingTintsPreservesGlow(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">clearingTintsPreservesGlow(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/EyeStateOverrideGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">EyeStateOverrideGameTests</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/gametest/TestEyeRuntime.HandCache.html#clear()" class="member-name-link">clear()</a> - Method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/TestEyeRuntime.HandCache.html" title="class in com.github.crittscott.somegoogly.gametest">TestEyeRuntime.HandCache</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/gametest/EyeStateOverrideGameTestsLogic.html#clearingTintsPreservesGlow(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">clearingTintsPreservesGlow(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/EyeStateOverrideGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">EyeStateOverrideGameTestsLogic</a></dt>
-<dd>
-<div class="block">Clearing colors keeps a glow override.</div>
-</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/RecipeGameTests.html#cobwebClearsAllOverrides(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">cobwebClearsAllOverrides(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/RecipeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">RecipeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/RecipeGameTestsLogic.html#cobwebClearsAllOverrides(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">cobwebClearsAllOverrides(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/RecipeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">RecipeGameTestsLogic</a></dt>
@@ -324,7 +344,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/SerializationGameTestsLogic.html#configSyncPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">configSyncPacketRoundTrips(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SerializationGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">SerializationGameTestsLogic</a></dt>
 <dd>
-<div class="block">The eye-definition sync survives the wire, and the reload budget measures it exactly.</div>
+<div class="block">The eye-definition sync survives the wire, and a decoded packet writes the very bytes it received.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/SerializationGameTests.html#configSyncRejectsOversizedAndUnsafePayloads(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">configSyncRejectsOversizedAndUnsafePayloads(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SerializationGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">SerializationGameTests</a></dt>
 <dd>&nbsp;</dd>
@@ -345,6 +365,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">A mob Minecraft converts into another keeps its eye state.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/LoaderInteractionGameTestsLogic.Copy.html#copy(net.minecraft.server.level.ServerPlayer,net.minecraft.server.level.ServerPlayer,boolean)" class="member-name-link">copy(ServerPlayer, ServerPlayer, boolean)</a> - Method in interface com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/LoaderInteractionGameTestsLogic.Copy.html" title="interface in com.github.crittscott.somegoogly.gametest">LoaderInteractionGameTestsLogic.Copy</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/TestPlayers.html#create(net.minecraft.server.level.ServerPlayer,boolean,int)" class="member-name-link">create(ServerPlayer, boolean, int)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/TestPlayers.html" title="class in com.github.crittscott.somegoogly.gametest">TestPlayers</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/BehaviorSchedulerGameTests.html#creepyEndermanPulses(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">creepyEndermanPulses(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BehaviorSchedulerGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">BehaviorSchedulerGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/BehaviorSchedulerGameTestsLogic.html#creepyEndermanPulses(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">creepyEndermanPulses(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BehaviorSchedulerGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">BehaviorSchedulerGameTestsLogic</a></dt>
@@ -374,11 +398,9 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Only a qualifying kill harvests.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/gametest/SomeGooglyGameTests.html#deathHarvestUsesTheSuppliedDropSink(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">deathHarvestUsesTheSuppliedDropSink(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SomeGooglyGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">SomeGooglyGameTests</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/gametest/SomeGooglyGameTestsLogic.html#deathHarvestUsesTheSuppliedDropSink(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">deathHarvestUsesTheSuppliedDropSink(GameTestHelper, Player)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SomeGooglyGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">SomeGooglyGameTestsLogic</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/gametest/TestBehaviorSettings.html#DEFAULTS" class="member-name-link">DEFAULTS</a> - Static variable in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/TestBehaviorSettings.html" title="class in com.github.crittscott.somegoogly.gametest">TestBehaviorSettings</a></dt>
 <dd>
-<div class="block">A shears kill can drop one Googly Eye carrying the mob's look.</div>
+<div class="block">Every behavior setting at its server-config default.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/VariantSelectionGameTests.html#degenerateConfigsFallToFirstVariant(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">degenerateConfigsFallToFirstVariant(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/VariantSelectionGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">VariantSelectionGameTests</a></dt>
 <dd>&nbsp;</dd>
@@ -415,12 +437,6 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:E">E</h2>
 <dl class="index">
-<dt><a href="com/github/crittscott/somegoogly/gametest/EligibilityGameTests.html#eligibilityFollowsTheSharedPredicate(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">eligibilityFollowsTheSharedPredicate(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/EligibilityGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">EligibilityGameTests</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/gametest/EligibilityGameTestsLogic.html#eligibilityFollowsTheSharedPredicate(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">eligibilityFollowsTheSharedPredicate(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/EligibilityGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">EligibilityGameTestsLogic</a></dt>
-<dd>
-<div class="block">Server eligibility follows that same predicate.</div>
-</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/EligibilityGameTests.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.gametest">EligibilityGameTests</a> - Class in <a href="com/github/crittscott/somegoogly/gametest/package-summary.html">com.github.crittscott.somegoogly.gametest</a></dt>
 <dd>
 <div class="block">Forge GameTest entry points for <a href="com/github/crittscott/somegoogly/gametest/EligibilityGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest"><code>EligibilityGameTestsLogic</code></a>; see that class for the actual
@@ -428,9 +444,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/EligibilityGameTestsLogic.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.gametest">EligibilityGameTestsLogic</a> - Class in <a href="com/github/crittscott/somegoogly/gametest/package-summary.html">com.github.crittscott.somegoogly.gametest</a></dt>
 <dd>
-<div class="block"><code>EyeConfigModel.RuntimeConfig.isUsable(com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig)</code> is the single eligibility predicate behind the slimy eye's targeting,
- the at-spawn gate, and the client's held-eye inspect indicator, so its endpoints — and
- <code>EyeItemService.verdictFor(net.minecraft.world.entity.Entity)</code> reading it — are what keep those three in agreement.</div>
+<div class="block">Which mobs can get eyes.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/SomeGooglyGameTestsLogic.html#entityPersistentDataSurvivesSaveLoad(net.minecraft.gametest.framework.GameTestHelper,java.lang.String)" class="member-name-link">entityPersistentDataSurvivesSaveLoad(GameTestHelper, String)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SomeGooglyGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">SomeGooglyGameTestsLogic</a></dt>
 <dd>
@@ -586,7 +600,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/BehaviorSchedulerGameTestsLogic.html#eyelessTrackedMobIgnoresGameEvents(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">eyelessTrackedMobIgnoresGameEvents(GameTestHelper, ServerPlayer)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BehaviorSchedulerGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">BehaviorSchedulerGameTestsLogic</a></dt>
 <dd>
-<div class="block">A tracked mob with no eyes is not an event target: heal and trade triggers no-op.</div>
+<div class="block">A tracked mob with no eyes is not an event target: a real heal and a real completed trade start nothing.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/EyeStateOverrideGameTests.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.gametest">EyeStateOverrideGameTests</a> - Class in <a href="com/github/crittscott/somegoogly/gametest/package-summary.html">com.github.crittscott.somegoogly.gametest</a></dt>
 <dd>
@@ -595,9 +609,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/EyeStateOverrideGameTestsLogic.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.gametest">EyeStateOverrideGameTestsLogic</a> - Class in <a href="com/github/crittscott/somegoogly/gametest/package-summary.html">com.github.crittscott.somegoogly.gametest</a></dt>
 <dd>
-<div class="block">The <code>EyeState</code> appearance-override mutations behind <code>/sg admin</code>: sparse overrides, atomic
- tint clearing, snapshot installation, and <code>setGlow(null)</code> dropping the override so eyes fall back
- to per-eye config glow.</div>
+<div class="block">The visual <code>/sg admin</code> commands, run through the server's command dispatcher by a player looking at an eyed
+ cow.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/SerializationGameTests.html#eyeStatePacketRejectsNonFiniteValues(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">eyeStatePacketRejectsNonFiniteValues(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SerializationGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">SerializationGameTests</a></dt>
 <dd>&nbsp;</dd>
@@ -628,13 +641,13 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTestsLogic.html#framedEyeFiltersItems(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">framedEyeFiltersItems(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">FramedEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">Empty slots, Slimy Eyes, and ordinary items are ineligible.</div>
+<div class="block">Only a Googly Eye in a frame gets a moving pupil; a Slimy Eye, an ordinary item, and an empty frame get none.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTests.html#framedEyeFollowsMountedGravity(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">framedEyeFollowsMountedGravity(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">FramedEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTestsLogic.html#framedEyeFollowsMountedGravity(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">framedEyeFollowsMountedGravity(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">FramedEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">Mounted pupils follow supplied gravity instead of always falling along the item's own down.</div>
+<div class="block">A framed eye's pupil falls toward the ground however the frame or the item in it is turned.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTests.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.gametest">FramedEyeGameTests</a> - Class in <a href="com/github/crittscott/somegoogly/gametest/package-summary.html">com.github.crittscott.somegoogly.gametest</a></dt>
 <dd>
@@ -649,62 +662,66 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTestsLogic.html#framedEyeHandlesShortIntervalsAndTimeJumps(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">framedEyeHandlesShortIntervalsAndTimeJumps(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">FramedEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">Short ambient intervals cannot overlap expressions; a time jump reconstructs the current slot.</div>
+<div class="block">Expressions never overlap, even with the shortest ambient interval, and an eye seen again after a long absence
+ joins the expression now playing.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTests.html#framedEyeHonorsAmbientSettings(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">framedEyeHonorsAmbientSettings(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">FramedEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTestsLogic.html#framedEyeHonorsAmbientSettings(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">framedEyeHonorsAmbientSettings(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">FramedEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">Ambient-off, empty, and partner-only pools suppress expressions, including one already active
- when settings change.</div>
+<div class="block">A framed eye stops expressing, even mid-expression, when ambient expressions are off, the pool is empty, or the
+ pool holds only expressions that need a second eye.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTests.html#framedEyePlaysSingleEyeExpressions(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">framedEyePlaysSingleEyeExpressions(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">FramedEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTestsLogic.html#framedEyePlaysSingleEyeExpressions(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">framedEyePlaysSingleEyeExpressions(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">FramedEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">Removing cross-eye from a mixed pool still leaves lone-eye expressions available.</div>
+<div class="block">A lone eye skips expressions that need a partner and still plays the rest.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTests.html#framedEyeReconstructsExpressions(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">framedEyeReconstructsExpressions(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">FramedEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTestsLogic.html#framedEyeReconstructsExpressions(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">framedEyeReconstructsExpressions(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">FramedEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">A newly created tracker joins a running expression with identical age and seeded parameters.</div>
+<div class="block">A player who starts watching a frame mid-expression sees the same expression at the same point as everyone else.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTests.html#framedEyeReleasesExpressionOverlays(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">framedEyeReleasesExpressionOverlays(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">FramedEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTestsLogic.html#framedEyeReleasesExpressionOverlays(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">framedEyeReleasesExpressionOverlays(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">FramedEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">Expressions finish, leaving neutral overlays between slots.</div>
+<div class="block">Each expression ends fully, leaving the eye as it was.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTests.html#framedEyeUsesIndependentSchedules(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">framedEyeUsesIndependentSchedules(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">FramedEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTestsLogic.html#framedEyeUsesIndependentSchedules(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">framedEyeUsesIndependentSchedules(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">FramedEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">Frames use independent UUID schedules.</div>
+<div class="block">Each frame keeps its own expression schedule, even when frames hold identical eyes.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTests.html#framedHeadAllowsPairedExpressions(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">framedHeadAllowsPairedExpressions(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">FramedEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTestsLogic.html#framedHeadAllowsPairedExpressions(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">framedHeadAllowsPairedExpressions(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">FramedEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">Two head pupils can cross; the same pool is suppressed for a lone loose eye.</div>
+<div class="block">A framed eyed head's two eyes can cross toward each other; a lone Googly Eye under the same settings cannot.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTests.html#framedHeadInvalidatesChangedItems(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">framedHeadInvalidatesChangedItems(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">FramedEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTestsLogic.html#framedHeadInvalidatesChangedItems(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">framedHeadInvalidatesChangedItems(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">FramedEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">Species, variant, and appearance changes invalidate a head tracker; plain heads have no tracker.</div>
+<div class="block">A framed head's eyes follow what the frame now holds: a different species, eye arrangement, or appearance gets a
+ fresh layout, and a plain head or a loose eye shows nothing of the head before it.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTests.html#framedHeadReconstructsExpressions(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">framedHeadReconstructsExpressions(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">FramedEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTestsLogic.html#framedHeadReconstructsExpressions(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">framedHeadReconstructsExpressions(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">FramedEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">Newly arriving viewers reconstruct a head's expression and blink participation.</div>
+<div class="block">A player who starts watching a framed head mid-blink sees the same eyes blinking at the same point as everyone
+ else.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTests.html#framedHeadUsesConfiguredLayout(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">framedHeadUsesConfiguredLayout(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">FramedEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTestsLogic.html#framedHeadUsesConfiguredLayout(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">framedHeadUsesConfiguredLayout(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/FramedEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">FramedEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">Eyed heads carry their mob's configured head parts and pupil arrays, including mounted gravity.</div>
+<div class="block">A framed eyed head shows its mob's eyes where they sit on the placed head, with its stored appearance, and its
+ pupils fall toward the ground.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/PickerFreezeGameTests.html#freezeCapturesAndUnfreezeRestores(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">freezeCapturesAndUnfreezeRestores(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/PickerFreezeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">PickerFreezeGameTests</a></dt>
 <dd>&nbsp;</dd>
@@ -740,12 +757,12 @@ loadScripts(document, 'script');</script>
 <div class="block"><code>swirlOnHeal</code>, <code>swirlOnTrade</code>, and <code>growOnHitPercent</code> gate their respective
  triggers.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/gametest/EyeStateOverrideGameTests.html#glowOverrideCanBeSetAndDropped(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">glowOverrideCanBeSetAndDropped(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/EyeStateOverrideGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">EyeStateOverrideGameTests</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/gametest/TestEyeRuntime.GuiCache.html#get(com.github.crittscott.somegoogly.client.ClientEyeRuntime.GuiKey,net.minecraft.world.item.ItemStack)" class="member-name-link">get(ClientEyeRuntime.GuiKey, ItemStack)</a> - Method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/TestEyeRuntime.GuiCache.html" title="class in com.github.crittscott.somegoogly.gametest">TestEyeRuntime.GuiCache</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/gametest/EyeStateOverrideGameTestsLogic.html#glowOverrideCanBeSetAndDropped(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">glowOverrideCanBeSetAndDropped(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/EyeStateOverrideGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">EyeStateOverrideGameTestsLogic</a></dt>
-<dd>
-<div class="block">A glow override can be set and then dropped back to the definition's glow.</div>
-</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/TestEyeRuntime.HandCache.html#get(net.minecraft.world.entity.LivingEntity,net.minecraft.world.InteractionHand,net.minecraft.world.item.ItemStack)" class="member-name-link">get(LivingEntity, InteractionHand, ItemStack)</a> - Method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/TestEyeRuntime.HandCache.html" title="class in com.github.crittscott.somegoogly.gametest">TestEyeRuntime.HandCache</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/TestEyeRuntime.BoatCache.html#get(net.minecraft.world.entity.vehicle.AbstractBoat)" class="member-name-link">get(AbstractBoat)</a> - Method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/TestEyeRuntime.BoatCache.html" title="class in com.github.crittscott.somegoogly.gametest">TestEyeRuntime.BoatCache</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/RecipeGameTests.html#glowstoneAndRedstoneToggleGlow(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">glowstoneAndRedstoneToggleGlow(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/RecipeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">RecipeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/RecipeGameTestsLogic.html#glowstoneAndRedstoneToggleGlow(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">glowstoneAndRedstoneToggleGlow(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/RecipeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">RecipeGameTestsLogic</a></dt>
@@ -758,47 +775,51 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">A Googly Eye stack carries its appearance.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/TestEyeRuntime.GuiCache.html#%3Cinit%3E()" class="member-name-link">GuiCache()</a> - Constructor for class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/TestEyeRuntime.GuiCache.html" title="class in com.github.crittscott.somegoogly.gametest">TestEyeRuntime.GuiCache</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/GuiItemEyeGameTests.html#guiEyesAdvanceWithoutWorldTicks(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">guiEyesAdvanceWithoutWorldTicks(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/GuiItemEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">GuiItemEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/GuiItemEyeGameTestsLogic.html#guiEyesAdvanceWithoutWorldTicks(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">guiEyesAdvanceWithoutWorldTicks(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/GuiItemEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">GuiItemEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">The UI clock advances expressions without world ticks.</div>
+<div class="block">Inventory icons keep their own clock, so their expressions continue while the world is paused.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/GuiItemEyeGameTests.html#guiEyesHonorEligibilityAndSwitch(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">guiEyesHonorEligibilityAndSwitch(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/GuiItemEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">GuiItemEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/GuiItemEyeGameTestsLogic.html#guiEyesHonorEligibilityAndSwitch(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">guiEyesHonorEligibilityAndSwitch(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/GuiItemEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">GuiItemEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">Hidden eyes and ordinary items retire their old presentation.</div>
+<div class="block">Only eye items get animated icons, and hiding eyes discards icon state, so showing them again starts fresh.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/GuiItemEyeGameTests.html#guiEyesKeepPresentationIdentity(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">guiEyesKeepPresentationIdentity(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/GuiItemEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">GuiItemEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/GuiItemEyeGameTestsLogic.html#guiEyesKeepPresentationIdentity(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">guiEyesKeepPresentationIdentity(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/GuiItemEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">GuiItemEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">Stack copies and count changes preserve a slot's simulation.</div>
+<div class="block">A slot keeps its eye's simulation when the stack is copied or its count changes, and the pupil falls toward
+ screen-down.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/GuiItemEyeGameTests.html#guiEyesReplaceChangedContents(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">guiEyesReplaceChangedContents(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/GuiItemEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">GuiItemEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/GuiItemEyeGameTestsLogic.html#guiEyesReplaceChangedContents(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">guiEyesReplaceChangedContents(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/GuiItemEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">GuiItemEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">A changed appearance replaces the simulation.</div>
+<div class="block">A changed appearance gives a slot's eye a new simulation with the new look.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/GuiItemEyeGameTests.html#guiEyesRetireClosedAndHiddenViews(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">guiEyesRetireClosedAndHiddenViews(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/GuiItemEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">GuiItemEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/GuiItemEyeGameTestsLogic.html#guiEyesRetireClosedAndHiddenViews(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">guiEyesRetireClosedAndHiddenViews(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/GuiItemEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">GuiItemEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">Closing a view drops its trackers while a visible HUD presentation survives.</div>
+<div class="block">Closing a screen frees its icons' state, the hotbar's icons keep theirs, and icons out of view expire.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/GuiItemEyeGameTests.html#guiEyesSeparateSlotsAndCursor(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">guiEyesSeparateSlotsAndCursor(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/GuiItemEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">GuiItemEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/GuiItemEyeGameTestsLogic.html#guiEyesSeparateSlotsAndCursor(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">guiEyesSeparateSlotsAndCursor(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/GuiItemEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">GuiItemEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">Neighboring copies and a carried stack have independent animation.</div>
+<div class="block">Each slot and the carried stack animate on their own.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/GuiItemEyeGameTests.html#guiHeadUsesConfiguredLayout(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">guiHeadUsesConfiguredLayout(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/GuiItemEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">GuiItemEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/GuiItemEyeGameTestsLogic.html#guiHeadUsesConfiguredLayout(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">guiHeadUsesConfiguredLayout(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/GuiItemEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">GuiItemEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">GUI heads retain their actual layout and paired expressions, with GUI gravity on each pupil.</div>
+<div class="block">An eyed head in the inventory shows its mob's eyes in place, and both eyes can blink and cross, independent of
+ the same head in a frame.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/GuiItemEyeGameTests.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.gametest">GuiItemEyeGameTests</a> - Class in <a href="com/github/crittscott/somegoogly/gametest/package-summary.html">com.github.crittscott.somegoogly.gametest</a></dt>
 <dd>
@@ -812,47 +833,54 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:H">H</h2>
 <dl class="index">
+<dt><a href="com/github/crittscott/somegoogly/gametest/TestEyeRuntime.HandCache.html#%3Cinit%3E()" class="member-name-link">HandCache()</a> - Constructor for class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/TestEyeRuntime.HandCache.html" title="class in com.github.crittscott.somegoogly.gametest">TestEyeRuntime.HandCache</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/HandItemEyeGameTests.html#handEyesFollowWorldGravityAcrossViews(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">handEyesFollowWorldGravityAcrossViews(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HandItemEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">HandItemEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/HandItemEyeGameTestsLogic.html#handEyesFollowWorldGravityAcrossViews(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">handEyesFollowWorldGravityAcrossViews(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HandItemEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">HandItemEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">World gravity ignores camera rotation and item display scale.</div>
+<div class="block">A held eye's pupil falls toward world-down whatever the camera angle or the item's display scale, a new pupil
+ starts already resting toward the ground, and an eye facing straight up rests centered.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/HandItemEyeGameTests.html#handEyesReactToHolderMotion(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">handEyesReactToHolderMotion(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HandItemEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">HandItemEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/HandItemEyeGameTestsLogic.html#handEyesReactToHolderMotion(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">handEyesReactToHolderMotion(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HandItemEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">HandItemEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">Holder movement drives third-person pupil physics.</div>
+<div class="block">A held eye's pupil reacts to its holder walking, jumping, and turning, and a holder who reappears far away does
+ not jolt it.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/HandItemEyeGameTests.html#handEyesReplaceContentsAndHonorGates(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">handEyesReplaceContentsAndHonorGates(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HandItemEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">HandItemEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/HandItemEyeGameTestsLogic.html#handEyesReplaceContentsAndHonorGates(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">handEyesReplaceContentsAndHonorGates(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HandItemEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">HandItemEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">Replacement and eligibility gates retire the former hand state.</div>
+<div class="block">A held eye keeps its pupil when the stack's count changes and starts a new one when its appearance changes or
+ eyes are shown again; plain heads, ordinary items, and empty hands have none.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/HandItemEyeGameTests.html#handEyesRetireUnloadedAndHiddenHolders(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">handEyesRetireUnloadedAndHiddenHolders(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HandItemEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">HandItemEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/HandItemEyeGameTestsLogic.html#handEyesRetireUnloadedAndHiddenHolders(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">handEyesRetireUnloadedAndHiddenHolders(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HandItemEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">HandItemEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">Unloading, hidden hands, and resource/world resets drop disposable state.</div>
+<div class="block">A holder that unloads drops both hands' eye state, unseen hands expire, and resource or world resets clear it
+ all.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/HandItemEyeGameTests.html#handEyesSeparateHoldersAndHands(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">handEyesSeparateHoldersAndHands(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HandItemEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">HandItemEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/HandItemEyeGameTestsLogic.html#handEyesSeparateHoldersAndHands(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">handEyesSeparateHoldersAndHands(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HandItemEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">HandItemEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">Holders and logical hands have independent pupils and expression seeds.</div>
+<div class="block">Each holder and each hand has its own pupil and expression schedule, and held pupils use world gravity.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/HandItemEyeGameTests.html#handEyesUseWorldClockAndPause(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">handEyesUseWorldClockAndPause(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HandItemEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">HandItemEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/HandItemEyeGameTestsLogic.html#handEyesUseWorldClockAndPause(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">handEyesUseWorldClockAndPause(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HandItemEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">HandItemEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">The world clock advances ambient expressions and pause freezes them.</div>
+<div class="block">Held eyes follow world time: pausing freezes their expressions, resuming continues them, and turning ambient
+ expressions off stops them while the pupils keep moving.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/HandItemEyeGameTests.html#handHeadUsesConfiguredLayout(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">handHeadUsesConfiguredLayout(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HandItemEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">HandItemEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/HandItemEyeGameTestsLogic.html#handHeadUsesConfiguredLayout(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">handHeadUsesConfiguredLayout(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HandItemEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">HandItemEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">Eyed head items retain their configured layout and paired ambient pool.</div>
+<div class="block">A held eyed head shows its mob's eyes in place, and both can cross.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/HandItemEyeGameTests.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.gametest">HandItemEyeGameTests</a> - Class in <a href="com/github/crittscott/somegoogly/gametest/package-summary.html">com.github.crittscott.somegoogly.gametest</a></dt>
 <dd>
@@ -895,9 +923,10 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTests.html#heldEyeBulgesWhenHurt(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">heldEyeBulgesWhenHurt(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">HeldEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTestsLogic.html#heldEyeBulgesWhenHurt(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">heldEyeBulgesWhenHurt(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">HeldEyeGameTestsLogic</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTestsLogic.html#heldEyeBulgesWhenHurt(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">heldEyeBulgesWhenHurt(GameTestHelper, ServerPlayer)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">HeldEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">A held eye bulges when its holder is hurt, at the server's <code>growOnHitPercent</code>; here it is 100.</div>
+<div class="block">A held eye bulges when its holder takes any damage, at the server's <code>growOnHitPercent</code>; here it is 100,
+ and each hand's eye reacts on its own.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTests.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.gametest">HeldEyeGameTests</a> - Class in <a href="com/github/crittscott/somegoogly/gametest/package-summary.html">com.github.crittscott.somegoogly.gametest</a></dt>
 <dd>
@@ -906,47 +935,47 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTestsLogic.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.gametest">HeldEyeGameTestsLogic</a> - Class in <a href="com/github/crittscott/somegoogly/gametest/package-summary.html">com.github.crittscott.somegoogly.gametest</a></dt>
 <dd>
-<div class="block">Coverage for <code>HeldEye</code>, the live eye a player sees in first person while holding a Googly Eye.</div>
+<div class="block">Coverage for a loose Googly Eye held in a hand.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTests.html#heldEyeHonorsServerSettings(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">heldEyeHonorsServerSettings(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">HeldEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTestsLogic.html#heldEyeHonorsServerSettings(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">heldEyeHonorsServerSettings(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">HeldEyeGameTestsLogic</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTestsLogic.html#heldEyeHonorsServerSettings(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">heldEyeHonorsServerSettings(GameTestHelper, ServerPlayer)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">HeldEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">A held eye follows the server's switches: with <code>growOnHitPercent</code> at 0 being hurt plays nothing,
- with <code>swirlOnHeal</code> off healing plays nothing, and with <code>ambientBehaviors</code> off it never
- plays an idle expression.</div>
+<div class="block">The server's switches govern held reactions: with hit growth at 0 and heal swirl off, damage and healing
+ start nothing.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTests.html#heldEyePlaysIdleBehaviors(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">heldEyePlaysIdleBehaviors(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">HeldEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTestsLogic.html#heldEyePlaysIdleBehaviors(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">heldEyePlaysIdleBehaviors(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">HeldEyeGameTestsLogic</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTestsLogic.html#heldEyePlaysIdleBehaviors(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">heldEyePlaysIdleBehaviors(GameTestHelper, ServerPlayer)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">HeldEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">A held eye left alone plays an expression from the server's ambient pool now and then, and never
- crosses.</div>
+<div class="block">A held eye plays the server's ambient expressions from deterministic world-time slots, on one simulation per
+ hand that stack copies keep.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTests.html#heldEyeResetsWhenPutAway(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">heldEyeResetsWhenPutAway(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">HeldEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTestsLogic.html#heldEyeResetsWhenPutAway(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">heldEyeResetsWhenPutAway(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">HeldEyeGameTestsLogic</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTestsLogic.html#heldEyeResetsWhenPutAway(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">heldEyeResetsWhenPutAway(GameTestHelper, ServerPlayer)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">HeldEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">A held eye is dropped when it leaves the holder's hands and starts fresh when picked up again, in either
- hand.</div>
+<div class="block">Putting the eye away retires its simulation and any received reaction; equipping it again starts afresh.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTests.html#heldEyeSwirlsWhenHealed(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">heldEyeSwirlsWhenHealed(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">HeldEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTestsLogic.html#heldEyeSwirlsWhenHealed(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">heldEyeSwirlsWhenHealed(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">HeldEyeGameTestsLogic</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTestsLogic.html#heldEyeSwirlsWhenHealed(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">heldEyeSwirlsWhenHealed(GameTestHelper, ServerPlayer)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">HeldEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">A held eye swirls when its holder heals, at most once per <code>swirlHealCooldownTicks</code>, and a heal while
- something else plays is dropped.</div>
+<div class="block">A held eye swirls when its holder heals, then not again until the cooldown passes, and a heal while it is
+ busy keeps the current reaction.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTests.html#heldEyeWinksAlone(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">heldEyeWinksAlone(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">HeldEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTestsLogic.html#heldEyeWinksAlone(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">heldEyeWinksAlone(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">HeldEyeGameTestsLogic</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTestsLogic.html#heldEyeWinksAlone(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">heldEyeWinksAlone(GameTestHelper, ServerPlayer)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/HeldEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">HeldEyeGameTestsLogic</a></dt>
 <dd>
-<div class="block">A lone eye's blink closes it, and cross-eye, which needs a partner eye, leaves it alone.</div>
+<div class="block">A lone eye's blink closes it, and cross-eye, which needs a partner eye, is never chosen.</div>
 </dd>
 </dl>
 <h2 class="title" id="I:I">I</h2>
 <dl class="index">
 <dt><a href="com/github/crittscott/somegoogly/gametest/TestEyeConfigs.html#install(java.util.Map)" class="member-name-link">install(Map&lt;ResourceLocation, EyeConfigModel.RuntimeConfigSet&gt;)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/TestEyeConfigs.html" title="class in com.github.crittscott.somegoogly.gametest">TestEyeConfigs</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/LoaderInteractionGameTestsLogic.Use.html#interact(net.minecraft.server.level.ServerPlayer,net.minecraft.world.entity.Entity,net.minecraft.world.phys.BlockHitResult,boolean)" class="member-name-link">interact(ServerPlayer, Entity, BlockHitResult, boolean)</a> - Method in interface com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/LoaderInteractionGameTestsLogic.Use.html" title="interface in com.github.crittscott.somegoogly.gametest">LoaderInteractionGameTestsLogic.Use</a></dt>
 <dd>&nbsp;</dd>
 </dl>
 <h2 class="title" id="I:J">J</h2>
@@ -960,6 +989,27 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:L">L</h2>
 <dl class="index">
+<dt><a href="com/github/crittscott/somegoogly/gametest/ConfigGameTests.html#listSettingWithNoValidEntryUsesDefault(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">listSettingWithNoValidEntryUsesDefault(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/ConfigGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">ConfigGameTests</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/ConfigGameTestsLogic.html#listSettingWithNoValidEntryUsesDefault(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">listSettingWithNoValidEntryUsesDefault(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/ConfigGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">ConfigGameTestsLogic</a></dt>
+<dd>
+<div class="block">A list setting drops its invalid entries, and a list with no valid entry means the default, on every
+ loader.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/LoaderInteractionGameTestsLogic.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.gametest">LoaderInteractionGameTestsLogic</a> - Class in <a href="com/github/crittscott/somegoogly/gametest/package-summary.html">com.github.crittscott.somegoogly.gametest</a></dt>
+<dd>
+<div class="block">Each loader's own use and player-copy hooks, driven through the loader's event or callback rather than the
+ shared service behind it.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/LoaderInteractionGameTestsLogic.Copy.html" class="type-name-link" title="interface in com.github.crittscott.somegoogly.gametest">LoaderInteractionGameTestsLogic.Copy</a> - Interface in <a href="com/github/crittscott/somegoogly/gametest/package-summary.html">com.github.crittscott.somegoogly.gametest</a></dt>
+<dd>
+<div class="block">Fire the loader's player-copy event for <code>original</code> becoming <code>replacement</code>.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/LoaderInteractionGameTestsLogic.Use.html" class="type-name-link" title="interface in com.github.crittscott.somegoogly.gametest">LoaderInteractionGameTestsLogic.Use</a> - Interface in <a href="com/github/crittscott/somegoogly/gametest/package-summary.html">com.github.crittscott.somegoogly.gametest</a></dt>
+<dd>
+<div class="block">Fire the loader's use event or callback: on <code>hit</code>'s block when given, else on <code>target</code> when
+ given, else the held item alone; with <code>refused</code>, a protection listener refuses it first.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/VersionRangeGameTests.html#loaderNamesDoNotChangeAVersion(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">loaderNamesDoNotChangeAVersion(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/VersionRangeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">VersionRangeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/VersionRangeGameTestsLogic.html#loaderNamesDoNotChangeAVersion(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">loaderNamesDoNotChangeAVersion(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/VersionRangeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">VersionRangeGameTestsLogic</a></dt>
@@ -992,6 +1042,15 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:N">N</h2>
 <dl class="index">
+<dt><a href="com/github/crittscott/somegoogly/gametest/SomeGooglyGameTests.html#nativePlayerCopiesKeepEyesOnlyWhileAlive(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">nativePlayerCopiesKeepEyesOnlyWhileAlive(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SomeGooglyGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">SomeGooglyGameTests</a></dt>
+<dd>
+<div class="block">Forge's clone event; see the shared test for the End-exit and death steps.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/SomeGooglyGameTests.html#nativeUseHooksHonorResults(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">nativeUseHooksHonorResults(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SomeGooglyGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">SomeGooglyGameTests</a></dt>
+<dd>
+<div class="block">Forge's interaction events, allowed and refused by a temporary highest-priority listener that cancels them as a
+ protection mod would; see the shared test for the in-game steps.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/EligibilityGameTests.html#naturalDecisionRespectsMasterToggleAndIsOneShot(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">naturalDecisionRespectsMasterToggleAndIsOneShot(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/EligibilityGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">EligibilityGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/EligibilityGameTestsLogic.html#naturalDecisionRespectsMasterToggleAndIsOneShot(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">naturalDecisionRespectsMasterToggleAndIsOneShot(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/EligibilityGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">EligibilityGameTestsLogic</a></dt>
@@ -1024,6 +1083,13 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">With every range above the installed version, the oldest generation is used.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/GuiItemEyeGameTests.html#nestedDrawContextsRestoreOuterSelection(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">nestedDrawContextsRestoreOuterSelection(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/GuiItemEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">GuiItemEyeGameTests</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/GuiItemEyeGameTestsLogic.html#nestedDrawContextsRestoreOuterSelection(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">nestedDrawContextsRestoreOuterSelection(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/GuiItemEyeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">GuiItemEyeGameTestsLogic</a></dt>
+<dd>
+<div class="block">One nested draw context carries GUI identity, the selected animation, and the item being drawn; closing an
+ inner scope restores the enclosing one.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/SerializationGameTests.html#networkProtocolIdsAreUnique(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">networkProtocolIdsAreUnique(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SerializationGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">SerializationGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/SerializationGameTestsLogic.html#networkProtocolIdsAreUnique(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">networkProtocolIdsAreUnique(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SerializationGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">SerializationGameTestsLogic</a></dt>
@@ -1045,6 +1111,12 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">"One at a time, non-interruptable": a trigger is dropped while another behavior plays, allowed once it
  elapses.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/SpawnGatingGameTests.html#onlyEyedMobsStoreAVariantRoll(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">onlyEyedMobsStoreAVariantRoll(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SpawnGatingGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">SpawnGatingGameTests</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/SpawnGatingGameTestsLogic.html#onlyEyedMobsStoreAVariantRoll(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">onlyEyedMobsStoreAVariantRoll(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SpawnGatingGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">SpawnGatingGameTestsLogic</a></dt>
+<dd>
+<div class="block">Only a mob that gets eyes stores a placement roll, and one switched on later draws its own.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/VersionRangeGameTests.html#optionalModVersionRangeSynthesis(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">optionalModVersionRangeSynthesis(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/VersionRangeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">VersionRangeGameTests</a></dt>
 <dd>&nbsp;</dd>
@@ -1080,6 +1152,13 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/github/crittscott/somegoogly/gametest/EyeItemServiceGameTestsLogic.html#optometristInteractPassesWhenNotApplicable(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">optometristInteractPassesWhenNotApplicable(GameTestHelper, Player)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/EyeItemServiceGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">EyeItemServiceGameTestsLogic</a></dt>
 <dd>
 <div class="block">Every non-qualifying right-click passes to the vanilla interaction and spends nothing.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/EyeItemServiceGameTests.html#optometristRollsOnlyOntoShearsAndBooks(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">optometristRollsOnlyOntoShearsAndBooks(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/EyeItemServiceGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">EyeItemServiceGameTests</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/EyeItemServiceGameTestsLogic.html#optometristRollsOnlyOntoShearsAndBooks(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">optometristRollsOnlyOntoShearsAndBooks(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/EyeItemServiceGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">EyeItemServiceGameTestsLogic</a></dt>
+<dd>
+<div class="block">Loot that rolls enchantments by level from the random-loot set can put Optometrist on shears or a book but on
+ nothing else.</div>
 </dd>
 </dl>
 <h2 class="title" id="I:P">P</h2>
@@ -1130,7 +1209,8 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/SerializationGameTestsLogic.html#pickerExportPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">pickerExportPacketRoundTrips(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SerializationGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">SerializationGameTestsLogic</a></dt>
 <dd>
-<div class="block">The picker export request survives the wire, and a request with no definition is refused on decode.</div>
+<div class="block">The picker export request survives the wire for both ages, and a request with no definition or an
+ unsupported age is refused on decode.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/PickerFreezeGameTests.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.gametest">PickerFreezeGameTests</a> - Class in <a href="com/github/crittscott/somegoogly/gametest/package-summary.html">com.github.crittscott.somegoogly.gametest</a></dt>
 <dd>
@@ -1173,6 +1253,10 @@ loadScripts(document, 'script');</script>
 <div class="block">In game: give a placed head a one-eye layout and enable blink and cross-eye at the shortest
  interval.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/LoaderInteractionGameTestsLogic.html#playerCopiesKeepEyesOnlyWhileAlive(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer,com.github.crittscott.somegoogly.gametest.LoaderInteractionGameTestsLogic.Copy)" class="member-name-link">playerCopiesKeepEyesOnlyWhileAlive(GameTestHelper, ServerPlayer, LoaderInteractionGameTestsLogic.Copy)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/LoaderInteractionGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">LoaderInteractionGameTestsLogic</a></dt>
+<dd>
+<div class="block">Players keep their applied eyes when the game copies them alive (leaving the End) and lose them on death.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/BehaviorSchedulerGameTests.html#playerHitBulgesEyes(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">playerHitBulgesEyes(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BehaviorSchedulerGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">BehaviorSchedulerGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/BehaviorSchedulerGameTestsLogic.html#playerHitBulgesEyes(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">playerHitBulgesEyes(GameTestHelper, ServerPlayer)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BehaviorSchedulerGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">BehaviorSchedulerGameTestsLogic</a></dt>
@@ -1200,7 +1284,7 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/github/crittscott/somegoogly/gametest/SomeGooglyGameTestsLogic.html#realShearsKillsHarvestAnEye(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">realShearsKillsHarvestAnEye(GameTestHelper, Player)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SomeGooglyGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">SomeGooglyGameTestsLogic</a></dt>
 <dd>
 <div class="block">A real shears kill harvests through each loader's own death path, and a baby harvests like an adult though it
- drops no loot of its own.</div>
+ drops no loot of its own; the eye carries the mob's look and the harvest wears the shears once.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/BehaviorSchedulerGameTests.html#receivedExpressionsOutliveRenderTrackers(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">receivedExpressionsOutliveRenderTrackers(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BehaviorSchedulerGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">BehaviorSchedulerGameTests</a></dt>
 <dd>&nbsp;</dd>
@@ -1250,6 +1334,12 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">No datapack, from any namespace, may install an eye config for the ender dragon.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/ConfigGameTests.html#reloadRejectsFileWithMalformedEntry(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadRejectsFileWithMalformedEntry(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/ConfigGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">ConfigGameTests</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/ConfigGameTestsLogic.html#reloadRejectsFileWithMalformedEntry(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadRejectsFileWithMalformedEntry(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/ConfigGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">ConfigGameTestsLogic</a></dt>
+<dd>
+<div class="block">A file with one entry the codec cannot decode is rejected whole, not loaded without that entry.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/ConfigGameTests.html#reloadReplacesConfigsOnlyOnContentChange(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadReplacesConfigsOnlyOnContentChange(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/ConfigGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">ConfigGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/ConfigGameTestsLogic.html#reloadReplacesConfigsOnlyOnContentChange(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadReplacesConfigsOnlyOnContentChange(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/ConfigGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">ConfigGameTestsLogic</a></dt>
@@ -1263,6 +1353,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">One malformed file, a duplicate age/version entry, and an invalid age string never abort the reload.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/TestEyeRuntime.HandCache.html#remove(java.util.UUID)" class="member-name-link">remove(UUID)</a> - Method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/TestEyeRuntime.HandCache.html" title="class in com.github.crittscott.somegoogly.gametest">TestEyeRuntime.HandCache</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/PickerAuthGameTests.html#riderChainSurvivesInsertion(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">riderChainSurvivesInsertion(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/PickerAuthGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">PickerAuthGameTests</a></dt>
 <dd>&nbsp;</dd>
 </dl>
@@ -1291,12 +1383,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">The server counts a provoked neutral mob or a piglin with someone to be angry at as angry, and nothing
  as angry while <code>angryEyes</code> is off.</div>
-</dd>
-<dt><a href="com/github/crittscott/somegoogly/gametest/EyeStateOverrideGameTests.html#settingOneFieldLeavesOthersAbsent(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">settingOneFieldLeavesOthersAbsent(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/EyeStateOverrideGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">EyeStateOverrideGameTests</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/gametest/EyeStateOverrideGameTestsLogic.html#settingOneFieldLeavesOthersAbsent(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">settingOneFieldLeavesOthersAbsent(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/EyeStateOverrideGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">EyeStateOverrideGameTestsLogic</a></dt>
-<dd>
-<div class="block">Setting one color leaves every other field at the definition's value.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/SerializationGameTests.html#settingsPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">settingsPacketRoundTrips(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SerializationGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">SerializationGameTests</a></dt>
 <dd>&nbsp;</dd>
@@ -1376,7 +1462,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/EligibilityGameTestsLogic.html#slimyEyeRefusesAnAlreadyEyedTarget(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">slimyEyeRefusesAnAlreadyEyedTarget(GameTestHelper, Player)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/EligibilityGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">EligibilityGameTestsLogic</a></dt>
 <dd>
-<div class="block">An already-eyed mob refuses a Slimy Eye and keeps its look.</div>
+<div class="block">An already-eyed mob refuses a Slimy Eye, keeps its look, and gets the click for its own use.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTests.html#slimyEyeRefusesUnconfiguredHeadsAndTheSwitch(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">slimyEyeRefusesUnconfiguredHeadsAndTheSwitch(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SkullEyeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">SkullEyeGameTests</a></dt>
 <dd>&nbsp;</dd>
@@ -1396,13 +1482,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block"><code>SlimyEyeItem.use(net.minecraft.world.level.Level, net.minecraft.world.entity.player.Player, net.minecraft.world.InteractionHand)</code>: only a sneaking use applies the eye to the player; a plain right-click
  passes.</div>
-</dd>
-<dt><a href="com/github/crittscott/somegoogly/gametest/EyeStateOverrideGameTests.html#snapshotAppliesAllFieldsTogether(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">snapshotAppliesAllFieldsTogether(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/EyeStateOverrideGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">EyeStateOverrideGameTests</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/gametest/EyeStateOverrideGameTestsLogic.html#snapshotAppliesAllFieldsTogether(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">snapshotAppliesAllFieldsTogether(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/EyeStateOverrideGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">EyeStateOverrideGameTestsLogic</a></dt>
-<dd>
-<div class="block">A full eye-state snapshot applies eyes, variant, and appearance together, as a client does when it
- receives one.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/SomeGooglyGameTestMod.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.gametest">SomeGooglyGameTestMod</a> - Class in <a href="com/github/crittscott/somegoogly/gametest/package-summary.html">com.github.crittscott.somegoogly.gametest</a></dt>
 <dd>
@@ -1431,12 +1510,6 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/github/crittscott/somegoogly/gametest/PickerAuthGameTestsLogic.html#spawnAllHasAServerWideCooldown(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">spawnAllHasAServerWideCooldown(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/PickerAuthGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">PickerAuthGameTestsLogic</a></dt>
 <dd>
 <div class="block"><code>allowSpawnAll</code> arms a server-wide cooldown; a second call inside the window is refused.</div>
-</dd>
-<dt><a href="com/github/crittscott/somegoogly/gametest/SpawnGatingGameTests.html#spawnAlwaysAssignsAVariantRoll(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">spawnAlwaysAssignsAVariantRoll(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SpawnGatingGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">SpawnGatingGameTests</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/gametest/SpawnGatingGameTestsLogic.html#spawnAlwaysAssignsAVariantRoll(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">spawnAlwaysAssignsAVariantRoll(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SpawnGatingGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">SpawnGatingGameTestsLogic</a></dt>
-<dd>
-<div class="block">Every spawned mob stores a placement roll, with or without eyes.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/PickerSpawnServiceGameTestsLogic.html#spawnCommandsRefuseDragonPlayersAndExcludedTypes(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">spawnCommandsRefuseDragonPlayersAndExcludedTypes(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/PickerSpawnServiceGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">PickerSpawnServiceGameTestsLogic</a></dt>
 <dd>
@@ -1494,10 +1567,34 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:T">T</h2>
 <dl class="index">
+<dt><a href="com/github/crittscott/somegoogly/gametest/TestBehaviorSettings.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.gametest">TestBehaviorSettings</a> - Class in <a href="com/github/crittscott/somegoogly/gametest/package-summary.html">com.github.crittscott.somegoogly.gametest</a></dt>
+<dd>
+<div class="block">Behavior settings for driving client simulations directly: the server config's built-in defaults.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/TestEyeConfigs.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.gametest">TestEyeConfigs</a> - Class in <a href="com/github/crittscott/somegoogly/gametest/package-summary.html">com.github.crittscott.somegoogly.gametest</a></dt>
 <dd>
 <div class="block">Installs a test's eye definitions through the same path a datapack reload uses.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/TestEyeRuntime.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.gametest">TestEyeRuntime</a> - Class in <a href="com/github/crittscott/somegoogly/gametest/package-summary.html">com.github.crittscott.somegoogly.gametest</a></dt>
+<dd>
+<div class="block">Test-source facades for driving the production runtime's caches and clocks without a rendered client.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/TestEyeRuntime.BoatCache.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.gametest">TestEyeRuntime.BoatCache</a> - Class in <a href="com/github/crittscott/somegoogly/gametest/package-summary.html">com.github.crittscott.somegoogly.gametest</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/TestEyeRuntime.GuiCache.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.gametest">TestEyeRuntime.GuiCache</a> - Class in <a href="com/github/crittscott/somegoogly/gametest/package-summary.html">com.github.crittscott.somegoogly.gametest</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/TestEyeRuntime.HandCache.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.gametest">TestEyeRuntime.HandCache</a> - Class in <a href="com/github/crittscott/somegoogly/gametest/package-summary.html">com.github.crittscott.somegoogly.gametest</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/TestPlayers.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.gametest">TestPlayers</a> - Class in <a href="com/github/crittscott/somegoogly/gametest/package-summary.html">com.github.crittscott.somegoogly.gametest</a></dt>
+<dd>
+<div class="block">Distinct test players with actual player permission checks and the template's connection.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/TestEyeRuntime.HandCache.html#tick(long,boolean,com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)" class="member-name-link">tick(long, boolean, BehaviorSettings)</a> - Method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/TestEyeRuntime.HandCache.html" title="class in com.github.crittscott.somegoogly.gametest">TestEyeRuntime.HandCache</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/TestEyeRuntime.BoatCache.html#tick(long,com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)" class="member-name-link">tick(long, BehaviorSettings)</a> - Method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/TestEyeRuntime.BoatCache.html" title="class in com.github.crittscott.somegoogly.gametest">TestEyeRuntime.BoatCache</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/TestEyeRuntime.GuiCache.html#tick(java.lang.Object,com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)" class="member-name-link">tick(Object, BehaviorSettings)</a> - Method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/TestEyeRuntime.GuiCache.html" title="class in com.github.crittscott.somegoogly.gametest">TestEyeRuntime.GuiCache</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/RecipeGameTests.html#twoEyesDoNotMatch(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">twoEyesDoNotMatch(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/RecipeGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">RecipeGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/RecipeGameTestsLogic.html#twoEyesDoNotMatch(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">twoEyesDoNotMatch(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/RecipeGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">RecipeGameTestsLogic</a></dt>
@@ -1507,11 +1604,10 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:U">U</h2>
 <dl class="index">
-<dt><a href="com/github/crittscott/somegoogly/gametest/EligibilityGameTests.html#usablePredicateEndpoints(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">usablePredicateEndpoints(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/EligibilityGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">EligibilityGameTests</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/github/crittscott/somegoogly/gametest/EligibilityGameTestsLogic.html#usablePredicateEndpoints(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">usablePredicateEndpoints(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/EligibilityGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">EligibilityGameTestsLogic</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/gametest/LoaderInteractionGameTestsLogic.html#useHooksHonorResults(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer,com.github.crittscott.somegoogly.gametest.LoaderInteractionGameTestsLogic.Use,boolean)" class="member-name-link">useHooksHonorResults(GameTestHelper, ServerPlayer, LoaderInteractionGameTestsLogic.Use, boolean)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/LoaderInteractionGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">LoaderInteractionGameTestsLogic</a></dt>
 <dd>
-<div class="block">A definition is usable only when present, enabled, and holding a variant.</div>
+<div class="block">The loader's use hooks apply and harvest eyes on a cow, a boat, an armor stand, a placed head, and the player,
+ and with <code>testRefusal</code>, a protection listener's refusal leaves everything as it was.</div>
 </dd>
 </dl>
 <h2 class="title" id="I:V">V</h2>

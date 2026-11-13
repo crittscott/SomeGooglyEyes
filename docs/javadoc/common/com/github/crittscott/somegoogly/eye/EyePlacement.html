@@ -124,30 +124,35 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Field</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>static final <a href="EyePlacement.html" title="class in com.github.crittscott.somegoogly.eye">EyePlacement</a></code></div>
-<div class="col-second even-row-color"><code><a href="#DEFAULT" class="member-name-link">DEFAULT</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
-<div class="col-first odd-row-color"><code>static final float</code></div>
-<div class="col-second odd-row-color"><code><a href="#DEFAULT_AZIMUTH" class="member-name-link">DEFAULT_AZIMUTH</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>static final float</code></div>
+<div class="col-second even-row-color"><code><a href="#AZIMUTH_TO_YAW_OFFSET" class="member-name-link">AZIMUTH_TO_YAW_OFFSET</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Azimuth starts at +X; vanilla yaw starts at +Z.</div>
+</div>
+<div class="col-first odd-row-color"><code>static final <a href="EyePlacement.html" title="class in com.github.crittscott.somegoogly.eye">EyePlacement</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#DEFAULT" class="member-name-link">DEFAULT</a></code></div>
+<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-first even-row-color"><code>static final float</code></div>
+<div class="col-second even-row-color"><code><a href="#DEFAULT_AZIMUTH" class="member-name-link">DEFAULT_AZIMUTH</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">Default orientation: pupil facing local -Z (straight ahead), matching the unrotated eye.</div>
 </div>
-<div class="col-first even-row-color"><code>static final float</code></div>
-<div class="col-second even-row-color"><code><a href="#DEFAULT_DEPTH" class="member-name-link">DEFAULT_DEPTH</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first odd-row-color"><code>static final float</code></div>
+<div class="col-second odd-row-color"><code><a href="#DEFAULT_DEPTH" class="member-name-link">DEFAULT_DEPTH</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block">Standard thickness: the depth multiplier that reproduces the classic googly-eye proportions.</div>
 </div>
-<div class="col-first odd-row-color"><code>static final float</code></div>
-<div class="col-second odd-row-color"><code><a href="#DEFAULT_INCLINATION" class="member-name-link">DEFAULT_INCLINATION</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
-<div class="col-first even-row-color"><code>static final com.mojang.serialization.MapCodec<wbr>&lt;<a href="EyePlacement.html" title="class in com.github.crittscott.somegoogly.eye">EyePlacement</a>&gt;</code></div>
-<div class="col-second even-row-color"><code><a href="#MAP_CODEC" class="member-name-link">MAP_CODEC</a></code></div>
-<div class="col-last even-row-color">
+<div class="col-first even-row-color"><code>static final float</code></div>
+<div class="col-second even-row-color"><code><a href="#DEFAULT_INCLINATION" class="member-name-link">DEFAULT_INCLINATION</a></code></div>
+<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-first odd-row-color"><code>static final com.mojang.serialization.MapCodec<wbr>&lt;<a href="EyePlacement.html" title="class in com.github.crittscott.somegoogly.eye">EyePlacement</a>&gt;</code></div>
+<div class="col-second odd-row-color"><code><a href="#MAP_CODEC" class="member-name-link">MAP_CODEC</a></code></div>
+<div class="col-last odd-row-color">
 <div class="block"><code>MapCodec</code> (flat fields) so <a href="EyeDefinition.html" title="class in com.github.crittscott.somegoogly.eye"><code>EyeDefinition</code></a> can sit placement beside appearance.</div>
 </div>
-<div class="col-first odd-row-color"><code>static final int</code></div>
-<div class="col-second odd-row-color"><code><a href="#NO_CROSS_TARGET" class="member-name-link">NO_CROSS_TARGET</a></code></div>
-<div class="col-last odd-row-color">
+<div class="col-first even-row-color"><code>static final int</code></div>
+<div class="col-second even-row-color"><code><a href="#NO_CROSS_TARGET" class="member-name-link">NO_CROSS_TARGET</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">No cross-eye partner: the eye stays neutral during the cross-eye behavior.</div>
 </div>
 </div>
@@ -276,6 +281,21 @@ loadScripts(document, 'script');</script>
 <section class="field-details" id="field-detail">
 <h2>Field Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="AZIMUTH_TO_YAW_OFFSET">
+<h3>AZIMUTH_TO_YAW_OFFSET</h3>
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">AZIMUTH_TO_YAW_OFFSET</span></div>
+<div class="block">Azimuth starts at +X; vanilla yaw starts at +Z.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="../../../../../constant-values.html#com.github.crittscott.somegoogly.eye.EyePlacement.AZIMUTH_TO_YAW_OFFSET">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
 <li>
 <section class="detail" id="DEFAULT_AZIMUTH">
 <h3>DEFAULT_AZIMUTH</h3>
