@@ -6,6 +6,7 @@ Read code-review-decisions.md before applying a general rule to accepted behavio
 
 ## Adding a variant of something that exists
 
+- Before writing a new method, search for one that already does the job. Search by what it would do, not by what you would name it: the vanilla and loader calls it would make, the types it takes, the config value or tag it reads. Copies have different names but the same calls inside. If a match exists, call it or extend it. The "Where decisions live" table in `orientation-code.md` names the owners of the recurring ones.
 - Before writing the new one, read its siblings. The usual way a mod rots is that each new surface, mob family, or setting copies the last one. When changing a rule, find its existing owner and consumers, including predictions, previews, inverse operations, loader adapters, and diagnostics.
 - Decisions go in one place; mechanics may repeat. A gate, a formula, a timing constant, or a choice of which case wins lives in one function that every copy calls. Repeated wiring that holds no decision may stay.
 - Add the shared code to an existing class. If sharing needs a new small class to save a few lines, keep the duplication.
@@ -48,7 +49,15 @@ Read code-review-decisions.md before applying a general rule to accepted behavio
 - No function that only forwards to one other call. Exceptions: forced platform bridges, overloads that supply a default to several callers, and one-line event adapters.
 - Each type has one decoding entry point, not a static factory beside a private constructor doing the same job.
 - Do not write a branch the caller already excludes, and do not document behavior no production path can reach.
-- When porting, delete runtime hooks and abstractions the target cannot use. Shared cross-version build machinery and the accepted bundled eye-definition labels and placements are exceptions; do not remove or retag them solely to make the checkout look version-pure.
+
+## Porting a change to another version
+
+- Carry the intent, not the text. Re-derive the fix from the target's own code. "Does not apply" is a valid result when the target already gets it right by other means, such as data-driven content, render states, or a loader API that now exists; do not port code to fix a problem the target does not have.
+- Take only the hunks that belong to the change. Copy a whole file only when its entire diff against the source is that change; otherwise you overwrite the target's own API forms, integrations, and pending work.
+- Re-establish every fact the change rests on for the target version. Vanilla and loader APIs are added, removed, renamed, and retimed between versions (Forge has no `FakePlayer` after 1.20.1), so a name, signature, or event order remembered from another version is a hypothesis. Read the target's `platform-notes.md` first and record there what you establish.
+- A workaround for one version's quirk goes away where the quirk is gone. Delete runtime hooks and abstractions the target cannot use. Shared cross-version build machinery and the accepted bundled eye-definition labels and placements are exceptions; do not remove or retag them solely to make the checkout look version-pure.
+- Count the target's loaders. A fix written for Forge needs its NeoForge counterpart where NeoForge exists, traced from that loader's own event, which may not be the one Forge uses.
+- Data files are code. Tags, advancement criteria, recipes, and enchantments change shape between versions, and one bad key can stop the whole registry from loading. Port data with the same care as Java.
 
 ## Values and text
 
