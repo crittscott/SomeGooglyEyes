@@ -1,7 +1,6 @@
 package com.github.crittscott.somegoogly.mixin.common.client;
 
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
-import com.github.crittscott.somegoogly.client.GuiItemEyes;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -11,7 +10,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-/** Selects GUI animation before models are resolved; rendering states retain the selection. */
+/**
+ * Selects GUI animation and position-based identity for every GUI item as it is extracted, before its models are
+ * resolved; the item's render state keeps the selection until it is submitted. No loader has a render event around
+ * a single GUI item.
+ */
 @Mixin(GuiGraphicsExtractor.class)
 abstract class GuiItemEyesMixin {
 
@@ -19,7 +22,7 @@ abstract class GuiItemEyesMixin {
             + "Lnet/minecraft/world/item/ItemStack;III)V", at = @At("HEAD"))
     private void somegoogly$beginGuiItem(LivingEntity owner, Level level, ItemStack stack, int x, int y,
                                          int seed, CallbackInfo callback) {
-        GuiItemEyes.beginDraw(stack, x, y, seed);
+        ClientEyeRuntime.beginGuiDraw(stack, x, y, seed);
     }
 
     @Inject(method = "item(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/level/Level;"

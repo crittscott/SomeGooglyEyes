@@ -12,7 +12,7 @@ import java.util.Map;
 import org.jspecify.annotations.Nullable;
 
 /**
- * The eight named one-shot eye expressions a mob can play, keyed by a {@link Identifier} id; the
+ * The named one-shot eye expressions a mob can play, keyed by a {@link Identifier} id; the
  * behaviors that last as long as a mob stays in some state are the {@link OngoingBehavior}s. These are
  * code-defined client animations, and both sides only need the ids to agree: the server names a
  * behavior by its {@link #wireId} in the trigger packet and the client looks it up to play. All per-play
@@ -252,7 +252,7 @@ public enum EyeBehavior {
     private final int wireId;
 
     EyeBehavior(String name, int wireId, int defaultDuration) {
-        this.id = Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, name);
+        this.id = SomeGooglyCommon.id(name);
         this.wireId = wireId;
         this.defaultDuration = defaultDuration;
     }
@@ -274,7 +274,7 @@ public enum EyeBehavior {
         return id;
     }
 
-    /** Default length in ticks when triggered without an explicit duration (ambient uses this). */
+    /** Length in ticks of one play of this expression, whether ambient or triggered; no play sets its own. */
     public int defaultDuration() {
         return defaultDuration;
     }

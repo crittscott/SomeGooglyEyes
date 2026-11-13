@@ -119,7 +119,7 @@ public final class PickerSpawnService {
     @Nullable
     public static SpawnRefusal refusal(EntityType<?> type) {
         Identifier id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
-        if (id.equals(ServerEyeConfigs.ENDER_DRAGON)) {
+        if (ServerEyeConfigs.isExcluded(id)) {
             return SpawnRefusal.ENDER_DRAGON;
         }
         if (!type.canSummon()) {
@@ -166,8 +166,7 @@ public final class PickerSpawnService {
 
     /** Report a world change to the sender, other operators, and the console, per vanilla convention. */
     private static void announce(CommandSourceStack source, String key, Object... args) {
-        source.sendSuccess(() -> Component.translatable("somegoogly.command.picker.feedback",
-                Component.translatable(key, args)), true);
+        PickerGate.tellSuccess(source, true, key, args);
     }
 
     /**
@@ -408,7 +407,7 @@ public final class PickerSpawnService {
             announce(source, "somegoogly.command.spawnall.skipped", skipped);
         }
         if (filtering && !dropped.isEmpty()) {
-            PickerGate.tellSuccess(source, "somegoogly.command.spawnall.dropped_header", dropped.size());
+            PickerGate.tellSuccess(source, false, "somegoogly.command.spawnall.dropped_header", dropped.size());
             for (Component entry : dropped) {
                 source.sendSuccess(() -> Component.translatable("somegoogly.command.spawnall.dropped_entry", entry), false);
             }

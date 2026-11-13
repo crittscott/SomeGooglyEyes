@@ -8,8 +8,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 /**
- * Loads Fabric's client TOML into the shared runtime configuration. Like Forge and NeoForge, a file missing any key, such as
- * one from an earlier release, is completed with absent keys at their defaults, retaining its values and comments.
+ * Loads Fabric's client TOML into the shared runtime configuration. A file missing any key, such as one from an
+ * earlier release, is completed with the absent keys at their defaults, retaining its values and comments.
  */
 public final class FabricClientConfig {
 

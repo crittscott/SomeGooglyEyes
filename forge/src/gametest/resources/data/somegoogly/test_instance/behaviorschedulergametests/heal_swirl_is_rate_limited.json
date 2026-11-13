@@ -1,7 +1,7 @@
 {
   "type": "minecraft:function",
   "function": "somegoogly:behaviorschedulergametests/heal_swirl_is_rate_limited",
-  "environment": "minecraft:default",
+  "environment": "somegoogly:heal_swirl_is_rate_limited",
   "structure": "somegoogly:empty",
-  "max_ticks": 100
+  "max_ticks": 400
 }

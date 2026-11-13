@@ -63,6 +63,7 @@ loadScripts(document, 'script');</script>
 <li><a href="#guiEyesRetireClosedAndHiddenViews(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">guiEyesRetireClosedAndHiddenViews(GameTestHelper)</a></li>
 <li><a href="#guiEyesSeparateSlotsAndCursor(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">guiEyesSeparateSlotsAndCursor(GameTestHelper)</a></li>
 <li><a href="#guiHeadUsesConfiguredLayout(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">guiHeadUsesConfiguredLayout(GameTestHelper)</a></li>
+<li><a href="#nestedDrawContextsRestoreOuterSelection(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">nestedDrawContextsRestoreOuterSelection(GameTestHelper)</a></li>
 </ol>
 </li>
 </ol>
@@ -99,37 +100,45 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#guiEyesAdvanceWithoutWorldTicks(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">guiEyesAdvanceWithoutWorldTicks</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The UI clock advances expressions without world ticks.</div>
+<div class="block">Inventory icons keep their own clock, so their expressions continue while the world is paused.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#guiEyesHonorEligibilityAndSwitch(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">guiEyesHonorEligibilityAndSwitch</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Hidden eyes and ordinary items retire their old presentation.</div>
+<div class="block">Only eye items get animated icons, and hiding eyes discards icon state, so showing them again starts fresh.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#guiEyesKeepPresentationIdentity(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">guiEyesKeepPresentationIdentity</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Stack copies and count changes preserve a slot's simulation.</div>
+<div class="block">A slot keeps its eye's simulation when the stack is copied or its count changes, and the pupil falls toward
+screen-down.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#guiEyesReplaceChangedContents(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">guiEyesReplaceChangedContents</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">A changed appearance replaces the simulation.</div>
+<div class="block">A changed appearance gives a slot's eye a new simulation with the new look.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#guiEyesRetireClosedAndHiddenViews(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">guiEyesRetireClosedAndHiddenViews</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Closing a view drops its trackers while a visible HUD presentation survives.</div>
+<div class="block">Closing a screen frees its icons' state, the hotbar's icons keep theirs, and icons out of view expire.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#guiEyesSeparateSlotsAndCursor(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">guiEyesSeparateSlotsAndCursor</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Neighboring copies and a carried stack have independent animation.</div>
+<div class="block">Each slot and the carried stack animate on their own.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#guiHeadUsesConfiguredLayout(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">guiHeadUsesConfiguredLayout</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">GUI heads retain their actual layout and paired expressions, with GUI gravity on each pupil.</div>
+<div class="block">An eyed head in the inventory shows its mob's eyes in place, and both eyes can blink and cross, independent of
+the same head in a frame.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#nestedDrawContextsRestoreOuterSelection(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">nestedDrawContextsRestoreOuterSelection</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">One nested draw context carries GUI identity, the selected animation, and the item being drawn; closing an
+inner scope restores the enclosing one.</div>
 </div>
 </div>
 </div>
@@ -153,8 +162,10 @@ loadScripts(document, 'script');</script>
 <h3>guiEyesAdvanceWithoutWorldTicks</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">guiEyesAdvanceWithoutWorldTicks</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">The UI clock advances expressions without world ticks. In game: view an animated inventory
-preview in a pausing screen; its eyes continue expressing while world entities are paused.</div>
+<div class="block">Inventory icons keep their own clock, so their expressions continue while the world is paused. In game: in single
+player with <code>ambientBehaviorPool = ["somegoogly:blink"]</code> and <code>ambientMinTicks = 1</code> and <code>
+ambientMaxTicks = 1</code> in <code>somegoogly-server.toml</code>, open your inventory with a Googly Eye in it and press Esc
+to pause; the icon keeps blinking while mobs behind the menu stand still.</div>
 </div>
 </section>
 </li>
@@ -163,8 +174,10 @@ preview in a pausing screen; its eyes continue expressing while world entities a
 <h3>guiEyesHonorEligibilityAndSwitch</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">guiEyesHonorEligibilityAndSwitch</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Hidden eyes and ordinary items retire their old presentation. In game: disable eye animation, then
-replace a visible eye with a diamond; restoring the eye produces a fresh live presentation.</div>
+<div class="block">Only eye items get animated icons, and hiding eyes discards icon state, so showing them again starts fresh. In
+game: put a Googly Eye, a plain skull, and a diamond in your inventory; only the eye's pupil moves. Set <code>
+disableGooglyEyes = true</code> in <code>somegoogly-client.toml</code>; the icon is drawn plain. Set it back; the pupil
+moves again, starting from rest.</div>
 </div>
 </section>
 </li>
@@ -173,8 +186,9 @@ replace a visible eye with a diamond; restoring the eye produces a fresh live pr
 <h3>guiEyesKeepPresentationIdentity</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">guiEyesKeepPresentationIdentity</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Stack copies and count changes preserve a slot's simulation.
-In game: split and merge a stack in one slot; its pupil does not restart on each rendered frame.</div>
+<div class="block">A slot keeps its eye's simulation when the stack is copied or its count changes, and the pupil falls toward
+screen-down. In game: with a stack of Googly Eyes in a slot, right-click to pick up half and put it back; the
+slot's pupil keeps moving smoothly instead of jumping back to rest.</div>
 </div>
 </section>
 </li>
@@ -183,8 +197,8 @@ In game: split and merge a stack in one slot; its pupil does not restart on each
 <h3>guiEyesReplaceChangedContents</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">guiEyesReplaceChangedContents</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">A changed appearance replaces the simulation. In game: replace a normal eye in one slot
-with a glowing or dyed copy; its icon immediately shows the new appearance.</div>
+<div class="block">A changed appearance gives a slot's eye a new simulation with the new look. In game: put a Googly Eye in a slot,
+then replace it with a dyed or glowing one; the icon shows the new color or glow at once.</div>
 </div>
 </section>
 </li>
@@ -193,8 +207,9 @@ with a glowing or dyed copy; its icon immediately shows the new appearance.</div
 <h3>guiEyesRetireClosedAndHiddenViews</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">guiEyesRetireClosedAndHiddenViews</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Closing a view drops its trackers while a visible HUD presentation survives. Hidden icons expire.
-In game: close a chest, change screens, and scroll creative entries out of view; no old icon state leaks.</div>
+<div class="block">Closing a screen frees its icons' state, the hotbar's icons keep theirs, and icons out of view expire. No visible
+in-game form, since a fresh pupil starts at rest where the old one settled; guards that closed chests, changed
+screens, and creative entries scrolled out of view leave no state behind.</div>
 </div>
 </section>
 </li>
@@ -203,8 +218,9 @@ In game: close a chest, change screens, and scroll creative entries out of view;
 <h3>guiEyesSeparateSlotsAndCursor</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">guiEyesSeparateSlotsAndCursor</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Neighboring copies and a carried stack have independent animation. In game:
-drag an eye across matching occupied slots; the cursor eye keeps its own expression while moving.</div>
+<div class="block">Each slot and the carried stack animate on their own. In game: fill several slots with Googly Eyes and pick up
+another stack with the cursor; the slots blink at different times, and the carried eye keeps its own pupil and
+expressions as you drag it across the occupied slots.</div>
 </div>
 </section>
 </li>
@@ -213,9 +229,24 @@ drag an eye across matching occupied slots; the cursor eye keeps its own express
 <h3>guiHeadUsesConfiguredLayout</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">guiHeadUsesConfiguredLayout</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">GUI heads retain their actual layout and paired expressions, with GUI gravity on each pupil.
-In game: place eyed skulls in inventory and a chest; their configured pupils blink and cross-eye
-at normal icon size, independently of the same heads in frames.</div>
+<div class="block">An eyed head in the inventory shows its mob's eyes in place, and both eyes can blink and cross, independent of
+the same head in a frame. In game: with <code>ambientBehaviorPool = ["somegoogly:blink",
+"somegoogly:cross_eye"]</code> in <code>somegoogly-server.toml</code>, put eyed skeleton skulls in your inventory and a
+chest and frame another; the icons show both eyes at normal icon size, blink and cross, and do so at different
+times from the framed skull.</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="nestedDrawContextsRestoreOuterSelection(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>nestedDrawContextsRestoreOuterSelection</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">nestedDrawContextsRestoreOuterSelection</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">One nested draw context carries GUI identity, the selected animation, and the item being drawn; closing an
+inner scope restores the enclosing one. A GUI item's animation is selected inside its slot's scope while its
+render state is filled, and the state carries that selection to its later draw, which no GUI scope encloses.
+In game: put eyed heads and Googly Eyes in inventory slots, the hotbar, and item frames; each animates on its
+own and a head drawn inside another item's slot keeps its eyes.</div>
 </div>
 </section>
 </li>

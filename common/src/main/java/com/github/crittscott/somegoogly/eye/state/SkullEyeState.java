@@ -14,17 +14,16 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractSkullBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SkullBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.functions.CopyComponentsFunction;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +51,7 @@ public final class SkullEyeState {
     /** The key of the eye-state compound in a head block entity's saved data. */
     public static final String DATA_KEY = "somegoogly:data";
     /** Twilight Forest's namespace; declared first because the entries below read it. */
-    private static final String TWILIGHT_NAMESPACE = "twilightforest";
+    public static final String TWILIGHT_NAMESPACE = "twilightforest";
     /**
      * The attachment token of the part a head reproduces, for mobs whose eyes sit on a part other than the head;
      * every other mob's head shows the eyes on parts named {@value EyeConfigModel#PART_HEAD}.
@@ -119,22 +118,12 @@ public final class SkullEyeState {
     }
 
     /**
-     * Copy an eyed head block's snapshot onto its generated head items. The Forge and NeoForge
-     * {@code HeadEyesLootModifier}s call this; Fabric's counterpart is the {@code copy_components} function its
-     * loot-table event adds.
+     * The loot function that copies a placed head's eye state onto its dropped item, as the
+     * {@link ModContent#HEAD_EYES} component the block entity reports. Every loader's head loot uses it.
      */
-    public static void copyToLoot(LootContext context, Collection<ItemStack> generatedLoot) {
-        BlockEntity skull = context.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
-        if (skull instanceof Holder) {
-            Snapshot state = snapshot(skull);
-            if (state.hasEyes()) {
-                for (ItemStack stack : generatedLoot) {
-                    if (entityFor(stack) != null) {
-                        stampItem(stack, state);
-                    }
-                }
-            }
-        }
+    public static LootItemFunction.Builder headLootCopy() {
+        return CopyComponentsFunction.copyComponentsFromBlockEntity(LootContextParams.BLOCK_ENTITY)
+                .include(ModContent.HEAD_EYES.get());
     }
 
     /** The placed head's eye-state compound, or {@code null} if it has none; read it, don't write it. */
@@ -307,7 +296,7 @@ public final class SkullEyeState {
             return false;
         }
         String partToken = HEAD_PART_TOKENS.get(entity);
-        return partToken == null ? token.substring(token.lastIndexOf('/') + 1).equals(EyeConfigModel.PART_HEAD)
+        return partToken == null ? EyeConfigModel.lastAttachmentSegment(token).equals(EyeConfigModel.PART_HEAD)
                 : token.equals(partToken);
     }
 
@@ -330,11 +319,8 @@ public final class SkullEyeState {
     public static void set(BlockEntity skull, Snapshot snapshot) {
         snapshot.write(((Holder) skull).somegoogly$get());
         skull.setChanged();
-        Level level = skull.getLevel();
-        if (level != null) {
-            BlockState state = skull.getBlockState();
-            level.sendBlockUpdated(skull.getBlockPos(), state, state, Block.UPDATE_CLIENTS);
-        }
+        BlockState state = skull.getBlockState();
+        skull.getLevel().sendBlockUpdated(skull.getBlockPos(), state, state, Block.UPDATE_CLIENTS);
     }
 
     /** Whether {@code variant} of {@code entity}'s definition has eyes a head of that mob shows. */

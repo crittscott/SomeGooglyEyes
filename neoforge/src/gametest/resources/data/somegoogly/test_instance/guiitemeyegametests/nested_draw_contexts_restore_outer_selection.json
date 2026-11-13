@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "function": "somegoogly:guiitemeyegametests/nested_draw_contexts_restore_outer_selection",
+  "environment": "minecraft:default",
+  "structure": "somegoogly:empty",
+  "max_ticks": 40
+}

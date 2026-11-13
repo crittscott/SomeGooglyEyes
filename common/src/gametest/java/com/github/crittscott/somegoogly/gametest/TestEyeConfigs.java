@@ -13,6 +13,6 @@ final class TestEyeConfigs {
     }
 
     static void install(Map<Identifier, RuntimeConfigSet> next) {
-        ServerEyeConfigs.replaceIfChanged(next, ServerEyeConfigs.encode(next));
+        ServerEyeConfigs.replaceIfChanged(ServerEyeConfigs.packetFor(next));
     }
 }

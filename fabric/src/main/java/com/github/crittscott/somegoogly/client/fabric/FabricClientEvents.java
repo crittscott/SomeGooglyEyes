@@ -23,7 +23,6 @@ import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.color.item.ItemTintSources;
 import net.minecraft.client.renderer.special.SpecialModelRenderers;
-import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 
@@ -38,6 +37,8 @@ public final class FabricClientEvents {
 
     /** Register the client's Fabric event callbacks. */
     public static void register() {
+        // Not helper.register: it appends after a slime's outer jelly layer, hiding the eyes behind it, so the
+        // shared installer inserts into the renderer's layer list itself.
         LivingEntityRenderLayerRegistrationCallback.EVENT.register(
                 (entityType, renderer, helper, context) ->
                         ClientRenderLayers.install(renderer));
@@ -45,14 +46,11 @@ public final class FabricClientEvents {
             FabricGeckoLayers.register();
         }
         ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(
-                Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "attachment_caches"),
+                SomeGooglyCommon.id("attachment_caches"),
                 (ResourceManagerReloadListener) manager -> ClientRenderLayers.clearCaches());
 
         KeyMapping.Category.register(PickerInput.CATEGORY.id());
-        KeyMappingHelper.registerKeyMapping(PickerInput.LOCK);
-        KeyMappingHelper.registerKeyMapping(PickerInput.PART_NEXT);
-        KeyMappingHelper.registerKeyMapping(PickerInput.PART_PREV);
-        KeyMappingHelper.registerKeyMapping(PickerInput.TOGGLE);
+        PickerInput.KEYS.forEach(KeyMappingHelper::registerKeyMapping);
 
         ClientEntityEvents.ENTITY_UNLOAD.register((entity, level) -> {
             ClientEyeRuntime.onEntityRemoved(entity);
@@ -61,7 +59,7 @@ public final class FabricClientEvents {
         ClientTickEvents.END_CLIENT_TICK.register(client -> ClientLifecycle.tick());
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> ClientLifecycle.onDisconnect());
         HudElementRegistry.attachElementAfter(VanillaHudElements.SUBTITLES,
-                Identifier.fromNamespaceAndPath("somegoogly", "picker"), (graphics, partialTick) ->
+                SomeGooglyCommon.id("picker"), (graphics, partialTick) ->
                         PickerHud.render(graphics, graphics.guiWidth()));
 
         ItemTooltipCallback.EVENT.register((stack, context, flag, lines) ->

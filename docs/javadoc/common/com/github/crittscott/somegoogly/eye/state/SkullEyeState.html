@@ -59,6 +59,7 @@ loadScripts(document, 'script');</script>
 <li><a href="#field-detail" tabindex="0">Field Details</a>
 <ol class="toc-list">
 <li><a href="#DATA_KEY" tabindex="0">DATA_KEY</a></li>
+<li><a href="#TWILIGHT_NAMESPACE" tabindex="0">TWILIGHT_NAMESPACE</a></li>
 <li><a href="#HEADS_MOBS" tabindex="0">HEADS_MOBS</a></li>
 <li><a href="#HEADS_NAMESPACE" tabindex="0">HEADS_NAMESPACE</a></li>
 <li><a href="#HYDRA_TROPHY_LAYOUT" tabindex="0">HYDRA_TROPHY_LAYOUT</a></li>
@@ -67,7 +68,7 @@ loadScripts(document, 'script');</script>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
 <li><a href="#canHaveEyes(net.minecraft.resources.Identifier,com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig)" tabindex="0">canHaveEyes(Identifier, EyeConfigModel.RuntimeConfig)</a></li>
-<li><a href="#copyToLoot(net.minecraft.world.level.storage.loot.LootContext,java.util.Collection)" tabindex="0">copyToLoot(LootContext, Collection)</a></li>
+<li><a href="#headLootCopy()" tabindex="0">headLootCopy()</a></li>
 <li><a href="#data(net.minecraft.world.level.block.entity.BlockEntity)" tabindex="0">data(BlockEntity)</a></li>
 <li><a href="#loadedData(net.minecraft.nbt.CompoundTag)" tabindex="0">loadedData(CompoundTag)</a></li>
 <li><a href="#entityFor(net.minecraft.world.level.block.Block)" tabindex="0">entityFor(Block)</a></li>
@@ -162,6 +163,11 @@ range; clients only read the compound.</div>
 <div class="col-first odd-row-color"><code>static final net.minecraft.resources.Identifier</code></div>
 <div class="col-second odd-row-color"><code><a href="#HYDRA_TROPHY_LAYOUT" class="member-name-link">HYDRA_TROPHY_LAYOUT</a></code></div>
 <div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color"><code><a href="#TWILIGHT_NAMESPACE" class="member-name-link">TWILIGHT_NAMESPACE</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Twilight Forest's namespace; declared first because the entries below read it.</div>
+</div>
 </div>
 </section>
 </li>
@@ -183,37 +189,37 @@ range; clients only read the compound.</div>
 <div class="block">Whether a head of <code>entity</code>'s kind can have eyes under that mob's adult <code>config</code>: it is usable and
 has a weighted variant with eyes the head shows.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#copyToLoot(net.minecraft.world.level.storage.loot.LootContext,java.util.Collection)" class="member-name-link">copyToLoot</a><wbr>(net.minecraft.world.level.storage.loot.LootContext&nbsp;context,
- <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;net.minecraft.world.item.ItemStack&gt;&nbsp;generatedLoot)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable net.minecraft.nbt.CompoundTag</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#data(net.minecraft.world.level.block.entity.BlockEntity)" class="member-name-link">data</a><wbr>(@Nullable net.minecraft.world.level.block.entity.BlockEntity&nbsp;skull)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Copy an eyed head block's snapshot onto its generated head items.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable net.minecraft.nbt.CompoundTag</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#data(net.minecraft.world.level.block.entity.BlockEntity)" class="member-name-link">data</a><wbr>(@Nullable net.minecraft.world.level.block.entity.BlockEntity&nbsp;skull)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The placed head's eye-state compound, or <code>null</code> if it has none; read it, don't write it.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable net.minecraft.resources.Identifier</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#entityFor(net.minecraft.resources.Identifier)" class="member-name-link">entityFor</a><wbr>(net.minecraft.resources.Identifier&nbsp;blockId)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable net.minecraft.resources.Identifier</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#entityFor(net.minecraft.resources.Identifier)" class="member-name-link">entityFor</a><wbr>(net.minecraft.resources.Identifier&nbsp;blockId)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The mob whose eye definition the Heads mod's head block <code>blockId</code> (floor or wall) uses, or <code>null</code>
 for any other block id.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable net.minecraft.resources.Identifier</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#entityFor(net.minecraft.world.item.ItemStack)" class="member-name-link">entityFor</a><wbr>(net.minecraft.world.item.ItemStack&nbsp;stack)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable net.minecraft.resources.Identifier</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#entityFor(net.minecraft.world.item.ItemStack)" class="member-name-link">entityFor</a><wbr>(net.minecraft.world.item.ItemStack&nbsp;stack)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The mob whose eye definition the head item <code>stack</code> uses, or <code>null</code> for any other item.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable net.minecraft.resources.Identifier</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#entityFor(net.minecraft.world.level.block.Block)" class="member-name-link">entityFor</a><wbr>(net.minecraft.world.level.block.Block&nbsp;block)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable net.minecraft.resources.Identifier</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#entityFor(net.minecraft.world.level.block.Block)" class="member-name-link">entityFor</a><wbr>(net.minecraft.world.level.block.Block&nbsp;block)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The mob whose eye definition the head <code>block</code> uses, or <code>null</code> for any other block.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#hasEyes(net.minecraft.world.level.block.entity.BlockEntity)" class="member-name-link">hasEyes</a><wbr>(net.minecraft.world.level.block.entity.BlockEntity&nbsp;skull)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#hasEyes(net.minecraft.world.level.block.entity.BlockEntity)" class="member-name-link">hasEyes</a><wbr>(net.minecraft.world.level.block.entity.BlockEntity&nbsp;skull)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Whether the placed head has eyes; cheap enough to ask every frame.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.world.level.storage.loot.functions.LootItemFunction.Builder</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#headLootCopy()" class="member-name-link">headLootCopy</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">The loot function that copies a placed head's eye state onto its dropped item, as the
+<a href="../../registry/ModContent.html#HEAD_EYES"><code>ModContent.HEAD_EYES</code></a> component the block entity reports.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static int[]</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#headParts(net.minecraft.resources.Identifier,com.github.crittscott.somegoogly.eye.HeadInfo)" class="member-name-link">headParts</a><wbr>(net.minecraft.resources.Identifier&nbsp;entity,
@@ -305,6 +311,23 @@ only elsewhere (a cow's on its body) never leaves a head blank.</div>
 </section>
 </li>
 <li>
+<section class="detail" id="TWILIGHT_NAMESPACE">
+<h3>TWILIGHT_NAMESPACE</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">TWILIGHT_NAMESPACE</span></div>
+<div class="block">Twilight Forest's namespace; declared first because the entries below read it.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list">
+<li><a href="../../../../../../constant-values.html#com.github.crittscott.somegoogly.eye.state.SkullEyeState.TWILIGHT_NAMESPACE">Constant Field Values</a></li>
+</ul>
+</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
 <section class="detail" id="HEADS_MOBS">
 <h3>HEADS_MOBS</h3>
 <div class="horizontal-scroll">
@@ -360,14 +383,12 @@ has a weighted variant with eyes the head shows.</div>
 </section>
 </li>
 <li>
-<section class="detail" id="copyToLoot(net.minecraft.world.level.storage.loot.LootContext,java.util.Collection)">
-<h3>copyToLoot</h3>
+<section class="detail" id="headLootCopy()">
+<h3>headLootCopy</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">copyToLoot</span><wbr><span class="parameters">(net.minecraft.world.level.storage.loot.LootContext&nbsp;context,
- <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;net.minecraft.world.item.ItemStack&gt;&nbsp;generatedLoot)</span></div>
-<div class="block">Copy an eyed head block's snapshot onto its generated head items. The Forge and NeoForge
-<code>HeadEyesLootModifier</code>s call this; Fabric's counterpart is the <code>copy_components</code> function its
-loot-table event adds.</div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">net.minecraft.world.level.storage.loot.functions.LootItemFunction.Builder</span>&nbsp;<span class="element-name">headLootCopy</span>()</div>
+<div class="block">The loot function that copies a placed head's eye state onto its dropped item, as the
+<a href="../../registry/ModContent.html#HEAD_EYES"><code>ModContent.HEAD_EYES</code></a> component the block entity reports. Every loader's head loot uses it.</div>
 </div>
 </section>
 </li>

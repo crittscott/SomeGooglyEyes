@@ -3,11 +3,13 @@ package com.github.crittscott.somegoogly.client.picker;
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.ARGB;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,112 +27,93 @@ import static com.github.crittscott.somegoogly.command.MaybeFloatArgumentType.co
  */
 public final class PickerHud {
 
-    // Translucent dark backdrop so the text stays legible over a busy scene while the mob shows
-    // through. ARGB: raise the leading alpha byte (0xA0) toward 0xFF for a more opaque panel.
+    /** Translucent dark backdrop, leaving the target visible through the panel. */
     private static final int BACKDROP = 0xA0101010;
-    private static final int GRAY = 0xFFB0B0B0;
-    private static final int GREEN = 0xFF55FF55;
-    private static final int LINE_HEIGHT = 10;
+    private static final int LINE_GAP = 1;
     private static final int PADDING = 4;
     private static final int RIGHT_MARGIN = 6;
     private static final int TOP_MARGIN = 6;
-    private static final int WHITE = 0xFFFFFFFF;
-    private static final int YELLOW = 0xFFFFE060;
 
     /** The panel's text, rebuilt at most once per client tick; {@code null} while the picker is off. */
-    private static List<List<Line>> cachedRows;
+    private static List<Component> cachedRows;
     private static int cachedRowsTick;
 
     private PickerHud() {
     }
 
-    private record Line(String text, int color) {
+    /** Add the identity/position and orientation/appearance rows for one saved or unsaved eye. */
+    private static void appendEye(List<Component> out, Component label, Component part, EyeDraft eye,
+                                  ChatFormatting colorA, ChatFormatting colorB) {
+        out.add(Component.translatable("somegoogly.picker.hud.eye_line1", label, part,
+                compact(eye.position[0]), compact(eye.position[1]), compact(eye.position[2])).withStyle(colorA));
+        Component cross = eye.crossTarget != EyePlacement.NO_CROSS_TARGET
+                ? Component.translatable("somegoogly.picker.cross_target_mark", eye.crossTarget + 1)
+                : Component.empty();
+        out.add(Component.translatable("somegoogly.picker.hud.eye_line2",
+                angle(eye.inclination), angle(eye.azimuth),
+                compact(eye.eyeScale), compact(eye.irisScale), compact(eye.depth),
+                Component.translatable(eye.glows ? "somegoogly.picker.hud.glow_on" : "somegoogly.picker.hud.glow_off"),
+                hex(eye.corneaColors), hex(eye.irisColors), cross).withStyle(colorB));
     }
 
-    /** One rendered line as a sequence of differently-colored segments (e.g. a green label, a white value). */
-    private static List<Line> row(Line... segments) {
-        return List.of(segments);
-    }
-
-    /**
-     * Add an eye as two rows: identity/part/position, then orientation/scales/flags (indented). Each
-     * row is a single-segment row. Glow is shown as {@code +G}/{@code -G} (set/unset) to keep the row
-     * short; cornea/iris colors follow as {@code c#RRGGBB i#RRGGBB}.
-     */
-    private static void appendEye(List<List<Line>> out, String label, String part, EyeDraft e, int colorA, int colorB) {
-        out.add(row(new Line(I18n.get("somegoogly.picker.hud.eye_line1", label, part,
-                compact(e.position[0]), compact(e.position[1]), compact(e.position[2])), colorA)));
-        String cross = e.crossTarget != EyePlacement.NO_CROSS_TARGET ? I18n.get("somegoogly.picker.cross_target_mark", e.crossTarget + 1) : "";
-        out.add(row(new Line(I18n.get("somegoogly.picker.hud.eye_line2",
-                angle(e.inclination), angle(e.azimuth),
-                compact(e.eyeScale), compact(e.irisScale), compact(e.depth),
-                I18n.get(e.glows ? "somegoogly.picker.hud.glow_on" : "somegoogly.picker.hud.glow_off"),
-                hex(e.corneaColors), hex(e.irisColors), cross), colorB)));
-    }
-
-    /** An RGB triple in 0–1 as {@code RRGGBB} (8-bit, rounded); the {@code eye_line2} template adds the {@code #}. */
+    /** An RGB triple as {@code RRGGBB}; the row's translation supplies the punctuation. */
     private static String hex(float[] rgb) {
         return EyeColor.of(rgb).toHex();
     }
 
-    private static List<List<Line>> lines() {
-        List<List<Line>> out = new ArrayList<>();
+    /** The key's current binding, translated by the same component used in Controls. */
+    private static Component keyName(KeyMapping key) {
+        return key.getTranslatedKeyMessage();
+    }
 
+    private static List<Component> lines() {
+        List<Component> out = new ArrayList<>();
         if (PickerState.target() == null) {
-            out.add(row(new Line(I18n.get("somegoogly.picker.hud.no_target", keyName(PickerInput.LOCK)), GRAY)));
+            out.add(Component.translatable("somegoogly.picker.hud.no_target", keyName(PickerInput.LOCK))
+                    .withStyle(ChatFormatting.GRAY));
             return out;
         }
 
         String ageKey = PickerState.target().isBaby()
                 ? "somegoogly.picker.hud.age_baby" : "somegoogly.picker.hud.age_adult";
-        out.add(row(
-                new Line(I18n.get("somegoogly.picker.hud.target_label"), GREEN),
-                new Line(" " + PickerState.targetType() + "  ", WHITE),
-                new Line(I18n.get("somegoogly.picker.hud.variant_label"), GREEN),
-                new Line(" " + I18n.get("somegoogly.picker.hud.variant_value", PickerState.variantIndex() + 1,
-                        PickerState.variantCount(), compact(PickerState.currentVariant().weight)) + "  ", WHITE),
-                new Line(I18n.get("somegoogly.picker.hud.age_label"), GREEN),
-                new Line(" " + I18n.get(ageKey), WHITE)));
+        out.add(Component.translatable("somegoogly.picker.hud.target_row",
+                Component.literal(PickerState.targetType().toString()).withStyle(ChatFormatting.WHITE),
+                Component.translatable("somegoogly.picker.hud.variant_value", PickerState.variantIndex() + 1,
+                        PickerState.variantCount(), compact(PickerState.currentVariant().weight)).withStyle(ChatFormatting.WHITE),
+                Component.translatable(ageKey).withStyle(ChatFormatting.WHITE)).withStyle(ChatFormatting.GREEN));
 
-        String token = partOrNone(PickerState.currentPart());
-        int n = PickerState.parts().size();
-        int i = n == 0 ? 0 : (Math.floorMod(PickerState.partIndex(), n) + 1);
-        out.add(row(
-                new Line(I18n.get("somegoogly.picker.hud.part_label"), GREEN),
-                new Line(" " + I18n.get("somegoogly.picker.hud.part_value", token, i, n,
-                        keyName(PickerInput.PART_PREV), keyName(PickerInput.PART_NEXT)), WHITE)));
+        Component token = partOrNone(PickerState.currentPart());
+        int count = PickerState.parts().size();
+        int index = count == 0 ? 0 : Math.floorMod(PickerState.partIndex(), count) + 1;
+        out.add(Component.translatable("somegoogly.picker.hud.part_row",
+                Component.translatable("somegoogly.picker.hud.part_value", token, index, count,
+                        keyName(PickerInput.PART_PREV), keyName(PickerInput.PART_NEXT)).withStyle(ChatFormatting.WHITE))
+                .withStyle(ChatFormatting.GREEN));
+        out.add(Component.translatable("somegoogly.picker.hud.eyes_header",
+                Component.literal(Integer.toString(PickerState.currentEyeCount())).withStyle(ChatFormatting.WHITE))
+                .withStyle(ChatFormatting.GREEN));
 
-        out.add(row(
-                new Line(I18n.get("somegoogly.picker.hud.eyes_header_label"), GREEN),
-                new Line(" " + I18n.get("somegoogly.picker.hud.eyes_header_value", PickerState.currentEyeCount()), WHITE)));
-
-        // One block per saved eye in the current variant (two rows). The eye being edited via /sg
-        // (selectedIndex) is drawn live from currentEye and highlighted; if nothing is selected, the
-        // in-progress currentEye is appended as a trailing "new (unsaved)" block — what /sg save commits.
+        // Saved eyes have two rows each. The selected eye shows its live draft; an unsaved draft trails the list.
         List<PickerState.ListedEye> eyes = PickerState.currentEyes();
-        for (int idx = 0; idx < eyes.size(); idx++) {
-            PickerState.ListedEye listed = eyes.get(idx);
-            if (idx == PickerState.selectedIndex()) {
-                appendEye(out, I18n.get("somegoogly.picker.hud.selected_marker", idx + 1), token, PickerState.currentEye(), YELLOW, YELLOW);
+        for (int indexInList = 0; indexInList < eyes.size(); indexInList++) {
+            PickerState.ListedEye listed = eyes.get(indexInList);
+            if (indexInList == PickerState.selectedIndex()) {
+                appendEye(out, Component.translatable("somegoogly.picker.hud.selected_marker", indexInList + 1),
+                        token, PickerState.currentEye(), ChatFormatting.YELLOW, ChatFormatting.YELLOW);
             } else {
-                appendEye(out, I18n.get("somegoogly.picker.hud.eye_marker", idx + 1), partOrNone(listed.part), listed.eye, WHITE, GRAY);
+                appendEye(out, Component.translatable("somegoogly.picker.hud.eye_marker", indexInList + 1),
+                        partOrNone(listed.part), listed.eye, ChatFormatting.WHITE, ChatFormatting.GRAY);
             }
         }
-
         if (PickerState.selectedIndex() == PickerState.NO_SELECTION && PickerState.currentEye() != null) {
-            appendEye(out, I18n.get("somegoogly.picker.hud.new_unsaved"), token, PickerState.currentEye(), YELLOW, YELLOW);
+            appendEye(out, Component.translatable("somegoogly.picker.hud.new_unsaved"), token,
+                    PickerState.currentEye(), ChatFormatting.YELLOW, ChatFormatting.YELLOW);
         }
-
         return out;
     }
 
-    /** The key currently bound to {@code key}, as the Controls screen shows it. */
-    private static String keyName(KeyMapping key) {
-        return key.getTranslatedKeyMessage().getString();
-    }
-
-    private static String partOrNone(String part) {
-        return part != null ? part : I18n.get("somegoogly.picker.hud.none");
+    private static Component partOrNone(String part) {
+        return part != null ? Component.literal(part) : Component.translatable("somegoogly.picker.hud.none");
     }
 
     /** Draw the picker HUD while the picker is active. */
@@ -145,35 +128,20 @@ public final class PickerHud {
             cachedRows = lines();
             cachedRowsTick = tick;
         }
-        List<List<Line>> rows = cachedRows;
-
+        List<Component> rows = cachedRows;
         int widest = 0;
-        for (List<Line> row : rows) {
-            int w = 0;
-            for (Line segment : row) {
-                w += font.width(segment.text);
-            }
-            widest = Math.max(widest, w);
+        for (Component row : rows) {
+            widest = Math.max(widest, font.width(row));
         }
-
-        // Anchor the panel against the right edge and grow downward from the top.
+        int lineHeight = font.lineHeight + LINE_GAP;
         int right = width - RIGHT_MARGIN;
         int left = right - widest;
-        graphics.fill(
-                left - PADDING,
-                TOP_MARGIN - PADDING,
-                right + PADDING,
-                TOP_MARGIN + rows.size() * LINE_HEIGHT + PADDING,
-                BACKDROP);
-
+        graphics.fill(left - PADDING, TOP_MARGIN - PADDING, right + PADDING,
+                TOP_MARGIN + rows.size() * lineHeight + PADDING, BACKDROP);
         int y = TOP_MARGIN;
-        for (List<Line> row : rows) {
-            int x = left;
-            for (Line segment : row) {
-                graphics.text(font, segment.text, x, y, segment.color);
-                x += font.width(segment.text);
-            }
-            y += LINE_HEIGHT;
+        for (Component row : rows) {
+            graphics.text(font, row, left, y, ARGB.opaque(ChatFormatting.WHITE.getColor()));
+            y += lineHeight;
         }
     }
 }

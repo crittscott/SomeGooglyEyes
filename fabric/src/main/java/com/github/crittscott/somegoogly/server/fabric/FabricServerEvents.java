@@ -3,9 +3,7 @@ package com.github.crittscott.somegoogly.server.fabric;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.command.GooglyServerCommands;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
-import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
-import com.github.crittscott.somegoogly.registry.ModContent;
 import com.github.crittscott.somegoogly.item.EyeItemService;
 import com.github.crittscott.somegoogly.server.ServerServices;
 import java.util.HashSet;
@@ -28,11 +26,8 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.functions.CopyComponentsFunction;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
 /** Fabric event wiring for the loader-neutral authoritative server services. */
 public final class FabricServerEvents {
@@ -42,7 +37,7 @@ public final class FabricServerEvents {
      * callbacks can veto before either action mutates state.
      */
     private static final Identifier LATE_PHASE =
-            Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "after_protection");
+            SomeGooglyCommon.id("after_protection");
 
     /** The loot tables of the heads that can have eyes, gathered on first use, once blocks are registered. */
     @Nullable
@@ -78,9 +73,7 @@ public final class FabricServerEvents {
         // The Forge and NeoForge counterpart is HeadEyesLootModifier.
         LootTableEvents.MODIFY.register((key, tableBuilder, source, registries) -> {
             if (headLootTables().contains(key)) {
-                tableBuilder.modifyPools(pool -> pool.apply(
-                        CopyComponentsFunction.copyComponentsFromBlockEntity(LootContextParams.BLOCK_ENTITY)
-                                .include(ModContent.HEAD_EYES.get())));
+                tableBuilder.modifyPools(pool -> pool.apply(SkullEyeState.headLootCopy()));
             }
         });
         UseItemCallback.EVENT.addPhaseOrdering(Event.DEFAULT_PHASE, LATE_PHASE);
@@ -92,18 +85,11 @@ public final class FabricServerEvents {
             }
         });
         ServerLivingEntityEvents.MOB_CONVERSION.register((previous, converted, context) ->
-                EyeState.copy(previous, converted));
-        // Leaving the End replaces the player; eyes applied to a player are still lost on death.
-        ServerPlayerEvents.COPY_FROM.register((oldPlayer, newPlayer, alive) -> {
-            if (alive) {
-                EyeState.copy(oldPlayer, newPlayer);
-            }
-        });
-        ServerLivingEntityEvents.AFTER_DAMAGE.register((entity, source, baseDamage, damageTaken, blocked) -> {
-            if (source.getEntity() instanceof Player) {
-                ServerBehaviorScheduler.onPlayerHurt(entity);
-            }
-        });
+                ServerServices.onConverted(previous, converted));
+        // Respawning or leaving the End replaces the player.
+        ServerPlayerEvents.COPY_FROM.register(ServerServices::onPlayerCloned);
+        ServerLivingEntityEvents.AFTER_DAMAGE.register((entity, source, baseDamage, damageTaken, blocked) ->
+                ServerBehaviorScheduler.onHurt(entity, source));
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) ->
                 ServerServices.onPlayerLeft(handler.player));
         // Sent with the rest of the joining player's game data, ahead of their own eye state.

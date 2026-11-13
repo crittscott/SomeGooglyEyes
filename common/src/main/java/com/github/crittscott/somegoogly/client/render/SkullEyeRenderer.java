@@ -20,9 +20,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.BlockItem;
 import org.joml.Quaternionf;
 import java.lang.reflect.Field;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -44,11 +42,12 @@ import org.jspecify.annotations.Nullable;
 /**
  * Submits the eyes of placed mob heads and head items. A placed head's eyes are chosen while its render state
  * is extracted ({@link #extract}) and kept on that state ({@link PlacedHolder}). Mixins bracket a placed head's
- * submission with {@link #begin} and a head item's with {@link #beginItem}, both ending in {@link #end}, and
- * call {@link #render} right after the head model is submitted, in the model's space. A placed head's eyes are
- * live ({@link PresentationEyes}). Head items in the GUI, in third-person hands, or in frames have independent
- * pupils and ambient expressions. Unanimated items have centered pupils. Worn heads share the model submission
- * outside both brackets, so they draw no eyes.
+ * submission with {@link ClientEyeRuntime#beginHead} and an item render state's with
+ * {@link ClientEyeRuntime#beginItemState}, both closed by {@link ClientEyeRuntime#endItemDraw}, and call
+ * {@link #render} or {@link #renderTrophy} as the head model is submitted, in the model's space; they read that draw
+ * context while the head is submitted, never later. A placed head's eyes are live ({@link PresentationEyes}). Head
+ * items in the GUI, in third-person hands, or in frames have independent pupils and ambient expressions. Unanimated
+ * items have centered pupils. Worn heads share the model submission outside both brackets, so they draw no eyes.
  *
  * <p>The eyes attach to the model's head part, which a vanilla head model shares with its mob, so the mob's
  * definition places them as they are. Heads-mod models use a cached cube fit to carry eyes to their
@@ -74,21 +73,11 @@ public final class SkullEyeRenderer {
     /** Fitted placements by Heads-mod head model and eye attach token; empty where fitting failed. */
     private static final Map<ModelPart, Map<String, Optional<Placement>>> PLACEMENTS =
             new IdentityHashMap<>();
-
-    private static final Deque<DrawContext> DRAWS = new ArrayDeque<>();
-
-    private static final class DrawContext {
-        final @Nullable PresentationEyes eyes;
-        final @Nullable ItemStack item;
-        final float partialTick;
-        boolean itemEyesSubmitted;
-
-        DrawContext(@Nullable PresentationEyes eyes, @Nullable ItemStack item, float partialTick) {
-            this.eyes = eyes;
-            this.item = item;
-            this.partialTick = partialTick;
-        }
-    }
+    /**
+     * The item draw whose eyes were last submitted: a head item can submit an additional model, and its eyes
+     * belong to the first model only. Compared by identity, since each item draw opens its own context.
+     */
+    private static ClientEyeRuntime.@Nullable DrawContext itemEyesSubmitted;
 
     private SkullEyeRenderer() {
     }
@@ -178,24 +167,9 @@ public final class SkullEyeRenderer {
         return eyes;
     }
 
-    /** A placed head's submission starts. */
-    public static void begin(PlacedHolder state) {
-        DRAWS.push(new DrawContext(state.somegoogly$eyes(), null, state.somegoogly$partialTick()));
-    }
-
-    /** An item's submission starts; any but a head item's is ignored, since it never reaches {@link #render}. */
-    public static void beginItem(@Nullable ItemStack stack) {
-        DRAWS.push(new DrawContext(null, stack, 0F));
-    }
-
     /** Drop fits when renderer rebuilds replace the head and mob models. */
     public static void clearCaches() {
         PLACEMENTS.clear();
-    }
-
-    /** The placed head's or head item's submission ends. */
-    public static void end() {
-        DRAWS.pop();
     }
 
     /**
@@ -314,8 +288,7 @@ public final class SkullEyeRenderer {
      */
     public static void render(PoseStack pose, SubmitNodeCollector collector, int packedLight, SkullModelBase model,
                               SkullModelBase.State modelState) {
-        DrawContext draw = DRAWS.peek();
-        if (draw == null || draw.eyes == null && (draw.item == null || draw.itemEyesSubmitted)) {
+        if (!hasEyesToDraw(ClientEyeRuntime.currentDraw())) {
             return;
         }
         ModelPart head = headPart(model);
@@ -331,16 +304,16 @@ public final class SkullEyeRenderer {
 
     private static void renderHead(PoseStack pose, SubmitNodeCollector collector, int packedLight,
                                    ModelPart head, boolean trophy) {
-        DrawContext draw = DRAWS.peek();
-        if (draw == null || draw.eyes == null && (draw.item == null || draw.itemEyesSubmitted)) {
+        ClientEyeRuntime.DrawContext draw = ClientEyeRuntime.currentDraw();
+        if (!hasEyesToDraw(draw)) {
             return;
         }
-        PresentationEyes eyes = draw.eyes;
-        ItemStack stack = draw.item;
+        PresentationEyes eyes = draw.head();
+        ItemStack stack = draw.item();
         if (eyes != null) {
             renderEyes(pose, collector, packedLight, head, eyes.headsMod || trophy && !SkullEyeState.HYDRA_TROPHY_LAYOUT.equals(eyes.entity),
                     eyes.entity, eyes.helper, eyes.parts, eyes.eyes,
-                    eyes.snapshot.properties(), draw.partialTick);
+                    eyes.snapshot.properties(), draw.partialTick());
         } else {
             Identifier entity = SkullEyeState.entityFor(stack);
             if (!mayShow(entity)) {
@@ -348,10 +321,10 @@ public final class SkullEyeRenderer {
             }
             boolean headsMod = trophy ? !SkullEyeState.HYDRA_TROPHY_LAYOUT.equals(entity)
                     : stack.getItem() instanceof BlockItem item && SkullEyeState.isHeadsMod(item.getBlock());
-            PresentationEyes.Draw itemDraw = ClientEyeRuntime.itemDraw(stack);
+            PresentationEyes.Draw itemDraw = draw.draw();
             PresentationEyes animated = itemDraw.eyes();
             if (animated != null) {
-                draw.itemEyesSubmitted = true;
+                itemEyesSubmitted = draw;
                 renderEyes(pose, collector, packedLight, head, headsMod, entity, animated.helper, animated.parts,
                         animated.eyes, animated.properties, itemDraw.partialTick());
                 return;
@@ -360,12 +333,17 @@ public final class SkullEyeRenderer {
             if (snapshot != null) {
                 HeadInfo helper = ClientEyeConfigs.resolveHead(entity, snapshot.variantRoll());
                 if (helper.hasConfig()) {
-                    draw.itemEyesSubmitted = true;
+                    itemEyesSubmitted = draw;
                     renderEyes(pose, collector, packedLight, head, headsMod, entity, helper,
                             SkullEyeState.headParts(entity, helper), null, snapshot.properties(), 0F);
                 }
             }
         }
+    }
+
+    /** Whether {@code draw} is a placed head with eyes, or an item whose eyes have not been submitted yet. */
+    private static boolean hasEyesToDraw(ClientEyeRuntime.DrawContext draw) {
+        return draw.head() != null || draw.item() != null && itemEyesSubmitted != draw;
     }
 
     /**

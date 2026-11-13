@@ -20,6 +20,12 @@ import org.spongepowered.asm.mixin.Unique;
 
 import org.jspecify.annotations.Nullable;
 
+/**
+ * Gives Twilight Forest's boss trophies the saved, synced, and item-carried eye state vanilla heads get from
+ * {@code SkullBlockEntityDataMixin}, making each trophy a {@link SkullEyeState.Holder}. Twilight Forest is an
+ * optional mod with no API for this, and its trophy block entity is not a vanilla skull, so that Mixin does not
+ * reach it.
+ */
 @Pseudo
 @Mixin(targets = "twilightforest.block.entity.TrophyBlockEntity", remap = false)
 abstract class TwilightTrophyDataMixin extends BlockEntity implements SkullEyeState.Holder {

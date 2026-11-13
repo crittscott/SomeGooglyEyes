@@ -15,6 +15,12 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
+/**
+ * Carries a placed head's eyes onto the skull candle that replaces it when a candle is put on it, by hand or by
+ * dispenser. Twilight Forest is an optional mod with no API or event for this conversion, and it replaces the block
+ * and installs a new block entity directly, so neither vanilla's head paths nor {@code SkullBlockEntityDataMixin} see
+ * the old head's state move. Each redirect still makes the original call.
+ */
 @Pseudo
 @Mixin(targets = {"twilightforest.events.EntityEvents", "twilightforest.dispenser.CandleDispenseBehavior"},
         remap = false)

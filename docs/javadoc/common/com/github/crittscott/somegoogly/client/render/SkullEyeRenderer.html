@@ -58,10 +58,7 @@ loadScripts(document, 'script');</script>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
 <li><a href="#extract(net.minecraft.world.level.block.entity.BlockEntity)" tabindex="0">extract(BlockEntity)</a></li>
-<li><a href="#begin(com.github.crittscott.somegoogly.client.render.SkullEyeRenderer.PlacedHolder)" tabindex="0">begin(SkullEyeRenderer.PlacedHolder)</a></li>
-<li><a href="#beginItem(net.minecraft.world.item.ItemStack)" tabindex="0">beginItem(ItemStack)</a></li>
 <li><a href="#clearCaches()" tabindex="0">clearCaches()</a></li>
-<li><a href="#end()" tabindex="0">end()</a></li>
 <li><a href="#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,net.minecraft.client.model.object.skull.SkullModelBase,net.minecraft.client.model.object.skull.SkullModelBase.State)" tabindex="0">render(PoseStack, SubmitNodeCollector, int, SkullModelBase, SkullModelBase.State)</a></li>
 <li><a href="#renderTrophy(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,net.minecraft.client.model.geom.ModelPart)" tabindex="0">renderTrophy(PoseStack, SubmitNodeCollector, int, ModelPart)</a></li>
 </ol>
@@ -83,11 +80,12 @@ loadScripts(document, 'script');</script>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Submits the eyes of placed mob heads and head items. A placed head's eyes are chosen while its render state
 is extracted (<a href="#extract(net.minecraft.world.level.block.entity.BlockEntity)"><code>extract(BlockEntity)</code></a>) and kept on that state (<a href="SkullEyeRenderer.PlacedHolder.html" title="interface in com.github.crittscott.somegoogly.client.render"><code>SkullEyeRenderer.PlacedHolder</code></a>). Mixins bracket a placed head's
-submission with <a href="#begin(com.github.crittscott.somegoogly.client.render.SkullEyeRenderer.PlacedHolder)"><code>begin(SkullEyeRenderer.PlacedHolder)</code></a> and a head item's with <a href="#beginItem(net.minecraft.world.item.ItemStack)"><code>beginItem(ItemStack)</code></a>, both ending in <a href="#end()"><code>end()</code></a>, and
-call <a href="#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,net.minecraft.client.model.object.skull.SkullModelBase,net.minecraft.client.model.object.skull.SkullModelBase.State)"><code>render(PoseStack, SubmitNodeCollector, int, SkullModelBase, SkullModelBase.State)</code></a> right after the head model is submitted, in the model's space. A placed head's eyes are
-live (<a href="../PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client"><code>PresentationEyes</code></a>). Head items in the GUI, in third-person hands, or in frames have independent
-pupils and ambient expressions. Unanimated items have centered pupils. Worn heads share the model submission
-outside both brackets, so they draw no eyes.
+submission with <a href="../ClientEyeRuntime.html#beginHead(com.github.crittscott.somegoogly.client.PresentationEyes,float)"><code>ClientEyeRuntime.beginHead(PresentationEyes, float)</code></a> and an item render state's with
+<a href="../ClientEyeRuntime.html#beginItemState(net.minecraft.world.item.ItemStack,com.github.crittscott.somegoogly.client.PresentationEyes.Draw)"><code>ClientEyeRuntime.beginItemState(ItemStack, PresentationEyes.Draw)</code></a>, both closed by <a href="../ClientEyeRuntime.html#endItemDraw()"><code>ClientEyeRuntime.endItemDraw()</code></a>, and call
+<a href="#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,net.minecraft.client.model.object.skull.SkullModelBase,net.minecraft.client.model.object.skull.SkullModelBase.State)"><code>render(PoseStack, SubmitNodeCollector, int, SkullModelBase, SkullModelBase.State)</code></a> or <a href="#renderTrophy(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,net.minecraft.client.model.geom.ModelPart)"><code>renderTrophy(PoseStack, SubmitNodeCollector, int, ModelPart)</code></a> as the head model is submitted, in the model's space; they read that draw
+context while the head is submitted, never later. A placed head's eyes are live (<a href="../PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client"><code>PresentationEyes</code></a>). Head
+items in the GUI, in third-person hands, or in frames have independent pupils and ambient expressions. Unanimated
+items have centered pupils. Worn heads share the model submission outside both brackets, so they draw no eyes.
 
 <p>The eyes attach to the model's head part, which a vanilla head model shares with its mob, so the mob's
 definition places them as they are. Heads-mod models use a cached cube fit to carry eyes to their
@@ -131,47 +129,32 @@ rebuilt head parts. Honors the client display settings by the head's mob and the
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#begin(com.github.crittscott.somegoogly.client.render.SkullEyeRenderer.PlacedHolder)" class="member-name-link">begin</a><wbr>(<a href="SkullEyeRenderer.PlacedHolder.html" title="interface in com.github.crittscott.somegoogly.client.render">SkullEyeRenderer.PlacedHolder</a>&nbsp;state)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">A placed head's submission starts.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#beginItem(net.minecraft.world.item.ItemStack)" class="member-name-link">beginItem</a><wbr>(@Nullable net.minecraft.world.item.ItemStack&nbsp;stack)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">An item's submission starts; any but a head item's is ignored, since it never reaches <a href="#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,net.minecraft.client.model.object.skull.SkullModelBase,net.minecraft.client.model.object.skull.SkullModelBase.State)"><code>render(PoseStack, SubmitNodeCollector, int, SkullModelBase, SkullModelBase.State)</code></a>.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#clearCaches()" class="member-name-link">clearCaches</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Drop fits when renderer rebuilds replace the head and mob models.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#end()" class="member-name-link">end</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable <a href="../PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client">PresentationEyes</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#extract(net.minecraft.world.level.block.entity.BlockEntity)" class="member-name-link">extract</a><wbr>(net.minecraft.world.level.block.entity.BlockEntity&nbsp;skull)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The placed head's or head item's submission ends.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable <a href="../PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client">PresentationEyes</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#extract(net.minecraft.world.level.block.entity.BlockEntity)" class="member-name-link">extract</a><wbr>(net.minecraft.world.level.block.entity.BlockEntity&nbsp;skull)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The eyes of the placed head <code>skull</code> to draw this frame, or <code>null</code> when it has none to show, as
 its render state is extracted.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,net.minecraft.client.model.object.skull.SkullModelBase,net.minecraft.client.model.object.skull.SkullModelBase.State)" class="member-name-link">render</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,net.minecraft.client.model.object.skull.SkullModelBase,net.minecraft.client.model.object.skull.SkullModelBase.State)" class="member-name-link">render</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
  net.minecraft.client.renderer.SubmitNodeCollector&nbsp;collector,
  int&nbsp;packedLight,
  net.minecraft.client.model.object.skull.SkullModelBase&nbsp;model,
  net.minecraft.client.model.object.skull.SkullModelBase.State&nbsp;modelState)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Submit the current placed head's or head item's eyes, if it has any to show, with <code>pose</code> in the space
 <code>model</code> was just submitted in, the head's <code>packedLight</code>, and its extracted model state.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#renderTrophy(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,net.minecraft.client.model.geom.ModelPart)" class="member-name-link">renderTrophy</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#renderTrophy(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,net.minecraft.client.model.geom.ModelPart)" class="member-name-link">renderTrophy</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
  net.minecraft.client.renderer.SubmitNodeCollector&nbsp;collector,
  int&nbsp;packedLight,
  net.minecraft.client.model.geom.ModelPart&nbsp;head)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -200,38 +183,11 @@ its render state is extracted.</div>
 </section>
 </li>
 <li>
-<section class="detail" id="begin(com.github.crittscott.somegoogly.client.render.SkullEyeRenderer.PlacedHolder)">
-<h3>begin</h3>
-<div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">begin</span><wbr><span class="parameters">(<a href="SkullEyeRenderer.PlacedHolder.html" title="interface in com.github.crittscott.somegoogly.client.render">SkullEyeRenderer.PlacedHolder</a>&nbsp;state)</span></div>
-<div class="block">A placed head's submission starts.</div>
-</div>
-</section>
-</li>
-<li>
-<section class="detail" id="beginItem(net.minecraft.world.item.ItemStack)">
-<h3>beginItem</h3>
-<div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">beginItem</span><wbr><span class="parameters">(@Nullable net.minecraft.world.item.ItemStack&nbsp;stack)</span></div>
-<div class="block">An item's submission starts; any but a head item's is ignored, since it never reaches <a href="#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,net.minecraft.client.model.object.skull.SkullModelBase,net.minecraft.client.model.object.skull.SkullModelBase.State)"><code>render(PoseStack, SubmitNodeCollector, int, SkullModelBase, SkullModelBase.State)</code></a>.</div>
-</div>
-</section>
-</li>
-<li>
 <section class="detail" id="clearCaches()">
 <h3>clearCaches</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">clearCaches</span>()</div>
 <div class="block">Drop fits when renderer rebuilds replace the head and mob models.</div>
-</div>
-</section>
-</li>
-<li>
-<section class="detail" id="end()">
-<h3>end</h3>
-<div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">end</span>()</div>
-<div class="block">The placed head's or head item's submission ends.</div>
 </div>
 </section>
 </li>

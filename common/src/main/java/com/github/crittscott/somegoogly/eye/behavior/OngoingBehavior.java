@@ -6,10 +6,13 @@ import com.github.crittscott.somegoogly.config.ServerConfig;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.NeutralMob;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.animal.goat.Goat;
 import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.entity.monster.piglin.AbstractPiglin;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.Item;
@@ -106,7 +109,7 @@ public enum OngoingBehavior {
     private final ConfigValue<Boolean> setting;
 
     OngoingBehavior(String name, ConfigValue<Boolean> setting) {
-        this.id = Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, name);
+        this.id = SomeGooglyCommon.id(name);
         this.setting = setting;
     }
 
@@ -129,6 +132,19 @@ public enum OngoingBehavior {
 
     private static float on(boolean on) {
         return on ? 1F : 0F;
+    }
+
+    /**
+     * Anger the client can't see for itself, kept by vanilla on the server: a neutral mob (iron golem, zombified
+     * piglin, enderman, wolf, bee, ...) with anger time left, or a piglin with someone to be angry at. Always
+     * {@code false} for any behavior but {@link #ANGER}, or while its switch is off.
+     */
+    public boolean serverAngry(LivingEntity entity) {
+        if (this != ANGER || !setting.get()) {
+            return false;
+        }
+        return entity instanceof NeutralMob neutral ? neutral.isAngry()
+                : entity instanceof AbstractPiglin && entity.getBrain().hasMemoryValue(MemoryModuleType.ANGRY_AT);
     }
 
     /** The server switch that enables this behavior. */

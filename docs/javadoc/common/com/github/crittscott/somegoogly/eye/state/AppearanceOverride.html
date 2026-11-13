@@ -72,7 +72,6 @@ loadScripts(document, 'script');</script>
 <ol class="toc-list">
 <li><a href="#fromNbt(net.minecraft.nbt.Tag)" tabindex="0">fromNbt(Tag)</a></li>
 <li><a href="#isEmpty()" tabindex="0">isEmpty()</a></li>
-<li><a href="#isValid()" tabindex="0">isValid()</a></li>
 <li><a href="#toNbt()" tabindex="0">toNbt()</a></li>
 <li><a href="#withCorneaColor(com.github.crittscott.somegoogly.eye.state.EyeColor)" tabindex="0">withCorneaColor(EyeColor)</a></li>
 <li><a href="#withGlow(java.lang.Boolean)" tabindex="0">withGlow(Boolean)</a></li>
@@ -102,8 +101,8 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public record </span><span class="element-name type-name-label">AppearanceOverride</span>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="EyeColor.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeColor</a>&gt;&nbsp;cornea, <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="EyeColor.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeColor</a>&gt;&nbsp;iris, <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;&nbsp;glow)
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a></span></div>
-<div class="block">A <b>sparse</b> override of an eye's <a href="EyeAppearance.html" title="class in com.github.crittscott.somegoogly.eye.state"><code>EyeAppearance</code></a>: each field is optional and, when absent,
-falls back to the underlying value (a mob's datapack appearance, via <a href="EyeAppearance.html#overlay(com.github.crittscott.somegoogly.eye.state.AppearanceOverride)"><code>EyeAppearance.overlay(AppearanceOverride)</code></a>).
+<div class="block">A <b>sparse</b> override of an eye's <a href="../EyeAppearance.html" title="class in com.github.crittscott.somegoogly.eye"><code>EyeAppearance</code></a>: each field is optional and, when absent,
+falls back to the underlying value (a mob's datapack appearance, via <a href="../EyeAppearance.html#overlay(com.github.crittscott.somegoogly.eye.state.AppearanceOverride)"><code>EyeAppearance.overlay(AppearanceOverride)</code></a>).
 
 <p>This is the one portable appearance payload. Persistent forms use <a href="#CODEC"><code>CODEC</code></a>; the bounded
 network packet (<code>EyeStatePacket</code>) uses <a href="#STREAM_CODEC"><code>STREAM_CODEC</code></a>. It serves three uses:
@@ -208,36 +207,31 @@ decoded by <a href="#CODEC"><code>CODEC</code></a>.</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isEmpty()" class="member-name-link">isEmpty</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Whether no field is set, so this override contributes nothing on <a href="EyeAppearance.html#overlay(com.github.crittscott.somegoogly.eye.state.AppearanceOverride)"><code>EyeAppearance.overlay(AppearanceOverride)</code></a>.</div>
+<div class="block">Whether no field is set, so this override contributes nothing on <a href="../EyeAppearance.html#overlay(com.github.crittscott.somegoogly.eye.state.AppearanceOverride)"><code>EyeAppearance.overlay(AppearanceOverride)</code></a>.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isValid()" class="member-name-link">isValid</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>net.minecraft.nbt.CompoundTag</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toNbt()" class="member-name-link">toNbt</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Whether every set color channel is in range; an unset channel is always valid.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>net.minecraft.nbt.CompoundTag</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toNbt()" class="member-name-link">toNbt</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Encode this override as a compound.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns a string representation of this record class.</div>
 </div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#withCorneaColor(com.github.crittscott.somegoogly.eye.state.EyeColor)" class="member-name-link">withCorneaColor</a><wbr>(@Nullable <a href="EyeColor.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeColor</a>&nbsp;color)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block"><code>null</code> clears the field.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#withCorneaColor(com.github.crittscott.somegoogly.eye.state.EyeColor)" class="member-name-link">withCorneaColor</a><wbr>(@Nullable <a href="EyeColor.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeColor</a>&nbsp;color)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#withGlow(java.lang.Boolean)" class="member-name-link">withGlow</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&nbsp;value)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block"><code>null</code> clears the field.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#withGlow(java.lang.Boolean)" class="member-name-link">withGlow</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&nbsp;value)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#withIrisColor(com.github.crittscott.somegoogly.eye.state.EyeColor)" class="member-name-link">withIrisColor</a><wbr>(@Nullable <a href="EyeColor.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeColor</a>&nbsp;color)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block"><code>null</code> clears the field.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#withIrisColor(com.github.crittscott.somegoogly.eye.state.EyeColor)" class="member-name-link">withIrisColor</a><wbr>(@Nullable <a href="EyeColor.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeColor</a>&nbsp;color)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block"><code>null</code> clears the field.</div>
 </div>
 </div>
@@ -330,16 +324,7 @@ decoded by <a href="#CODEC"><code>CODEC</code></a>.</div>
 <h3>isEmpty</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isEmpty</span>()</div>
-<div class="block">Whether no field is set, so this override contributes nothing on <a href="EyeAppearance.html#overlay(com.github.crittscott.somegoogly.eye.state.AppearanceOverride)"><code>EyeAppearance.overlay(AppearanceOverride)</code></a>.</div>
-</div>
-</section>
-</li>
-<li>
-<section class="detail" id="isValid()">
-<h3>isValid</h3>
-<div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isValid</span>()</div>
-<div class="block">Whether every set color channel is in range; an unset channel is always valid.</div>
+<div class="block">Whether no field is set, so this override contributes nothing on <a href="../EyeAppearance.html#overlay(com.github.crittscott.somegoogly.eye.state.AppearanceOverride)"><code>EyeAppearance.overlay(AppearanceOverride)</code></a>.</div>
 </div>
 </section>
 </li>

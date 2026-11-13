@@ -15,6 +15,6 @@
 - A Twilight Forest update that changes what the mod hooks no longer stops the game from starting on NeoForge. Placed trophies keep only their eye state from supplied data.
 
 ### Compatibility
-- Multiplayer uses protocol 18 across Fabric, Forge, and NeoForge. Servers and clients need matching versions.
+- Multiplayer uses protocol 19 across Fabric, Forge, and NeoForge. Servers and clients need matching versions.
 - Worlds saved with the 26.1.1 release load with their eyed mobs, eye items, heads, and settings intact. Worlds from earlier versions must first be opened with the 26.1.1 release.
 - Bundled Minecraft eye definitions for mobs whose babies Minecraft 26.1 redesigned select 26.1 and later, with baby placements fitted to the 26.1 baby models; definitions for mobs added after 1.21.4 select the release that introduced the mob and later; the other bundled Minecraft definitions select 1.21.4 and apply through the nearest-version fallback. The mod's data pack declares formats 84.0 through 101.1. Optional-mod definitions have not been verified against 26.1.2 releases of those mods.

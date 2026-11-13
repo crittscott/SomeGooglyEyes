@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.gametest;
 
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.fabricmc.fabric.api.entity.FakePlayer;
 
 /**
  * Fabric GameTest entry points for {@link EyeStateOverrideGameTestsLogic}; see that class for the
@@ -12,32 +13,17 @@ public final class EyeStateOverrideGameTests {
     private static final String TEMPLATE = "somegoogly:empty";
 
     @GameTest(structure = TEMPLATE, maxTicks = 40)
-    public void clearingTintRemovesOnlyThatField(GameTestHelper helper) {
-        EyeStateOverrideGameTestsLogic.clearingTintRemovesOnlyThatField(helper);
+    public void adminAppearanceCommands(GameTestHelper helper) {
+        EyeStateOverrideGameTestsLogic.adminAppearanceCommands(helper, FakePlayer.get(helper.getLevel()));
     }
 
     @GameTest(structure = TEMPLATE, maxTicks = 40)
-    public void glowOverrideCanBeSetAndDropped(GameTestHelper helper) {
-        EyeStateOverrideGameTestsLogic.glowOverrideCanBeSetAndDropped(helper);
+    public void adminCommandsRefuseUnauthorizedOrInvalidUse(GameTestHelper helper) {
+        EyeStateOverrideGameTestsLogic.adminCommandsRefuseUnauthorizedOrInvalidUse(helper, FakePlayer.get(helper.getLevel()));
     }
 
     @GameTest(structure = TEMPLATE, maxTicks = 40)
-    public void settingOneFieldLeavesOthersAbsent(GameTestHelper helper) {
-        EyeStateOverrideGameTestsLogic.settingOneFieldLeavesOthersAbsent(helper);
-    }
-
-    @GameTest(structure = TEMPLATE, maxTicks = 40)
-    public void clearingEveryFieldRemovesTheCompound(GameTestHelper helper) {
-        EyeStateOverrideGameTestsLogic.clearingEveryFieldRemovesTheCompound(helper);
-    }
-
-    @GameTest(structure = TEMPLATE, maxTicks = 40)
-    public void clearingTintsPreservesGlow(GameTestHelper helper) {
-        EyeStateOverrideGameTestsLogic.clearingTintsPreservesGlow(helper);
-    }
-
-    @GameTest(structure = TEMPLATE, maxTicks = 40)
-    public void snapshotAppliesAllFieldsTogether(GameTestHelper helper) {
-        EyeStateOverrideGameTestsLogic.snapshotAppliesAllFieldsTogether(helper);
+    public void adminEyesAndBehaviorCommands(GameTestHelper helper) {
+        EyeStateOverrideGameTestsLogic.adminEyesAndBehaviorCommands(helper, FakePlayer.get(helper.getLevel()));
     }
 }

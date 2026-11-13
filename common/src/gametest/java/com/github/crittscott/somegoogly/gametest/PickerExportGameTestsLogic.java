@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.gametest;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.client.picker.EyeDraft;
 import com.github.crittscott.somegoogly.client.picker.PickerState;
 import com.github.crittscott.somegoogly.config.EyeConfigLimits;
@@ -12,8 +13,9 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.VersionedEntry;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
-import com.github.crittscott.somegoogly.eye.state.EyeAppearance;
+import com.github.crittscott.somegoogly.eye.EyeAppearance;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
+import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.github.crittscott.somegoogly.network.PickerExportPacket;
 import com.github.crittscott.somegoogly.picker.PickerExportService;
 import com.google.gson.JsonObject;
@@ -150,7 +152,8 @@ public final class PickerExportGameTestsLogic {
     /**
      * Export-all can replace both ages and preserve an empty disabled bucket; a newly configured
      * species needs no prior definition. In game: author both ages, export-all, and inspect both
-     * entries; repeat for a previously unconfigured species. An existing disabled any entry remains.
+     * entries; repeat for a previously unconfigured species. An existing entry with {@code "age": "any"} and
+     * {@code "enabled": false} remains in the exported file.
      */
     public static void exportOverlayCombinesDraftAges(GameTestHelper helper) {
         RuntimeConfigSet base = new RuntimeConfigSet();
@@ -286,7 +289,7 @@ public final class PickerExportGameTestsLogic {
      * exports only mobs that exist; guards the server against a forged export packet.
      */
     public static void exportRejectsUnknownEntityType(GameTestHelper helper) {
-        Identifier type = Identifier.fromNamespaceAndPath("somegoogly", "not_a_real_mob");
+        Identifier type = SomeGooglyCommon.id("not_a_real_mob");
         Component result = PickerExportService.export(
                 server(helper), UUID.randomUUID(), type, AGE_ADULT, new CompoundTag());
         helper.assertTrue(result.equals(Component.translatable(
@@ -341,8 +344,7 @@ public final class PickerExportGameTestsLogic {
         config.variants = List.of(variant);
         CompoundTag exported = (CompoundTag) RuntimeConfig.CODEC.encodeStart(NbtOps.INSTANCE, config).result().orElseThrow();
 
-        Map<Identifier, RuntimeConfigSet> originalSet = ServerEyeConfigs.all();
-        Map<Identifier, CompoundTag> originalEncoded = ServerEyeConfigs.encoded();
+        EyeConfigSyncPacket original = ServerEyeConfigs.packet();
         Map<Identifier, RuntimeConfigSet> full = new HashMap<>();
         for (int part = 0; part < EyeConfigLimits.MAX_TOTAL_EYES_PER_SYNC / EyeConfigLimits.MAX_EYES_PER_HEAD; part++) {
             HeadConfig fullHead = new HeadConfig();
@@ -354,15 +356,15 @@ public final class PickerExportGameTestsLogic {
             fullConfig.variants = List.of(fullVariant);
             RuntimeConfigSet set = new RuntimeConfigSet();
             set.any = fullConfig;
-            full.put(Identifier.fromNamespaceAndPath("somegoogly", "filler_" + part), set);
+            full.put(SomeGooglyCommon.id("filler_" + part), set);
         }
         Component result;
         try {
-            ServerEyeConfigs.replaceIfChanged(full, ServerEyeConfigs.encode(full));
+            ServerEyeConfigs.replaceIfChanged(ServerEyeConfigs.packetFor(full));
             result = PickerExportService.export(server(helper), UUID.randomUUID(),
                     Identifier.fromNamespaceAndPath("minecraft", "cow"), AGE_ADULT, exported);
         } finally {
-            ServerEyeConfigs.replaceIfChanged(originalSet, originalEncoded);
+            ServerEyeConfigs.replaceIfChanged(original);
         }
         helper.assertTrue(result.getContents() instanceof TranslatableContents contents
                         && contents.getKey().equals("somegoogly.command.picker.export_rejected_unsafe_payload"),

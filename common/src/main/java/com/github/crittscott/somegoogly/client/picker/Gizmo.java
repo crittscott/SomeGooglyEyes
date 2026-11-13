@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.client.picker;
 
+import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.mojang.blaze3d.pipeline.BlendFunction;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
@@ -12,7 +13,6 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderSetup;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.resources.Identifier;
 import org.joml.Matrix4f;
 
 import java.util.Optional;
@@ -29,7 +29,7 @@ public final class Gizmo {
     private static final float END_CUBE = 0.10f;
     private static final RenderPipeline GIZMO_PIPELINE = RenderPipelines.register(
             RenderPipeline.builder(RenderPipelines.LINES_SNIPPET)
-                    .withLocation(Identifier.fromNamespaceAndPath("somegoogly", "pipeline/gizmo_lines"))
+                    .withLocation(SomeGooglyCommon.id("pipeline/gizmo_lines"))
                     .withDepthStencilState(new DepthStencilState(CompareOp.ALWAYS_PASS, false, 0F, 0F))
                     .withColorTargetState(new ColorTargetState(Optional.of(BlendFunction.TRANSLUCENT),
                             ColorTargetState.WRITE_RED | ColorTargetState.WRITE_GREEN

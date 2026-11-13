@@ -38,11 +38,11 @@ import java.util.Optional;
 public final class RecipeGameTestsLogic {
 
     private static final Identifier EYE_MODIFIER =
-            Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "eye_modifier");
+            SomeGooglyCommon.id("eye_modifier");
     private static final Identifier SLIMY_EYE =
-            Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "slimy_eye");
+            SomeGooglyCommon.id("slimy_eye");
     private static final Identifier SLIMY_EYE_ADVANCEMENT =
-            Identifier.fromNamespaceAndPath(SomeGooglyCommon.MOD_ID, "recipes/misc/slimy_eye");
+            SomeGooglyCommon.id("recipes/misc/slimy_eye");
 
     private RecipeGameTestsLogic() {
     }

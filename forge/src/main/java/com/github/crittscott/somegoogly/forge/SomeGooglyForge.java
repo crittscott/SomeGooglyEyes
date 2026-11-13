@@ -5,7 +5,8 @@ import com.github.crittscott.somegoogly.client.forge.ForgeClientBootstrap;
 import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
 import com.github.crittscott.somegoogly.config.forge.ForgeServerConfig;
 import com.github.crittscott.somegoogly.network.forge.ForgeNetworkTransport;
-import com.github.crittscott.somegoogly.registry.forge.ForgeContentRegistrar;
+import com.github.crittscott.somegoogly.platform.forge.RegistrationImpl;
+import com.github.crittscott.somegoogly.registry.ModContent;
 import com.github.crittscott.somegoogly.server.forge.ForgeServerEvents;
 import com.github.crittscott.somegoogly.server.forge.HeadEyesLootModifier;
 import net.minecraftforge.api.distmarker.Dist;
@@ -23,9 +24,8 @@ public final class SomeGooglyForge {
         // Eye configs are loaded from datapacks on the server (EyeConfigReloadListener) and synced
         // to clients (EyeConfigSyncPacket); nothing to load at construction time.
         BusGroup modBusGroup = context.getModBusGroup();
-        ForgeContentRegistrar registrar = new ForgeContentRegistrar();
-        SomeGooglyCommon.init(registrar);
-        registrar.register(modBusGroup);
+        ModContent.init();
+        RegistrationImpl.attach(modBusGroup);
         HeadEyesLootModifier.register(modBusGroup);
         ForgeNetworkTransport.register();
         ForgeServerConfig.register(context);

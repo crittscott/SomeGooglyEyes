@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.server;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
+import com.github.crittscott.somegoogly.config.ConfigValue;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
@@ -8,11 +9,11 @@ import com.github.crittscott.somegoogly.eye.BoatEyeLayout;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
-import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.github.crittscott.somegoogly.network.EyeSettingsPacket;
 import com.github.crittscott.somegoogly.picker.PickerFreezeService;
 import com.github.crittscott.somegoogly.picker.PickerGate;
 import com.github.crittscott.somegoogly.platform.Networking;
+import java.util.List;
 import java.util.Map;
 import org.jspecify.annotations.Nullable;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -56,7 +57,7 @@ public final class ServerServices {
         if (!(living instanceof Player) && ServerConfig.GOOGLY_EYES_ENABLED.get()
                 && ServerEyeConfigs.canEverWearEyes(living)) {
             int percent = ServerConfig.percentFor(entityType);
-            hasGooglyEyes = random.nextFloat() < (percent / (float) ServerConfig.PERCENT_MAX);
+            hasGooglyEyes = ServerConfig.roll(random, percent);
         }
 
         EyeState.initialize(living, hasGooglyEyes, random.nextFloat());
@@ -70,7 +71,7 @@ public final class ServerServices {
     public static void broadcastEyeSyncIfChanged(MinecraftServer server) {
         if (sentEyeConfigs != ServerEyeConfigs.all()) {
             sentEyeConfigs = ServerEyeConfigs.all();
-            Networking.sendToAll(server, eyeConfigPacket());
+            Networking.sendToAll(server, ServerEyeConfigs.packet());
         }
         EyeSettingsPacket settings = settingsPacket();
         if (!settings.equals(sentSettings)) {
@@ -79,15 +80,20 @@ public final class ServerServices {
         }
     }
 
-    private static EyeConfigSyncPacket eyeConfigPacket() {
-        return new EyeConfigSyncPacket(ServerEyeConfigs.all(), ServerEyeConfigs.encoded());
+    /**
+     * Minecraft is replacing {@code source} with {@code target} (a mob conversion): carry the eye state and any
+     * picker freeze across. Every loader conversion hook calls this.
+     */
+    public static void onConverted(LivingEntity source, LivingEntity target) {
+        EyeState.copy(source, target);
+        PickerFreezeService.onConverted(source, target);
     }
 
     /**
      * Initialize persistent eye state once for a server-side living entity, then reconcile any picker
      * freeze marker after that state is available. A player joining a level (login, respawn, dimension
-     * change) gets their own snapshot: their client has just built a fresh local player, and a player is
-     * never their own tracker, so the start-tracking sync doesn't cover them.
+     * change) gets their own snapshot and becomes a watcher of their own eyes: their client has just built a
+     * fresh local player, and a player is never their own tracker, so the start-tracking path covers neither.
      */
     public static void onLivingEntityLoaded(LivingEntity living) {
         if (!EyeState.isInitialized(living)) {
@@ -95,23 +101,42 @@ public final class ServerServices {
         }
         if (living instanceof ServerPlayer player) {
             EyeState.sendTo(player, player);
+            ServerBehaviorScheduler.onPlayerJoined(player);
         }
         if (living instanceof Mob mob) {
             PickerFreezeService.onMobJoin(mob);
         }
     }
 
-    /** Release all per-player picker state when a server player leaves. */
-    public static void onPlayerLeft(ServerPlayer player) {
-        PickerFreezeService.onPlayerLoggedOut(player);
-        PickerGate.onPlayerLeft(player.getUUID());
+    /**
+     * Minecraft replaced {@code original} with {@code replacement} on respawn ({@code alive} false) or on
+     * leaving the End ({@code alive} true). Eyes applied to a player carry over only when alive; either way the
+     * original stops watching its own eyes.
+     */
+    public static void onPlayerCloned(ServerPlayer original, ServerPlayer replacement, boolean alive) {
+        if (alive) {
+            EyeState.copy(original, replacement);
+        }
+        ServerBehaviorScheduler.onPlayerLeft(original);
     }
 
-    /** Record the settings that decide who gets eyes, once at startup and whenever they change. */
+    /** Release all per-player picker and behavior state when a server player leaves. */
+    public static void onPlayerLeft(ServerPlayer player) {
+        PickerFreezeService.unfreeze(player.level().getServer(), player.getUUID());
+        PickerGate.onPlayerLeft(player.getUUID());
+        ServerBehaviorScheduler.onPlayerLeft(player);
+    }
+
+    /** Record the settings that decide who gets eyes and which behaviors are off, at startup and on change. */
     public static void onServerConfigApplied() {
-        String applied = "googlyEyesEnabled=%s, globalPercent=%d, entityOverrides=%d".formatted(
+        List<String> behaviorsOff = ServerConfig.settings().stream()
+                .filter(setting -> setting instanceof ConfigValue.Flag flag
+                        && ServerConfig.SECTION_BEHAVIORS.equals(flag.section()) && !flag.get())
+                .map(ConfigValue::key)
+                .toList();
+        String applied = "googlyEyesEnabled=%s, globalPercent=%d, entityOverrides=%d, behaviorSwitchesOff=%s".formatted(
                 ServerConfig.GOOGLY_EYES_ENABLED.get(), ServerConfig.GLOBAL_PERCENT.get(),
-                ServerConfig.ENTITY_OVERRIDES.parsed().size());
+                ServerConfig.ENTITY_OVERRIDES.parsed().size(), behaviorsOff);
         if (!applied.equals(loggedConfig)) {
             SomeGooglyCommon.LOGGER.info("Server configuration applied ({})", applied);
             loggedConfig = applied;
@@ -161,7 +186,7 @@ public final class ServerServices {
             sentEyeConfigs = ServerEyeConfigs.all();
             sentSettings = settings;
         }
-        Networking.sendToPlayer(player, eyeConfigPacket());
+        Networking.sendToPlayer(player, ServerEyeConfigs.packet());
         Networking.sendToPlayer(player, settings);
     }
 }

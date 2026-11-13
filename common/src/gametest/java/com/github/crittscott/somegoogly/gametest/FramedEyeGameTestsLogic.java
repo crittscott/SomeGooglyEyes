@@ -44,8 +44,9 @@ public final class FramedEyeGameTestsLogic {
     }
 
     /**
-     * Empty slots, Slimy Eyes, and ordinary items are ineligible. In game: replace a framed Googly Eye
-     * with a Slimy Eye, a diamond, and nothing; only the Googly Eye has a simulated pupil.
+     * Only a Googly Eye in a frame gets a moving pupil; a Slimy Eye, an ordinary item, and an empty frame get none. In
+     * game: frame a Googly Eye, then replace it with a Slimy Eye, then a diamond, then nothing; only the Googly Eye's
+     * pupil moves.
      */
     public static void framedEyeFiltersItems(GameTestHelper helper) {
         helper.assertTrue(PresentationEyes.supports(new ItemStack(ModContent.GOOGLY_EYE.get())), Component.literal("Googly Eye is eligible"));
@@ -56,12 +57,13 @@ public final class FramedEyeGameTestsLogic {
     }
 
     /**
-     * Mounted pupils follow supplied gravity instead of always falling along the item's own down.
-     * In game: right-click a wall-mounted eye to rotate it; its pupil still falls toward the ground.
+     * A framed eye's pupil falls toward the ground however the frame or the item in it is turned. In game: frame a
+     * Googly Eye on a wall and right-click it to rotate it through each position; its pupil always settles at the
+     * bottom.
      */
     public static void framedEyeFollowsMountedGravity(GameTestHelper helper) {
-        PresentationEyes left = new PresentationEyes(FIRST_FRAME);
-        PresentationEyes right = new PresentationEyes(FIRST_FRAME);
+        PresentationEyes left = PresentationEyes.create(FIRST_FRAME, new ItemStack(ModContent.GOOGLY_EYE.get()));
+        PresentationEyes right = PresentationEyes.create(FIRST_FRAME, new ItemStack(ModContent.GOOGLY_EYE.get()));
         left.eye.gravX = -1F;
         right.eye.gravX = 1F;
         left.eye.gravY = right.eye.gravY = 0F;
@@ -77,12 +79,14 @@ public final class FramedEyeGameTestsLogic {
     }
 
     /**
-     * Short ambient intervals cannot overlap expressions; a time jump reconstructs the current slot.
-     * In game: set ambient min/max to their minimum and pool to blink; framed eyes keep blinking cleanly.
+     * Expressions never overlap, even with the shortest ambient interval, and an eye seen again after a long absence
+     * joins the expression now playing. In game: set {@code ambientMinTicks = 1} and {@code ambientMaxTicks = 1} and
+     * {@code ambientBehaviorPool = ["somegoogly:blink"]} in {@code somegoogly-server.toml}, then {@code /reload}; a
+     * framed Googly Eye blinks back to back, each blink finishing before the next starts.
      */
     public static void framedEyeHandlesShortIntervalsAndTimeJumps(GameTestHelper helper) {
         BehaviorSettings shortSlots = settings(true, 1, List.of(EyeBehavior.BLINK));
-        PresentationEyes eye = new PresentationEyes(FIRST_FRAME);
+        PresentationEyes eye = PresentationEyes.create(FIRST_FRAME, new ItemStack(ModContent.GOOGLY_EYE.get()));
         eye.tick(0L, shortSlots);
         BehaviorInstance first = eye.active;
         helper.assertTrue(first != null && first.age == 0, Component.literal("first short slot starts a blink"));
@@ -101,11 +105,15 @@ public final class FramedEyeGameTestsLogic {
     }
 
     /**
-     * Ambient-off, empty, and partner-only pools suppress expressions, including one already active
-     * when settings change. In game: reload each setting and observe that the framed eye stops expressing.
+     * A framed eye stops expressing, even mid-expression, when ambient expressions are off, the pool is empty, or the
+     * pool holds only expressions that need a second eye. In game: with {@code ambientMinTicks = 1} and {@code
+     * ambientMaxTicks = 1} and {@code ambientBehaviorPool = ["somegoogly:blink"]} in {@code somegoogly-server.toml},
+     * watch a framed Googly Eye blink. Then set each in turn and {@code /reload}: {@code ambientBehaviors = false};
+     * {@code ambientBehaviorPool = []}; {@code ambientBehaviorPool = ["somegoogly:cross_eye"]}. Each time the eye stops
+     * blinking and plays nothing.
      */
     public static void framedEyeHonorsAmbientSettings(GameTestHelper helper) {
-        PresentationEyes eye = new PresentationEyes(FIRST_FRAME);
+        PresentationEyes eye = PresentationEyes.create(FIRST_FRAME, new ItemStack(ModContent.GOOGLY_EYE.get()));
         eye.tick(0L, settings(true, 1, List.of(EyeBehavior.BLINK)));
         helper.assertTrue(eye.active != null, Component.literal("begin with an active expression"));
         List<BehaviorSettings> inactive = List.of(
@@ -122,12 +130,13 @@ public final class FramedEyeGameTestsLogic {
     }
 
     /**
-     * Removing cross-eye from a mixed pool still leaves lone-eye expressions available. In game: use
-     * ambient pool [cross_eye, blink]; the framed eye winks but never tries to cross toward another eye.
+     * A lone eye skips expressions that need a partner and still plays the rest. In game: set {@code
+     * ambientBehaviorPool = ["somegoogly:cross_eye", "somegoogly:blink"]} in {@code somegoogly-server.toml} and {@code
+     * /reload}; a framed Googly Eye winks from time to time and never tries to cross.
      */
     public static void framedEyePlaysSingleEyeExpressions(GameTestHelper helper) {
         BehaviorSettings settings = settings(true, SLOT_TICKS, List.of(EyeBehavior.CROSS_EYE, EyeBehavior.BLINK));
-        PresentationEyes eye = new PresentationEyes(FIRST_FRAME);
+        PresentationEyes eye = PresentationEyes.create(FIRST_FRAME, new ItemStack(ModContent.GOOGLY_EYE.get()));
         boolean winked = false;
         for (int tick = 0; tick < OBSERVATION_TICKS; tick++) {
             eye.tick(tick, settings);
@@ -142,18 +151,19 @@ public final class FramedEyeGameTestsLogic {
     }
 
     /**
-     * A newly created tracker joins a running expression with identical age and seeded parameters.
-     * In game: two players view one frame, with the second arriving mid-expression; both see its same phase.
+     * A player who starts watching a frame mid-expression sees the same expression at the same point as everyone else.
+     * In game: with two players, have one watch a framed Googly Eye while the other approaches from out of render
+     * range; when it comes into view, both see the same expression at the same moment.
      */
     public static void framedEyeReconstructsExpressions(GameTestHelper helper) {
         BehaviorSettings settings = settings(true, SLOT_TICKS,
                 List.of(EyeBehavior.SIDE_EYE, EyeBehavior.COLOR_CHANGE, EyeBehavior.BLINK));
-        PresentationEyes original = new PresentationEyes(FIRST_FRAME);
+        PresentationEyes original = PresentationEyes.create(FIRST_FRAME, new ItemStack(ModContent.GOOGLY_EYE.get()));
         boolean reconstructed = false;
         for (int tick = 0; tick < OBSERVATION_TICKS; tick++) {
             original.tick(tick, settings);
             if (original.active != null && original.active.age > 0) {
-                PresentationEyes arriving = new PresentationEyes(FIRST_FRAME);
+                PresentationEyes arriving = PresentationEyes.create(FIRST_FRAME, new ItemStack(ModContent.GOOGLY_EYE.get()));
                 arriving.tick(tick, settings);
                 BehaviorInstance a = original.active;
                 BehaviorInstance b = arriving.active;
@@ -169,12 +179,13 @@ public final class FramedEyeGameTestsLogic {
     }
 
     /**
-     * Expressions finish, leaving neutral overlays between slots. In game: restrict ambient pool to
-     * blink and watch the frame reopen fully before its next wink.
+     * Each expression ends fully, leaving the eye as it was. In game: set {@code ambientBehaviorPool =
+     * ["somegoogly:blink"]} in {@code somegoogly-server.toml} and {@code /reload}; between blinks a framed Googly Eye
+     * opens fully to its normal size.
      */
     public static void framedEyeReleasesExpressionOverlays(GameTestHelper helper) {
         BehaviorSettings settings = settings(true, SLOT_TICKS, List.of(EyeBehavior.BLINK));
-        PresentationEyes eye = new PresentationEyes(FIRST_FRAME);
+        PresentationEyes eye = PresentationEyes.create(FIRST_FRAME, new ItemStack(ModContent.GOOGLY_EYE.get()));
         boolean played = false;
         boolean released = false;
         for (int tick = 0; tick < OBSERVATION_TICKS; tick++) {
@@ -191,13 +202,13 @@ public final class FramedEyeGameTestsLogic {
     }
 
     /**
-     * Frames use independent UUID schedules. In game: fill several neighboring frames with copies of
-     * one eye; they express independently even though their displayed items match.
+     * Each frame keeps its own expression schedule, even when frames hold identical eyes. In game: fill several
+     * neighboring frames with Googly Eyes from one stack; they blink and glance at different times.
      */
     public static void framedEyeUsesIndependentSchedules(GameTestHelper helper) {
         BehaviorSettings settings = settings(true, SLOT_TICKS, List.of(EyeBehavior.SIDE_EYE, EyeBehavior.BLINK));
-        PresentationEyes first = new PresentationEyes(FIRST_FRAME);
-        PresentationEyes second = new PresentationEyes(SECOND_FRAME);
+        PresentationEyes first = PresentationEyes.create(FIRST_FRAME, new ItemStack(ModContent.GOOGLY_EYE.get()));
+        PresentationEyes second = PresentationEyes.create(SECOND_FRAME, new ItemStack(ModContent.GOOGLY_EYE.get()));
         boolean differed = false;
         for (int tick = 0; tick < OBSERVATION_TICKS; tick++) {
             first.tick(tick, settings);
@@ -211,8 +222,10 @@ public final class FramedEyeGameTestsLogic {
     }
 
     /**
-     * Two head pupils can cross; the same pool is suppressed for a lone loose eye. In game: set the
-     * ambient pool to cross_eye and frame an eyed skull beside a Googly Eye; only the skull crosses.
+     * A framed eyed head's two eyes can cross toward each other; a lone Googly Eye under the same settings cannot. In
+     * game: set {@code ambientBehaviorPool = ["somegoogly:cross_eye"]} and {@code ambientMinTicks = 1} and {@code
+     * ambientMaxTicks = 1} in {@code somegoogly-server.toml} and {@code /reload}, then frame an eyed skeleton skull
+     * beside a Googly Eye; the skull's pupils cross and the lone eye stays still.
      */
     public static void framedHeadAllowsPairedExpressions(GameTestHelper helper) {
         withHeadDefinitions(() -> {
@@ -246,9 +259,10 @@ public final class FramedEyeGameTestsLogic {
     }
 
     /**
-     * Species, variant, and appearance changes invalidate a head tracker; plain heads have no tracker.
-     * In game: replace an eyed framed head with another species, another eye color/glow, then a plain
-     * head and a loose eye. No former head layout or expression remains attached to the new contents.
+     * A framed head's eyes follow what the frame now holds: a different species, eye arrangement, or appearance gets a
+     * fresh layout, and a plain head or a loose eye shows nothing of the head before it. In game: frame an eyed
+     * skeleton skull, then swap in an eyed creeper head, an eyed skeleton skull with glowing eyes, a plain skull, and a
+     * Googly Eye; each shows only its own eyes, if any.
      */
     public static void framedHeadInvalidatesChangedItems(GameTestHelper helper) {
         withHeadDefinitions(() -> {
@@ -267,15 +281,17 @@ public final class FramedEyeGameTestsLogic {
                             && PresentationEyes.create(FIRST_FRAME, new ItemStack(Items.SKELETON_SKULL)) == null,
                     Component.literal("a plain skull has no animated eyes"));
             helper.assertTrue(!frame.matches(new ItemStack(ModContent.GOOGLY_EYE.get()))
-                            && !new PresentationEyes(FIRST_FRAME).matches(stack),
+                            && !PresentationEyes.create(FIRST_FRAME, new ItemStack(ModContent.GOOGLY_EYE.get())).matches(stack),
                     Component.literal("head and loose-eye simulations cannot be reused for each other"));
             helper.succeed();
         });
     }
 
     /**
-     * Newly arriving viewers reconstruct a head's expression and blink participation. In game: join
-     * another player's framed-head display mid-blink; the same eyes blink at the same expression age.
+     * A player who starts watching a framed head mid-blink sees the same eyes blinking at the same point as everyone
+     * else. In game: with two players and {@code ambientBehaviorPool = ["somegoogly:blink"]} in {@code
+     * somegoogly-server.toml}, have one watch a framed eyed skeleton skull while the other approaches from out of
+     * render range; both see each blink together.
      */
     public static void framedHeadReconstructsExpressions(GameTestHelper helper) {
         withHeadDefinitions(() -> {
@@ -308,9 +324,9 @@ public final class FramedEyeGameTestsLogic {
     }
 
     /**
-     * Eyed heads carry their mob's configured head parts and pupil arrays, including mounted gravity.
-     * In game: frame an eyed skeleton skull and an eyed zombie head; their eyes retain their
-     * normal positions, colors, and sizes while their pupils animate.
+     * A framed eyed head shows its mob's eyes where they sit on the placed head, with its stored appearance, and its
+     * pupils fall toward the ground. In game: frame an eyed skeleton skull, and with the Heads mod installed an eyed
+     * Heads-mod head; each shows its eyes in the same places, colors, and sizes as when placed, and the pupils move.
      */
     public static void framedHeadUsesConfiguredLayout(GameTestHelper helper) {
         withHeadDefinitions(() -> {
@@ -346,7 +362,7 @@ public final class FramedEyeGameTestsLogic {
         boolean enabled = ClientEyeConfigs.googlyEyesEnabled();
         try {
             ClientEyeConfigs.replaceAll(ServerEyeConfigs.all());
-            ClientEyeConfigs.applySettings(true, BehaviorSettings.DEFAULTS);
+            ClientEyeConfigs.applySettings(true, TestBehaviorSettings.DEFAULTS);
             test.run();
         } finally {
             ClientEyeConfigs.replaceAll(definitions);

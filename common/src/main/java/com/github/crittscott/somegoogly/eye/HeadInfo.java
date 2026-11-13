@@ -2,7 +2,6 @@ package com.github.crittscott.somegoogly.eye;
 
 import com.github.crittscott.somegoogly.config.EyeConfigModel.HeadConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
-import com.github.crittscott.somegoogly.eye.state.EyeAppearance;
 import java.util.List;
 
 /**
@@ -45,11 +44,6 @@ public final class HeadInfo {
     /** How many eyes the selected head carries. */
     public int getEyeCount(int headIndex) {
         return heads.get(headIndex).eyes.size();
-    }
-
-    /** The selected eye's placement scale. */
-    public float getEyeScale(int headIndex, int eyeIndex) {
-        return placementAt(headIndex, eyeIndex).eyeScale();
     }
 
     /** How many heads the selected variant places eyes on; 0 when {@link #hasConfig()} is false. */

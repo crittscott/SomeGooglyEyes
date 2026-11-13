@@ -76,7 +76,7 @@ loadScripts(document, 'script');</script>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Every behavior must animate identically given the same seed — the contract that keeps all viewers of
 one mob (and a mid-effect joiner catching up by age) in lock-step, since only the trigger (id,
-duration, seed) crosses the wire. Drives the server-loadable half of a behavior (<code>onStart</code> plus
+seed, elapsed ticks) crosses the wire. Drives the server-loadable half of a behavior (<code>onStart</code> plus
 <code>influence</code>, which is a pure function of age + seeded params) on a <code>BehaviorInstance</code>. A
 cow supplies a real <code>HeadInfo</code> so per-eye behaviors (blink's mask) have geometry to resolve
 against.</div>

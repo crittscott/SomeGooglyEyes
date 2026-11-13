@@ -62,12 +62,9 @@ loadScripts(document, 'script');</script>
 </li>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
-<li><a href="#clearingTintRemovesOnlyThatField(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">clearingTintRemovesOnlyThatField(GameTestHelper)</a></li>
-<li><a href="#glowOverrideCanBeSetAndDropped(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">glowOverrideCanBeSetAndDropped(GameTestHelper)</a></li>
-<li><a href="#settingOneFieldLeavesOthersAbsent(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">settingOneFieldLeavesOthersAbsent(GameTestHelper)</a></li>
-<li><a href="#clearingEveryFieldRemovesTheCompound(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">clearingEveryFieldRemovesTheCompound(GameTestHelper)</a></li>
-<li><a href="#clearingTintsPreservesGlow(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">clearingTintsPreservesGlow(GameTestHelper)</a></li>
-<li><a href="#snapshotAppliesAllFieldsTogether(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">snapshotAppliesAllFieldsTogether(GameTestHelper)</a></li>
+<li><a href="#adminAppearanceCommands(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">adminAppearanceCommands(GameTestHelper)</a></li>
+<li><a href="#adminCommandsRefuseUnauthorizedOrInvalidUse(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">adminCommandsRefuseUnauthorizedOrInvalidUse(GameTestHelper)</a></li>
+<li><a href="#adminEyesAndBehaviorCommands(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">adminEyesAndBehaviorCommands(GameTestHelper)</a></li>
 </ol>
 </li>
 </ol>
@@ -116,23 +113,14 @@ actual assertions.</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#clearingEveryFieldRemovesTheCompound(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">clearingEveryFieldRemovesTheCompound</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#adminAppearanceCommands(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">adminAppearanceCommands</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#clearingTintRemovesOnlyThatField(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">clearingTintRemovesOnlyThatField</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#adminCommandsRefuseUnauthorizedOrInvalidUse(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">adminCommandsRefuseUnauthorizedOrInvalidUse</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#clearingTintsPreservesGlow(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">clearingTintsPreservesGlow</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#adminEyesAndBehaviorCommands(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">adminEyesAndBehaviorCommands</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#glowOverrideCanBeSetAndDropped(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">glowOverrideCanBeSetAndDropped</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#settingOneFieldLeavesOthersAbsent(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">settingOneFieldLeavesOthersAbsent</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#snapshotAppliesAllFieldsTogether(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">snapshotAppliesAllFieldsTogether</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -167,62 +155,32 @@ actual assertions.</div>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="clearingTintRemovesOnlyThatField(net.minecraft.gametest.framework.GameTestHelper)">
-<h3>clearingTintRemovesOnlyThatField</h3>
+<section class="detail" id="adminAppearanceCommands(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>adminAppearanceCommands</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="annotations">@GameTest(structure="somegoogly:empty",
           maxTicks=40)
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">clearingTintRemovesOnlyThatField</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">adminAppearanceCommands</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 </div>
 </section>
 </li>
 <li>
-<section class="detail" id="glowOverrideCanBeSetAndDropped(net.minecraft.gametest.framework.GameTestHelper)">
-<h3>glowOverrideCanBeSetAndDropped</h3>
+<section class="detail" id="adminCommandsRefuseUnauthorizedOrInvalidUse(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>adminCommandsRefuseUnauthorizedOrInvalidUse</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="annotations">@GameTest(structure="somegoogly:empty",
           maxTicks=40)
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">glowOverrideCanBeSetAndDropped</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">adminCommandsRefuseUnauthorizedOrInvalidUse</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 </div>
 </section>
 </li>
 <li>
-<section class="detail" id="settingOneFieldLeavesOthersAbsent(net.minecraft.gametest.framework.GameTestHelper)">
-<h3>settingOneFieldLeavesOthersAbsent</h3>
+<section class="detail" id="adminEyesAndBehaviorCommands(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>adminEyesAndBehaviorCommands</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="annotations">@GameTest(structure="somegoogly:empty",
           maxTicks=40)
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">settingOneFieldLeavesOthersAbsent</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-</div>
-</section>
-</li>
-<li>
-<section class="detail" id="clearingEveryFieldRemovesTheCompound(net.minecraft.gametest.framework.GameTestHelper)">
-<h3>clearingEveryFieldRemovesTheCompound</h3>
-<div class="horizontal-scroll">
-<div class="member-signature"><span class="annotations">@GameTest(structure="somegoogly:empty",
-          maxTicks=40)
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">clearingEveryFieldRemovesTheCompound</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-</div>
-</section>
-</li>
-<li>
-<section class="detail" id="clearingTintsPreservesGlow(net.minecraft.gametest.framework.GameTestHelper)">
-<h3>clearingTintsPreservesGlow</h3>
-<div class="horizontal-scroll">
-<div class="member-signature"><span class="annotations">@GameTest(structure="somegoogly:empty",
-          maxTicks=40)
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">clearingTintsPreservesGlow</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-</div>
-</section>
-</li>
-<li>
-<section class="detail" id="snapshotAppliesAllFieldsTogether(net.minecraft.gametest.framework.GameTestHelper)">
-<h3>snapshotAppliesAllFieldsTogether</h3>
-<div class="horizontal-scroll">
-<div class="member-signature"><span class="annotations">@GameTest(structure="somegoogly:empty",
-          maxTicks=40)
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">snapshotAppliesAllFieldsTogether</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">adminEyesAndBehaviorCommands</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 </div>
 </section>
 </li>

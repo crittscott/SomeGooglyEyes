@@ -102,7 +102,6 @@ loadScripts(document, 'script');</script>
 <li><a href="#resetMotion()" tabindex="0">resetMotion()</a></li>
 <li><a href="#step(com.github.crittscott.somegoogly.eye.behavior.EyeInfluence,com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance,int,int,net.minecraft.util.RandomSource,float,float,double,double,double)" tabindex="0">step(EyeInfluence, BehaviorInstance, int, int, RandomSource, float, float, double, double, double)</a></li>
 <li><a href="#step(com.github.crittscott.somegoogly.eye.behavior.EyeInfluence,com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance,int,int,float,float,float,float,net.minecraft.util.RandomSource,float,float,double,double,double,float)" tabindex="0">step(EyeInfluence, BehaviorInstance, int, int, float, float, float, float, RandomSource, float, float, double, double, double, float)</a></li>
-<li><a href="#update(net.minecraft.util.RandomSource,float,float,double,double,double,float,float,float,float)" tabindex="0">update(RandomSource, float, float, double, double, double, float, float, float, float)</a></li>
 </ol>
 </li>
 </ol>
@@ -126,7 +125,7 @@ loadScripts(document, 'script');</script>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Physics state for one pupil: its position and velocity in the eye's unit disk, the head
 orientation used to derive angular forcing, and the non-physical overlay values (grow/blink/tint)
-an active behavior writes each tick. <a href="#update(net.minecraft.util.RandomSource,float,float,double,double,double,float,float,float,float)"><code>update(RandomSource, float, float, double, double, double, float, float, float, float)</code></a> steps all of it by one tick.</div>
+an active behavior writes each tick. <code>update(RandomSource, float, float, double, double, double, float, float, float, float)</code> steps all of it by one tick.</div>
 </div>
 </section>
 <section class="summary">
@@ -371,20 +370,6 @@ folded in as a force.</div>
  double&nbsp;motionZ)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">A <code>step</code> with no overlays of the owner's own.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#update(net.minecraft.util.RandomSource,float,float,double,double,double,float,float,float,float)" class="member-name-link">update</a><wbr>(net.minecraft.util.RandomSource&nbsp;rand,
- float&nbsp;headYaw,
- float&nbsp;headPitch,
- double&nbsp;motionX,
- double&nbsp;motionY,
- double&nbsp;motionZ,
- float&nbsp;anchorX,
- float&nbsp;anchorY,
- float&nbsp;stiffness,
- float&nbsp;agitation)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Advance the pupil simulation by one tick and update its previous/current render positions.</div>
 </div>
 </div>
 </div>
@@ -782,38 +767,6 @@ on the rim toward gravity, so eyes rebuilt after time offscreen come into view a
 <div class="block">One tick of this pupil, eye <code>eye</code> of head <code>head</code>: ask the active behavior, if any, for its
 influence (spring and overlays), layer the owner's overlays on it, and step the physics with the spring
 folded in as a force. <code>influence</code> is the caller's reusable scratch instance.</div>
-</div>
-</section>
-</li>
-<li>
-<section class="detail" id="update(net.minecraft.util.RandomSource,float,float,double,double,double,float,float,float,float)">
-<h3>update</h3>
-<div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">update</span><wbr><span class="parameters">(net.minecraft.util.RandomSource&nbsp;rand,
- float&nbsp;headYaw,
- float&nbsp;headPitch,
- double&nbsp;motionX,
- double&nbsp;motionY,
- double&nbsp;motionZ,
- float&nbsp;anchorX,
- float&nbsp;anchorY,
- float&nbsp;stiffness,
- float&nbsp;agitation)</span></div>
-<div class="block">Advance the pupil simulation by one tick and update its previous/current render positions.
-Pupil positions and behavior anchors use the eye-local unit disk, with +X right and +Y up.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>rand</code> - randomness source (per-tracker / per-held-eye)</dd>
-<dd><code>headYaw</code> - the living holder's head yaw, or the boat's yaw, this tick</dd>
-<dd><code>headPitch</code> - the holder's pitch this tick (<code>getXRot</code>)</dd>
-<dd><code>motionX</code> - the holder's X position delta this tick</dd>
-<dd><code>motionY</code> - the holder's Y position delta this tick</dd>
-<dd><code>motionZ</code> - the holder's Z position delta this tick</dd>
-<dd><code>anchorX</code> - the behavior spring's X target in the unit disk (ignored when stiffness is nonpositive)</dd>
-<dd><code>anchorY</code> - the behavior spring's Y target in the unit disk (ignored when stiffness is nonpositive)</dd>
-<dd><code>stiffness</code> - positive behavior-spring strength; nonpositive values disable the spring</dd>
-<dd><code>agitation</code> - 0 to 1; above 0, a pupil slower than its scaled speed floor gets a random kick</dd>
-</dl>
 </div>
 </section>
 </li>

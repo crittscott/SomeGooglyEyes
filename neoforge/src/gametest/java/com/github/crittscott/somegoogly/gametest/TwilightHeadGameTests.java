@@ -34,6 +34,11 @@ import net.neoforged.neoforge.common.util.FakePlayerFactory;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.fml.ModList;
 
+/**
+ * Twilight Forest-only head scenarios: a head keeping its eyes when a candle, placed by hand or by dispenser, turns it
+ * into a skull candle, and trophies taking, keeping, and giving up eyes and saving only their eye state. They need
+ * Twilight Forest loaded and fail without it.
+ */
 public final class TwilightHeadGameTests {
     private static final BlockPos HEAD = new BlockPos(1, 2, 1);
     private static final Snapshot EYES = new Snapshot(true, 0.42F, AppearanceOverride.EMPTY);
