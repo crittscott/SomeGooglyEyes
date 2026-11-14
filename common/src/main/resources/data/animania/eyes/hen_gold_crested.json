@@ -18,10 +18,10 @@
                   "crossTarget": -1,
                   "position": [
                     -0.095,
-                    0.0,
+                    -0.02,
                     -0.028125
                   ],
-                  "eyeScale": 0.75,
+                  "eyeScale": 0.6,
                   "irisScale": 0.6,
                   "corneaColors": [
                     1.0,
@@ -42,10 +42,10 @@
                   "crossTarget": -1,
                   "position": [
                     0.095,
-                    0.0,
+                    -0.02,
                     -0.028125
                   ],
-                  "eyeScale": 0.75,
+                  "eyeScale": 0.6,
                   "irisScale": 0.6,
                   "corneaColors": [
                     1.0,

@@ -17,11 +17,11 @@
                   "azimuth": 270.0,
                   "crossTarget": -1,
                   "position": [
-                    -0.094375,
-                    0.0625,
-                    -0.345
+                    -0.12,
+                    0.0,
+                    -0.13
                   ],
-                  "eyeScale": 0.75,
+                  "eyeScale": 0.5,
                   "irisScale": 0.6,
                   "corneaColors": [
                     1.0,
@@ -41,11 +41,11 @@
                   "azimuth": 270.0,
                   "crossTarget": -1,
                   "position": [
-                    0.093125,
-                    0.0625,
-                    -0.345
+                    0.12,
+                    0.0,
+                    -0.13
                   ],
-                  "eyeScale": 0.75,
+                  "eyeScale": 0.5,
                   "irisScale": 0.6,
                   "corneaColors": [
                     1.0,

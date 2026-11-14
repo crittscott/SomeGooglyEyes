@@ -176,7 +176,7 @@ Definitions are included for Minecraft, Ad Astra, Adorable Hamster Pets, Adventu
 
 The 991 eye drafts from `othersource/myassets` need in-game adjustment; see `docs/dumped-eyes.md` and its CSV.
 
-All 76 bundled Minecraft definitions select 1.20.1, including the player and armor stand; the witch's `[1.20.1,)` range matches every supported version. Axolotl, endermite, pufferfish, silverfish, tadpole, and tropical fish have none.
+All 77 bundled Minecraft definitions select 1.20.1, including the player and armor stand; the witch's `[1.20.1,)` range matches every supported version. Endermite, pufferfish, silverfish, tadpole, and tropical fish have none.
 
 Resource packs replace eye textures/item models. There is no JEI plugin.
 

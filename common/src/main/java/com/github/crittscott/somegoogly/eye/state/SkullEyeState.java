@@ -66,8 +66,8 @@ public final class SkullEyeState {
             Map.entry(new ResourceLocation(TWILIGHT_NAMESPACE, "ur_ghast"), HeadShape.showing("root/body")));
     /**
      * The Heads mod's heads by floor-block id path: the mob whose definition each borrows. Its wall blocks
-     * differ only by a {@code _wall} segment. Left out are the heads of mobs with no definition (axolotl,
-     * endermite, silverfish).
+     * differ only by a {@code _wall} segment. Left out are the heads of mobs with no definition (endermite,
+     * silverfish) and the axolotl's heads, which are not mapped.
      */
     public static final Map<String, EntityType<?>> HEADS_MOBS = headsMobs();
     /** The Heads mod's namespace. */

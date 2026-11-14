@@ -17,9 +17,9 @@
                   "azimuth": 180.0,
                   "crossTarget": -1,
                   "position": [
-                    -0.189375,
-                    0.0625,
-                    -0.2125
+                    -0.15,
+                    -0.05,
+                    0.0
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,
@@ -41,9 +41,9 @@
                   "azimuth": 0.0,
                   "crossTarget": -1,
                   "position": [
-                    0.188125,
-                    0.0625,
-                    -0.2125
+                    0.15,
+                    -0.05,
+                    0.0
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,
