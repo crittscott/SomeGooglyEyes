@@ -19,7 +19,7 @@
                   "position": [
                     -0.102188,
                     -0.1875,
-                    -0.080625
+                    -0.06
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,
@@ -43,55 +43,7 @@
                   "position": [
                     0.102188,
                     -0.1875,
-                    -0.080625
-                  ],
-                  "eyeScale": 0.75,
-                  "irisScale": 0.6,
-                  "corneaColors": [
-                    1.0,
-                    1.0,
-                    1.0
-                  ],
-                  "irisColors": [
-                    0.0,
-                    0.0,
-                    0.0
-                  ],
-                  "glows": false
-                },
-                {
-                  "depth": 1.0,
-                  "inclination": 90.0,
-                  "azimuth": 180.0,
-                  "crossTarget": -1,
-                  "position": [
-                    -0.205625,
-                    -0.1875,
-                    -0.023813
-                  ],
-                  "eyeScale": 0.75,
-                  "irisScale": 0.6,
-                  "corneaColors": [
-                    1.0,
-                    1.0,
-                    1.0
-                  ],
-                  "irisColors": [
-                    0.0,
-                    0.0,
-                    0.0
-                  ],
-                  "glows": false
-                },
-                {
-                  "depth": 1.0,
-                  "inclination": 90.0,
-                  "azimuth": 0.0,
-                  "crossTarget": -1,
-                  "position": [
-                    0.205625,
-                    -0.1875,
-                    -0.023813
+                    -0.06
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,

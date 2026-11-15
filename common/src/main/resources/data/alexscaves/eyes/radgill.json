@@ -13,85 +13,13 @@
               "eyes": [
                 {
                   "depth": 1.0,
-                  "inclination": 90.0,
-                  "azimuth": 270.0,
-                  "crossTarget": -1,
-                  "position": [
-                    -0.09375,
-                    0.03125,
-                    -0.37625
-                  ],
-                  "eyeScale": 0.75,
-                  "irisScale": 0.6,
-                  "corneaColors": [
-                    1.0,
-                    1.0,
-                    1.0
-                  ],
-                  "irisColors": [
-                    0.0,
-                    0.0,
-                    0.0
-                  ],
-                  "glows": false
-                },
-                {
-                  "depth": 1.0,
-                  "inclination": 90.0,
-                  "azimuth": 270.0,
-                  "crossTarget": -1,
-                  "position": [
-                    0.09375,
-                    0.03125,
-                    -0.37625
-                  ],
-                  "eyeScale": 0.75,
-                  "irisScale": 0.6,
-                  "corneaColors": [
-                    1.0,
-                    1.0,
-                    1.0
-                  ],
-                  "irisColors": [
-                    0.0,
-                    0.0,
-                    0.0
-                  ],
-                  "glows": false
-                },
-                {
-                  "depth": 1.0,
-                  "inclination": 90.0,
-                  "azimuth": 180.0,
-                  "crossTarget": -1,
-                  "position": [
-                    -0.18875,
-                    0.03125,
-                    -0.134375
-                  ],
-                  "eyeScale": 0.75,
-                  "irisScale": 0.6,
-                  "corneaColors": [
-                    1.0,
-                    1.0,
-                    1.0
-                  ],
-                  "irisColors": [
-                    0.0,
-                    0.0,
-                    0.0
-                  ],
-                  "glows": false
-                },
-                {
-                  "depth": 1.0,
-                  "inclination": 90.0,
+                  "inclination": 180.0,
                   "azimuth": 0.0,
                   "crossTarget": -1,
                   "position": [
-                    0.18875,
-                    0.03125,
-                    -0.134375
+                    -0.2,
+                    -0.31,
+                    -0.28
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,
@@ -105,7 +33,55 @@
                     0.0,
                     0.0
                   ],
-                  "glows": false
+                  "glows": true
+                },
+                {
+                  "depth": 1.0,
+                  "inclination": 180.0,
+                  "azimuth": 0.0,
+                  "crossTarget": -1,
+                  "position": [
+                    0.0,
+                    -0.37,
+                    -0.22
+                  ],
+                  "eyeScale": 0.75,
+                  "irisScale": 0.6,
+                  "corneaColors": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "irisColors": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "glows": true
+                },
+                {
+                  "depth": 1.0,
+                  "inclination": 180.0,
+                  "azimuth": 0.0,
+                  "crossTarget": -1,
+                  "position": [
+                    0.2,
+                    -0.31,
+                    -0.28
+                  ],
+                  "eyeScale": 0.75,
+                  "irisScale": 0.6,
+                  "corneaColors": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "irisColors": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "glows": true
                 }
               ]
             }

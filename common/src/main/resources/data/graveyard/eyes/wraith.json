@@ -18,10 +18,10 @@
                   "crossTarget": -1,
                   "position": [
                     -0.125,
-                    0.34375,
-                    -0.18875
+                    1.75,
+                    -0.17
                   ],
-                  "eyeScale": 0.75,
+                  "eyeScale": 0.6,
                   "irisScale": 0.6,
                   "corneaColors": [
                     1.0,
@@ -42,58 +42,10 @@
                   "crossTarget": -1,
                   "position": [
                     0.125,
-                    0.34375,
-                    -0.18875
+                    1.75,
+                    -0.17
                   ],
-                  "eyeScale": 0.75,
-                  "irisScale": 0.6,
-                  "corneaColors": [
-                    1.0,
-                    1.0,
-                    1.0
-                  ],
-                  "irisColors": [
-                    0.0,
-                    0.0,
-                    0.0
-                  ],
-                  "glows": false
-                },
-                {
-                  "depth": 1.0,
-                  "inclination": 90.0,
-                  "azimuth": 180.0,
-                  "crossTarget": -1,
-                  "position": [
-                    -0.25125,
-                    0.34375,
-                    -0.034375
-                  ],
-                  "eyeScale": 0.75,
-                  "irisScale": 0.6,
-                  "corneaColors": [
-                    1.0,
-                    1.0,
-                    1.0
-                  ],
-                  "irisColors": [
-                    0.0,
-                    0.0,
-                    0.0
-                  ],
-                  "glows": false
-                },
-                {
-                  "depth": 1.0,
-                  "inclination": 90.0,
-                  "azimuth": 0.0,
-                  "crossTarget": -1,
-                  "position": [
-                    0.25125,
-                    0.34375,
-                    -0.034375
-                  ],
-                  "eyeScale": 0.75,
+                  "eyeScale": 0.6,
                   "irisScale": 0.6,
                   "corneaColors": [
                     1.0,

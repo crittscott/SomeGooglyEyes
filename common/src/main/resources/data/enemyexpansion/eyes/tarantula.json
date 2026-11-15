@@ -17,9 +17,9 @@
                   "azimuth": 270.0,
                   "crossTarget": -1,
                   "position": [
-                    -0.15625,
-                    0.0,
-                    -0.62625
+                    -0.08,
+                    0.63,
+                    -0.82
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,
@@ -33,7 +33,7 @@
                     0.0,
                     0.0
                   ],
-                  "glows": false
+                  "glows": true
                 },
                 {
                   "depth": 1.0,
@@ -41,9 +41,9 @@
                   "azimuth": 270.0,
                   "crossTarget": -1,
                   "position": [
-                    0.15625,
-                    0.0,
-                    -0.62625
+                    0.08,
+                    0.63,
+                    -0.82
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,
@@ -57,17 +57,17 @@
                     0.0,
                     0.0
                   ],
-                  "glows": false
+                  "glows": true
                 },
                 {
                   "depth": 1.0,
                   "inclination": 90.0,
-                  "azimuth": 180.0,
+                  "azimuth": 270.0,
                   "crossTarget": -1,
                   "position": [
-                    -0.31375,
-                    0.0,
-                    -0.40625
+                    -0.22,
+                    0.78,
+                    -0.82
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,
@@ -81,17 +81,17 @@
                     0.0,
                     0.0
                   ],
-                  "glows": false
+                  "glows": true
                 },
                 {
                   "depth": 1.0,
                   "inclination": 90.0,
-                  "azimuth": 0.0,
+                  "azimuth": 270.0,
                   "crossTarget": -1,
                   "position": [
-                    0.31375,
-                    0.0,
-                    -0.40625
+                    0.22,
+                    0.78,
+                    -0.82
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,
@@ -105,7 +105,7 @@
                     0.0,
                     0.0
                   ],
-                  "glows": false
+                  "glows": true
                 }
               ]
             }

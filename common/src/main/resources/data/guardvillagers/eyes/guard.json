@@ -18,10 +18,10 @@
                   "crossTarget": -1,
                   "position": [
                     -0.125,
-                    -0.3125,
+                    -0.22,
                     -0.25125
                   ],
-                  "eyeScale": 0.75,
+                  "eyeScale": 0.6,
                   "irisScale": 0.6,
                   "corneaColors": [
                     1.0,
@@ -42,10 +42,10 @@
                   "crossTarget": -1,
                   "position": [
                     0.125,
-                    -0.3125,
+                    -0.22,
                     -0.25125
                   ],
-                  "eyeScale": 0.75,
+                  "eyeScale": 0.6,
                   "irisScale": 0.6,
                   "corneaColors": [
                     1.0,
@@ -66,10 +66,10 @@
                   "crossTarget": -1,
                   "position": [
                     -0.25125,
-                    -0.3125,
+                    -0.22,
                     -0.075
                   ],
-                  "eyeScale": 0.75,
+                  "eyeScale": 0.6,
                   "irisScale": 0.6,
                   "corneaColors": [
                     1.0,
@@ -90,10 +90,10 @@
                   "crossTarget": -1,
                   "position": [
                     0.25125,
-                    -0.3125,
+                    -0.22,
                     -0.075
                   ],
-                  "eyeScale": 0.75,
+                  "eyeScale": 0.6,
                   "irisScale": 0.6,
                   "corneaColors": [
                     1.0,
