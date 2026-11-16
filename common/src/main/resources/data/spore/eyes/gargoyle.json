@@ -17,8 +17,8 @@
                   "azimuth": 270.0,
                   "crossTarget": -1,
                   "position": [
-                    -0.111913,
-                    -0.246862,
+                    -0.111912,
+                    -0.215612,
                     -0.460025
                   ],
                   "eyeScale": 0.75,
@@ -41,57 +41,9 @@
                   "azimuth": 270.0,
                   "crossTarget": -1,
                   "position": [
-                    0.138087,
-                    -0.246862,
+                    0.138088,
+                    -0.215612,
                     -0.460025
-                  ],
-                  "eyeScale": 0.75,
-                  "irisScale": 0.6,
-                  "corneaColors": [
-                    1.0,
-                    1.0,
-                    1.0
-                  ],
-                  "irisColors": [
-                    0.0,
-                    0.0,
-                    0.0
-                  ],
-                  "glows": false
-                },
-                {
-                  "depth": 1.0,
-                  "inclination": 90.0,
-                  "azimuth": 180.0,
-                  "crossTarget": -1,
-                  "position": [
-                    -0.238162,
-                    -0.246862,
-                    -0.283775
-                  ],
-                  "eyeScale": 0.75,
-                  "irisScale": 0.6,
-                  "corneaColors": [
-                    1.0,
-                    1.0,
-                    1.0
-                  ],
-                  "irisColors": [
-                    0.0,
-                    0.0,
-                    0.0
-                  ],
-                  "glows": false
-                },
-                {
-                  "depth": 1.0,
-                  "inclination": 90.0,
-                  "azimuth": 0.0,
-                  "crossTarget": -1,
-                  "position": [
-                    0.264337,
-                    -0.246862,
-                    -0.283775
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,

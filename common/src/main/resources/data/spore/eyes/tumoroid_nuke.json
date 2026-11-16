@@ -58,54 +58,6 @@
                     0.0
                   ],
                   "glows": false
-                },
-                {
-                  "depth": 1.0,
-                  "inclination": 60.32122,
-                  "azimuth": 189.21602,
-                  "crossTarget": -1,
-                  "position": [
-                    -3.141551,
-                    -1.851082,
-                    -0.517383
-                  ],
-                  "eyeScale": 0.75,
-                  "irisScale": 0.6,
-                  "corneaColors": [
-                    1.0,
-                    1.0,
-                    1.0
-                  ],
-                  "irisColors": [
-                    0.0,
-                    0.0,
-                    0.0
-                  ],
-                  "glows": false
-                },
-                {
-                  "depth": 1.0,
-                  "inclination": 119.67878,
-                  "azimuth": 9.21602,
-                  "crossTarget": -1,
-                  "position": [
-                    -2.496207,
-                    -2.223673,
-                    -0.412675
-                  ],
-                  "eyeScale": 0.75,
-                  "irisScale": 0.6,
-                  "corneaColors": [
-                    1.0,
-                    1.0,
-                    1.0
-                  ],
-                  "irisColors": [
-                    0.0,
-                    0.0,
-                    0.0
-                  ],
-                  "glows": false
                 }
               ]
             }
