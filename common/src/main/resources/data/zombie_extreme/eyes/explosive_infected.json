@@ -13,13 +13,13 @@
               "eyes": [
                 {
                   "depth": 1.0,
-                  "inclination": 90.0,
+                  "inclination": 87.5,
                   "azimuth": 270.0,
                   "crossTarget": -1,
                   "position": [
-                    -0.125,
-                    0.23125,
-                    -0.25125
+                    -0.163257,
+                    1.716794,
+                    -0.242024
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,
@@ -37,61 +37,13 @@
                 },
                 {
                   "depth": 1.0,
-                  "inclination": 90.0,
+                  "inclination": 87.5,
                   "azimuth": 270.0,
                   "crossTarget": -1,
                   "position": [
-                    0.125,
-                    0.23125,
-                    -0.25125
-                  ],
-                  "eyeScale": 0.75,
-                  "irisScale": 0.6,
-                  "corneaColors": [
-                    1.0,
-                    1.0,
-                    1.0
-                  ],
-                  "irisColors": [
-                    0.0,
-                    0.0,
-                    0.0
-                  ],
-                  "glows": false
-                },
-                {
-                  "depth": 1.0,
-                  "inclination": 90.0,
-                  "azimuth": 180.0,
-                  "crossTarget": -1,
-                  "position": [
-                    -0.25125,
-                    0.23125,
-                    -0.075
-                  ],
-                  "eyeScale": 0.75,
-                  "irisScale": 0.6,
-                  "corneaColors": [
-                    1.0,
-                    1.0,
-                    1.0
-                  ],
-                  "irisColors": [
-                    0.0,
-                    0.0,
-                    0.0
-                  ],
-                  "glows": false
-                },
-                {
-                  "depth": 1.0,
-                  "inclination": 90.0,
-                  "azimuth": 0.0,
-                  "crossTarget": -1,
-                  "position": [
-                    0.25125,
-                    0.23125,
-                    -0.075
+                    0.082945,
+                    1.760165,
+                    -0.24013
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,
