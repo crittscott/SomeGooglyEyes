@@ -14,12 +14,12 @@
                 {
                   "depth": 1.0,
                   "inclination": 90.0,
-                  "azimuth": 270.0,
+                  "azimuth": 180.0,
                   "crossTarget": -1,
                   "position": [
-                    -0.345944,
-                    -0.414619,
-                    -0.839137
+                    -0.71875,
+                    -0.7,
+                    -0.5
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,
@@ -38,12 +38,12 @@
                 {
                   "depth": 1.0,
                   "inclination": 90.0,
-                  "azimuth": 270.0,
+                  "azimuth": 0.0,
                   "crossTarget": -1,
                   "position": [
-                    0.404056,
-                    -0.414619,
-                    -0.839137
+                    0.78125,
+                    -0.7,
+                    -0.5
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,

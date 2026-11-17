@@ -9,17 +9,17 @@
           "weight": 1.0,
           "heads": [
             {
-              "attachPoint": "root",
+              "attachPoint": "root/mainbody/neck/head2",
               "eyes": [
                 {
                   "depth": 1.0,
-                  "inclination": 85.00381,
-                  "azimuth": 270.0,
+                  "inclination": 90.0,
+                  "azimuth": 180.0,
                   "crossTarget": -1,
                   "position": [
-                    -0.328125,
-                    -4.351222,
-                    -4.352989
+                    -0.75,
+                    -0.3,
+                    -0.6
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,
@@ -37,13 +37,13 @@
                 },
                 {
                   "depth": 1.0,
-                  "inclination": 85.00381,
-                  "azimuth": 270.0,
+                  "inclination": 90.0,
+                  "azimuth": 0.0,
                   "crossTarget": -1,
                   "position": [
-                    0.328125,
-                    -4.351222,
-                    -4.352989
+                    0.5625,
+                    -0.3,
+                    -0.6
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,

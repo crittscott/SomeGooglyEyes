@@ -13,13 +13,13 @@
               "eyes": [
                 {
                   "depth": 1.0,
-                  "inclination": 179.99979,
+                  "inclination": 90.0,
                   "azimuth": 90.0,
                   "crossTarget": -1,
                   "position": [
                     -0.1875,
-                    -0.309523,
-                    0.302132
+                    0.098,
+                    0.68
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,
@@ -37,13 +37,13 @@
                 },
                 {
                   "depth": 1.0,
-                  "inclination": 179.99979,
+                  "inclination": 90.0,
                   "azimuth": 90.0,
                   "crossTarget": -1,
                   "position": [
                     0.1875,
-                    -0.309523,
-                    0.302132
+                    0.098,
+                    0.68
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,
