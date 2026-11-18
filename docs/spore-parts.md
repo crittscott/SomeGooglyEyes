@@ -1,0 +1,13334 @@
+# Spore mob parts
+
+Every mob in the Spore dump (`othersource/myassets/spore/entity/geometry`), one section each. Indented tree = skeleton; `[n]` = number of cubes on that part with the box size in model pixels (x,y,z) of the first cube; parts without a bracket are empty pivots. The current attach point (from the eye def, if any) is marked `<== eyes`.
+
+## arena_tendril (45 parts)
+
+- part0
+  - TumorBase
+    - Tumor1_r2 [1] 8,8,8
+    - Tumor2_r2 [1] 10,10,10
+    - SmallTumor2_r1 [1] 4,4,4
+    - SmallTumor1_r1 [1] 5,5,5
+    - SmallTumor3_r1 [1] 3,3,3
+    - Tumor4_r2 [1] 6,6,6
+    - SmallTumor4_r1 [1] 3,3,3
+    - Tumor3_r2 [1] 10,10,10
+    - Tumor5_r1 [1] 6,6,6
+  - TendrilSeg1 [1] 5,16,5
+    - TendrilSeg2 [1] 4,20,4
+      - TendrilSeg3 [1] 3,24,3
+        - S3Body [1] 6,5,4
+          - Arm_r3 [1] 3,8,3
+          - Head [1] 8,6,8 <== eyes
+            - Eye [1] 8,8,8
+              - pupil [1] 5,5,3
+            - Jaw [1] 8,2,8
+          - TorsoTop_r2 [1] 7,5,5
+          - Leg_r2 [1] 3,8,3
+          - Tumors
+            - Tumor1_r1 [1] 5,5,5
+            - Tumor3_r1 [1] 3,3,3
+            - Tumor2_r1 [1] 4,4,4
+            - Tumor4_r1 [1] 4,4,4
+      - S2Body
+        - Head_r1 [1] 7,8,8
+        - Jaw2
+          - Jaw_r1 [1] 1,8,8
+        - TorsoTop_r1 [1] 6,4,8
+        - Arm_r1 [1] 8,3,3
+        - Arm_r2 [1] 6,3,3
+        - TorsoBase_r1 [1] 6,3,7
+        - S2BEye1 [1] 8,8,8
+          - pupil2 [1] 5,5,3
+        - S2BEye2 [1] 8,8,8
+          - pupil3 [1] 5,5,4
+        - Leg_r1 [1] 8,3,3
+        - S2BEye3 [1] 8,8,8
+          - pupil4 [1] 5,5,3
+      - T2Tumors
+        - Tumor_r1 [1] 6,6,6
+        - Tumor_r2 [1] 4,4,4
+
+## bairn (32 parts)
+
+- part0
+  - Torso
+    - Head <== eyes
+      - HeadExtensionVillager_r1 [3] 6,2,6
+      - Jaw
+        - BottomJaw_r1 [1] 6,1,5
+      - BackJaw_r1 [1] 5,2,2
+      - NoseVillager_r1 [1] 2,3,2
+      - Ear2Drowned_r1 [2] 0,3,3
+    - Arms
+      - RightArm
+        - RightArmLower
+          - RightArmBottom_r1 [1] 3,6,3
+          - RightClaw3_r1 [3] 0,2,3
+        - RightArmTop_r1 [1] 3,6,3
+      - LeftArm
+        - LeftArmTop_r1 [1] 3,6,3
+        - LeftArmLower
+          - LeftArmBottom_r1 [1] 3,6,3
+          - LeftClaw3_r1 [3] 0,2,3
+    - ActualTorso
+      - BackTendril1_r1 [1] 0,4,4
+      - BackTendril2_r1 [1] 0,4,4
+      - BackTendril3Drowned_r1 [1] 0,4,4
+      - TorsoClothes_r1 [2] 6,8,4
+  - Legs
+    - LeftLeg [1] 3,4,3
+      - LeftLegLower
+        - LeftLegBottom_r1 [1] 3,5,3
+        - LeftLegTendrilDrowned_r1 [1] 0,4,4
+    - RightLeg [1] 3,4,3
+      - RightLegBottom_r1 [1] 3,5,3
+
+## biobloob (169 parts)
+
+- part0
+  - Body
+    - Legs
+      - LargeFrontLeg
+        - FleshLeg_r11 [1] 11,5,5
+        - FleshLeg_r10 [1] 4,13,4
+        - FleshLeg_r9 [1] 3,8,3
+      - LargeMiddleLeg
+        - FleshLeg_r13 [1] 4,13,4
+        - FleshLeg_r12 [1] 3,8,3
+        - FleshLeg_r14 [1] 11,5,5
+      - SmallHindLeg [1] 2,8,2
+        - FleshLeg_r18 [1] 7,3,3
+      - LowerLegs
+        - LowerLeg2
+          - FleshLeg_r4 [1] 2,5,2
+          - FleshLeg_r3 [1] 3,6,3
+        - LowerLeg3
+          - FleshLeg_r6 [1] 2,5,2
+          - FleshLeg_r5 [1] 3,6,3
+        - LowerLeg4
+          - FleshLeg_r8 [1] 2,5,2
+          - FleshLeg_r7 [1] 3,6,3
+        - LowerLeg
+          - FleshLeg_r2 [1] 2,5,2
+          - FleshLeg_r1 [1] 3,6,3
+      - SmallHindLeg4 [1] 2,7,2
+        - FleshLeg_r15 [1] 7,3,3
+      - SmallHindLeg2 [1] 2,7,2
+        - FleshLeg_r17 [1] 7,3,3
+      - SmallHindLeg3 [1] 2,7,2
+        - FleshLeg_r16 [1] 7,3,3
+    - BodyMass
+      - CalciumGrowths
+        - CalciumGrowth_r3 [1] 5,5,2
+        - CalciumGrowth_r2 [1] 6,6,2
+        - CalciumGrowth_r4 [1] 6,6,2
+        - CalciumGrowth_r1 [1] 5,5,2
+      - MeltedMass_r5 [1] 8,7,12
+      - MeltedMass_r4 [1] 9,9,13
+      - MeltedMass_r3 [1] 12,12,12
+      - MeltedMass_r2 [1] 13,13,12
+      - BodyTumors
+        - Tumors6
+          - Tumor_r3 [1] 3,3,4
+          - Tumor_r4 [1] 4,4,4
+        - Tumors7
+          - Tumor_r1 [1] 4,4,4
+          - Tumor_r2 [1] 3,3,4
+        - Tumors4
+          - Tumor_r7 [1] 4,4,4
+          - Tumor_r8 [1] 3,3,4
+        - Tumors5
+          - Tumor_r6 [1] 4,4,4
+          - Tumor_r5 [1] 3,3,4
+      - MeltedMass_r1 [1] 16,15,16
+    - BackTendrils
+      - BackTendril2 [1] 2,9,2
+        - Seg2Tendril2 [1] 2,10,2
+          - Seg3Tendril2 [1] 1,10,1
+      - BackTendril4 [1] 2,9,2
+        - Seg2Tendril4 [1] 2,10,2
+          - Seg3Tendril4 [1] 1,10,1
+      - BackTendril3 [1] 2,9,2
+        - Seg2Tendril3 [1] 2,10,2
+          - Seg3Tendril3 [1] 1,10,1
+      - BackTendril [1] 2,9,2
+        - Seg2Tendril1 [1] 2,10,2
+          - Seg3Tendril1 [1] 1,10,1
+    - Heads
+      - BileHead
+        - Jaw2
+          - BileGrowth
+            - BileGrowth_r1 [1] 6,5,6
+          - BileJaw_r1 [1] 8,2,8
+        - BileHead_r1 [1] 8,6,8
+      - AcidHead
+        - Jaw3 [1] 8,2,8
+          - AcidGrowth
+            - BileGrowth_r2 [1] 6,4,6
+        - Head_r1 [1] 8,6,8
+    - BodyRoots
+      - HangingRoots_r4 [1] 5,8,0
+      - HangingRoots_r1 [1] 5,8,0
+      - HangingRoots_r2 [1] 5,8,0
+      - HangingRoots_r3 [1] 5,8,0
+    - BruteArm
+      - BruteArmStart
+        - BruteArmTumorsStart
+          - Tumor_r10 [1] 3,3,4
+          - Tumor_r9 [1] 4,4,4
+        - BruteArmMiddle
+          - HangingArms
+            - HangingArm_r2 [1] 4,4,9
+            - HangingArm_r1 [1] 4,4,9
+            - HangingArm_r3 [1] 4,4,9
+          - ArmHead
+            - Jaw
+              - ArmJaw_r1 [1] 8,2,8
+            - Head <== eyes
+              - ArmHead_r1 [1] 8,6,8
+          - BruteArmMiddle_r1 [1] 27,9,9
+          - BruteArmEnd
+            - ArmRoots_r1 [1] 10,0,16
+            - BruteArmBottom_r1 [1] 7,11,11
+            - BruteArmHangingArmsEnd
+              - HangingArm_r5 [1] 4,4,9
+              - HangingArm_r4 [1] 4,4,9
+          - ArmTumors
+            - Tumors2
+              - Tumor_r13 [1] 3,3,4
+              - Tumor_r14 [1] 4,4,4
+            - Tumors3
+              - Tumor_r11 [1] 4,4,4
+              - Tumor_r12 [1] 3,3,4
+            - Tumors
+              - Tumor_r15 [1] 4,4,4
+              - Tumor_r16 [1] 5,4,5
+          - Flower6
+            - Petal_r26 [1] 7,0,7
+            - Petal_r25 [1] 6,0,6
+            - Petal_r28 [1] 7,0,7
+            - Petal_r27 [1] 7,0,7
+          - ArmCalciumGrowths [1] 6,6,2
+            - CalciumGrowth_r5 [1] 6,6,2
+            - CalciumGrowth_r7 [1] 5,5,2
+            - CalciumGrowth_r6 [1] 5,5,2
+        - BruteArmBeginning_r1 [1] 17,7,7
+        - Flower7
+          - Petal_r29 [1] 6,0,6
+          - Petal_r31 [1] 7,0,7
+          - Petal_r30 [1] 7,0,7
+          - Petal_r32 [1] 7,0,7
+      - Flower8
+        - Petal_r36 [1] 7,0,7
+        - Petal_r33 [1] 6,0,6
+        - Petal_r35 [1] 7,0,7
+        - Petal_r34 [1] 7,0,7
+    - Flowers
+      - Flower
+        - Petal_r4 [1] 7,0,7
+        - Petal_r3 [1] 7,0,7
+        - Petal_r2 [1] 7,0,7
+        - Petal_r1 [1] 6,0,6
+      - Flower2
+        - Petal_r8 [1] 7,0,7
+        - Petal_r7 [1] 7,0,7
+        - Petal_r6 [1] 7,0,7
+        - Petal_r5 [1] 6,0,6
+      - Flower5
+        - Petal_r17 [1] 6,0,6
+        - Petal_r19 [1] 7,0,7
+        - Petal_r18 [1] 7,0,7
+        - Petal_r20 [1] 7,0,7
+      - Flower4
+        - Petal_r15 [1] 7,0,7
+        - Petal_r14 [1] 7,0,7
+        - Petal_r16 [1] 7,0,7
+        - Petal_r13 [1] 6,0,6
+      - Flower3
+        - Petal_r9 [1] 6,0,6
+        - Petal_r11 [1] 7,0,7
+        - Petal_r10 [1] 7,0,7
+        - Petal_r12 [1] 7,0,7
+      - Flower9
+        - Petal_r22 [1] 7,0,7
+        - Petal_r21 [1] 6,0,6
+        - Petal_r24 [1] 7,0,7
+        - Petal_r23 [1] 7,0,7
+
+## bloater (118 parts)
+
+- part0
+  - Legs
+    - LeftLeg [2] 5,6,5
+      - LeftLeg2 [1] 5,6,5
+        - LeftFootFin [1] 4,6,0
+    - RightLeg [1] 4,6,4
+      - RightLeg2 [1] 5,6,5
+        - RightFootFin2
+          - Plane_r18 [1] 4,5,0
+      - RightLegFin
+        - Plane_r17 [1] 0,6,4
+  - LowerTorso
+    - LowerTorsoBase [2] 11,8,9
+    - TorsoDetails
+      - LowerTorsoTumor
+        - TumorClump1
+          - Tumor_r11 [1] 5,5,5
+          - Tumor_r12 [1] 6,6,6
+          - Tumor_r10 [1] 7,7,7
+          - Tumor_r9 [1] 6,6,6
+        - TumorClump2
+          - Tumor_r15 [1] 6,6,6
+          - Tumor_r16 [1] 4,4,4
+          - Tumor_r13 [1] 3,3,3
+          - Tumor_r14 [1] 4,4,4
+      - TorsoTendrils
+        - Tendril1
+          - Seg2Tendril1 [1] 1,8,1
+          - TendrilSegment_r1 [1] 2,5,2
+        - Tendril3
+          - Seg2Tendril3 [1] 1,8,1
+          - TendrilSegment_r3 [1] 2,4,2
+        - Tendril2
+          - Seg2Tendril2 [1] 1,8,1
+          - TendrilSegment_r2 [1] 2,6,2
+      - TorsoFins
+        - LowerTorsoFin_r1 [1] 0,9,9
+        - LowerTorsoFin_r2 [1] 0,11,9
+      - Shell2
+        - Shell_r3 [1] 3,4,6
+        - Shell_r2 [1] 3,2,5
+      - BottomSeaPickles
+        - SeaPickle5 [5] 4,3,4
+          - Tip2_r4 [1] 2,4,0
+          - Tip3_r3 [1] 2,4,0
+        - SeaPickle6 [5] 4,4,4
+          - Tip3_r4 [1] 2,4,0
+          - Tip4_r2 [1] 2,4,0
+        - SeaPickle4 [5] 4,5,4
+          - Tip2_r3 [1] 2,4,0
+          - Tip1_r2 [1] 2,4,0
+    - UpperTorso [1] 10,8,8
+      - HarpoonPoint
+        - Harpoon [1] 1,11,1
+          - Plane_r16 [1] 0,6,4
+          - Plane_r15 [1] 0,6,4
+      - Head [1] 8,6,8 <== eyes
+        - HeadFin
+          - Fin_r2 [1] 0,6,7
+          - Fin_r3 [1] 0,6,7
+          - Fin_r1 [1] 0,5,7
+        - Alge [1] 4,4,5
+          - Plane_r11 [1] 0,4,5
+          - Base_r1 [1] 3,3,0
+        - JawSeagrass
+          - Plane_r14 [1] 8,5,0
+          - Plane_r13 [1] 0,6,7
+          - Plane_r12 [1] 0,4,6
+      - Arms
+        - RightArm [1] 5,8,5
+          - RightArm2 [1] 4,5,4
+            - RightArmFin
+              - Plane_r10 [1] 3,5,0
+          - Shell
+            - Shell_r1 [2] 3,2,5
+          - UpperRightArmFin
+            - Plane_r9 [1] 4,7,0
+            - Plane_r8 [1] 4,7,0
+        - LeftArm [1] 4,8,4
+          - LeftArm2 [1] 5,8,5
+            - LowerLeftArmFin
+              - Plane_r1 [1] 3,7,0
+              - Plane_r2 [1] 4,7,0
+            - LowerLeftCoral
+              - Plane_r5 [1] 6,5,0
+              - Plane_r6 [1] 6,5,0
+              - Plane_r3 [1] 6,5,0
+              - Plane_r4 [1] 6,5,0
+          - LeftArmFin
+            - Plane_r7 [1] 4,8,0
+      - UpperTorsoDetails
+        - MiddleTorsoTumor
+          - TumorClump4
+            - Tumor_r7 [1] 7,7,7
+            - Tumor_r6 [1] 5,5,5
+            - Tumor_r8 [1] 5,5,5
+            - Tumor_r5 [1] 4,4,4
+          - TumorClump3
+            - Tumor_r1 [1] 5,5,5
+            - AlgePlane_r2 [1] 4,3,0
+            - Tumor_r3 [1] 6,6,6
+            - Tumor_r2 [1] 5,5,5
+            - AlgePlane_r1 [1] 0,4,5
+            - Alge_r1 [1] 5,4,3
+            - Tumor_r4 [1] 7,7,7
+        - TopSeaPickles
+          - SeaPickle3 [5] 4,4,4
+            - Tip3_r2 [1] 2,4,0
+            - Tip4_r1 [1] 2,4,0
+          - SeaPickle1 [5] 4,5,4
+            - Tip1_r1 [1] 2,4,0
+            - Tip2_r1 [1] 2,4,0
+          - SeaPickle2 [5] 4,3,4
+            - Tip2_r2 [1] 2,4,0
+            - Tip3_r1 [1] 2,4,0
+        - UpperTorsoFins [1] 0,6,8
+          - Fin_r4 [1] 0,8,8
+          - Fin_r5 [1] 0,7,8
+
+## braiomil (47 parts)
+
+- part0 [1] 9,4,4
+  - spine2 [1] 8,6,5
+    - Boobs
+      - BoobRight_r1 [1] 4,4,4
+      - BoobLeft_r1 [1] 4,4,4
+    - back3 [1] 3,4,4
+    - back4 [1] 3,4,4
+  - spine3 [1] 4,3,5
+    - back5 [1] 3,2,4
+    - back6 [1] 3,2,4
+  - spine [1] 4,3,5
+    - back [1] 3,2,4
+    - back2 [1] 3,2,4
+  - cube_r1 [2] 5,0,6
+- part1 [1] 4,6,4
+  - leftForLeg [1] 4,6,4
+- part2 [1] 4,6,4
+  - rightForLeg [1] 4,6,4
+- part3 [1] 3,6,3
+  - LeftForArm
+    - cube_r2 [1] 3,6,3
+- part4 [1] 3,6,3
+  - RightForArm [1] 3,6,3
+- part5 [3] 8,6,8
+  - FangJoint2
+    - rightfang2 [4] 2,2,5
+  - cube_r4 [1] 5,0,6
+  - cube_r5 [1] 5,0,6
+  - FangJoint
+    - rightfang [4] 2,2,5
+  - cube_r3 [1] 5,0,6
+  - flower
+    - cube_r8 [1] 7,0,7
+    - cube_r9 [1] 7,0,7
+    - cube_r6 [1] 7,0,7
+    - cube_r7 [1] 7,0,7
+- part6
+  - tongue [1] 4,1,6
+    - tongueM2
+      - tongue2 [1] 3,1,6
+        - tongueM3
+          - tongue3 [1] 2,1,6
+- part7 [2] 6,11,2
+  - cube_r10 [1] 7,0,6
+  - cube_r11 [1] 7,0,8
+- part8 [2] 6,11,2
+  - cube_r12 [1] 5,0,6
+
+## braurei (192 parts)
+
+- part0
+  - TumorBase
+    - Tumor_r11 [1] 9,9,9
+    - Tumor_r12 [1] 9,9,9
+    - Tumor_r1 [1] 13,13,13
+    - Tumor_r10 [1] 16,16,16
+    - Tumor_r15 [1] 16,16,16
+    - Tumor_r13 [1] 15,15,15
+    - Tumor_r14 [1] 14,14,14
+    - Tumor_r7 [1] 9,9,9
+    - Tumor_r6 [1] 15,15,15
+    - Tumor_r9 [1] 15,15,15
+    - Tumor_r8 [1] 14,14,14
+    - Tumor_r3 [1] 11,11,11
+    - Tumor_r2 [1] 7,7,7
+    - Tumor_r5 [1] 9,9,9
+    - Tumor_r4 [1] 11,11,11
+  - Chef
+    - BiomassBase
+      - Biomass_r1 [1] 11,11,11
+      - Biomass_r2 [1] 10,10,10
+      - Biomass_r5 [1] 12,12,12
+      - Biomass_r3 [1] 8,8,8
+      - Biomass_r4 [1] 9,9,9
+    - Body1 [1] 7,6,4
+      - Robe_r1 [2] 8,9,5
+      - Body2
+        - Robe_r2 [1] 8,7,5
+        - TorsoTop_r1 [1] 8,6,5
+        - Body2Head [3] 8,8,8
+          - Head2Jaw [1] 8,2,8
+          - B2HFungus
+            - Plane_r11 [1] 7,0,7
+            - Plane_r10 [1] 7,0,7
+            - Plane_r14 [1] 7,0,7
+            - Plane_r13 [1] 7,0,7
+            - Plane_r12 [1] 7,0,7
+          - Body2Hat [1] 10,2,10
+            - Seg2_r2 [1] 8,4,8
+            - Seg4_r2 [1] 3,3,3
+            - Seg3_r2 [1] 5,4,5
+        - TorsoBase_r1 [1] 7,6,4
+        - Body3 [1] 4,8,4
+          - TorsoTop_r2 [1] 8,6,5
+          - Body4
+            - Body5 [1] 7,6,4
+              - Body6 [1] 7,6,4
+                - Arm_r4 [1] 4,8,4
+                - Body6Heads
+                  - Body6Head2 [3] 8,8,8
+                    - B6H2HeadFungus
+                      - Plane_r22 [1] 7,0,7
+                      - Plane_r21 [1] 7,0,7
+                      - Plane_r23 [1] 7,0,7
+                    - Body6Head2Hat [1] 10,2,10
+                      - Seg1_r1 [1] 8,4,8
+                      - Seg2_r6 [1] 5,4,5
+                      - Seg3_r6 [1] 3,3,3
+                  - Body6Head1
+                    - Body3Head1Nose [2] 2,4,2
+                    - HeadBase_r2 [1] 8,8,8
+                    - B6H1HeadFungus
+                      - Plane_r20 [1] 7,0,7
+                      - Plane_r19 [1] 7,0,7
+                      - Plane_r18 [1] 7,0,7
+                    - Body3Head1Hat [1] 10,2,10
+                      - Seg4_r5 [1] 3,3,3
+                      - Seg3_r5 [1] 5,4,5
+                      - Seg2_r5 [1] 8,4,8
+                  - PotionHead [1] 8,8,8
+                    - Jaw [1] 8,2,8
+                      - Potion [9] 4,1,4
+                    - PotionHeadTumorClump
+                      - Tumor_r20 [1] 3,3,3
+                      - FungalPlane_r2 [1] 7,0,7
+                      - Tumor_r21 [1] 4,4,4
+                      - Tumor_r19 [1] 3,3,3
+                    - LilWart_r2 [2] 1,1,1
+                    - PotionHeadHat [1] 10,2,10
+                      - Seg3_r7 [1] 5,4,5
+                      - Seg2_r7 [1] 8,4,8
+                      - Seg4_r6 [1] 3,3,3
+                  - FusedJaw
+                    - BackofMouth_r1 [1] 6,4,2
+                    - tongue [1] 4,1,6
+                      - tongue2 [1] 3,1,6
+                        - tongue3 [1] 2,1,5
+                    - Head2Jaw2
+                      - Jaw_r3 [1] 8,2,8
+                    - Head2Jaw3
+                      - Jaw_r4 [1] 6,2,8
+                      - JawSeg2_r1 [1] 6,1,8
+                - TorsoBaseRobe_r1 [1] 7,6,4
+                - Robe_r5 [1] 8,9,5
+                - TorsoTop_r6 [1] 8,6,5
+              - Robe_r4 [1] 8,9,5
+              - TorsoTop_r5 [1] 8,6,5
+            - Body4_1 [1] 4,6,7
+              - TorsoTop_r3 [1] 5,6,8
+              - Body4_2Head [3] 8,8,8
+                - FungalPlane_r1 [1] 7,0,7
+                - Body4_2Hat [1] 10,2,10
+                  - Seg3_r3 [1] 5,4,5
+                  - Seg2_r3 [1] 8,4,8
+                  - Seg4_r3 [1] 3,3,3
+                - Head4_2Jaw [1] 8,2,8
+                  - Tumor_r16 [1] 3,3,3
+                  - Tumor_r17 [1] 3,3,3
+                  - Tumor_r18 [1] 3,3,3
+            - Body4_2 [1] 4,6,7
+              - Arm_r3 [2] 4,8,4
+              - TorsoTop_r4 [1] 5,6,8
+              - Body4_1Head [3] 8,8,8
+                - B4_1HeadFungus
+                  - Plane_r17 [1] 7,0,7
+                  - Plane_r16 [1] 7,0,7
+                  - Plane_r15 [1] 7,0,7
+                - Body4_1Hat [1] 10,2,10
+                  - Seg4_r4 [1] 3,3,3
+                  - Seg3_r4 [1] 5,4,5
+                  - Seg2_r4 [1] 8,4,8
+                - Head4_1Jaw [1] 8,2,8
+          - TorsoBase_r2 [1] 7,6,4
+          - Robe_r3 [1] 8,9,5
+      - Arm_r2 [1] 4,8,4
+      - Body1Head [1] 8,8,8
+        - Jaw_r2 [1] 8,2,8
+        - Hat [1] 10,2,10
+          - Seg3_r1 [1] 5,4,5
+          - Seg2_r1 [1] 8,4,8
+          - Seg4_r1 [1] 3,3,3
+        - LilWart_r1 [2] 1,1,1
+        - B2HFungus2
+          - Plane_r9 [1] 7,0,7
+          - Plane_r7 [1] 7,0,7
+          - Plane_r8 [1] 7,0,7
+  - Vat [1] 32,1,32
+    - Shelf2 [2] 18,3,7
+      - ShelfWall5_r2 [1] 12,7,2
+      - ShelfWall4_r2 [1] 2,7,10
+      - ShelfWall3_r2 [1] 2,7,10
+      - ShelfWall2_r2 [1] 3,7,5
+      - ShelfWall1_r2 [1] 3,7,10
+      - Shelf2Juice [3] 11,0,11
+    - Rim
+      - RightRidge [1] 4,9,6
+        - FleshLining_r4 [1] 29,8,3
+        - RightRidgeSeg2 [1] 4,18,6
+          - FungalPetals
+            - Plane_r5 [1] 7,0,7
+            - Plane_r6 [1] 7,0,7
+            - Plane_r4 [1] 7,0,7
+          - FleshLining_r5 [1] 29,12,3
+      - FrontRidge [1] 6,9,4
+        - FleshLining_r1 [1] 29,8,3
+        - FrontRidgeSeg2 [2] 6,18,4
+          - Head <== eyes
+            - HeadBase_r1 [1] 8,7,8
+      - CornerRidges
+        - SERidge [1] 6,18,4
+          - FallingCorpse [2] 7,6,4
+            - Leg_r2 [1] 4,8,4
+            - Leg_r1 [1] 4,8,4
+          - SERidgeSeg2
+          - FleshLining_r8 [1] 2,12,21
+        - NWRidge [1] 6,18,4
+          - FleshLining_r7 [1] 2,12,21
+        - SWRidge [2] 4,18,6
+        - NERidge [2] 4,18,6
+      - VatJuice [7] 28,0,46
+      - LeftRidge [1] 4,9,6
+        - FleshLining_r2 [1] 29,8,3
+        - LeftRidgeSeg2 [1] 4,18,6
+          - FleshLining_r3 [1] 29,12,3
+          - Corpse [2] 4,6,7
+            - Head_r1 [1] 8,7,8
+            - Arm_r1 [1] 4,8,4
+            - Jaw_r1 [1] 8,1,8
+            - HeadFugus
+              - Plane_r1 [1] 7,0,7
+              - Plane_r2 [1] 7,0,7
+              - Plane_r3 [1] 7,0,7
+      - BackRidge [1] 6,9,4
+        - FleshLining_r6 [1] 29,8,3
+        - BackRidgeSeg2 [2] 6,18,4
+    - Shelf1 [2] 18,3,10
+      - ShelfWall3_r1 [1] 2,7,10
+      - ShelfWall5_r1 [1] 12,7,2
+      - ShelfWall4_r1 [1] 2,7,10
+      - ShelfWall2_r1 [1] 3,7,10
+      - ShelfWall1_r1 [1] 3,7,10
+      - ShelfJuice [3] 19,0,6
+
+## brot (94 parts)
+
+- part0 [1] 12,8,10
+  - TorsoTop [1] 14,9,9
+    - Lungs
+      - lung1 [2] 9,3,15
+      - lung2 [2] 9,3,15
+    - Neck1 [3] 6,6,8
+      - Neck2 [3] 6,6,8
+        - Neck2Fungus
+          - Fungus_r3 [1] 7,0,7
+          - Fungus_r4 [1] 7,0,7
+          - Fungus_r1 [1] 7,0,7
+          - Fungus_r2 [1] 7,0,7
+        - Neck3 [3] 6,6,8
+          - Head [1] 10,8,10 <== eyes
+            - crown1
+              - Petal4_r1 [1] 7,0,7
+              - Petal3_r1 [1] 7,0,7
+              - Petal2_r1 [1] 7,0,7
+              - Petal1_r1 [1] 7,0,7
+            - Jaw [1] 10,3,2
+              - RightFang2 [2] 2,3,5
+                - FangBlade_r2 [1] 0,3,7
+              - RightFang1 [3] 2,3,5
+              - Flesh [1] 10,6,0
+              - LeftFang2 [2] 2,3,5
+                - FangDetail_r1 [1] 0,2,5
+              - LeftFang1 [2] 2,3,5
+                - FangBlade_r1 [1] 0,3,7
+            - crown2
+              - Petal1_r2 [1] 7,0,7
+              - Petal4_r2 [1] 7,0,7
+              - Petal3_r2 [1] 7,0,7
+              - Petal2_r2 [1] 7,0,7
+            - Tongue [1] 5,1,7
+              - TongueSeg2 [1] 4,1,5
+                - TongueSeg3 [1] 4,1,5
+                  - TongueSeg4 [1] 3,1,5
+                    - TongueSeg5 [1] 2,1,5
+    - FrontLimbs
+      - LeftFrontJoint
+        - LeftFront [1] 4,4,17
+          - LeftFrontSeg2 [1] 3,15,3
+            - LeftFrontSeg3 [1] 3,16,3
+            - LeftFrontSeg2Fungus
+              - Fungus_r7 [1] 7,0,7
+              - Fungus_r8 [1] 7,0,7
+              - Fungus_r5 [1] 7,0,7
+              - Fungus_r6 [1] 7,0,7
+      - RightFrontJoint
+        - RightFront [1] 4,4,17
+          - RightFrontSeg1 [1] 3,15,3
+            - RightFrontSeg2 [1] 3,16,3
+              - RightFrontSeg2Fungus
+                - Fungus_r9 [1] 7,0,7
+                - Fungus_r12 [1] 7,0,7
+                - Fungus_r11 [1] 7,0,7
+                - Fungus_r10 [1] 7,0,7
+    - Body
+      - TorsoBottom_r1 [1] 7,3,6
+      - BodyHead
+        - Head_r1 [1] 8,6,8
+        - BodyRightFang [3] 2,3,5
+        - BodyLeftFang [2] 2,3,5
+          - FangBlade_r3 [1] 0,3,7
+        - BodyTongue [1] 4,1,6
+          - BTongue2 [1] 3,1,6
+            - BTongue3 [1] 2,1,6
+      - Arm_r1 [1] 4,4,8
+      - Arm_r2 [1] 4,4,8
+      - BodyLung2 [2] 6,2,12
+      - BodyLung1 [2] 6,2,12
+      - Torso_r1 [1] 8,4,6
+  - TorsoBottom [1] 13,9,7
+    - BackLimbs
+      - LeftBackJoint
+        - LeftBack [1] 4,4,15
+          - LeftBackFungus
+            - Fungus_r16 [1] 7,0,7
+            - Fungus_r15 [1] 7,0,7
+            - Fungus_r14 [1] 7,0,7
+            - Fungus_r13 [1] 7,0,7
+          - LeftBackForLegJoint
+            - LeftFrontSeg [1] 3,15,3
+              - LeftBackSeg3 [1] 3,9,3
+      - RightBackJoint
+        - RightBack [1] 4,4,15
+          - RightBackForLegJoint
+            - RightFrontSeg3 [1] 3,15,3
+              - RightBackSeg3 [1] 3,9,3
+    - Tumors
+      - Tumor_r1 [1] 4,4,4
+      - Tumor_r3 [1] 5,5,5
+      - Tumor_r2 [1] 5,5,5
+      - Tumor_r4 [1] 6,6,6
+
+## brute (71 parts)
+
+- part0
+  - Legs
+    - LeftLeg [1] 4,9,4
+      - LeftLegSeg2 [1] 5,5,5
+    - RightLeg [1] 4,9,4
+      - RightLegSeg2 [1] 5,5,5
+  - Tail_r1 [1] 4,4,6
+  - FungalBloom
+    - Plane2_r1 [1] 0,12,14
+    - Plane1_r1 [1] 0,12,14
+    - Spetal_r1 [1] 16,0,16
+    - Npetal_r1 [1] 16,0,16
+    - Wpetal_r1 [1] 16,0,16
+    - Epetal_r1 [1] 16,0,16
+  - Base_r1 [1] 10,6,6
+  - Arms
+    - RightArm [1] 8,6,7
+      - MiddleChestFungus
+        - Fungus_r5 [1] 7,0,7
+        - Fungus_r6 [1] 7,0,7
+      - RightArmSeg3 [1] 6,9,6
+        - RightFist
+          - Fist2 [1] 7,8,7
+            - FistFungus
+              - Fungus_r3 [1] 7,0,7
+              - Fungus_r4 [1] 7,0,7
+    - crown2
+      - Petal4_r1 [1] 7,0,7
+      - Petal3_r1 [1] 7,0,7
+      - Petal2_r1 [1] 7,0,7
+      - Petal1_r1 [1] 7,0,7
+    - LeftArm [1] 8,6,7
+      - LeftArmSeg2 [1] 6,9,6
+        - LeftFist
+          - Fist [1] 7,8,7
+        - LeftArmFungus
+          - Fungus_r1 [1] 7,0,7
+          - Fungus_r2 [1] 7,0,7
+    - crown6
+      - Petal5_r2 [1] 7,0,7
+      - Petal4_r3 [1] 7,0,7
+      - Petal3_r3 [1] 7,0,7
+      - Petal6_r1 [1] 7,0,7
+    - crown3
+      - Petal4_r2 [1] 7,0,7
+      - Petal3_r2 [1] 7,0,7
+      - Petal2_r2 [1] 7,0,7
+      - Petal5_r1 [1] 7,0,7
+    - RightShoulder_r1 [2] 6,4,6
+  - Neck [1] 6,6,5
+    - Head [2] 8,8,8 <== eyes
+      - crown1
+        - Petal1_r2 [1] 7,0,7
+        - Petal3_r4 [1] 7,0,7
+        - Petal2_r3 [1] 7,0,7
+        - Petal4_r4 [1] 7,0,7
+      - Jaw [2] 8,1,8
+        - Tooth_r2 [1] 0,1,4
+        - Tooth_r1 [1] 0,1,6
+        - Tooth_r3 [1] 8,1,0
+      - crown5
+        - Petal4_r6 [1] 7,0,7
+        - Petal3_r6 [1] 7,0,7
+        - Petal5_r4 [1] 7,0,7
+        - Petal6_r2 [1] 7,0,7
+      - crown4
+        - Petal4_r5 [1] 7,0,7
+        - Petal3_r5 [1] 7,0,7
+        - Petal2_r4 [1] 7,0,7
+        - Petal5_r3 [1] 7,0,7
+  - UpperTorso_r1 [1] 12,8,12
+
+## busser (61 parts)
+
+- part0
+  - head [3] 8,6,8 <== eyes
+    - jaw [1] 7,2,4
+    - flower3
+      - cube_r11 [1] 6,0,6
+      - cube_r12 [1] 6,0,6
+      - cube_r13 [1] 7,0,6
+      - cube_r14 [1] 7,0,6
+    - flower4
+      - cube_r15 [1] 6,0,6
+      - cube_r16 [1] 6,0,6
+      - cube_r17 [1] 7,0,6
+      - cube_r18 [1] 7,0,6
+    - flower2
+      - cube_r10 [1] 7,0,6
+      - cube_r8 [1] 6,0,6
+      - cube_r9 [1] 7,0,6
+      - cube_r7 [1] 6,0,6
+  - RightArm [3] 3,3,3
+    - RightForArm [1] 2,6,2
+      - cube_r20 [1] 2,5,1
+      - cube_r19 [1] 0,8,6
+      - RightHand [1] 1,7,1
+        - cube_r21 [1] 1,7,1
+        - cube_r22 [1] 1,6,1
+        - cube_r23 [1] 0,11,11
+  - LeftArm [3] 3,3,3
+    - LeftForArm [1] 2,6,2
+      - LeftHand [1] 1,7,1
+        - cube_r26 [1] 1,7,1
+        - cube_r27 [1] 1,6,1
+        - cube_r28 [1] 0,11,11
+      - cube_r24 [1] 0,8,6
+      - cube_r25 [1] 2,5,1
+  - Tail [1] 6,6,4
+    - flower5
+      - cube_r4 [1] 6,0,6
+      - cube_r5 [1] 7,0,6
+      - cube_r6 [1] 7,0,6
+      - cube_r3 [1] 6,0,6
+    - claws [1] 0,8,7
+    - claws2 [1] 0,8,7
+    - Tail2 [1] 5,6,3
+      - Tail3 [1] 5,6,3
+        - Tail4 [1] 4,6,3
+          - Claw
+            - cube_r1 [1] 0,10,6
+            - cube_r2 [1] 0,10,6
+  - body [1] 6,2,4
+    - spine2 [1] 8,6,6
+      - back3 [1] 4,4,5
+      - back4 [1] 4,4,5
+    - spine [2] 4,5,5
+      - back [1] 2,6,4
+      - back2 [1] 2,6,4
+    - cube_r29 [1] 0,11,4
+    - flower
+      - cube_r30 [1] 6,0,6
+      - cube_r31 [1] 6,0,6
+      - cube_r32 [1] 7,0,6
+      - cube_r33 [1] 7,0,6
+
+## chemist (141 parts)
+
+- part0
+  - Chemist
+    - Torso
+      - Head [2] 8,8,7 <== eyes
+        - HeadTendrils
+          - HeadTendril2
+            - tendril2Base_r1 [1] 1,1,3
+            - tendril2Seg1
+              - tendril2Seg1_r1 [1] 1,1,3
+          - HeadTendril3
+            - tendril3Seg1
+              - tendril3Seg1_r1 [1] 1,1,3
+              - FlintEnd2
+                - FlintEnd4_r1 [1] 0,3,5
+                - FlintEnd3_r1 [1] 0,3,5
+            - tendril3Base_r1 [1] 1,1,3
+          - HeadTendril1
+            - tendril1Seg1
+              - tendril1Seg1_r1 [1] 2,2,4
+              - FlintEnd1
+                - FlintEnd2_r1 [1] 0,3,5
+                - FlintEnd1_r1 [1] 0,3,5
+            - tendril1Base_r1 [1] 2,2,4
+          - HeadSmallTendril [1] 1,1,2
+        - Helmet
+          - HelmetBase [5] 9,9,8
+          - Glass [3] 2,7,0
+            - Glass_r3 [1] 2,3,0
+            - Glass_r4 [1] 1,2,0
+            - Glass_r1 [1] 2,4,0
+            - Glass_r2 [1] 3,2,0
+        - Foliage7_r1 [1] 7,0,7
+        - Foliage6_r1 [1] 7,0,7
+        - IntakeTubeRight
+          - ConnectingTumorBase2_r1 [1] 2,2,2
+          - ConnectingTumorBase1_r1 [1] 2,2,2
+          - IntakeTubeTumorBase_r1 [1] 3,3,3
+          - Vein8_r1 [1] 0,1,2
+          - Vein1_r1 [1] 0,1,2
+          - ConnectingTumorBase4_r1 [1] 2,2,2
+          - Vein2_r1 [1] 0,1,2
+          - ConnectingTumorBase6_r1 [1] 2,2,2
+          - ConnectingTumorBase3_r1 [1] 2,2,2
+          - ConnectingTumorBase5_r1 [1] 2,2,2
+          - Vein4_r1 [1] 0,1,2
+          - IntakeTube_r1 [1] 3,2,2
+          - ConnectingTumorBase7_r1 [1] 2,3,2
+          - Vein3_r1 [1] 0,1,2
+          - Fang_r1 [1] 0,3,5
+          - Vein6_r1 [1] 0,1,2
+          - Vein5_r1 [1] 0,1,2
+          - Vein7_r1 [1] 0,1,2
+        - HeadTumors2
+          - Tumor5_r1 [1] 3,3,3
+          - Tumor4_r1 [1] 4,4,4
+        - IntakeTubeLeft
+          - ConnectingTumorBase2_r2 [1] 2,2,2
+          - IntakeTubeTumorBase_r2 [1] 3,3,3
+          - Vein9_r1 [1] 0,1,2
+          - ConnectingTumorBase3_r2 [1] 2,2,2
+          - ConnectingTumorBase1_r2 [1] 2,2,2
+          - Vein8_r2 [1] 0,1,2
+          - Vein2_r2 [1] 0,1,2
+          - ConnectingTumorBase5_r2 [1] 2,3,2
+          - ConnectingTumorBase4_r2 [1] 2,2,2
+          - Vein3_r2 [1] 0,1,2
+          - ConnectingTumorBase7_r2 [1] 2,2,2
+          - ConnectingTumorBase6_r2 [1] 2,2,2
+          - Vein5_r2 [1] 0,1,2
+          - Vein4_r2 [1] 0,1,2
+          - IntakeTube_r2 [1] 3,2,2
+          - Vein6_r2 [1] 0,1,2
+          - Vein7_r2 [1] 0,1,2
+          - Fang_r2 [1] 0,3,5
+        - HeadTumors1
+          - Tumor1_r1 [1] 4,4,4
+          - Tumor3_r1 [1] 3,3,3
+          - Tumor2_r1 [1] 3,3,3
+        - GasMask
+          - Filters
+            - Filter1
+              - String_r1 [1] 1,5,1
+              - Filter1end [1] 2,2,2
+                - Filter1Cap_r1 [1] 3,1,3
+            - Filter2
+              - Filter2Cap_r1 [2] 3,3,1
+              - Blood_r1 [1] 4,5,0
+          - FilterBase [1] 8,4,2
+            - FilterBaseLeft [2] 3,2,1
+            - FilterBaseRight [1] 3,2,1
+              - FilterRightSmoothTop_r1 [1] 2.9,1.5,1
+      - BackTendril2
+        - Seg4_r2 [1] 2,7,2
+        - r3seg4
+          - Seg5_r2 [1] 2,10,2
+          - r3seg5
+            - Seg6_r1 [1] 1,6,1
+      - BackTendril1 [1] 2,6,2
+        - r3seg2
+          - r3seg3
+            - Seg5_r1 [1] 1,8,1
+          - Seg4_r1 [1] 2,9,2
+      - Arms
+        - RightArm [4] 4,5,4
+          - Foliage1_r1 [1] 7,0,7
+        - LeftArm [5] 4,5,4
+          - Foliage3_r1 [1] 7,0,7
+          - Tendrils
+            - Tendril1
+              - HandTendrilEnd_r1 [1] 1,6,1
+              - HandTendrilBase_r1 [1] 2,5,2
+            - Tendril3
+              - HandTendrilEnd_r3 [1] 1,6,1
+              - HandTendrilBase_r3 [1] 2,5,2
+            - Tendril2
+              - HandTendrilEnd_r2 [1] 1,6,1
+              - HandTendrilBase_r2 [1] 2,5,2
+      - ActualTorso
+        - Foliage5_r1 [1] 7,0,7
+        - TorsoBottom_r1 [1] 8,5,6
+        - HazmatSkeletonTorso_r1 [1] 8,2,6
+        - TorsoTopInterior_r1 [2] 8,5,6
+        - LeakingGuts
+          - Intestines1_r1 [1] 4,7,0
+          - Intestines2_r1 [1] 3,5,0
+          - StomachTumors
+            - StomachTumor5_r1 [1] 2,2,2
+            - StomachTumor4_r1 [1] 2,2,2
+            - StomachTumor3_r1 [1] 2,2,2
+            - StomachTumor1_r1 [1] 2,2,2
+            - StomachTumor2_r1 [1] 2,2,2
+        - Tank [1] 5,10,5
+          - TankTop_r1 [1] 3,1,3
+          - Foliage8_r1 [1] 7,0,7
+    - Legs
+      - LeftLeg [3] 4,6,4
+        - LeftForLeg [2] 4,6,4
+        - Foliage2_r1 [1] 7,0,7
+      - RightLeg [3] 4,6,4
+        - RightForLeg [1] 4,6,4
+          - Foliag4_r1 [1] 7,0,7
+
+## claw (28 parts)
+
+- part0
+  - base [1] 3,6,3
+    - fingerT2
+      - jointT2 [1] 1,7,2
+        - fingerG2
+          - jointG2 [1] 1,7,2
+            - claw2 [1] 0,7,3
+    - middleF [1] 3,6,3
+      - middleF2
+        - middleF3
+          - cube_r3 [1] 0,7,4
+        - cube_r2 [1] 2,7,3
+    - cube_r1 [1] 3,6,3
+    - fingerT
+      - jointT [1] 1,7,2
+        - fingerG
+          - jointG [1] 1,7,2
+            - claw [1] 0,7,3
+    - fingerT3
+      - jointT3 [1] 1,7,2
+        - fingerG3
+          - jointG3 [1] 1,7,2
+            - claw3 [1] 0,7,3
+    - fingerT4
+      - jointT4 [1] 2,7,2
+        - fingerG4
+          - jointG4 [1] 2,7,2
+            - claw4 [1] 0,9,5
+
+## conductor (78 parts)
+
+- part0
+  - Torso
+    - Arms
+      - RightArm
+        - UpperRightArm [2] 4,8,4
+          - Petal_r7 [1] 7,0,7
+        - LowerRightArm [2] 4,8,4
+          - Petal_r8 [1] 7,0,7
+          - Taser
+            - straps [2] 5,8,3
+            - pokers [2] 1,2,2
+              - electricity [1] 3,0,2
+              - cube_r2 [1] 1,1,2
+              - cube_r3 [1] 1,1,2
+            - body2 [1] 4,3,11
+            - end
+              - cube_r1 [1] 2,2,1
+      - LeftArm
+        - LowerLeftArm [1] 4,4,4
+        - UpperLeftArm [2] 4,8,4
+          - Petal_r9 [1] 7,0,7
+          - Petal_r10 [1] 7,0,7
+    - Body
+      - Chest [2] 3,4,0
+        - ChestSuit_r1 [2] 9,6,7
+        - Petal_r2 [1] 7,0,7
+        - Petal_r1 [1] 7,0,7
+      - Stomach
+        - Petal_r5 [1] 7,0,7
+        - StomachSuit_r1 [2] 8,6,6
+        - Petal_r4 [1] 7,0,7
+        - Petal_r3 [1] 7,0,7
+      - CarBattery
+        - Petal_r6 [1] 7,0,7
+        - Wire_r1 [5] 1,2,3
+  - Legs
+    - LeftLeg
+      - LowerLeftLeg [2] 4,8,4
+      - UpperLeftLeg [2] 4,8,4
+        - Petal_r12 [1] 7,0,7
+    - RightLeg
+      - LowerRightLeg [2] 4,8,4
+        - Petal_r11 [1] 7,0,7
+      - UpperRightLeg [2] 4,8,4
+- part1 [4] 8,5,6
+  - HeadDetailsTop [12] 3,2,1
+  - HeadDetailsBack [8] 3,5,2
+  - Foliage
+    - Petal_r15 [1] 7,0,7
+    - Petal_r14 [1] 7,0,7
+    - Petal_r17 [1] 7,0,7
+    - Petal_r16 [1] 7,0,7
+    - Petal_r18 [1] 7,0,7
+    - Petal_r13 [1] 7,0,7
+  - MouthDetails [1] 8,6,0
+    - MouthTendrils
+      - Tendril1
+        - Seg2Tendril1 [1] 2,6,2
+          - Seg3Tendril1 [1] 1,6,1
+      - Tendril3
+        - Seg2Tendril3 [1] 2,6,2
+          - Seg3Tendril3 [1] 1,6,1
+      - Tendril2
+        - Seg2Tendril2 [1] 2,6,2
+          - Seg3Tendril2 [1] 1,6,1
+    - Teeth [1] 8,1,5
+      - Toothie_r2 [1] 4,2,0
+      - Toothie_r1 [1] 4,1,0
+- part2 [5] 5,4,6
+  - BrainMatter_r1 [1] 3,5,0
+  - BrainClump_r4 [1] 5,3,2
+  - RightTopGrowth_r1 [1] 3,2,3
+  - BrainClump_r1 [1] 2,3,3
+  - BrainMatter_r4 [1] 3,5,0
+  - BrainMatter_r3 [1] 3,5,0
+  - BrainClump_r3 [1] 3,3,3
+  - BrainMatter_r2 [1] 3,5,0
+  - BrainClump_r2 [1] 3,3,3
+
+## delusioner (141 parts)
+
+- part0
+  - TumorBase
+    - Tumor_r1 [1] 9,9,9
+    - Tumor_r3 [1] 8,8,8
+    - Tumor_r2 [1] 7,7,7
+    - Tumor_r5 [1] 11,11,11
+    - Tumor_r4 [1] 8,8,8
+  - BodyBase [1] 8,5,6
+    - BodyCrown
+      - Petal4_r1 [1] 7,0,7
+      - Petal3_r1 [1] 7,0,7
+      - Petal2_r1 [1] 7,0,7
+      - Petal5_r1 [1] 7,0,7
+    - BodyBaseHead [1] 8,8,9
+      - BodyHeadCrown
+        - Petal4_r2 [1] 7,0,7
+        - Petal5_r2 [1] 7,0,7
+        - Petal3_r2 [1] 7,0,7
+        - Petal2_r2 [1] 7,0,7
+      - Nose_r1 [1] 2,2,4
+      - Jaw_r1 [1] 8,8,1
+    - Arm_r1 [1] 4,4,8
+    - BodyToTorso
+      - BtTT1
+        - B_T_T1S2_r1 [1] 2,8,2
+        - B_T_T1_r1 [1] 2,5,2
+      - BtTT2
+        - B_T_T2S2_r1 [1] 1,9,1
+        - B_T_T2_r1 [1] 1,5,1
+      - BtTT3
+        - B_T_T3_r1 [1] 1,5,1
+        - B_T_T3S2_r1 [1] 1,9,1
+      - BtTT4
+        - B_T_T4_r1 [1] 1,6,1
+        - B_T_T4S2_r1 [1] 1,8,1
+      - DelusionerTorso [2] 7,6,4
+        - TorsoToUpper
+          - TtUT4
+            - TtU_T4_r1 [1] 1,4,1
+          - TtUT3
+            - TtU_T3_r1 [1] 1,4,1
+          - TtUT2
+            - TtU_T2_r1 [1] 1,4,1
+          - TtUT1
+            - TtU_T1_r1 [1] 2,4,2
+          - DelusionerUpperTorso [1] 8,6,5
+            - Robe_r1 [1] 8,8,6
+            - UpperTorsoFungus
+              - Fungus_r7 [1] 7,0,7
+              - Fungus_r8 [1] 7,0,7
+              - Fungus_r5 [1] 7,0,7
+              - Fungus_r6 [1] 7,0,7
+            - Arms
+              - UpperToLeftArm
+                - LeftArmSeg1 [1] 6,4,4
+                  - LeftArmToLeftHand
+                    - LeftArmSeg2 [2] 6,4,4
+                      - SleeveEnd_r2 [1] 3,4,4
+                      - Tendrils
+                        - LT1
+                          - LT1_r2 [1] 2,5,2
+                          - LT1Seg2 [1] 2,5,2
+                        - LT3
+                          - LT3Seg1_r2 [1] 2,5,2
+                          - LT3Seg2 [1] 2,5,2
+                        - LT2
+                          - LT2Seg1_r2 [1] 2,5,2
+                          - LT2Seg2 [1] 2,5,2
+                    - LtHT1
+                      - LtHT1_r1 [1] 7,1,1
+                    - LtHT2
+                      - LtHT2_r1 [1] 7,1,1
+                  - LeftArmTumor
+                    - Tumor_r12 [1] 3,3,3
+                    - Tumor_r13 [1] 3,3,3
+                - UtLT2
+                  - UtLT2_r1 [1] 7,1,1
+                - UtLT1
+                  - UtLT1_r1 [1] 7,1,1
+              - UpperToRightArm
+                - UtRT2
+                  - UtRT2_r1 [1] 7,1,1
+                - UtRT1
+                  - UtRT1_r1 [1] 7,1,1
+                - RightArmSeg1 [2] 6,4,4
+                  - RightArmToRightHand
+                    - RightArmSeg2 [2] 6,4,4
+                      - SleeveEnd_r1 [1] 3,4,4
+                      - Tendrils2
+                        - LT5
+                          - LT2Seg3 [1] 2,5,2
+                          - LT2Seg1_r1 [1] 2,5,2
+                        - LT4
+                          - LT1_r1 [1] 2,5,2
+                          - LT1Seg3 [1] 2,5,2
+                        - LT6
+                          - LT3Seg1_r1 [1] 2,5,2
+                          - LT3Seg3 [1] 2,5,2
+                    - RtHT1
+                      - RtHT1_r1 [1] 7,1,1
+                    - RtHT2
+                      - RtHT2_r1 [1] 7,1,1
+            - UpperToHead
+              - Head [3] 8,8,8 <== eyes
+                - Jaw [1] 8,2,4
+                - HeadCrown1
+                  - Petal2_r3 [1] 7,0,7
+                  - Petal5_r3 [1] 7,0,7
+                  - Petal4_r3 [1] 7,0,7
+                  - Petal3_r3 [1] 7,0,7
+                - HeadCrown2
+                  - Petal3_r4 [1] 7,0,7
+                  - Petal2_r4 [1] 7,0,7
+                  - Petal4_r4 [1] 7,0,7
+                  - Petal1_r1 [1] 7,0,7
+                - Nose [1] 2,4,2
+                - HeadTumors
+                  - Tumor_r11 [1] 4,4,4
+                  - Tumor_r10 [1] 3,3,3
+                  - Tumor_r9 [1] 3,3,3
+              - UtHT2
+                - TtU_T3_r2 [1] 1,5,1
+              - UtHT1
+                - UtHT1_r1 [1] 2,5,2
+              - UtHT4
+                - UtHT4_r1 [1] 1,5,1
+              - UtHT3
+                - UtHT3_r1 [1] 1,5,1
+        - LowerTorsoFungus
+          - Fungus_r3 [1] 7,0,7
+          - Fungus_r4 [1] 7,0,7
+          - Fungus_r1 [1] 7,0,7
+          - Fungus_r2 [1] 7,0,7
+    - Arm_r2 [1] 4,4,8
+    - BodyTumors
+      - Tumor_r7 [1] 3,3,3
+      - Tumor_r6 [1] 3,3,3
+      - Tumor_r8 [1] 4,4,4
+    - Torso_r1 [1] 7,4,6
+    - Leg_r2 [1] 4,4,8
+    - Leg_r1 [1] 4,4,8
+
+## gargoyle (115 parts) - no eyes
+
+- part0
+  - Torso
+    - Chest
+      - ChestArmor_r1 [3] 10,8,8
+      - SpineParts_r1 [1] 0,1,8
+      - SpineConnection_r1 [1] 2,2,1
+    - Stomach
+      - StomachArmor_r1 [2] 11,8,9
+      - Foliage_r8 [1] 6,0,6
+      - Foliage_r7 [1] 6,0,6
+      - Foliage_r6 [1] 6,0,6
+      - Foliage_r5 [1] 6,0,6
+      - Foliage_r4 [1] 6,0,6
+      - SpineParts_r2 [1] 0,7,1
+      - TumorCluster8
+        - Tumor_r5 [1] 2,2,2
+        - Tumor_r4 [1] 2,2,2
+      - TumorCluster7
+        - Tumor_r3 [1] 4,4,4
+        - Tumor_r2 [1] 2,2,2
+      - Spine_r1 [1] 2,7,1
+    - Foliage_r3 [1] 6,0,7
+    - Foliage_r2 [1] 6,0,7
+    - Tumor
+      - Tumor_r1 [1] 2,2,2
+    - Foliage_r1 [1] 6,0,6
+  - RightArm
+    - BottomArmBase2
+      - BottomArm_r2 [1] 5,6,5
+      - claw3_r1 [3] 5,7,0
+    - TopArmBase2
+      - Armor_r2 [2] 4,4,4
+      - Foliage_r13 [1] 6,0,7
+      - Foliage_r12 [1] 6,0,7
+      - TumorCluster5 [1] 3,3,3
+        - Tumor_r9 [1] 2,2,2
+  - LeftLeg [1] 4,6,5
+    - foliage_r14 [1] 6,0,6
+    - HangingFlesh1
+      - HF1_r1 [1] 0,5,5
+      - HF2_r1 [1] 0,6,5
+    - TumorCluster3
+      - Tumor1_r2 [1] 3,3,3
+      - Tumor2_r2 [1] 2,2,2
+      - Tumor3_r2 [1] 2,2,2
+  - Head [1] 8,6,8
+    - Foliage4_r1 [1] 6,0,6
+    - headWear [1] 32,32,32
+    - Jaw [2] 8,2,2
+      - TongueStart
+        - TongueEnd
+          - TonguePiece_r2 [1] 2,1,3
+        - TonguePiece_r1 [1] 2,1,3
+      - MouthTendril2
+        - Tsegment2_r2 [1] 2,3,2
+        - Tsegment3_r1 [1] 2,5,2
+      - MouthTendril1
+        - Tsegment1_r1 [1] 2,3,2
+        - Tsegment2_r1 [1] 2,5,2
+    - HeadFoliageCrown
+      - HeadCrownPetal4_r1 [1] 6,0,6
+      - HeadCrownPetal3_r1 [1] 6,0,6
+      - HeadCrownPetal2_r1 [1] 6,0,6
+      - HeadCrownPetal1_r1 [1] 6,0,6
+    - Foliage3_r1 [1] 6,0,6
+    - TumorCluster2
+      - Tumor5_r1 [1] 2,2,2
+      - Tumor4_r1 [1] 2,2,2
+    - Foliage2_r1 [1] 6,0,6
+    - Foliage1_r1 [1] 6,0,6
+    - TumorCluster1
+      - Tumor1_r1 [1] 3,3,3
+      - Tumor3_r1 [1] 2,2,2
+      - Tumor2_r1 [1] 2,2,2
+  - LeftArm
+    - TopArmBase
+      - Foliage_r9 [1] 6,0,6
+      - Armor_r1 [2] 4,4,4
+      - Foliage_r10 [1] 6,0,6
+    - BottomArmBase
+      - BottomArm_r1 [1] 5,6,5
+      - Claw_r1 [2] 5,7,0
+      - Foliage_r11 [1] 6,0,7
+      - TumorCluster6
+        - Tumor_r7 [1] 2,2,2
+        - Tumor_r6 [1] 2,2,2
+        - Tumor_r8 [1] 3,3,3
+      - Claw_r2 [1] 5,7,0
+  - RightLeg [1] 4,4,5
+    - TumorCluster4
+      - Tumor4_r2 [1] 2,2,2
+      - Tumor5_r2 [1] 2,2,2
+      - Tumor6_r1 [1] 2,2,2
+    - HangingFlesh2
+      - HF2_r2 [1] 0,6,5
+      - HF3_r1 [1] 0,7,5
+  - TopWings
+    - LeftWing [3] 2,5,2
+      - Foliage_r15 [1] 6,0,6
+      - WingFrame1_r1 [1] 7,2,2
+      - WingFrame3_r1 [1] 6,1,1
+      - Wingframe2_r1 [1] 7,2,2
+    - RightWing [3] 2,5,2
+      - WingFrame1_r2 [1] 7,2,2
+      - WingFrame3_r2 [1] 6,1,1
+      - WingFrame2_r2 [1] 7,2,2
+  - BottomWings
+    - leftwing2 [3] 1,2,1
+      - WingFrame2_r4 [1] 5,1,1
+      - WingFrame3_r4 [1] 2,1,1
+      - WingFrame1_r4 [1] 4,1,1
+    - RightWing2 [3] 1,2,1
+      - WingFrame1_r3 [1] 4,1,1
+      - WingFrame2_r3 [1] 5,1,1
+      - WingFrame3_r3 [1] 2,1,1
+
+## gastgaber (149 parts)
+
+- part0
+  - torso [1] 8,5,7
+    - MiddleTorso_r1 [1] 9,6,7
+    - head <== eyes
+      - upperhead [2] 8,6,8
+        - upperflower1
+          - cube_r4 [1] 7,0,7
+          - cube_r1 [1] 7,0,7
+          - cube_r2 [1] 7,0,7
+          - cube_r3 [1] 7,0,7
+        - upperflower2
+          - cube_r8 [1] 7,0,7
+          - cube_r5 [1] 7,0,7
+          - cube_r6 [1] 7,0,7
+          - cube_r7 [1] 7,0,7
+      - lowerHeadJoint
+        - lowerhead [1] 8,6,8
+          - Teeth_r1 [1] 8,2,3
+          - Tendrils
+            - LT1
+              - LT1_r3 [1] 2,5,2
+              - LT1Seg2 [1] 2,5,2
+            - LT3
+              - LT3Seg1_r3 [1] 2,5,2
+              - LT3Seg2 [1] 2,5,2
+            - LT2
+              - LT2Seg1_r3 [1] 2,5,2
+              - LT2Seg2 [1] 2,5,2
+          - lowerflower1
+            - cube_r10 [1] 7,0,7
+            - cube_r9 [1] 7,0,7
+            - cube_r11 [1] 7,0,7
+            - cube_r12 [1] 7,0,7
+      - mound7 [2] 4,6,4
+        - LowerBase_r7 [1] 4,4,4
+      - mound6 [2] 4,6,4
+        - LowerBase_r6 [1] 4,4,4
+      - mound5 [2] 4,6,4
+        - LowerBase_r5 [1] 4,4,4
+    - largeroots
+      - tentacle1
+        - root_1 [1] 2,7,2
+          - r1seg2
+            - Seg2_r1 [1] 2,7,2
+            - r1seg3 [1] 1,7,1
+      - tentacle2
+        - root_2 [1] 2,7,2
+          - r2seg3 [1] 2,7,2
+            - r2seg2 [1] 1,7,1
+      - tentacle3
+        - root_3 [1] 2,9,2
+          - r3seg2 [1] 2,10,2
+            - r3seg3 [1] 1,10,1
+    - tumoralmass
+      - Tumor_r11 [1] 4,4,4
+      - Tumor_r12 [1] 5,5,5
+      - Tumor_r1 [1] 3,3,3
+      - Tumor_r10 [1] 3,3,3
+      - Tumor_r13 [1] 4,4,4
+      - Tumor_r14 [1] 4,4,4
+      - Tumor_r7 [1] 4,4,4
+      - Tumor_r6 [1] 4,4,4
+      - Tumor_r9 [1] 3,3,3
+      - Tumor_r8 [1] 3,3,3
+      - Tumor_r3 [1] 4,4,4
+      - Tumor_r2 [1] 3,3,3
+      - Tumor_r5 [1] 4,4,4
+      - Tumor_r4 [1] 5,5,5
+    - torsofungus
+      - Fungus_r7 [1] 7,0,7
+      - Fungus_r8 [1] 7,0,7
+      - Fungus_r5 [1] 7,0,7
+      - Fungus_r6 [1] 7,0,7
+    - arms
+      - arm1 [1] 3,6,3
+        - LeftForArm
+          - cube_r13 [1] 3,6,3
+      - arm2 [1] 3,6,3
+        - LeftForArm2
+          - cube_r14 [1] 3,6,3
+    - torsomounds
+      - mound4 [2] 4,6,4
+        - LowerBase_r4 [1] 4,4,4
+      - mound3 [2] 4,6,4
+        - LowerBase_r3 [1] 4,4,4
+      - mound2 [2] 4,6,4
+        - LowerBase_r2 [1] 4,4,4
+      - mound1 [2] 4,6,4
+        - LowerBase_r1 [1] 4,4,4
+    - dumpy
+      - Tumor_r15 [1] 5,5,5
+      - Tumor_r16 [1] 5,5,5
+    - UpperTorso_r1 [1] 10,4,8
+    - backtendrils
+      - LT9
+        - LT3Seg2_r1 [1] 2,5,2
+        - LT3Seg4 [1] 2,5,2
+      - LT8
+        - LT2Seg4 [1] 2,5,2
+        - LT2Seg2_r1 [1] 2,5,2
+      - LT5
+        - LT2Seg3 [1] 2,5,2
+        - LT2Seg1_r4 [1] 2,5,2
+      - LT4
+        - LT1Seg3 [1] 2,5,2
+        - LT1_r4 [1] 2,5,2
+      - LT7
+        - LT1Seg4 [1] 2,5,2
+        - LT2_r1 [1] 2,5,2
+      - LT6
+        - LT3Seg1_r4 [1] 2,5,2
+        - LT3Seg3 [1] 2,5,2
+  - legs
+    - rightleg [1] 4,6,4
+      - rightfoot [1] 5,5,5
+        - rightfoottendrils
+          - tendriljoint6
+            - LT14
+              - LT2Seg6 [1] 2,5,2
+              - LT2Seg1_r2 [1] 2,5,2
+          - tendriljoint5
+            - LT15
+              - LT3Seg1_r2 [1] 2,5,2
+              - LT3Seg6 [1] 2,5,2
+          - tendriljoint4
+            - LT13
+              - LT1Seg6 [1] 2,5,2
+              - LT1_r2 [1] 2,5,2
+      - rightlegfungus
+        - Fungus_r3 [1] 7,0,7
+        - Fungus_r4 [1] 7,0,7
+        - Fungus_r1 [1] 7,0,7
+        - Fungus_r2 [1] 7,0,7
+    - leftleg [1] 4,6,4
+      - leftfoot [1] 5,6,5
+        - leftfoottendrils
+          - tendriljoint3
+            - LT12
+              - LT3Seg1_r1 [1] 2,5,2
+              - LT3Seg5 [1] 2,5,2
+          - tendriljoint2
+            - LT11
+              - LT2Seg5 [1] 2,5,2
+              - LT2Seg1_r1 [1] 2,5,2
+          - tendriljoint1
+            - LT10
+              - LT1_r1 [1] 2,5,2
+              - LT1Seg5 [1] 2,5,2
+  - roots [1] 24,0,24
+
+## gazenbreacher (563 parts)
+
+- root
+  - FrontSeg1
+    - FrontSeg1BaseGroup [1] 30,36,27
+      - RightTopRidge_r1 [1] 20,11,24
+      - FrontSeg1Fin
+        - RightSidefin
+          - RFinmemebrane_r1 [1] 37,24,0
+          - RfinTop_r1 [1] 2,29,2
+          - RfinBottom_r1 [1] 2,23,2
+        - TopFin [1] 4,13,4
+          - finMemebrane3_r1 [1] 0,30,28
+          - TopFinBody [2] 4,6,7
+            - SLimb
+              - SLimb_r1 [1] 3,7,3
+            - TFHead [1] 8,7,8
+              - TFJaw [1] 8,1,8
+            - NLimb
+              - NLimb_r1 [1] 3,8,3
+      - LeftBottomBase_r1 [1] 8,20,27
+      - RightTopBase_r1 [1] 8,20,27
+      - FrontSeg1Connectors
+        - TopConnector_r1 [1] 23,4,10
+      - RightBottomBase_r1 [1] 8,20,27
+      - FrontSeg1CorpseDetails
+        - FS1Body1
+          - TorsoTop_r1 [2] 6,4,8
+          - Arm_r1 [1] 9,3,3
+          - Arm_r2 [1] 6,3,3
+          - TorsoBase_r1 [1] 6,3,7
+          - Jaw_r1 [1] 1,8,8
+          - Leg_r1 [1] 8,3,3
+        - FS1Body4 [1] 7,3,6
+          - TorsoTop_r4 [1] 8,4,6
+          - Arm_r6 [1] 3,3,9
+          - Leg_r5 [1] 8,3,3
+          - Head_r3 [1] 8,7,8
+        - FS1Body5
+          - TorsoBase_r4 [1] 6,3,8
+          - TorsoTop_r5 [1] 9,3,3
+          - TorsoTop_r6 [2] 6,5,8
+        - FS1Body2
+          - Arm_r3 [1] 3,7,3
+          - Head_r1 [1] 8,7,8
+          - TorsoTop_r2 [1] 4,7,8
+          - TorsoBase_r2 [1] 3,6,7
+          - Leg_r3 [1] 3,6,3
+          - Leg_r2 [1] 3,8,3
+        - FS1Body3
+          - TorsoTop_r3 [1] 8,4,6
+          - Head_r2 [1] 8,8,7
+          - TorsoBase_r3 [1] 7,3,6
+          - Arm_r4 [1] 3,3,8
+          - Arm_r5 [1] 3,3,8
+          - Leg_r4 [1] 3,3,10
+        - FS1Body8
+          - Arm_r11 [1] 3,3,8
+          - TorsoBase_r7 [1] 7,3,6
+          - TorsoTop_r8 [1] 8,4,6
+          - Head_r5 [1] 8,8,8
+        - FS1Body9
+          - TorsoBottom_r2 [2] 6,4,8
+          - Leg_r9 [1] 8,3,3
+          - Arm_r12 [1] 9,3,3
+          - Jaw_r2 [1] 1,8,8
+          - Arm_r13 [1] 6,3,3
+          - TorsoBase_r8 [1] 6,3,7
+        - FS1Body6
+          - TorsoBottom_r1 [1] 8,4,6
+          - TorsoBase_r5 [1] 7,3,6
+          - Leg_r6 [1] 3,3,10
+          - Arm_r7 [1] 3,3,8
+          - Arm_r8 [1] 3,3,6
+        - FS1Body7
+          - TorsoBase_r6 [1] 7,3,6
+          - Arm_r10 [1] 3,3,8
+          - Leg_r8 [1] 3,3,10
+          - Leg_r7 [1] 3,3,10
+          - TorsoTop_r7 [1] 8,4,6
+          - Arm_r9 [1] 3,3,8
+          - Head_r4 [1] 8,8,7
+      - LeftTopRidge_r1 [1] 20,11,24
+      - LeftTopBase_r1 [1] 8,20,27
+    - FrontSeg2
+      - Head [1] 37,29,4 <== eyes
+        - Jaw
+          - Licker
+            - LickerSeg2
+              - TorsoBase_r28 [1] 5,3,7
+              - LickerSeg3
+                - TorsoTop_r22 [1] 6,4,7
+                - RightArm [1] 3,5,3
+                  - RightArmSeg2
+                    - RightArmSeg2_r1 [1] 2,5,2
+                - ToungeHead
+                  - JawLeft
+                    - JawLeft_r1 [1] 5,2,8
+                  - JawRight
+                    - JawRight_r1 [1] 4,1,6
+                  - HeadBase_r2 [2] 8,2,4
+                  - ToungeCorpseHeadTumor
+                    - ToungeCorpseHeadTumor_r2 [1] 4,4,4
+                    - ToungeCorpseHeadTumor_r1 [1] 2,2,2
+                - LeftArm [1] 3,9,3
+                - Tumor1 [1] 4,4,4
+            - Tumors [1] 8,8,8
+              - TumorBase1_r1 [1] 9,9,9
+              - TumorBase3_r1 [1] 7,7,7
+          - RightJaw
+            - RBackBase [1] 11,2,19
+              - bottomJawRight_r1 [1] 11,3,19
+              - RFrontBase [1] 11,2,19
+                - RFrontBaseMouthCorpseDetails
+                  - RMouthBody3
+                    - Teeth_r2 [2] 8,3,2
+                    - Arm_r44 [1] 3,3,8
+                    - Arm_r45 [1] 3,3,7
+                    - Torso_r2 [1] 8,4,6
+                  - RMouthBody4 [1] 7,8,8
+                  - RMouthBody1 [1] 8,4,6
+                    - Arm_r40 [1] 3,3,9
+                    - TorsoBase_r23 [1] 7,3,6
+                    - Jaw_r9 [1] 8,8,1
+                    - Arm_r41 [1] 3,3,9
+                    - Head_r22 [1] 8,8,7
+                  - RMouthBody2 [1] 8,4,6
+                    - TorsoBase_r24 [1] 7,3,6
+                    - Arm_r43 [1] 3,3,9
+                    - Arm_r42 [1] 3,3,9
+                    - Head_r23 [1] 8,8,7
+                - bottomJawLeft_r2 [1] 11,3,21
+                - bottomJawRight_r2 [1] 11,3,21
+              - bottomJawLeft_r1 [1] 11,3,19
+              - RBackBaseMouthDetails
+                - Corpse
+                  - RBackBody1 [1] 8,4,6
+                    - Jaw_r7 [1] 8,8,1
+                    - Head_r18 [1] 8,8,7
+                    - Arm_r37 [1] 3,3,8
+                    - TorsoBack_r1 [1] 7,3,6
+                  - RBackBody2 [1] 8,4,6
+                    - Teeth_r1 [2] 8,3,2
+                    - Limb_r3 [1] 3,3,10
+                    - TorsoBack_r2 [1] 7,3,6
+                    - Arm_r38 [1] 3,3,8
+                  - RBackBody3 [1] 8,4,6
+                    - Jaw_r8 [1] 8,8,1
+                    - Head_r19 [1] 8,8,7
+                    - Leg_r24 [1] 4,4,9
+                    - TorsoBack_r3 [1] 7,3,6
+                    - Arm_r39 [1] 3,3,8
+                    - Leg_r25 [1] 4,4,9
+                    - Head_r20 [1] 8,8,7
+                  - RBackBody4
+                    - TorsoBottom_r11 [1] 8,4,6
+                    - TorsoBack_r4 [1] 7,3,6
+                    - Head_r21 [1] 8,8,7
+                    - Leg_r26 [1] 4,4,9
+                - TumoralDetails
+                  - TumorGroup2
+                    - TumorTeeHee_r3 [1] 6,6,6
+                    - TumorTeeHee_r4 [1] 7,7,7
+                  - TumorGroup1
+                    - TumorTeeHee_r2 [1] 4,4,4
+                    - TumorTeeHee_r1 [1] 3,3,3
+          - TopJaw
+            - BackBase [1] 19,7,19
+              - RightTopRidge_r3 [1] 18,3,17
+              - MiddleBase [1] 11,5,19
+                - topJawLeft_r2 [1] 14,6,19
+                - topJawRight_r2 [1] 14,6,19
+                - FrontBase [1] 11,4,19
+                  - topJawLeft_r3 [1] 12,3,19
+                  - topJawRight_r3 [1] 11,4,14
+                  - FrontTopMouthCorpseDetails
+                    - MouthTopCenterpiece
+                      - MTCPLimbs
+                        - RArm_r1 [1] 4,4,9
+                        - Leg_r23 [1] 4,4,8
+                      - MTCPHead
+                        - MTCPJaw
+                          - MTCPJaw_r1 [1] 8,1,8
+                        - MTCPHead_r1 [1] 8,7,8
+                      - CenterTorsoTop_r1 [1] 8,4,6
+                      - CenterTorsoBack_r1 [1] 7,3,6
+                    - OutsideExtras
+                      - Body4
+                        - Limb_r2 [1] 10,4,4
+                      - Body2 [1] 8,8,8
+                        - Arm_r34 [1] 8,3,3
+                        - Torso_r1 [1] 8,4,6
+                      - Body3
+                        - TorsoBottom_r10 [1] 6,3,7
+                        - TorsoTop_r20 [1] 6,4,8
+                        - Arm_r36 [1] 8,3,3
+                        - Arm_r35 [1] 8,3,3
+                      - Body1
+                        - TorsoTop1_r1 [1] 6,4,8
+                        - TorsoBottom1_r1 [1] 6,3,7
+                        - Arm2_r2 [1] 8,3,3
+                        - Arm1_r2 [1] 8,3,3
+                    - HeadOuterLeft_r1 [1] 8,7,8
+                    - HeadInnerLeft_r1 [1] 8,6,8
+                    - HeadOuterRightTeeth_r1 [2] 8,2,2
+                    - FungalBloom
+                      - Plane2_r1 [1] 0,12,14
+                      - Plane1_r1 [1] 0,12,14
+                      - Spetal_r1 [1] 16,0,16
+                      - Npetal_r1 [1] 16,0,16
+                      - Wpetal_r1 [1] 16,0,16
+                      - Epetal_r1 [1] 16,0,16
+                    - HeadOuterLeftFlesh [1] 8,5,0
+                    - HeadInnerRight_r1 [1] 8,6,8
+              - topJawLeft_r1 [1] 14,6,19
+              - topJawRight_r1 [1] 14,6,19
+              - LeftTopRidge_r3 [1] 18,3,17
+              - BackBaseCorpseDetails
+                - BBBody2
+                  - Arm_r33 [1] 8,3,3
+                  - TorsoTop_r19 [1] 6,4,8
+                  - TorsoBase_r22 [1] 6,3,7
+                - BBBody1
+                  - Jaw_r6 [1] 8,8,1
+                  - Head_r17 [1] 8,8,7
+                  - TorsoBase_r21 [2] 6,3,7
+          - LeftJaw
+            - LBackBase [1] 11,2,19
+              - LBackBaseDetails
+                - LBackCorpseDetails
+                  - LBackBody2
+                    - TorsoBase_r26 [1] 7,3,6
+                    - TorsoBottom_r13 [1] 8,4,6
+                    - LEg_r27 [1] 4,4,9
+                    - LEg_r28 [1] 4,4,7
+                    - Arm_r47 [1] 3,3,9
+                    - Arm_r48 [1] 3,3,9
+                    - Head_r24 [1] 8,8,7
+                    - Jaw_r10 [1] 8,8,1
+                  - LBackBody1
+                    - TorsoBase_r25 [1] 7,3,6
+                    - TorsoBottom_r12 [1] 8,4,6
+                    - Arm_r46 [1] 3,3,9
+                  - LBackBody3
+                    - TorsoTop_r21 [1] 8,4,6
+                    - TorsoBase_r27 [1] 7,3,6
+                    - LEg_r29 [1] 4,4,9
+                    - Head_r25 [1] 8,8,7
+                    - LEg_r30 [1] 4,4,7
+                    - Arm_r49 [1] 3,3,9
+                    - Jaw_r11 [1] 8,8,1
+                - LBackTumoralDetails
+                  - LBackMouthTumor1
+                    - Tumor_r1 [1] 5,5,5
+                  - LBackMouthTumor2
+                    - Tumor_r2 [1] 4,4,4
+              - LFrontBase [1] 11,2,14
+                - LFrontCorpseDetails
+                  - HRToothies_r1 [2] 8,2,3
+                  - Corpsey
+                    - Arm_r50 [1] 3,3,8
+                    - CorpseTorsoBottom_r1 [1] 8,6,6
+                    - Teeth_r3 [2] 8,2,1
+                    - LEg_r31 [1] 3,3,8
+                    - CorpseTorsoBase_r1 [1] 7,5,6
+                  - CorpseyTree
+                    - CorpseTorsoBase_r3 [1] 7,5,6
+                    - CorpseTorsoBottom_r3 [1] 8,6,6
+                    - Arm_r52 [1] 3,3,11
+                    - Leg_r32 [1] 4,4,11
+                  - CorpseyToo
+                    - Arm_r51 [1] 4,4,11
+                    - CorpseTorsoBottom_r2 [1] 8,6,6
+                    - Head_r26 [1] 8,8,7
+                    - CorpseTorsoBase_r2 [1] 7,5,6
+                - bottomJawRight_r4 [1] 11,3,14
+                - bottomJawLeft_r4 [1] 11,3,14
+              - bottomJawRight_r3 [1] 11,3,19
+              - bottomJawLeft_r3 [1] 11,3,19
+        - HeadFin
+          - FinSupport_r1 [1] 2,13,2
+          - FinMembrane1_r1 [1] 0,25,23
+      - FrontSeg2BaseGroup [1] 30,36,30
+        - LeftTopBase_r2 [1] 8,20,30
+        - BackSegFin
+          - LeftFin
+            - LFinWingMemebrane_r1 [1] 32,24,0
+            - LFinTopSeg_r1 [1] 2,24,2
+            - LFinBottomSeg_r1 [1] 2,24,2
+          - TopFinBackSeg [2] 4,20,2
+        - Limbs
+          - Smoll3 [1] 11,6,6
+            - Smoll3Seg2
+              - Smoll3Seg3_r1 [1] 11,4,4
+          - RightLimb
+            - RLimbSeg1_r1 [1] 12,32,12
+            - CalciumCorpse
+              - TorsoBottom_r3 [2] 6,7,4
+              - Jaw_r3 [1] 1,8,8
+              - HeadBase_r1 [1] 7,8,8
+              - Arm1_r1 [1] 9,3,3
+              - Arm2_r1 [1] 9,3,3
+            - RLimbSeg2 [1] 8,8,8
+              - RLimbSeg2Seg2
+                - RLimbSeg2Seg2_r1 [1] 7,15,7
+                - RLimbSeg3
+                  - Arm_r14 [1] 4,8,4
+                  - RLimbSeg3Torso_r1 [1] 7,12,4
+                  - RLimbHeadJoint [1] 8,7,8
+                    - FleshDetailJoint [1] 8,6,0
+              - Limb_r1 [1] 4,11,4
+              - RLimbSeg2_r1 [1] 9,14,9
+          - LeftLimb
+            - CalciumCorpseLLimb
+              - TorsoBottom_r4 [2] 7,6,4
+              - Arm_r15 [1] 3,8,3
+              - Head_r7 [1] 8,8,8
+            - LLimbSeg1_r1 [1] 12,22,12
+            - LLimbSeg2
+              - LLimbSeg2_r1 [1] 9,20,9
+              - LLimbSeg3
+                - patty
+                  - LLimbSeg3Torso1Seg2_r1 [1] 8,3,10
+                - Head1_r1 [1] 8,7,8
+                - LLimbJawJoint [1] 8,1,8
+                - LLimbSeg3Torso2Seg2_r1 [2] 4,6,8
+                - LLimbSeg3Torso1_r1 [1] 4,8,8
+                - Torso1Arm_r1 [1] 3,8,3
+              - Head_r6 [1] 8,7,8
+          - Smoll1 [1] 5,5,10
+            - Smoll1Seg2 [1] 4,4,8
+            - Jaw_r4 [1] 8,1,8
+            - Head_r8 [1] 8,6,8
+          - Smoll2 [1] 4,4,13
+            - Smoll2Seg2 [1] 3,3,9
+        - LeftBottomBase_r2 [1] 8,20,30
+        - RightTopRidge_r2 [1] 21,12,27
+        - RightTopBase_r2 [1] 8,20,30
+        - FrontSeg2CorpseDetails
+          - FS2Body9
+            - Leg_r19 [1] 3,3,10
+            - Leg_r18 [1] 3,3,10
+            - TorsoBase_r16 [1] 7,3,6
+            - Head_r15 [1] 8,8,7
+            - Arm_r27 [1] 3,3,8
+            - TorsoTop_r16 [1] 8,4,6
+            - Arm_r28 [1] 3,3,8
+          - FS2Body8
+            - TorsoBase_r15 [1] 7,3,6
+            - Head_r14 [1] 8,8,8
+            - Arm_r26 [1] 3,3,8
+            - TorsoTop_r15 [1] 8,4,6
+          - FS2Body7
+            - TorsoBase_r14 [1] 7,3,6
+            - Arm_r25 [1] 3,3,8
+            - Arm_r24 [1] 3,3,8
+            - Head_r13 [1] 8,8,7
+            - Leg_r17 [1] 3,3,10
+            - TorsoTop_r14 [1] 8,4,6
+            - Leg_r16 [1] 3,3,10
+          - FS2Body6
+            - TorsoBase_r13 [1] 7,3,6
+            - TorsoBottom_r6 [1] 8,4,6
+            - Arm_r22 [1] 3,3,8
+            - Arm_r23 [1] 3,3,6
+            - Leg_r15 [1] 3,3,10
+          - FS2Body5
+            - TorsoBase_r12 [1] 6,3,8
+            - TorsoTop_r12 [1] 9,3,3
+            - TorsoTop_r13 [1] 6,5,8
+            - Head_r12 [1] 8,8,8
+          - FS2Body4 [1] 7,3,6
+            - TorsoTop_r11 [1] 8,4,6
+            - Arm_r21 [1] 3,3,9
+            - Head_r11 [1] 8,7,8
+            - Leg_r14 [1] 8,3,3
+          - FS2Body12
+            - TorsoBase_r19 [1] 6,3,8
+            - TorsoBottom_r8 [1] 6,5,8
+            - Head_r16 [1] 8,8,8
+            - TorsoBottom_r7 [1] 9,3,3
+          - FS2Body3
+            - TorsoBottom_r5 [1] 8,4,6
+            - Arm_r20 [1] 3,3,8
+            - Leg_r13 [1] 3,3,10
+            - Head_r10 [1] 8,8,7
+            - Arm_r19 [1] 3,3,8
+            - TorsoBase_r11 [1] 7,3,6
+          - FS2Body13
+            - Arm_r32 [1] 3,3,8
+            - TorsoBottom_r9 [1] 8,4,6
+            - Leg_r22 [1] 3,3,10
+            - TorsoBase_r20 [1] 7,3,6
+          - FS2Body2
+            - TorsoTop_r10 [1] 4,7,8
+            - Leg_r12 [1] 3,6,3
+            - Head_r9 [1] 8,7,8
+            - Leg_r11 [1] 3,8,3
+            - Arm_r18 [1] 3,7,3
+            - TorsoBase_r10 [1] 3,6,7
+          - FS2Body1
+            - Jaw_r5 [1] 1,8,8
+            - TorsoTop_r9 [2] 6,4,8
+            - Leg_r10 [1] 8,3,3
+            - Arm_r16 [1] 9,3,3
+            - Arm_r17 [1] 6,3,3
+            - TorsoBase_r9 [1] 6,3,7
+          - FS2Body10
+            - Leg_r20 [1] 3,3,10
+            - TorsoBase_r17 [1] 7,3,6
+            - Arm_r30 [1] 3,3,8
+            - Arm_r29 [1] 3,3,8
+            - TorsoTop_r17 [1] 8,4,6
+          - FS2Body11
+            - TorsoBase_r18 [1] 7,3,6
+            - Arm_r31 [1] 3,3,8
+            - TorsoTop_r18 [1] 8,4,6
+            - Leg_r21 [1] 3,3,10
+        - RightBottomBase_r2 [1] 8,20,30
+        - LeftTopRidge_r2 [1] 21,12,27
+    - CenterBaseGroup [1] 24,32,22
+      - CenterCorpseDetails
+        - CenterBody1
+          - TorsoTop_r23 [1] 4,7,8
+          - Head_r27 [1] 8,7,8
+          - Arm_r53 [1] 3,7,3
+          - TorsoBase_r29 [1] 3,6,7
+          - Leg_r34 [1] 3,4,3
+          - Leg_r33 [1] 3,8,3
+        - CenterBody2
+          - TorsoBottom_r14 [1] 3,3,8
+          - TorsoBottom_r15 [1] 7,3,6
+          - TorsoTop_r24 [1] 8,4,6
+          - Arm_r54 [1] 3,3,8
+          - Arm_r55 [1] 3,3,7
+        - CenterBody3
+          - Leg_r35 [1] 3,8,3
+          - Arm_r56 [1] 3,7,3
+          - TorsoTop_r25 [1] 4,7,8
+          - TorsoBase_r30 [1] 3,6,7
+          - Leg_r36 [1] 3,4,3
+        - CenterBody4
+          - Head_r28 [1] 8,8,8
+          - Arm_r58 [1] 3,3,6
+          - Arm_r57 [1] 3,3,8
+          - TorsoBase_r31 [1] 7,3,6
+          - TorsoTop_r26 [1] 8,4,6
+        - CenterBody5
+          - TorsoBottom_r16 [1] 8,4,6
+          - Arm_r60 [1] 3,3,6
+          - Head_r29 [1] 8,8,8
+          - Arm_r59 [1] 3,3,8
+          - TorsoBase_r32 [1] 7,3,6
+        - CenterBody6
+          - Arm_r61 [1] 3,3,8
+          - Arm_r62 [1] 3,3,7
+          - TorsoBottom_r17 [1] 8,4,6
+          - TorsoTop_r27 [1] 3,3,8
+          - TorsoTop_r28 [1] 7,3,6
+      - LeftTopBase_r3 [1] 8,18,22
+      - LeftBottomBase_r3 [1] 8,17,22
+      - CenterFin
+        - FinsupportFront_r1 [1] 3,30,3
+        - FinsupportBack_r1 [1] 2,20,3
+        - CenterFinTumor
+          - Tumor1_r1 [1] 4,4,4
+          - Tumor2_r1 [1] 3,3,3
+        - FinMemebrane4_r1 [1] 0,30,23
+      - RightTopBase_r3 [1] 8,18,22
+      - BackSeg1
+        - BackSeg2
+          - BackSeg3
+            - BackSeg3BaseGroup [1] 8,11,12
+              - RightConnectorBone
+                - RightConnector_r1 [1] 4,10,14
+              - BottomConnector_r1 [1] 7,4,8
+              - LeftConnectorBone
+                - LeftConnectorTorsoBase_r1 [2] 4,7,6
+                - LConnectorArm_r1 [1] 3,3,9
+              - TopConnector_r2 [1] 7,4,9
+            - Tail
+              - LeftTail [1] 0,26,26
+                - LTailTumorTop
+                  - Tumor_r4 [1] 4,4,4
+                - TopBase_r1 [1] 2,3,24
+                - BottomBase_r1 [1] 2,2,24
+              - RightTail [1] 0,22,19
+                - RTailTumor
+                  - Tumor_r5 [1] 3,3,3
+                - TopBase_r2 [1] 2,2,17
+                - BottomBase_r2 [1] 2,3,17
+              - MiddleTail [1] 0,53,39
+                - TopBaseSeg3TorsoTop_r1 [3] 8,5,6
+                - TopCorpseHead
+                  - Jaw_r12 [1] 8,8,1
+                  - Head_r33 [1] 8,8,7
+                - BottomCorpse
+                  - TorsoTop_r34 [2] 8,4,6
+                  - BottomHead
+                    - HeadBottom_r1 [1] 8,7,8
+                    - JawBottom_r1 [1] 8,1,8
+                  - BottomCorpseRightArm
+                    - RightArm_r1 [1] 3,3,6
+                - BottomBaseSeg2_r1 [1] 3,4,24
+                - Arm [1] 3,9,3
+                - Leg
+                  - Leg_r42 [1] 3,8,3
+          - BackSeg2BaseGroup
+            - Connectors
+              - Econnector_r1 [1] 3,5,20
+              - NWConnector_r1 [1] 3,17,17
+              - SWConnector_r1 [1] 3,18,15
+              - Wconnector_r1 [1] 3,5,20
+              - SconnectorSpinalRidge_r1 [1] 6,4,19
+              - SEConnector_r1 [1] 3,18,15
+              - NconnectorSpinalRidge_r1 [1] 4,3,31
+              - NEConnector_r1 [1] 3,17,17
+            - Base_r1 [1] 18,18,28
+            - BackSeg2CorpseDetail
+              - BS2Body2
+                - TorsoTop_r33 [1] 8,4,6
+                - TorsoBase_r36 [1] 7,3,6
+                - Leg_r40 [1] 3,3,10
+              - BS2Body1
+                - TorsoBase_r35 [1] 7,3,6
+                - TorsoTop_r32 [1] 8,4,6
+                - Arm_r67 [1] 3,3,8
+                - Arm_r68 [1] 3,3,6
+                - Leg_r39 [1] 3,3,10
+                - Head_r32 [1] 8,8,8
+              - BS2Body3
+                - TorsoBase_r37 [1] 7,3,6
+                - Arm_r70 [1] 3,3,6
+                - Leg_r41 [1] 3,3,10
+                - Arm_r69 [1] 3,3,8
+                - TorsoBottom_r18 [1] 8,4,6
+        - BackSeg1BaseGroup [2] 23,28,20
+          - LeftBottomBase_r4 [1] 6,15,20
+          - BS1CorpseDetials
+            - BS1Body2
+              - Arm_r65 [1] 3,3,8
+              - TorsoTop_r30 [1] 8,4,6
+              - Arm_r64 [1] 3,3,8
+              - Leg_r38 [1] 3,3,10
+              - TorsoBase_r33 [1] 7,3,6
+              - Head_r31 [1] 8,8,7
+            - BS1Body3
+              - TorsoBase_r34 [1] 7,3,6
+              - Arm_r66 [1] 3,3,8
+              - TorsoTop_r31 [1] 8,4,6
+            - BS1Body1 [1] 7,3,6
+              - Arm_r63 [1] 3,3,9
+              - TorsoTop_r29 [1] 8,4,6
+              - Leg_r37 [1] 8,3,3
+              - Head_r30 [1] 8,7,8
+          - LeftTopBase_r4 [1] 6,16,20
+          - RightTopBase_r4 [1] 6,16,20
+          - RightBottomBase_r4 [1] 6,15,20
+          - BackSeg1Fin [1] 2,14,2
+            - BS1FTumor
+              - Tumor_r3 [1] 3,3,3
+            - FinMemebrane5_r1 [1] 0,20,23
+            - FinMemebrane6_r1 [1] 0,8,14
+      - RightBottomBase_r3 [1] 8,17,22
+      - TopRidge_r1 [1] 5,3,22
+
+## gorgon (83 parts)
+
+- part0
+  - head [1] 8,10,8 <== eyes
+    - mouth
+      - facetumor [2] 3,3,3
+      - facetumor2 [2] 3,3,3
+      - facetumor3 [2] 3,3,3
+      - facetumor4 [2] 3,3,3
+      - facetumor5 [2] 3,3,3
+      - facetumor6 [2] 3,3,3
+      - facetumor7 [2] 3,3,3
+      - facetumor8 [2] 3,3,3
+      - facetumor9 [2] 3,3,3
+    - foliage_r1 [1] 7,0,7
+    - facetentacles
+      - tentacle [1] 1,1,3
+        - tentaclemiddle [1] 1,1,4
+      - tentacle6 [1] 1,1,3
+        - tentaclemiddle6 [1] 1,1,4
+      - tentacle4 [1] 1,1,3
+        - tentaclemiddle4 [1] 1,1,4
+      - tentacle5 [1] 1,1,3
+        - tentaclemiddle5 [1] 1,1,4
+      - tentacle2 [1] 1,1,3
+        - tentaclemiddle2 [1] 1,1,4
+      - tentacle3 [1] 1,1,3
+        - tentaclemiddle3 [1] 1,1,4
+    - foliage_r3 [1] 7,0,7
+    - hat [1] 10,2,10
+      - hat2 [1] 7,4,7
+        - foliage_r5 [1] 7,0,7
+        - foliage_r4 [1] 7,0,7
+        - hat3 [1] 4,4,4
+          - foliage_r6 [1] 7,0,7
+          - hat4 [1] 1,2,1
+    - foliage_r2 [1] 7,0,7
+  - torso
+    - uppertorso [2] 10,7,7
+      - uppersack [2] 5,6,5
+      - backtentacles
+        - tentacle8 [1] 1,1,4
+          - tentaclemiddle8 [1] 1,1,4
+            - tentacletips8 [1] 1,1,3
+        - tentacle7 [1] 1,1,4
+          - tentaclemiddle7 [1] 1,1,4
+            - tentacletips7 [1] 1,1,3
+      - booba [2] 9,5,4
+        - foliage_r7 [1] 7,0,7
+      - arms
+        - rightarm [2] 3,8,4
+          - foliage_r12 [1] 7,0,7
+          - foliage_r11 [1] 7,0,7
+          - foliage_r10 [1] 7,0,7
+          - righthand [1] 3,8,4
+            - rightclaws [3] 5,9,0
+        - leftarm [2] 3,8,4
+          - lefthand [1] 3,8,4
+            - foliage_r9 [1] 7,0,7
+            - leftclaws2 [3] 5,9,0
+            - foliage_r8 [1] 7,0,7
+    - lowertorso [2] 8,7,5
+      - foliage_r13 [1] 7,0,7
+      - tail
+        - tailseg1
+          - tailseg2
+            - tailseg3
+              - tailseg4
+                - tailseg5
+                  - cube_r8 [1] 0,6,6
+                  - cube_r7 [1] 0,6,6
+                - cube_r6 [1] 2,2,3
+              - cube_r5 [1] 1,2,3
+            - cube_r4 [1] 2,2,3
+          - cube_r3 [1] 1,2,3
+        - cube_r1 [1] 2,2,3
+        - cube_r2 [1] 1,2,3
+      - lowersack [1] 6,8,5
+  - legs
+    - rightleg [2] 4,8,4
+      - rightfoot [1] 4,7,4
+        - foliage_r15 [1] 7,0,7
+    - leftleg [2] 4,8,4
+      - leftfoot [1] 4,7,4
+      - foliage_r14 [1] 7,0,7
+
+## griefer (49 parts)
+
+- part0 [1] 10,6,6
+  - cube_r1 [1] 8,0,8
+  - cube_r2 [1] 10,9,7
+  - cube_r3 [1] 11,8,8
+- part1 [3] 8,6,8
+  - jaw
+    - cube_r4 [1] 7.5,1,4
+  - flower3
+    - cube_r10 [1] 6,0,6
+    - cube_r9 [1] 6,0,6
+    - cube_r11 [1] 7,0,6
+    - cube_r12 [1] 7,0,6
+  - flower2
+    - cube_r8 [1] 8.96,0,7.68
+    - cube_r5 [1] 7.68,0,7.68
+    - cube_r6 [1] 7.68,0,7.68
+    - cube_r7 [1] 8.96,0,7.68
+- part2 [1] 3,8,4
+  - RightForArm [1] 3,7,4
+- part3 [1] 3,8,4
+  - LeftForArm [1] 3,7,4
+- part4 [1] 4,7,5
+  - rightForLeg [1] 4,6,5
+- part5 [1] 4,7,5
+  - leftForLeg [1] 4,6,5
+- part6 [1] 8,7,2
+  - cube_r13 [1] 8,0,8
+- part7
+  - cube_r15 [1] 8,0,8
+  - cube_r16 [1] 8,0,8
+  - cube_r17 [1] 8,8,8
+  - cube_r14 [1] 8,0,8
+- part8
+  - cube_r20 [1] 5,5,5
+  - cube_r19 [1] 6,6,6
+  - cube_r18 [1] 8,0,8
+  - flower
+    - cube_r21 [1] 6,0,6
+    - cube_r22 [1] 6,0,6
+    - cube_r23 [1] 7,0,6
+    - cube_r24 [1] 7,0,6
+- part9
+  - cube_r26 [1] 8,0,8
+  - cube_r27 [1] 6,6,6
+  - cube_r25 [1] 7,7,7
+- part10
+  - cube_r30 [1] 5,5,5
+  - cube_r28 [1] 8,0,8
+  - cube_r29 [1] 6,6,6
+
+## grober (241 parts)
+
+- root
+  - Torso
+    - Legs
+      - LeftLeg
+        - LowerLeftLeg
+          - LeftLeg_r1 [1] 5,5,10
+          - LeftFoot
+            - LeftFoot_r1 [1] 5,3,6
+            - Claw_r5 [1] 0,3,6
+            - Claw_r4 [1] 0,3,6
+            - Claw_r6 [1] 0,3,6
+        - UpperLeftLeg
+          - LeftThighClothing_r1 [2] 6,10,7
+      - RightLeg
+        - LowerRightLeg
+          - RightLeg_r1 [1] 5,5,10
+          - RightFoot
+            - RightFoot_r1 [1] 5,3,6
+            - Claw_r1 [1] 0,3,6
+            - Claw_r3 [1] 0,3,6
+            - Claw_r2 [1] 0,3,6
+        - UpperRightLeg
+          - RightThighClothing_r1 [2] 6,10,7
+    - Head <== eyes
+      - SmallHead
+        - SmallLowerJaw
+          - LowerTeeth_r2 [2] 7,1,6
+        - Spine
+          - SpineMid
+            - Rib_r21 [1] 3,1,1
+            - Rib_r20 [1] 3,1,1
+            - Rib_r22 [1] 3,1,1
+            - Spine_r6 [1] 2,4,2
+            - SpineEnd
+              - Rib_r23 [1] 3,1,1
+              - Spine_r7 [1] 2,5,2
+              - Rib_r25 [1] 3,1,1
+              - Rib_r24 [1] 3,1,1
+          - Spine_r5 [1] 2,5,2
+        - UpperTeeth_r1 [3] 7,1,7
+        - Growth_r17 [1] 4,4,5
+      - MainHead
+        - TopHeadPart [5] 10,8,10
+          - UpperFangs
+            - Fang1
+              - Fang1_r1 [1] 1,2,0
+              - Fang1Seg2_r1 [1] 1,2,0
+            - Fang2
+              - Fang2_r1 [1] 0,2,1
+              - Fang2Seg2_r1 [1] 0,1,1
+            - Fang3
+              - Fang3Seg2_r1 [1] 1,2,0
+              - Fang3_r1 [1] 1,2,0
+            - Fang6
+              - Fang3Seg3_r1 [1] 1,2,0
+              - Fang4_r1 [1] 1,2,0
+          - CheekSlope_r1 [1] 5,2,2
+          - Nose_r1 [1] 3,6,3
+          - HeadFoliage
+            - Petal_r15 [1] 8,0,8
+            - PetalCrown3
+              - Petal_r28 [1] 8,0,8
+              - Petal_r29 [1] 8,0,8
+              - Petal_r31 [1] 8,0,8
+              - Petal_r30 [1] 8,0,8
+            - Petal_r14 [1] 8,0,8
+            - PetalCrown4
+              - Petal_r33 [1] 8,0,8
+              - Petal_r32 [1] 8,0,8
+              - Petal_r35 [1] 8,0,8
+              - Petal_r34 [1] 8,0,8
+            - Petal_r17 [1] 8,0,8
+            - PetalCrown1
+              - Petal_r20 [1] 8,0,8
+              - Petal_r22 [1] 8,0,8
+              - Petal_r21 [1] 8,0,8
+              - Petal_r23 [1] 8,0,8
+            - Petal_r16 [1] 8,0,8
+            - PetalCrown2
+              - Petal_r26 [1] 8,0,8
+              - Petal_r25 [1] 8,0,8
+              - Petal_r27 [1] 8,0,8
+              - Petal_r24 [1] 8,0,8
+            - Petal_r19 [1] 8,0,8
+            - Petal_r18 [1] 8,0,8
+            - Petal_r13 [1] 8,0,8
+            - Petal_r12 [1] 8,0,8
+          - HeadGrowths
+            - Growth_r2 [1] 4,3,3
+            - Growth_r3 [1] 3,5,3
+            - Growth_r10 [1] 4,5,3
+            - Growth_r4 [1] 3,4,4
+            - Growth_r11 [1] 4,7,9
+            - Growth_r5 [1] 4,2,9
+            - Growth_r12 [1] 4,2,4
+            - Growth_r6 [1] 5,3,3
+            - Growth_r13 [1] 4,2,3
+            - Growth_r7 [1] 4,4,9
+            - Growth_r14 [1] 4,2,3
+            - Growth_r8 [1] 4,6,4
+            - Growth_r15 [1] 3,4,3
+            - Growth_r9 [1] 3,4,3
+          - EyebrowSlope_r1 [1] 6,3,2
+        - MainLowerJaw
+          - LowerTeeth_r1 [2] 10,3,6
+          - LowerFangs
+            - Fang4
+              - Fang4Seg2_r1 [1] 1,2,0
+              - Fang4_r2 [1] 1,2,0
+            - Fang5
+              - Fang5Seg2_r1 [1] 1,2,0
+              - Fang5_r1 [1] 1,2,0
+          - Growth_r16 [1] 3,1,3
+    - Body
+      - UpperBody
+        - LeftShoulder_r1 [1] 5,8,8
+        - Chest_r1 [1] 14,10,9
+        - RightPec_r1 [1] 7,8,4
+        - RightShoulder_r1 [1] 5,8,8
+        - UpperSpine
+          - Rib_r1 [1] 4,1,2
+          - Rib_r5 [1] 4,1,2
+          - Rib_r4 [1] 4,1,2
+          - Rib_r3 [1] 3,1,2
+          - Rib_r2 [1] 4,1,2
+          - Spine_r2 [1] 2,5,2
+          - Spine_r1 [1] 2,6,2
+        - LeftPec_r1 [1] 7,8,4
+        - UpperBodyFoliage
+          - Petal_r4 [1] 8,0,8
+          - Petal_r3 [1] 8,0,8
+          - Petal_r2 [1] 8,0,8
+          - Petal_r1 [1] 8,0,8
+          - PetalCrown5
+            - Petal_r8 [1] 8,0,8
+            - Petal_r7 [1] 8,0,8
+            - Petal_r6 [1] 8,0,8
+            - Petal_r5 [1] 8,0,8
+        - Growth_r1 [1] 3,3,3
+      - LowerBody
+        - Stomach_r1 [1] 11,6,8
+        - LowerBodyFoliage
+          - Petal_r9 [1] 8,0,8
+          - Petal_r11 [1] 8,0,8
+          - Petal_r10 [1] 8,0,8
+        - PelvisClothing_r1 [2] 12,6,8
+        - LowerSpine
+          - Spine_r3 [1] 2,6,2
+          - Rib_r18 [1] 3,1,2
+          - Rib_r17 [1] 3,1,2
+          - Rib_r19 [1] 3,1,2
+          - Spine_r4 [1] 2,5,2
+          - Rib_r14 [1] 2,1,2
+          - Rib_r16 [1] 2,1,2
+          - Rib_r15 [1] 2,1,2
+        - Ribs
+          - LeftHinge
+            - LeftRib2
+              - Rib_r12 [1] 1,1,4
+              - Rib_r13 [1] 2,2,3
+            - LeftRib1
+              - Rib_r10 [1] 1,1,4
+              - Rib_r11 [1] 2,2,3
+          - RightHinge
+            - RightRib1
+              - Rib_r7 [1] 2,2,3
+              - Rib_r6 [1] 1,1,4
+            - RightRib2
+              - Rib_r9 [1] 2,2,3
+              - Rib_r8 [1] 1,1,4
+  - Arms
+    - RightArm
+      - UpperRightArm
+        - UpperRightArmFoliage
+          - Petal_r37 [1] 8,0,8
+          - Petal_r36 [1] 8,0,8
+          - PetalCrown6
+            - Petal_r39 [1] 8,0,8
+            - Petal_r38 [1] 8,0,8
+            - Petal_r40 [1] 8,0,8
+            - Petal_r41 [1] 8,0,8
+        - UpperRightArm_r1 [1] 5,12,5
+        - Muscle4
+          - Muscle_r1 [1] 3,3,4
+          - Muscle_r2 [1] 3,3,4
+          - Muscle_r3 [1] 3,5,4
+        - RightShoulder_r2 [1] 6,6,5
+        - RightShoulderMuscle_r1 [1] 2,3,5
+      - LowerRightArm
+        - LowerRightArmFoliage
+          - Petal_r42 [1] 8,0,8
+          - Petal_r44 [1] 8,0,8
+          - Petal_r43 [1] 8,0,8
+        - RightClaws
+          - Claw_r7 [3] 5,9,0
+        - LowerRightHand_r1 [1] 7,7,7
+        - LowerRightArm_r1 [1] 6,10,6
+        - Muscle5
+          - Muscle_r4 [1] 3,4,5
+          - Muscle_r5 [1] 3,4,5
+          - Muscle_r6 [1] 3,3,5
+        - Muscle6
+          - Muscle_r8 [1] 3,4,5
+          - Muscle_r9 [1] 3,3,5
+          - Muscle_r7 [1] 3,4,5
+    - LeftArm
+      - LowerLeftArm
+        - LowerLeftHand_r1 [1] 7,6,7
+        - LeftClaws
+          - Claw_r8 [3] 5,9,0
+        - LowerLeftArmFoliage
+          - Petal_r48 [1] 8,0,8
+          - Petal_r49 [1] 8,0,8
+          - Petal_r50 [1] 8,0,8
+          - PetalCrown7
+            - Petal_r51 [1] 8,0,8
+            - Petal_r53 [1] 8,0,8
+            - Petal_r52 [1] 8,0,8
+            - Petal_r54 [1] 8,0,8
+        - Muscle3
+          - Muscle_r16 [1] 3,4,5
+          - Muscle_r18 [1] 3,3,5
+          - Muscle_r17 [1] 3,4,5
+        - LowerLeftArm_r1 [1] 6,11,6
+        - Muscle2
+          - Muscle_r14 [1] 3,4,5
+          - Muscle_r13 [1] 3,4,5
+          - Muscle_r15 [1] 3,3,5
+      - UpperLeftArm
+        - UpperLeftArm_r1 [1] 5,11,5
+        - Growth_r18 [1] 3,3,2
+        - LeftShoulderMuscle_r1 [1] 3,4,5
+        - Muscle1
+          - Muscle_r12 [1] 3,5,4
+          - Muscle_r11 [1] 3,3,4
+          - Muscle_r10 [1] 3,3,4
+        - LeftShoulder_r2 [1] 6,5,5
+        - UpperLeftArmFoliage
+          - Petal_r47 [1] 8,0,8
+          - Petal_r46 [1] 8,0,8
+          - Petal_r45 [1] 8,0,8
+
+## hevoker (132 parts)
+
+- part0
+  - Legs
+    - LeftLeg [1] 5,12,4
+      - LeftLeg2 [2] 6,12,6
+        - LeftLegTumors
+          - Tumor_r7 [1] 4,4,4
+          - Tumor_r6 [1] 4,4,4
+          - Tumor_r9 [1] 4,4,4
+          - Tumor_r8 [1] 3,3,3
+      - LeftLegClaw4 [1] 1,4,2
+        - LLClawJoint5 [1] 1,5,2
+          - LLClawPlane5 [1] 0,5,3
+    - RightLeg [2] 4,11,3
+      - RightLegTumors
+        - Tumor_r11 [1] 4,4,4
+        - Tumor_r10 [1] 4,4,4
+      - RightLeg2 [1] 4,8,3
+        - RightLeg3 [1] 5,11,4
+          - RightLegFungus
+            - Fungus_r20 [1] 7,0,7
+            - Fungus_r19 [1] 7,0,7
+            - Fungus_r18 [1] 7,0,7
+            - Fungus_r17 [1] 7,0,7
+  - LowerTorso [2] 10,10,5
+    - UpperTorso [2] 12,10,7
+      - UpperChestFungus
+        - Fungus_r9 [1] 7,0,7
+        - Fungus_r7 [1] 7,0,7
+        - Fungus_r8 [1] 7,0,7
+        - Fungus_r6 [1] 7,0,7
+        - Fungus_r10 [1] 7,0,7
+      - Head [3] 8,8,8 <== eyes
+        - Jaw [2] 8,2,4
+        - HeadFungus
+          - Fungus_r12 [1] 7,0,7
+          - flower2
+            - cube_r8 [1] 7,0,7
+            - cube_r5 [1] 7,0,7
+            - cube_r6 [1] 7,0,7
+            - cube_r7 [1] 7,0,7
+          - Fungus_r11 [1] 7,0,7
+          - flower
+            - cube_r4 [1] 7,0,7
+            - cube_r1 [1] 7,0,7
+            - cube_r2 [1] 7,0,7
+            - cube_r3 [1] 7,0,7
+      - BackClaws
+        - BackClaw1 [1] 2,7,2
+          - BCJoint1 [1] 2,10,2
+            - BCPlane1 [1] 0,9,5
+        - BackClaw2 [1] 2,10,2
+          - BCJoint2 [1] 2,8,2
+            - BCPlane2 [1] 0,9,5
+        - BackClaw3 [1] 2,8,2
+          - BCJoint3 [1] 2,9,2
+            - BCPlane3
+              - Plane_r1 [1] 0,9,5
+      - TorsoTumors
+        - RightTumros
+          - Tumor_r1 [1] 4,4,4
+          - Tumor_r2 [1] 7,7,7
+        - LeftTumors
+          - Tumor_r3 [1] 5,5,5
+          - Tumor_r5 [1] 5,5,5
+          - Tumor_r4 [1] 6,6,6
+      - Arms
+        - RightArm [1] 6,8,6
+          - RightArm2 [1] 5,8,5
+            - RightArm3 [1] 3,7,4
+              - RightArmSplit2 [1] 3,7,3
+                - RightArmSplit2Seg1 [1] 2,7,3
+                  - RASplit2Claw2 [1] 1,7,2
+                    - RASplit2Joint2 [1] 1,7,2
+                      - RASplit2Plane2 [1] 0,7,3
+                  - RASplit2Claw1 [1] 2,6,2
+                    - RASplit2Joint1 [1] 2,6,2
+                      - RASplit2Plane1
+                        - Plane_r5 [1] 0,7,4
+              - RightArmSplit1 [1] 2,7,3
+                - RASplit1Claw2 [1] 1,7,2
+                  - RASplit1Joint2 [1] 1,7,2
+                    - RASplit1Plane2 [1] 0,7,3
+                - RASplit1Claw [1] 1,7,2
+                  - RASplit1Joint [1] 1,7,2
+                    - RASplit1Plane
+                      - Plane_r4 [1] 0,7,3
+            - RAClaw2 [1] 2,10,2
+              - RAJoint2 [1] 2,8,2
+                - RAPlane2 [1] 0,9,5
+            - RAClaw5 [1] 2,10,2
+              - RAJoint5 [1] 2,8,2
+                - RAPlane5 [1] 0,9,5
+          - RMClaw1 [1] 3,13,3
+            - RMJoint1 [1] 3,11,3
+              - RMPlane1 [1] 0,10,6
+            - RAClaw3 [1] 2,10,2
+              - RAJoint3 [1] 2,8,2
+                - RAPlane3 [1] 0,9,5
+            - RAClaw4 [1] 2,10,2
+              - RAJoint4 [1] 2,8,2
+                - RAPlane4 [1] 0,9,5
+        - LeftArm [2] 5,9,5
+          - RightArmFungus
+            - Fungus_r16 [1] 7,0,7
+            - Fungus_r15 [1] 7,0,7
+            - Fungus_r14 [1] 7,0,7
+            - Fungus_r13 [1] 7,0,7
+          - LeftArm2 [1] 4,6,5
+            - LeftArmSplit2 [1] 3,9,3
+              - LASplit2Claw [1] 2,6,2
+                - LASplit2Joint
+                  - ClawBase_r2 [1] 2,6,2
+                  - LASplit2Plane
+                    - Plane_r3 [1] 0,7,4
+            - LeftArmSplit1 [1] 3,6,3
+              - LASplit1Claw [1] 1,7,2
+                - LASplit1Joint [1] 1,7,2
+                  - LASplit1Plane
+                    - Plane_r2 [1] 0,7,3
+            - LAClaw2 [1] 2,6,2
+              - LAJoint2
+                - LAPlane2 [1] 0,7,4
+                - ClawBase_r1 [1] 2,6,2
+          - LAClaw1 [1] 2,7,2
+            - LAJoint1 [1] 2,7,2
+              - LAPlane1 [1] 0,9,5
+    - LowerChestFungus
+      - Fungus_r5 [1] 7,0,7
+      - Fungus_r3 [1] 7,0,7
+      - Fungus_r4 [1] 7,0,7
+      - Fungus_r1 [1] 7,0,7
+      - Fungus_r2 [1] 7,0,7
+
+## hevoker_arm (35 parts)
+
+- root [1] 6,8,6 <== eyes
+  - RightArm2 [1] 5,8,5
+    - RightArm3 [1] 3,7,4
+      - RightArmSplit2 [1] 3,7,3
+        - RightArmSplit2Seg1 [1] 2,7,3
+          - RASplit2Claw2 [1] 1,7,2
+            - RASplit2Joint2 [1] 1,7,2
+              - RASplit2Plane2 [1] 0,7,3
+          - RASplit2Claw1 [1] 2,6,2
+            - RASplit2Joint1 [1] 2,6,2
+              - RASplit2Plane1
+                - Plane_r2 [1] 0,7,4
+      - RightArmSplit1 [1] 2,7,3
+        - RASplit1Claw2 [1] 1,7,2
+          - RASplit1Joint2 [1] 1,7,2
+            - RASplit1Plane2 [1] 0,7,3
+        - RASplit1Claw [1] 1,7,2
+          - RASplit1Joint [1] 1,7,2
+            - RASplit1Plane
+              - Plane_r1 [1] 0,7,3
+    - RAClaw2 [1] 2,10,2
+      - RAJoint2 [1] 2,8,2
+        - RAPlane2 [1] 0,9,5
+    - RAClaw5 [1] 2,10,2
+      - RAJoint5 [1] 2,8,2
+        - RAPlane5 [1] 0,9,5
+  - RMClaw1 [1] 3,13,3
+    - RMJoint1 [1] 3,11,3
+      - RMPlane1 [1] 0,10,6
+    - RAClaw3 [1] 2,10,2
+      - RAJoint3 [1] 2,8,2
+        - RAPlane3 [1] 0,9,5
+    - RAClaw4 [1] 2,10,2
+      - RAJoint4 [1] 2,8,2
+        - RAPlane4 [1] 0,9,5
+
+## hindenburg (741 parts)
+
+- part0
+  - Center [2] 70,2,70
+    - CenterTendrils
+      - LeftCannon
+        - LeftTumors
+          - LCannonTumor3
+            - LCannonTumor3_r1 [1] 5,5,5
+          - LCannonTumor2
+            - LCannonTumor2_r1 [1] 6,6,6
+          - LCannonTumor5 [1] 9,9,9
+          - LCannonTumor4
+            - LCannonTumor4_r1 [1] 7,7,7
+          - LCannonTumor1
+            - LCannonTumor1_r1 [1] 9,9,9
+          - LCannonTumor6
+            - LCannonTumor6_r1 [1] 7,7,7
+        - LeftCannonBase [1] 15,28,15
+          - LeftCannonSegment1 [1] 12,22,12
+            - LCannonSeg1CorpseDetail
+              - Jaw_r9 [1] 8,1,8
+              - Torso_r7 [1] 7,5,4
+              - Head_r11 [1] 8,7,8
+            - LeftCannonTip [4] 2,5,10
+              - LeftCannonTumorClog
+                - Tumor_r19 [1] 5,5,5
+          - WeeLilExausts [1] 3,3,7
+            - Tube4_r1 [1] 3,3,5
+            - Tube3_r1 [1] 3,3,4
+            - Tumor_r17 [1] 2,2,2
+            - Tumor_r18 [1] 3,3,3
+            - Tube2_r1 [1] 3,3,5
+      - RightCannon
+        - RightCannonBase [1] 16,24,16
+          - LaTumoral_r2 [1] 4,4,4
+          - LaTumoral_r1 [1] 3,3,3
+          - RightCannonSegment1 [1] 12,14,12
+            - CannonTip [3] 2,9,10
+              - CannonTumorClog
+                - Tumor_r12 [1] 4,4,4
+                - Tumor_r13 [1] 5,5,5
+              - CannonTipRightSegment_r1 [1] 6,9,2
+              - TopHeadDetail
+                - Head_r9 [1] 7,8,8
+                - Arm_r7 [1] 4,10,4
+            - RCS1BodyConnector
+              - Jaw_r8 [1] 8,1,3
+              - TorsoTop_r1 [1] 7,5,3
+              - Torso_r6 [1] 6,5,3
+              - Head_r10 [1] 8,7,3
+          - SmallExaust
+            - Tumor_r15 [1] 3,3,3
+            - Tumor_r16 [1] 2,2,2
+            - Tumor_r14 [1] 2,2,2
+            - TipBottom_r1 [5] 7,1,2
+        - Tumors
+          - RCannonTumor8 [1] 9,9,9
+          - RCannonTumor7
+            - RCannonTumor7_r1 [1] 7,7,7
+          - RCannonTumor6
+            - RCannonTumor6_r1 [1] 7,7,7
+          - RCannonTumor5
+            - RCannonTumor5_r1 [1] 9,9,9
+          - RCannonTumor4
+            - RCannonTumor4_r1 [1] 4,4,4
+          - RCannonTumor3
+            - RCannonTumor3_r1 [1] 5,5,5
+          - RCannonTumor2
+            - RCannonTumor2_r1 [1] 10,10,10
+          - RCannonTumor1
+            - RCannonTumor1_r1 [1] 9,9,9
+    - CenterUpperRight_r1 [1] 2,52,70
+    - CenterBottomRight_r1 [1] 2,52,70
+    - Front1
+      - Front1Top
+        - Front1TopMiddle_r1 [1] 54,2,45
+        - RidgeSeg4_r1 [4] 8,5,8
+        - Front1TopLeft
+          - Front1TopLeftSeg4_r1 [3] 2,8,11
+          - Front1TopLeftSeg1_r1 [1] 2,8,37
+        - Front1TopRight
+          - Front1TopRightSeg4_r1 [3] 2,8,11
+          - Front1TopRightSeg1_r1 [1] 2,8,37
+        - TumorFlowerTop [1] 8,2,8
+          - Maw
+            - SouthMaw [1] 10,7,2
+              - SMawSeg2 [1] 9,7,2
+                - SMawSeg3 [1] 8,5,2
+                  - Tooth_r27 [1] 0,3,2
+                  - Tooth_r26 [1] 0,3,2
+                - Tooth_r25 [1] 0,6,2
+                - Tooth_r24 [1] 0,6,2
+              - Tooth_r22 [1] 0,7,2
+              - Tooth_r23 [1] 0,4,2
+            - NWMaw
+              - Tooth_r28 [1] 0,7,2
+              - NWMawSeg1_r1 [1] 10,7,2
+              - NWMawSeg2
+                - Tooth_r29 [1] 0,4,2
+                - Tooth_r30 [1] 0,5,2
+                - NWMawSeg2_r1 [1] 9,6,2
+            - NSMaw
+              - Tooth_r32 [1] 0,5,2
+              - Tooth_r31 [1] 0,5,2
+              - NSMawSeg1_r1 [1] 8,7,2
+              - NSMawSeg2
+                - Tooth_r33 [1] 0,4,2
+                - NSMawSeg3
+                  - NSMawSeg3_r1 [1] 6,6,2
+                  - Tooth_r35 [1] 0,5,2
+                  - Tooth_r34 [1] 0,5,2
+                - NSMawSeg2_r1 [1] 7,6,2
+          - TumorBase
+            - Tumor_r22 [1] 9,9,9
+            - SouthTendril
+              - STendieSeg2
+                - STendieSeg2_r1 [1] 2,2,9
+              - STendieSeg1_r1 [1] 3,3,8
+            - Tumor_r23 [1] 7,7,7
+            - EastTendril [1] 8,2,2
+              - ETendieSeg2
+                - ETendieSeg2_r1 [1] 6,2,2
+            - Tumor_r20 [1] 5,5,5
+            - Tumor_r21 [1] 6,6,6
+            - WestTendril [1] 6,3,3
+              - WTendieSeg2 [1] 5,2,2
+            - Tumor_r24 [1] 8,8,8
+      - Front2
+        - Front2Top [6] 18,2,24
+        - F2SBodies
+          - F2SBody3
+            - Torso_r10 [1] 8,6,6
+            - Leg_r6 [1] 4,8,4
+            - TorsoLower_r4 [1] 7,6,5
+          - F2Clump1
+            - Tumor3_r5 [1] 5,5,5
+            - Tumor2_r7 [1] 7,7,7
+            - Tumor1_r7 [1] 6,6,6
+          - F2SBody1
+            - Arm_r10 [1] 4,4,8
+            - Torso_r8 [1] 8,5,6
+            - TorsoLower_r2 [1] 7,4,6
+            - Leg_r5 [1] 4,4,8
+            - Head_r13 [1] 8,7,8
+            - Jaw_r11 [1] 8,1,8
+          - F2SBody2
+            - Torso_r9 [1] 5,8,6
+            - Arm_r11 [1] 4,4,8
+            - Head_r14 [1] 8,7,8
+            - Jaw_r12 [1] 8,1,8
+            - TorsoLower_r3 [1] 4,7,6
+        - Front1Right2
+          - Ridge_r6 [1] 6,8,47
+          - Front1LowerRight2
+            - Front1LowerRightSeg5_r1 [3] 2,1,-1
+          - Front1UpperRight2
+            - Front2LowerRightSeg5_r1 [3] 2,1,-1
+            - FungalBloom4
+              - Plane2_r5 [1] 0,12,14
+              - Plane1_r4 [1] 0,12,14
+              - Npetal_r5 [1] 16,0,16
+              - Wpetal_r5 [1] 16,0,16
+              - Epetal_r5 [1] 16,0,16
+              - Spetal_r5 [1] 16,0,16
+        - Front3 [1] 9,8,1
+          - Connector_r1 [1] 38,8,5
+          - TopSegLeft_r1 [1] 23,10,2
+          - TopSegMiddle_r1 [1] 9,29,5
+          - TopSegRight_r1 [1] 23,10,2
+          - BottomSegMiddle_r1 [1] 7,29,5
+          - BottomSegRight_r1 [1] 23,10,2
+          - BottomSegLeft_r1 [1] 23,10,2
+        - Front2Bottom [6] 18,2,24
+          - Front2Tendrils
+            - F2Tendril1 [1] 6,9,6
+              - F2Tendril1Seg2 [1] 4,9,4
+                - F2Tendril1Seg3 [1] 2,7,2
+          - F2HoleFiller
+            - Clump2
+              - Tumor_r33 [1] 5,5,5
+              - Tumor_r34 [1] 7,7,7
+              - Tumor_r35 [1] 8,8,8
+            - Clump1
+              - Tumor_r31 [1] 7,7,7
+              - Tumor_r32 [1] 8,8,8
+              - Tumor_r30 [1] 5,5,5
+        - Front1Left3
+          - Front1LowerLeft3
+            - TumorFlowerfront1 [1] 8,2,8
+              - Maw3
+                - NWMaw3
+                  - NWMawSeg4
+                    - Tooth_r44 [1] 0,5,2
+                    - Tooth_r43 [1] 0,4,2
+                    - NWMawSeg3_r1 [1] 9,6,2
+                  - NWMawSeg2_r2 [1] 10,7,2
+                  - Tooth_r42 [1] 0,7,2
+                - NSMaw3
+                  - NSMawSeg6
+                    - NSMawSeg7
+                      - Tooth_r49 [1] 0,5,2
+                      - NSMawSeg4_r1 [1] 6,6,2
+                      - Tooth_r48 [1] 0,5,2
+                    - NSMawSeg3_r2 [1] 7,6,2
+                    - Tooth_r47 [1] 0,4,2
+                  - NSMawSeg2_r2 [1] 8,7,2
+                  - Tooth_r46 [1] 0,5,2
+                  - Tooth_r45 [1] 0,5,2
+                - SouthMaw3 [1] 10,7,2
+                  - SMawSeg6 [1] 9,7,2
+                    - Tooth_r39 [1] 0,6,2
+                    - Tooth_r38 [1] 0,6,2
+                    - SMawSeg7 [1] 8,5,2
+                      - Tooth_r40 [1] 0,3,2
+                      - Tooth_r41 [1] 0,3,2
+                  - Tooth_r37 [1] 0,4,2
+                  - Tooth_r36 [1] 0,7,2
+              - TumorBase3
+                - Tumor_r26 [1] 6,6,6
+                - Tumor_r27 [1] 9,9,9
+                - Tumor_r25 [1] 5,5,5
+                - WestTendril3 [1] 6,3,3
+                  - WTendieSeg4 [1] 5,2,2
+                - Tumor_r28 [1] 7,7,7
+                - Tumor_r29 [1] 8,8,8
+                - SouthTendril3
+                  - STendieSeg2_r2 [1] 3,3,8
+                  - STendieSeg4
+                    - STendieSeg3_r1 [1] 2,2,9
+                - EastTendril3 [1] 8,2,2
+                  - ETendieSeg4
+                    - ETendieSeg3_r1 [1] 6,2,2
+            - Front1LowerLeftSeg6_r1 [3] 2,1,-1
+          - Front1UpperLeft3
+            - FrontLowerLeftSeg6_r1 [3] 2,1,-1
+          - Ridge_r7 [1] 6,8,47
+      - Front1Bottom
+        - RidgeSeg2_r1 [1] 5,5,18
+        - Front1BottomMiddle_r1 [1] 54,10,45
+        - Front1Tendrils
+          - F1Tendril3 [1] 10,17,10
+            - F1Tendril3Seg2
+              - F1Tendril3Seg3
+                - F1Tendril3Seg4
+                  - Tendril4Seg4_r1 [1] 4,12,4
+                - Tendril3Seg3_r1 [1] 6,13,6
+              - Tendril3Seg2_r1 [1] 8,17,8
+              - Head_r12 [1] 8,7,8
+              - Arm_r8 [1] 8,4,4
+              - Arm_r9 [1] 8,4,4
+              - Jaw_r10 [1] 8,1,8
+          - F1Tendril2
+            - F1Tendril2Seg2
+              - F1Tendril2Seg3
+                - F1Tendril2Seg4
+                  - Tendril2Seg4_r1 [1] 3,9,3
+                - Tendril2Seg3_r1 [1] 4,9,4
+              - Tendril2Seg2_r1 [1] 6,14,6
+            - Tendril2Seg1_r1 [1] 8,14,8
+          - F1Tendril1 [1] 7,11,7
+            - Tumor3_r4 [1] 4,4,4
+            - F1Tendril1Seg2 [1] 5,12,5
+              - F1Tendril1Seg3 [1] 3,9,3
+            - Tumor1_r6 [1] 6,6,6
+            - Tumor2_r6 [1] 5,5,5
+        - Front1BottomRight
+          - Front1BottomRightSeg5_r1 [3] 2,8,11
+          - FrontBottomRightSeg2_r1 [1] 2,8,37
+        - RidgeSeg1_r1 [1] 8,5,28
+        - Front1BottomLeft
+          - Front1BottomLeftSeg5_r1 [3] 2,8,11
+          - FrontBottomLeftSeg2_r1 [1] 2,8,37
+        - RidgeSeg3_r1 [1] 5,5,23
+        - FungalBloom5
+          - Plane2_r4 [1] 0,12,14
+          - Plane1_r3 [1] 0,12,14
+          - Wpetal_r4 [1] 16,0,16
+          - Epetal_r4 [1] 16,0,16
+          - Npetal_r4 [1] 16,0,16
+          - Spetal_r4 [1] 16,0,16
+      - Front1Left
+        - Front1UpperLeft
+          - Front1UpperLeftSeg2_r1 [2] 1,5,27
+        - Front1LowerLeft
+          - Front1LowerLeftSeg2_r1 [2] 2,5,27
+          - FungalBloom7
+            - Plane2_r3 [1] 0,12,14
+            - Plane1_r2 [1] 0,12,14
+            - Npetal_r3 [1] 16,0,16
+            - Wpetal_r3 [1] 16,0,16
+            - Spetal_r3 [1] 16,0,16
+            - Epetal_r3 [1] 16,0,16
+        - Ridge_r5 [1] 6,8,50
+      - F1SBodies
+        - F1SBody3
+          - Arm_r14 [1] 4,8,4
+          - Arm_r15 [1] 4,8,4
+        - F1SBody2
+          - TorsoBottom_r2 [1] 5,6,7
+          - Torso_r12 [1] 6,6,8
+          - Head_r16 [1] 8,8,8
+          - ARm_r13 [1] 4,8,4
+        - F1SBody1
+          - TorsoBottom_r1 [1] 5,6,7
+          - Torso_r11 [1] 6,6,8
+          - Leg_r8 [1] 4,8,4
+          - Leg_r7 [1] 4,8,4
+          - Head_r15 [1] 8,8,8
+          - Arm_r12 [1] 4,8,4
+        - F1Clump1
+          - Tumor1_r8 [1] 8,8,8
+          - Tumor2_r8 [1] 6,6,6
+        - F1Clump2
+          - Tumor1_r9 [1] 6,6,6
+          - Tumor2_r9 [1] 5,5,5
+      - Front1Right
+        - Ridge_r4 [1] 7,8,50
+        - Front1LowerRight
+          - Front1LowerRightSeg2_r1 [2] 2,5,27
+        - Front1UpperRight
+          - Front2LowerRightSeg2_r1 [2] 2,5,27
+    - Back1
+      - Back2Tip [6] 58,24,1
+        - Back2Details
+          - BackBodyClump3
+            - Jaw_r17 [1] 8,1,8
+            - Torso_r16 [1] 8,6,6
+            - Head_r21 [1] 8,7,8
+            - TorsoLower_r7 [1] 7,6,5
+          - BackBodyClump2
+            - Jaw_r16 [1] 8,1,8
+            - Torso_r15 [1] 8,6,6
+            - TorsoLower_r6 [1] 7,6,5
+            - Head_r20 [1] 8,7,8
+          - BackBodyClump4
+            - Tumor1_r12 [1] 10,10,10
+            - Tumor2_r12 [1] 8,8,8
+            - Tumor3_r8 [1] 6,6,6
+          - BackBodyClump1
+            - Head_r19 [1] 8,7,8
+            - Torso_r14 [1] 8,6,6
+            - Jaw_r15 [1] 8,1,8
+            - TorsoLower_r5 [1] 7,6,5
+            - Arm_r18 [1] 4,8,4
+            - Arm_r17 [1] 4,8,4
+        - BottomRidge_r2 [1] 26,5,5
+        - BottomRidge_r1 [1] 20,5,5
+        - FungalBloom3
+          - Npetal_r9 [1] 16,0,16
+          - Wpetal_r9 [1] 16,0,16
+          - Epetal_r9 [1] 16,0,16
+          - Plane2_r9 [1] 0,12,14
+          - Plane1_r8 [1] 0,12,14
+          - Spetal_r9 [1] 16,0,16
+      - Back1Bottom
+        - Back1BottomMiddle_r1 [2] 42,8,23
+        - B1Tendrils
+          - B1Tendril3 [1] 6,9,6
+            - B1Tendril3Seg2 [1] 4,9,4
+              - B1Tendril3Seg3 [1] 2,9,2
+            - EmergingBody [1] 8,4,6
+              - TorsoBottom_r3 [1] 7,3,6
+              - Head_r17 [1] 8,8,7
+              - Jaw_r13 [1] 8,8,1
+              - Torso_r13 [1] 4,4,8
+          - B1Tendril4 [1] 11,14,11
+            - B1Tendril4Seg2 [1] 9,14,9
+              - B1Tendril4Seg3 [1] 7,14,7
+                - B1Tendril4Seg4 [1] 5,11,5
+                  - B1Tendril4Seg5 [1] 3,9,3
+                - Head_r18 [1] 8,8,7
+                - Jaw_r14 [1] 8,8,1
+              - ARm_r16 [1] 4,8,4
+          - B1Tendril5 [1] 8,8,8
+            - B1Tendril5Seg2 [1] 6,12,6
+              - B1Tendril5Seg3 [1] 4,8,4
+                - B1Tendril5Seg4 [1] 3,12,3
+          - B1Tendril1 [1] 14,17,14
+            - B1Tendril1Seg2 [1] 10,17,10
+              - B1TendrilSplit2 [1] 4,7,4
+                - B1TendrilSplit2Seg2
+                  - B1TendrilSplit2Seg2_r1 [1] 3,7,3
+              - B1TendrilSplit1 [1] 6,11,6
+                - B1TendrilSplit1Seg2 [1] 4,9,4
+                  - B1TendrilSplit1Seg3 [1] 2,6,2
+              - Tumor_r41 [1] 5,5,5
+            - FungalBloom6
+              - Wpetal_r8 [1] 16,0,16
+              - Plane2_r8 [1] 0,12,14
+              - Plane1_r7 [1] 0,12,14
+              - Epetal_r8 [1] 16,0,16
+              - Npetal_r8 [1] 16,0,16
+              - Spetal_r8 [1] 16,0,16
+          - B1Tendril2 [1] 6,11,6
+            - B1Tendril2Seg2 [1] 4,9,4
+              - B1Tendril2Seg3 [1] 2,6,2
+        - Back1BottomLeft
+          - Back1BottomLeftSeg6_r1 [3] 2,2,11
+          - BackBottomLeftSeg3_r1 [1] 2,2,37
+        - Back1BottomRight
+          - Back1BottomRightSeg6_r1 [3] 2,2,11
+          - BackBottomRightSeg3_r1 [1] 2,2,37
+      - B1SBodies
+        - B1TumoralClump
+          - Tumor2_r14 [1] 6,6,6
+          - Tumor3_r10 [1] 5,5,5
+          - Tumor1_r14 [1] 8,8,8
+        - B1SBody7
+          - Torso_r22 [1] 6,8,6
+          - Head_r28 [1] 8,8,8
+          - Arm_r25 [1] 4,4,8
+          - TorsoBottom_r9 [1] 5,7,6
+          - Arm_r24 [1] 4,4,8
+        - B1SBody6
+          - TorsoBottom_r8 [1] 5,7,4
+          - Torso_r21 [1] 6,8,6
+          - Head_r27 [1] 8,8,8
+          - Leg_r11 [1] 4,4,8
+        - B1SBody5
+          - TorsoBottom_r7 [1] 7,4,6
+          - Torso_r20 [1] 8,5,6
+          - Teeth_r7 [1] 8,1,8
+          - Head_r26 [1] 8,7,8
+          - Arm_r23 [1] 4,4,8
+          - Leg_r10 [1] 4,4,8
+        - B1TumoralClump1
+          - Tumor2_r13 [1] 5,5,5
+          - Tumor3_r9 [1] 4,4,4
+          - Tumor1_r13 [1] 6,6,6
+        - B1SBody4
+          - TorsoBottom_r6 [1] 7,4,6
+          - Arm_r21 [1] 4,4,8
+          - Arm_r22 [1] 4,4,8
+          - Leg_r9 [1] 4,4,8
+          - Head_r25 [1] 8,7,8
+          - Torso_r19 [1] 8,5,6
+          - Teeth_r6 [1] 8,2,3
+        - B1SBody3
+          - TorsoBottom_r5 [1] 5,7,6
+          - Arm_r20 [1] 4,4,8
+          - Head_r24 [1] 8,8,8
+          - Torso_r18 [1] 6,8,6
+        - B1SBody2
+          - TorsoBottom_r4 [1] 5,7,4
+          - JAW_r18 [1] 8,8,1
+          - Head_r23 [1] 8,8,7
+          - Arm_r19 [1] 4,4,8
+          - Torso_r17 [1] 6,8,6
+        - B1SBody1
+          - Head_r22 [1] 8,7,8
+      - Back1Right
+        - Back1LowerRight
+          - FungalBloom8
+            - Wpetal_r6 [1] 16,0,16
+            - Plane2_r6 [1] 0,12,14
+            - Plane1_r5 [1] 0,12,14
+            - Spetal_r6 [1] 16,0,16
+            - Epetal_r6 [1] 16,0,16
+            - Npetal_r6 [1] 16,0,16
+          - Ridge_r9 [1] 5,32,5
+          - Back1LowerRightSeg3_r1 [2] 2,5,27
+        - B1RRTumors
+          - Tumor3_r6 [1] 6,6,6
+          - Tumor2_r10 [1] 8,8,8
+          - Tumor1_r10 [1] 8,8,8
+        - Back1UpperRight
+          - Back3LowerRightSeg3_r1 [2] 2,5,27
+          - Ridge_r10 [1] 5,48,5
+        - Ridge_r8 [1] 8,8,81
+      - Back1Left
+        - Back1LowerLeft
+          - Back1LowerLeftSeg3_r1 [2] 2,5,27
+          - Ridge_r12 [1] 5,39,5
+          - TumorFlower [1] 8,2,8
+            - TumorBase2
+              - Tumor_r37 [1] 6,6,6
+              - Tumor_r38 [1] 9,9,9
+              - Tumor_r36 [1] 5,5,5
+              - Tumor_r39 [1] 7,7,7
+              - Tumor_r40 [1] 8,8,8
+              - EastTendril2 [1] 8,2,2
+                - ETendieSeg3
+                  - ETendieSeg3_r2 [1] 6,2,2
+              - SouthTendril2
+                - STendieSeg2_r3 [1] 3,3,8
+                - STendieSeg3
+                  - STendieSeg3_r2 [1] 2,2,9
+              - WestTendril2 [1] 6,3,3
+                - WTendieSeg3 [1] 5,2,2
+            - Maw2
+              - NWMaw2
+                - NWMawSeg3
+                  - NWMawSeg3_r2 [1] 9,6,2
+                  - Tooth_r58 [1] 0,5,2
+                  - Tooth_r57 [1] 0,4,2
+                - NWMawSeg2_r3 [1] 10,7,2
+                - Tooth_r56 [1] 0,7,2
+              - NSMaw2
+                - Tooth_r60 [1] 0,5,2
+                - NSMawSeg4
+                  - Tooth_r61 [1] 0,4,2
+                  - NSMawSeg5
+                    - Tooth_r62 [1] 0,5,2
+                    - NSMawSeg4_r2 [1] 6,6,2
+                    - Tooth_r63 [1] 0,5,2
+                  - NSMawSeg3_r3 [1] 7,6,2
+                - Tooth_r59 [1] 0,5,2
+                - NSMawSeg2_r3 [1] 8,7,2
+              - SouthMaw2 [1] 10,7,2
+                - Tooth_r51 [1] 0,4,2
+                - SMawSeg4 [1] 9,7,2
+                  - Tooth_r53 [1] 0,6,2
+                  - Tooth_r52 [1] 0,6,2
+                  - SMawSeg5 [1] 8,5,2
+                    - Tooth_r55 [1] 0,3,2
+                    - Tooth_r54 [1] 0,3,2
+                - Tooth_r50 [1] 0,7,2
+        - Back1UpperLeft
+          - Back1UpperLeftSeg3_r1 [1] 2,7,36
+          - Ridge_r13 [1] 5,39,5
+          - BackUpperLeftSeg2_r1 [1] 8,37,84
+        - Ridge_r11 [1] 8,8,82
+      - Back1Top
+        - RidgeSeg3_r2 [1] 8,5,77
+        - Back1TopLeft
+          - B1TLTumoralClump
+            - Tumor4_r2 [1] 5,5,5
+            - Tumor5_r1 [1] 4,4,4
+            - Tumor3_r7 [1] 6,6,6
+            - Tumor1_r11 [1] 10,10,10
+            - Tumor2_r11 [1] 8,8,8
+          - Back1TopLeftSeg5_r1 [1] 4,8,41
+          - BackTopLeftSeg2_r1 [1] 2,8,46
+        - Back1TopMiddle_r1 [2] 42,1,23
+        - FungalBloom
+          - Plane2_r7 [1] 0,12,14
+          - Plane1_r6 [1] 0,12,14
+          - Npetal_r7 [1] 16,0,16
+          - Wpetal_r7 [1] 16,0,16
+          - Spetal_r7 [1] 16,0,16
+          - Epetal_r7 [1] 16,0,16
+        - Back1TopRight
+          - BackTopRightSeg2_r1 [1] 2,8,37
+          - Back1TopRightSeg5_r1 [3] 2,8,11
+    - CenterTumorDetails
+      - CT2 [1] 5,5,5
+      - CT1 [1] 6,6,6
+      - CT4 [1] 6,6,6
+      - CT3 [1] 7,7,7
+      - CTClump1
+        - CTC1T1_r1 [1] 5,5,5
+        - CTC1T3_r1 [1] 7,7,7
+        - CTC1T2_r1 [1] 6,6,6
+    - CenterUpperLeft_r1 [1] 2,52,70
+    - CenterRidges
+      - LeftRidges [1] 5,8,70
+        - LeftBackBottomRidgeTip3_r1 [5] 1,4,5
+        - LeftBackTopRidge_r1 [1] 4,52,8
+        - LeftFrontTopRidge_r1 [1] 4,52,8
+        - LeftFrontBottomRidgeTip_r1 [1] 3,10,8
+      - RightRidges [1] 5,6,70
+        - RightFrontBottomRidge_r1 [1] 4,43,8
+        - RightBackBottomRidge_r1 [1] 4,51,10
+        - RightBackTopRidge_r1 [2] 4,52,8
+      - TopRidge [3] 2,4,20
+        - Ridge7_r1 [1] 5,4,20
+        - Ridge6_r1 [4] 6,4,20
+        - Ridge8_r1 [1] 8,5,15
+        - Ridge9_r1 [1] 3,2,25
+        - Ridge2_r1 [1] 5,4,20
+        - Ridge3_r1 [1] 6,3,20
+        - TopRidgeCorpses
+          - TRBody1
+            - Jaw_r4 [1] 8,8,1
+            - ARm_r3 [1] 4,4,7
+            - Torso_r4 [1] 7,4,7
+            - Head_r5 [1] 8,8,7
+            - Leg_r2 [1] 4,4,7
+        - Ridge1_r1 [1] 8,5,20
+        - Ridge_r2 [1] 35,3,8
+        - Ridge_r3 [1] 35,3,8
+        - Ridge_r1 [1] 35,3,8
+    - CentralBlooms
+      - FungalBloom1
+        - Plane2_r1 [1] 0,12,14
+        - Plane1_r1 [1] 0,12,14
+        - Spetal_r1 [1] 16,0,16
+        - Npetal_r1 [1] 16,0,16
+        - Wpetal_r1 [1] 16,0,16
+        - Epetal_r1 [1] 16,0,16
+      - FungalBloom2
+        - Plane2_r2 [1] 0,12,14
+        - Wpetal_r2 [1] 16,0,16
+        - Plane3_r1 [1] 0,12,14
+        - Spetal_r2 [1] 16,0,16
+        - Epetal_r2 [1] 16,0,16
+        - Npetal_r2 [1] 16,0,16
+    - CenterStretchedBodies
+      - CSClump1
+        - Tumor1_r1 [1] 7,7,7
+        - Tumor3_r1 [1] 4,4,4
+        - Tumor2_r1 [1] 5,5,5
+        - Tumor4_r1 [1] 4,4,4
+      - CSBody1
+        - Head_r1 [1] 8,7,8
+        - Arm_r1 [1] 4,4,8
+        - Jaw_r1 [1] 8,1,8
+      - CSBody3 [1] 6,6,8
+        - Arm_r2 [1] 4,4,8
+        - Jaw_r2 [1] 8,1,8
+        - Head_r3 [1] 8,7,8
+      - CSBody2
+        - Head_r2 [1] 8,8,8
+        - TorsoLower_r1 [1] 5,6,7
+        - Torso_r2 [1] 6,6,8
+        - Torso_r1 [1] 4,8,4
+        - Leg_r1 [1] 4,8,4
+      - CSBody4
+        - Tumor_r1 [1] 4,4,4
+        - Jaw_r3 [1] 8,1,8
+        - Torso_r3 [1] 6,6,8
+        - Tumor_r3 [1] 3,3,3
+        - Tumor_r2 [1] 4,4,4
+        - Head_r4 [1] 8,8,8
+        - Tumor_r4 [1] 3,3,3
+    - CavnerousMaw
+      - MawHoleFillers
+        - FrontFiller
+          - FFRight
+            - Tumor2_r3 [1] 7,7,7
+            - Tumor1_r3 [1] 8,8,8
+            - Tumor3_r2 [1] 5,5,5
+          - FFLeft
+            - Tumor1_r2 [1] 8,8,8
+            - Tumor2_r2 [1] 7,7,7
+        - BackFiller
+          - BFLeft
+            - Tumor1_r4 [1] 8,8,8
+            - Tumor2_r4 [1] 7,7,7
+          - BFRight
+            - Tumor3_r3 [1] 5,5,5
+            - Tumor2_r5 [1] 7,7,7
+            - Tumor1_r5 [1] 8,8,8
+      - RightLip [1] 13,10,58
+        - RightNorthJawSplit
+          - RightMuncherNorthSegment_r1 [1] 12,12,24
+          - HTOOT_r1 [1] 2,0,14
+          - Tumor_r9 [1] 4,4,4
+          - RNJSBase2
+            - RNJSBase2CorpseDetails
+              - MouthTumor_r2 [1] 3,3,3
+              - MouthTumor_r1 [1] 4,4,4
+              - Jaw_r7 [1] 1,8,8
+              - MouthTumor_r3 [1] 3,3,3
+              - hEAD_r8 [1] 7,8,8
+            - RNJSBase2_r1 [1] 8,15,8
+          - RNJSBase1 [1] 7,15,7
+            - Teeth_r1 [1] 0,5,2
+            - Tumor_r10 [1] 4,4,4
+            - Teeth_r2 [1] 0,12,2
+            - RNJS1Seg1 [1] 5,12,5
+              - Tooth_r17 [1] 0,6,2
+              - Tooth_r16 [1] 2,9,0
+              - Tooth_r15 [1] 2,5,0
+            - Teeth_r3 [1] 2,8,0
+            - Teeth_r4 [1] 2,10,0
+            - Teeth_r5 [1] 2,10,0
+        - RightSouthJawSplit
+          - Tooth_r19 [1] 0,10,2
+          - Tumor_r11 [1] 4,4,4
+          - Tooth_r18 [1] 0,11,2
+          - RSJSBase [1] 8,9,19
+            - LeTumor_r1 [1] 4,4,4
+            - BloodyDetail
+              - Clump_r1 [1] 4,4,4
+              - BloodPlane_r1 [1] 0,17,19
+              - LeBon_r1 [1] 1,2,16
+              - Giblet_r1 [1] 1,6,2
+              - Clump_r3 [1] 6,6,6
+              - Clump_r2 [1] 4,5,11
+              - Giblet_r2 [1] 2,7,4
+            - Tooth_r21 [1] 3,0,18
+          - Tooth_r20 [1] 2,0,20
+          - RightMuncherSouthSegment_r1 [1] 11,11,25
+      - LeftLip [1] 13,10,58
+        - SouthJawSplit [2] 11,11,25
+          - LSJSBase [1] 8,9,19
+            - LSJSSeg2 [1] 6,17,14
+              - LSJSCorseDetails
+                - Body2 [2] 4,5,8
+                  - Arm_r6 [1] 4,8,4
+                  - Jaw_r6 [1] 8,1,8
+                  - Head_r7 [1] 8,7,8
+                  - Leg_r4 [1] 4,8,4
+                  - Leg_r3 [1] 4,8,4
+                - Body1
+                  - Arm_r4 [1] 4,8,4
+                  - Arm_r5 [1] 4,8,4
+                  - Jaw_r5 [1] 1,8,8
+                  - Torso_r5 [1] 4,6,8
+                  - Head_r6 [1] 7,8,8
+                - Tumor_r8 [1] 4,4,4
+            - Tooth_r14 [1] 3,0,15
+          - Tooth_r11 [1] 2,0,18
+          - Tooth_r13 [1] 2,9,0
+          - Tooth_r12 [1] 3,9,0
+        - NorthJawSplit
+          - Tooth_r2 [1] 11,0,3
+          - Tooth_r1 [1] 0,11,2
+          - LeftMuncherNorthSegment_r1 [1] 12,12,21
+          - Tooth_r6 [1] 3,0,16
+          - Tooth_r5 [1] 2,0,16
+          - Tooth_r4 [1] 3,0,12
+          - Tooth_r3 [1] 0,9,2
+          - LNJSBase [1] 9,21,16
+            - Split_r1 [1] 2,9,2
+            - LNJSSeg2 [1] 6,15,14
+              - tumor_r7 [1] 3,3,3
+              - Tooth_r10 [1] 2,10,0
+              - Tumor_r6 [1] 6,6,6
+              - LNJS2S1 [1] 4,9,7
+                - LNJS2S1Seg2
+                  - LNJS2S1Seg2_r1 [1] 3,6,6
+                - LNJS2S1Base_r1 [1] 2,7,0
+              - LNJS2S2 [2] 3,9,5
+            - Tooth_r9 [1] 2,10,0
+            - Tooth_r8 [1] 4,0,16
+            - Tumor_r5 [1] 4,4,4
+            - Tooth_r7 [1] 2,10,0
+      - BackLip [1] 38,10,20
+        - BackTeeth
+          - ToothPlane_r8 [1] 24,5,0
+          - ToothPlane_r7 [1] 24,5,0
+          - ToothPlane_r6 [1] 34,5,0
+          - ToothPlane_r5 [1] 20,5,0
+      - FrontLip [1] 38,10,20
+        - FrontTeeth
+          - ToothPlane_r4 [1] 24,5,0
+          - ToothPlane_r3 [1] 24,5,0
+          - ToothPlane_r2 [1] 24,5,0
+          - ToothPlane_r1 [1] 20,5,0
+    - CenterBottomLeft_r1 [1] 2,52,70
+
+## hivetumor (283 parts)
+
+- part0
+  - TumorBase
+    - TumorGroup2
+      - Tumor8_r1 [1] 8,8,8
+      - Tumor7_r1 [1] 9,9,9
+      - Tumor5_r2 [1] 11,11,11
+      - Tumor6_r2 [1] 7,7,7
+    - TumorGroup3
+      - Tumor9_r1 [1] 8,7,8
+      - Tumor10_r1 [1] 9,9,9
+      - Tumor12_r1 [1] 8,8,8
+      - Tumor11_r1 [1] 11,11,11
+      - Tumor13_r1 [1] 7,7,7
+    - TumorGroup1
+      - Tumor1_r2 [1] 14,14,14
+      - Tumor2_r2 [1] 13,13,13
+      - Tumor4_r2 [1] 11,11,11
+      - Tumor3_r2 [1] 11,11,11
+    - TumorGroup4
+      - Tumor16_r1 [1] 8,8,8
+      - Tumor15_r1 [1] 9,9,9
+      - Tumor14_r1 [1] 15,15,15
+    - Ribs
+      - LeftRibs
+        - ribJoint8
+          - Rib8 [1] 2,7,2
+            - Rib6Seg4 [1] 2,7,2
+        - ribJoint7
+          - Rib7 [1] 2,7,2
+            - Rib6Seg3 [1] 2,7,2
+      - BackRibs
+        - ribJoint6
+          - Rib6 [1] 2,7,2
+            - Rib6Seg2 [1] 2,7,2
+        - ribJoint5
+          - Rib5 [1] 2,7,2
+            - Rib5Seg2 [1] 2,7,2
+        - ribJoint4
+          - Rib4 [1] 2,7,2
+            - Rib4Seg2 [1] 2,7,2
+      - RightRibs
+        - ribJoint10
+          - Rib10 [1] 2,7,2
+            - Rib6Seg6 [1] 2,7,2
+      - FrontRibs
+        - ribJoint2
+          - Rib2 [1] 2,7,2
+            - Rib2Seg2 [1] 2,7,2
+        - ribJoint
+          - Rib1 [1] 2,7,2
+            - Rib1Seg2 [1] 2,7,2
+        - ribJoint3
+          - Rib3 [1] 2,7,2
+            - Rib3Seg2 [1] 2,7,2
+    - TumorGroup5
+      - Tumor17_r1 [1] 11,11,11
+      - Tumor18_r1 [1] 7,7,7
+  - MainTendril
+    - T3Body1 [1] 4,6,7
+      - Arm_r1 [2] 4,8,4
+      - T3Body2 [1] 4,6,7
+        - BodyTop_r1 [1] 5,6,8
+        - Arm_r2 [1] 4,8,4
+        - T3Body3
+          - T3Body3TorsoFungus
+          - T3Body4
+            - BodyBase_r3 [1] 4,6,7
+            - BodyTop_r2 [1] 5,6,8
+            - T3Body4Head
+              - T3Body4HeadCrown
+                - Petal3_r4 [1] 6,0,6
+                - Petal2_r4 [1] 6,0,6
+                - Petal5_r2 [1] 6,0,6
+                - Petal4_r4 [1] 6,0,6
+              - Jaw_r3 [1] 8,1,8
+              - Head_r3 [1] 8,7,8
+            - T3Body4Ribs
+              - T3Rib4
+                - Rib4Seg1_r1 [1] 2,7,2
+              - T3Rib5
+                - T3Rib5Seg2
+                  - T3Rib5Seg3
+                    - Rib5Seg3_r1 [1] 2,6,2
+                  - Rib5Seg2_r1 [1] 2,6,2
+                - Rib5Seg1_r1 [1] 2,5,2
+              - T3Rib2
+                - Rib2Seg1_r1 [1] 2,9,2
+              - T3Rib3
+                - Rib3Seg1_r1 [1] 2,6,2
+                - T3Rib3Seg2
+                  - Rib3Seg2_r1 [1] 2,8,2
+                  - T3Rib3Seg3
+    - BiomassBaseT3
+      - Biomass_r1 [1] 9,9,9
+      - Biomass_r2 [1] 7,7,7
+      - Biomass_r3 [1] 8,8,8
+      - Biomass_r4 [1] 11,11,11
+  - HivetumorBody
+    - MainBodyBase
+      - SearchingBody
+        - PetalCrown3
+          - Petal4_r1 [1] 6,0,6
+          - Petal3_r1 [1] 6,0,6
+          - Petal2_r1 [1] 6,0,6
+          - Petal5_r1 [1] 6,0,6
+        - SearchingBiomass
+          - BiomassStrands6_r1 [1] 0,8,6
+        - SearchingMainBody
+          - Head_r2 [1] 8,7,8
+          - BodyBase_r2 [1] 4,6,7
+          - Tongue [1] 4,1,6
+            - Tongue2 [1] 3,1,6
+              - Tongue3 [1] 2,1,5
+          - RightArm_r2 [1] 4,8,4
+          - LeftArm_r2 [1] 4,8,4
+          - Jaw_r2 [1] 8,1,8
+          - BodyMain_r2 [1] 5,6,8
+      - BiomassClumps
+        - BiomassClump5
+          - BiomassTumor13_r1 [1] 4,5,4
+          - BiomassTumor15_r1 [1] 3,4,4
+          - BiomassTumor14_r1 [1] 3,5,4
+        - BiomassClump6
+          - BiomassTumor17_r1 [1] 3,5,4
+          - BiomassTumor18_r1 [1] 3,4,4
+          - BiomassTumor16_r1 [1] 4,5,4
+        - BiomassClump3
+          - BiomassTumor9_r1 [1] 3,4,4
+          - BiomassTumor8_r1 [1] 3,5,4
+          - BiomassTumor10_r1 [1] 3,3,3
+          - BiomassTumor7_r1 [1] 4,5,4
+        - BiomassClump4
+          - BiomassTumor12_r1 [1] 3,4,4
+          - BiomassTumor11_r1 [1] 4,5,4
+        - BiomassClump7
+          - BiomassTumor20_r1 [1] 3,3,3
+          - BiomassTumor19_r1 [1] 4,4,4
+        - BiomassClump8
+          - BiomassTumor21_r1 [1] 6,6,6
+          - BiomassTumor22_r1 [1] 5,5,5
+        - BiomassClump1
+          - BiomassTumor1_r1 [1] 5,5,5
+          - BiomassTumor2_r1 [1] 4,5,4
+          - BiomassTumor3_r1 [1] 5,4,5
+        - BiomassClump2
+          - BiomassTumor5_r1 [1] 3,5,4
+          - BiomassTumor4_r1 [1] 4,5,4
+          - BiomassTumor6_r1 [1] 3,4,4
+      - DetailSegments
+        - TopFront_r1 [1] 20,12,1
+        - TopRight_r1 [1] 2,12,22
+        - BottomLeft_r1 [1] 2,8,24
+        - BottomBack_r1 [1] 22,8,1
+        - BottomRight_r1 [1] 2,8,24
+        - TopLeft_r1 [1] 2,12,17
+        - TopBack_r1 [1] 12,12,1
+        - BottomFront_r1 [1] 22,8,1
+      - Brains
+        - Brain6
+          - Left_r1 [1] 3,5,8
+          - Right_r3 [1] 3,5,8
+        - Brain7 [1] 3,5,8
+          - Left_r2 [1] 3,5,8
+        - Brain8 [1] 6,5,8
+        - Brain9 [3] 6,5,8
+        - Brain2 [1] 6,5,8
+          - Right_r2 [1] 3,5,8
+        - Brain3 [3] 6,5,8
+        - Brain10
+          - Center_r1 [1] 6,5,8
+          - Left_r3 [1] 3,5,8
+        - Brain4 [3] 6,5,8
+        - Brain5 [1] 3,5,8
+        - Brain1 [2] 6,5,8
+          - Right_r1 [1] 3,5,8
+      - ExtraHeads
+        - Head2_r1 [1] 8,7,8
+        - Head1_r1 [1] 8,7,8
+      - ClawingBody
+        - ClawingBiomass
+          - BiomassStrands2_r1 [1] 0,5,12
+          - BiomassStrands3_r1 [1] 0,5,12
+          - BiomassStrands1_r1 [1] 0,4,7
+          - BiomassStrands5_r1 [1] 0,5,8
+          - BiomassStrands4_r1 [1] 0,5,10
+        - ClawingMainBody
+          - Head_r1 [1] 8,7,8
+          - RightArm_r1 [1] 4,8,4
+          - LeftArm_r1 [1] 4,8,4
+          - BodyBase_r1 [1] 4,6,7
+          - Jaw_r1 [1] 8,1,8
+          - BodyMain_r1 [1] 5,6,8
+      - BodyBase [5] 22,12,23
+    - TumorStick
+      - StickEnd
+        - StickEnd_r1 [1] 3,16,3
+        - Tumors
+          - Tumor1_r1 [1] 5,5,5
+          - Tumor3_r1 [1] 3,3,3
+          - Tumor2_r1 [1] 4,4,4
+          - Tumor5_r1 [1] 4,4,4
+          - Tumor4_r1 [1] 5,5,5
+          - Tumor6_r1 [1] 4,4,4
+      - StickBase_r1 [1] 3,20,3
+    - Roots
+      - Root4
+        - Root4Base_r1 [1] 2,9,2
+        - Root4Mid
+          - Root4End
+            - Root4EndPart_r1 [1] 1,10,1
+          - Root4MidPart_r1 [1] 2,10,2
+      - Root3
+        - Root3Base_r1 [1] 2,9,2
+        - Root3Mid
+          - Root3MidPart_r1 [1] 2,10,2
+          - Root3End
+            - Root3EndPart_r1 [1] 1,10,1
+      - Root2
+        - Root2Mid
+          - Root2End
+            - Root2EndPart_r1 [1] 1,10,1
+          - Root2MidPart_r1 [1] 2,10,2
+        - Root2Base_r1 [1] 2,9,2
+      - Root1
+        - Root1Mid
+          - Root1MidPart_r1 [1] 2,10,2
+          - Root1End
+            - Root1EndPart_r1 [1] 1,10,1
+        - Root1Base_r1 [1] 2,9,2
+    - Foliage
+      - PetalCrowns
+        - PetalCrown1
+          - Petal4_r2 [1] 6,0,6
+          - Petal3_r2 [1] 6,0,6
+          - Petal2_r2 [1] 6,0,6
+          - Petal1_r1 [1] 6,0,6
+        - PetalCrown2
+          - Petal1_r2 [1] 6,0,6
+          - Petal2_r3 [1] 6,0,6
+          - Petal4_r3 [1] 6,0,6
+          - Petal3_r3 [1] 6,0,6
+      - FungalBloom
+        - NorthPetal_r1 [1] 16,0,16
+        - BloomFoliage1_r1 [1] 0,12,14
+        - BloomFoliage2_r1 [1] 0,12,14
+        - EastPetal_r1 [1] 16,0,16
+        - WestPetal_r1 [1] 16,0,16
+        - SouthPetal_r1 [1] 16,0,16
+      - SparseFoliage
+        - Foliage4_r1 [1] 7,0,7
+        - Foliage5_r1 [1] 7,0,7
+        - Foliage7_r1 [1] 7,0,7
+        - Foliage6_r1 [1] 7,0,7
+        - Foliage3_r1 [1] 7,0,7
+        - Foliage10_r1 [1] 7,0,7
+        - Foliage2_r1 [1] 7,0,7
+        - Foliage1_r1 [1] 7,0,7
+        - Foliage9_r1 [1] 7,0,7
+        - Foliage8_r1 [1] 7,0,7
+    - Face
+      - Eye
+        - Pupil
+          - Pupil_r1 [1] 5,5,1
+        - EyeMain_r1 [1] 8,8,8
+      - Jaws
+        - UpperJaw
+          - UpperRightHead
+            - UpperRightHeadTeeth_r1 [2] 8,2,3
+          - UpperCenterHead_r1 [1] 8,6,8
+        - LowerJaw
+          - LowerCenterHead_r1 [1] 8,6,8
+    - BrokenCoolingSystem
+      - UpperHinge
+        - UpperRightRidgeTip_r1 [1] 3,4,8
+        - UpperRightRidge_r1 [1] 3,4,12
+        - UpperRidge_r1 [1] 3,16,4
+        - UpperMembrane_r1 [1] 0,16,12
+      - LowerRidge_r1 [1] 3,13,4
+      - MiddleHinge
+        - MiddleMembrane_r1 [1] 0,13,12
+        - MiddleLeftRidge_r1 [1] 3,4,12
+        - MiddleLeftRidgeTip_r1 [1] 3,4,8
+        - MiddleRidge_r1 [1] 3,13,4
+
+## hohlfresser (431 parts)
+
+- part0
+  - Body
+    - Front
+      - Front_r2 [1] 6,31,11
+      - Front_r3 [1] 41,7,11
+      - Front_r1 [1] 4,27,11
+      - Front_r8 [1] 33,6,11
+      - Front_r6 [1] 5,29,11
+      - Front_r7 [1] 22,4,11
+      - Front_r4 [1] 5,10,11
+      - Front_r5 [1] 5,27,11
+    - Back
+      - Back_r1 [1] 8,42,23
+      - EndRight_r1 [2] 7,24,2
+      - EndTumors
+        - RightTumor_r8 [1] 13,13,13
+        - RightTumor_r9 [1] 15,15,15
+        - RightTumor_r6 [1] 12,12,12
+        - RightTumor_r7 [1] 15,15,15
+        - RightTumor_r4 [1] 12,12,12
+        - RightTumor_r5 [1] 13,13,13
+        - RightTumor_r10 [1] 19,19,19
+        - RightTumor_r2 [1] 11,11,11
+        - RightTumor_r11 [1] 11,11,11
+        - RightTumor_r3 [1] 10,10,10
+        - RightTumor_r12 [1] 11,11,11
+        - RightTumor_r1 [1] 11,11,11
+        - RightTumor_r13 [1] 12,12,12
+        - RightTumor_r14 [1] 14,14,14
+        - RightTumor_r15 [1] 16,16,16
+        - RightTumor_r16 [1] 16,16,16
+      - EndRoot [1] 20,8,8
+        - ESeg1 [1] 23,6,6
+          - ESeg2 [1] 16,4,4
+            - ESeg3 [1] 16,3,3
+      - BackDetails
+        - Root1 [1] 20,7,7
+          - R1Seg2 [1] 22,5,5
+            - R1Seg3 [1] 14,3,3
+              - R1Seg4 [1] 13,2,2
+        - ArmoredTumors1
+          - Tumors_r2 [1] 8,8,8
+          - Tumors_r1 [1] 7,7,7
+          - Tumors_r4 [1] 10,10,10
+          - Tumors_r3 [1] 15,15,15
+          - FungalArmor [3] 4,2,10
+            - plane_r7 [1] 6,9,0
+            - Plate_r15 [1] 3,3,2
+            - plane_r8 [1] 6,9,0
+            - Plate_r16 [1] 3,4,2
+            - plane_r9 [1] 6,9,0
+            - Plate_r17 [1] 4,7,3
+            - plate_r18 [2] 2,3,2
+            - plate_r19 [2] 2,5,3
+            - plate_r23 [1] 3,3,3
+            - plate_r24 [1] 4,7,4
+            - plate_r21 [1] 3,5,3
+            - plate_r22 [1] 4,5,3
+            - plate_r14 [1] 5,2,2
+            - CalciumArmor_r3 [1] 5,3,4
+            - CalciumArmor_r2 [1] 5,3,4
+            - CalciumArmor_r4 [1] 5,3,4
+            - plate_r20 [1] 2,9,5
+            - CalciumArmor_r1 [1] 5,3,4
+        - BackTumors
+          - Tumor_r20 [1] 13,13,13
+          - Tumor_r21 [1] 15,15,15
+          - Tumor_r15 [1] 11,11,11
+          - Tumor_r16 [1] 11,11,11
+          - Tumor_r13 [1] 10,10,10
+          - Tumor_r14 [1] 7,7,7
+          - Tumor_r19 [1] 11,11,11
+          - Tumor_r17 [1] 14,14,14
+          - Tumor_r18 [1] 11,11,11
+      - Back_r4 [1] 38,6,34
+      - Back_r5 [1] 42,6,29
+      - Back_r2 [1] 56,6,23
+      - Back_r3 [1] 7,38,33
+    - Middle
+      - TopSpine
+        - rib1
+          - rBase_r1 [1] 32,4,8
+          - rBase_r3 [1] 24,4,8
+          - rBase_r2 [1] 10,4,8
+        - plane_r1 [1] 0,16,12
+        - Ridge_r2 [1] 4,3,11
+        - Base_r16 [1] 12,7,32
+        - plane_r2 [1] 0,16,12
+        - Ridge_r3 [2] 4,3,11
+        - plane_r3 [1] 0,16,12
+        - Ridge_r1 [1] 4,3,11
+      - Middle_r5 [1] 27,7,40
+      - Middle_r4 [1] 33,7,33
+      - Middle_r7 [1] 44,8,33
+      - TopSpine2
+        - Ridge_r6 [2] 4,3,11
+        - Ridge_r4 [1] 4,3,11
+        - Ridge_r5 [1] 4,3,11
+        - Base_r17 [1] 12,7,32
+        - plane_r4 [1] 0,16,12
+        - plane_r5 [1] 0,16,12
+        - plane_r6 [1] 0,16,12
+      - Middle_r6 [1] 21,7,33
+      - Middle_r1 [1] 8,25,33
+      - Middle_r3 [1] 6,54,33
+      - Middle_r2 [1] 8,42,29
+      - MiddleDetails
+        - Tendril1 [1] 4,4,11
+          - Seg2Tendril1 [1] 3,3,10
+            - Seg3Tendril1 [1] 2,2,10
+              - Seg4Tendril1 [1] 1,1,10
+        - ArmoredTumors4
+          - tumor_r10 [1] 8,8,8
+          - tumor_r11 [1] 7,7,7
+          - tumor_r12 [1] 9,9,9
+          - tumor_r9 [1] 8,8,8
+          - armor3 [3] 4,2,10
+            - plate_r10 [1] 5,2,2
+            - Plate_r11 [1] 3,3,2
+            - Plate_r12 [1] 3,4,2
+            - Plate_r13 [1] 4,7,3
+        - Tendril5
+          - Seg2Tendril5 [1] 2,2,10
+            - Seg3Tendril5 [1] 1,1,10
+          - TendrilSeg_r3 [1] 3,3,11
+        - Tendril4 [1] 4,4,11
+          - Seg2Tendril4 [1] 3,3,10
+            - Seg3Tendril4 [1] 2,2,10
+              - Seg4Tendril3 [1] 1,1,10
+        - ArmoredTumors2
+          - tumor_r4 [1] 9,9,9
+          - tumor_r3 [1] 7,7,7
+          - tumor_r2 [1] 8,8,8
+          - armor [3] 4,2,10
+            - plate_r1 [1] 5,2,2
+            - Plate_r4 [1] 4,7,3
+            - Plate_r3 [1] 3,4,2
+            - Plate_r2 [1] 3,3,2
+          - tumor_r1 [1] 8,8,8
+        - Tendril3 [1] 4,4,11
+          - Seg2Tendril3 [1] 3,3,10
+            - Seg3Tendril3 [1] 2,2,10
+              - Seg4Tendril2 [1] 1,1,10
+        - ArmoredTumors3
+          - tumor_r5 [1] 8,8,8
+          - tumor_r8 [1] 10,10,10
+          - tumor_r7 [1] 7,7,7
+          - tumor_r6 [1] 8,8,8
+          - armor2 [2] 2,2,8
+            - plate_r5 [1] 5,2,2
+            - plate_r6 [1] 4,2,10
+            - Plate_r9 [1] 4,7,3
+            - Plate_r8 [1] 4,6,2
+            - Plate_r7 [1] 3,3,2
+        - Bloom [1] 8,6,8
+          - SPetal_r2 [1] 16,0,16
+          - EPetal_r2 [1] 16,0,16
+          - NPetal_r2 [1] 16,0,16
+          - WPetal_r2 [1] 16,0,16
+        - Tendril2 [1] 3,3,10
+          - Seg2Tendril2
+            - TendrilSeg_r1 [1] 2,2,10
+            - Seg3Tendril2
+              - TendrilSeg_r2 [1] 1,1,10
+        - Tendril7
+          - RootSeg_r1 [1] 12,6,6
+          - Seg2Tendril7 [1] 16,4,4
+            - Seg3Tendril7 [1] 16,2,2
+              - Seg4Tendril7 [1] 14,1,1
+        - Tendril6
+          - Seg2Tendril6 [1] 2,2,10
+            - Seg3Tendril6 [1] 1,1,10
+          - TendrilSeg_r4 [1] 3,3,11
+        - RidgeBodies
+          - Body19
+            - TorsoBottom_r1 [1] 8,4,6
+            - TorsoBase_r2 [1] 7,3,6
+            - Leg_r4 [1] 3,3,10
+            - Arm_r18 [1] 3,3,8
+            - Arm_r19 [1] 3,3,8
+            - Head_r4 [1] 8,8,7
+          - Body18 [1] 3,6,7
+            - TorsoTop_r2 [1] 4,7,8
+            - Leg_r3 [1] 3,6,3
+            - Leg_r2 [1] 3,8,3
+            - Arm_r17 [1] 3,7,3
+            - Head_r3 [1] 8,7,8
+          - Body29
+            - TorsoBottom_r6 [1] 8,4,6
+            - Arm_r31 [1] 3,3,8
+            - Leg_r11 [1] 3,3,10
+            - TorsoBase_r11 [1] 7,3,6
+          - Body17
+            - TorsoTop_r1 [2] 6,4,8
+            - TorsoBase_r1 [1] 6,3,7
+            - Arm_r15 [1] 9,3,3
+            - Jaw_r1 [1] 1,8,8
+            - Arm_r16 [1] 6,3,3
+            - Leg_r1 [1] 8,3,3
+          - Body28
+            - TorsoBottom_r4 [1] 9,3,3
+            - TorsoBottom_r5 [1] 6,5,8
+            - Head_r10 [1] 8,8,8
+            - TorsoBase_r10 [1] 6,3,8
+          - Body23
+            - TorsoBase_r5 [1] 7,3,6
+            - Arm_r23 [1] 3,3,8
+            - Arm_r24 [1] 3,3,8
+            - Head_r7 [1] 8,8,7
+            - TorsoTop_r6 [1] 8,4,6
+          - Body22
+            - TorsoBase_r4 [1] 7,3,6
+            - TorsoBottom_r2 [1] 8,4,6
+            - Arm_r21 [1] 3,3,8
+            - Arm_r22 [1] 3,3,6
+            - Leg_r6 [1] 3,3,10
+          - Body21
+            - TorsoBase_r3 [1] 6,3,8
+            - TorsoTop_r4 [1] 9,3,3
+            - Head_r6 [1] 8,8,8
+            - TorsoTop_r5 [1] 6,5,8
+          - Body20 [1] 7,3,6
+            - TorsoTop_r3 [1] 8,4,6
+            - Arm_r20 [1] 3,3,9
+            - Leg_r5 [1] 8,3,3
+            - Head_r5 [1] 8,7,8
+          - Body27
+            - Arm_r30 [1] 3,3,8
+            - TorsoTop_r9 [1] 8,4,6
+            - Leg_r10 [1] 3,3,10
+            - TorsoBase_r9 [1] 7,3,6
+          - Body26
+            - Leg_r9 [1] 3,3,10
+            - TorsoBase_r8 [1] 7,3,6
+            - Arm_r29 [1] 3,3,8
+            - TorsoTop_r8 [1] 8,4,6
+            - Arm_r28 [1] 3,3,8
+          - Body25
+            - TorsoBottom_r3 [1] 8,4,6
+            - Leg_r8 [1] 3,3,10
+            - Leg_r7 [1] 3,3,10
+            - Arm_r26 [1] 3,3,8
+            - Head_r9 [1] 8,8,7
+            - TorsoBase_r7 [1] 7,3,6
+            - Arm_r27 [1] 3,3,8
+          - Body24
+            - TorsoBase_r6 [1] 7,3,6
+            - Arm_r25 [1] 3,3,8
+            - Head_r8 [1] 8,8,8
+            - TorsoTop_r7 [1] 8,4,6
+  - TrueHead
+    - Outer
+      - OuterRingDetails
+        - Body8
+          - Head_r2 [1] 8,6,8
+        - Body9
+          - Teeth_r22 [2] 8,2,2
+          - Torso_r7 [1] 8,6,7
+          - Arm_r9 [1] 4,4,8
+        - Body6
+          - Teeth_r20 [2] 8,2,2
+          - Arm_r6 [1] 4,4,8
+          - Torso_r5 [1] 8,6,7
+        - Tongue [1] 5,1,7
+          - TongueSeg2 [1] 4,1,5
+            - TongueSeg3 [1] 4,1,5
+              - TongueSeg4 [1] 3,1,5
+                - TongueSeg5 [1] 2,1,5
+        - Body7
+          - Teeth_r21 [2] 8,2,2
+          - Torso_r6 [1] 8,6,7
+          - LowerTorso_r3 [1] 7,5,7
+          - Arm_r7 [1] 4,4,8
+          - Arm_r8 [1] 4,4,8
+        - Body4
+          - Arm_r4 [1] 4,4,8
+          - Arm_r5 [1] 4,4,8
+          - Torso_r3 [1] 8,6,7
+          - LowerTorso_r2 [1] 7,5,7
+          - Teeth_r18 [2] 8,2,2
+        - Body5
+          - Torso_r4 [1] 8,5,7
+          - Teeth_r19 [2] 8,2,2
+        - Body2
+          - Head_r1 [1] 8,6,8
+        - Body3
+          - Arm_r3 [1] 4,4,8
+          - Teeth_r17 [2] 8,2,2
+          - Torso_r2 [1] 8,6,7
+        - FungalBloom
+          - Plane2_r1 [1] 0,12,14
+          - Plane1_r1 [1] 0,12,14
+          - Spetal_r1 [1] 16,0,16
+          - Npetal_r1 [1] 16,0,16
+          - Wpetal_r1 [1] 16,0,16
+          - Epetal_r1 [1] 16,0,16
+        - Teeth
+          - t_r19 [1] 0,15,4
+          - t_r18 [1] 0,15,5
+          - t_r17 [1] 0,10,4
+          - t_r16 [1] 0,10,4
+          - t_r9 [1] 0,15,4
+          - t_r15 [1] 0,12,5
+          - t_r14 [1] 0,10,4
+          - t_r7 [1] 0,19,4
+          - t_r13 [1] 0,15,4
+          - t_r8 [1] 0,10,4
+          - t_r12 [1] 0,15,5
+          - t_r11 [1] 0,10,4
+          - t_r10 [1] 0,15,5
+          - t_r21 [1] 0,15,4
+          - t_r20 [1] 0,15,5
+          - t_r5 [1] 0,15,4
+          - t_r6 [1] 0,12,5
+          - t_r3 [1] 0,10,4
+          - t_r4 [1] 0,15,5
+          - t_r1 [1] 0,10,4
+          - t_r2 [1] 0,12,4
+        - Body12
+          - Torso_r10 [1] 8,6,7
+          - Teeth_r25 [2] 8,2,2
+        - Body11
+          - Torso_r9 [1] 8,6,7
+          - Teeth_r24 [2] 8,2,2
+          - Arm_r11 [1] 4,4,8
+        - Body10
+          - Arm_r10 [1] 4,4,8
+          - Torso_r8 [1] 8,6,7
+          - Teeth_r23 [2] 8,2,2
+        - Biomass
+          - Biomass_r1 [1] 9,9,9
+          - Biomass_r2 [1] 7,7,7
+        - Body16
+          - Torso_r13 [1] 8,6,7
+          - Teeth_r29 [2] 8,2,2
+        - Body15
+          - Torso_r12 [1] 8,6,7
+          - Arm_r14 [1] 4,4,8
+          - Teeth_r28 [2] 8,2,2
+        - Body14
+          - Torso_r11 [1] 8,6,7
+          - Teeth_r27 [2] 8,2,2
+          - Arm_r12 [1] 4,4,8
+          - Arm_r13 [1] 4,4,8
+        - Body13
+          - Teeth_r26 [2] 8,2,2
+        - Body1
+          - Arm_r1 [1] 4,4,8
+          - Arm_r2 [1] 4,4,8
+          - Teeth_r16 [2] 8,2,2
+          - LowerTorso_r1 [1] 7,5,7
+          - Torso_r1 [1] 8,6,7
+      - OuterRingBase
+        - Rim
+          - Base_r9 [1] 2,22,10
+          - Base_r10 [1] 16,2,10
+          - Base_r8 [1] 19,2,10
+          - Base_r14 [1] 24,2,10
+          - Base_r13 [1] 2,29,10
+          - Base_r7 [1] 9,2,10
+          - Base_r12 [1] 2,20,10
+          - Base_r11 [1] 24,3,10
+          - Base_r15 [1] 21,2,10
+        - Internal
+          - In_r1 [1] 11,2,15
+          - In_r2 [1] 19,2,14
+          - In_r3 [3] 1,4,5
+          - In_r4 [1] 3,22,11
+          - In_r11 [1] 24,2,10
+          - In_r5 [1] 2,2,6
+          - In_r12 [1] 21,2,10
+          - In_r6 [1] 17,2,10
+          - In_r7 [2] 5,1,2
+          - In_r8 [1] 22,3,10
+          - In_r9 [1] 2,24,14
+          - In_r10 [1] 2,27,10
+        - Raised
+          - Raised_r16 [1] 21,2,15
+          - Raised_r11 [1] 16,2,15
+          - Raised_r9 [1] 19,2,15
+          - Raised_r10 [1] 3,22,15
+          - Raised_r8 [1] 10,2,15
+          - Raised_r15 [1] 24,2,15
+          - Raised_r14 [1] 2,31,15
+          - Raised_r13 [1] 2,21,15
+          - Raised_r12 [1] 24,3,15
+    - Inner
+      - InnerRingBase [1] 22,20,2
+        - InnerRim [1] 19,2,6
+          - teeth_r3 [1] 0,13,3
+          - Base_r5 [1] 24,2,6
+          - Base_r4 [1] 2,14,6
+          - Base_r6 [1] 2,14,6
+          - Base_r1 [1] 3,13,6
+          - Base_r3 [1] 2,14,6
+          - Base_r2 [1] 11,2,6
+          - teeth_r1 [1] 0,13,3
+          - teeth_r2 [1] 0,11,3
+        - InnerRaise
+          - Raised_r2 [1] 3,13,9
+          - Raised_r1 [1] 2,15,9
+          - InnerRingDetail
+            - teeth_r5 [1] 0,10,3
+            - teeth_r6 [1] 0,9,3
+            - teeth_r4 [1] 0,9,3
+            - teeth_r9 [1] 0,12,3
+            - teeth_r7 [1] 0,13,3
+            - teeth_r8 [1] 0,13,3
+            - teeth_r14 [1] 0,12,3
+            - teeth_r15 [1] 0,12,3
+            - teeth_r12 [1] 0,13,3
+            - teeth_r13 [1] 0,13,3
+            - teeth_r10 [1] 0,12,3
+            - teeth_r11 [1] 0,12,3
+          - LargeTongue [1] 7,2,9
+            - LargeTongueS2 [1] 6,2,7
+              - LargeTongueS3 [1] 5,2,7
+                - LargeTongueS4 [1] 3,1,7
+          - LargeTongue3 [1] 10,3,13
+            - LargeTongueS8 [1] 8,2,11
+              - LargeTongueS9 [1] 6,2,11
+                - LargeTongueS10 [1] 3,1,11
+          - Raised_r7 [1] 24,2,9
+          - Raised_r6 [1] 2,14,9
+          - Raised_r5 [1] 2,14,9
+          - Raised_r4 [1] 19,2,9
+          - Raised_r3 [1] 11,2,9
+          - LargeTongue2 [1] 10,3,11
+            - LargeTongueS5 [1] 8,2,9
+              - LargeTongueS6 [1] 6,2,9
+                - LargeTongueS7 [1] 3,1,9
+
+## hohlfresser_seg (142 parts)
+
+- part0
+  - Tendrils
+    - Tendril1 [1] 4,4,11
+      - Seg2Tendril1 [1] 3,3,10
+        - Seg3Tendril1 [1] 2,2,10
+          - Seg4Tendril1 [1] 1,1,10
+    - Tendril3 [1] 4,4,11
+      - Seg2Tendril3 [1] 3,3,10
+        - Seg3Tendril3 [1] 2,2,10
+          - Seg4Tendril2 [1] 1,1,10
+    - Tendril2 [1] 3,3,10
+      - Seg2Tendril2
+        - TendrilSeg_r1 [1] 2,2,10
+        - Seg3Tendril2
+          - TendrilSeg_r2 [1] 1,1,10
+    - Root1 [1] 20,7,7
+      - R1Seg2 [1] 22,5,5
+        - R1Seg3 [1] 14,3,3
+          - R1Seg4
+            - RootSeg_r1 [1] 13,2,2
+  - SpineSide
+    - Base_r1 [1] 12,7,32
+    - plane_r1 [1] 0,16,12
+    - Ridge_r2 [1] 4,3,11
+    - plane_r2 [1] 0,16,12
+    - Ridge_r3 [2] 4,3,11
+    - plane_r3 [1] 0,16,12
+    - Ridge_r1 [1] 4,3,11
+  - SpineTop
+    - rib2
+      - rBase_r1 [1] 32,4,8
+      - rBase_r3 [1] 24,4,8
+      - rBase_r2 [1] 10,4,8
+    - Ridge_r6 [2] 4,3,11
+    - Ridge_r4 [1] 4,3,11
+    - Ridge_r5 [1] 4,3,11
+    - Base_r2 [1] 12,7,32
+    - plane_r4 [1] 0,16,12
+    - plane_r5 [1] 0,16,12
+    - plane_r6 [1] 0,16,12
+  - Bloom [1] 8,6,8
+    - SPetal_r1 [1] 16,0,16
+    - EPetal_r1 [1] 16,0,16
+    - NPetal_r1 [1] 16,0,16
+    - WPetal_r1 [1] 16,0,16
+  - Tumors2
+    - Tumor_r22 [1] 13,13,13
+    - Tumor_r23 [1] 15,15,15
+    - Tumor_r20 [1] 12,12,12
+    - Tumor_r21 [1] 15,15,15
+    - Tumor_r26 [1] 11,11,11
+    - Tumor_r16 [1] 11,11,11
+    - Tumor_r27 [1] 12,12,12
+    - Tumor_r24 [1] 19,19,19
+    - Tumor_r25 [1] 11,11,11
+    - Tumor_r19 [1] 13,13,13
+    - Tumor_r17 [1] 11,11,11
+    - Tumor_r28 [1] 14,14,14
+    - Tumor_r18 [1] 12,12,12
+    - Tumor_r29 [1] 16,16,16
+    - Tumor_r30 [1] 16,16,16
+  - Bodies
+    - Body30
+      - TorsoTop_r1 [2] 6,4,8
+      - Arm_r1 [1] 9,3,3
+      - Arm_r2 [1] 6,3,3
+      - TorsoBase_r1 [1] 6,3,7
+      - Jaw_r1 [1] 1,8,8
+      - Leg_r1 [1] 8,3,3
+    - Body34
+      - TorsoBase_r3 [1] 6,3,8
+      - TorsoTop_r4 [1] 9,3,3
+      - TorsoTop_r5 [1] 6,5,8
+      - Head_r4 [1] 8,8,8
+    - Body33 [1] 7,3,6
+      - TorsoTop_r3 [1] 8,4,6
+      - Arm_r6 [1] 3,3,9
+      - Leg_r5 [1] 8,3,3
+      - Head_r3 [1] 8,7,8
+    - Body32
+      - Head_r2 [1] 8,8,7
+      - Arm_r4 [1] 3,3,8
+      - TorsoBottom_r1 [1] 8,4,6
+      - Arm_r5 [1] 3,3,8
+      - TorsoBase_r2 [1] 7,3,6
+      - Leg_r4 [1] 3,3,10
+    - Body31 [1] 3,6,7
+      - Arm_r3 [1] 3,7,3
+      - Head_r1 [1] 8,7,8
+      - TorsoTop_r2 [1] 4,7,8
+      - Leg_r3 [1] 3,6,3
+      - Leg_r2 [1] 3,8,3
+    - Body37
+      - TorsoBase_r6 [1] 7,3,6
+      - Arm_r11 [1] 3,3,8
+      - TorsoTop_r7 [1] 8,4,6
+      - Head_r6 [1] 8,8,8
+    - Body36
+      - TorsoBase_r5 [1] 7,3,6
+      - Arm_r10 [1] 3,3,8
+      - Head_r5 [1] 8,8,7
+      - Arm_r9 [1] 3,3,8
+      - TorsoTop_r6 [1] 8,4,6
+    - Body35
+      - TorsoBase_r4 [1] 7,3,6
+      - TorsoBottom_r2 [1] 8,4,6
+      - Leg_r6 [1] 3,3,10
+      - Arm_r7 [1] 3,3,8
+      - Arm_r8 [1] 3,3,6
+  - SegBase
+    - s_r7 [1] 24,8,54
+    - s_r6 [1] 34,8,54
+    - s_r8 [1] 27,8,54
+    - s1_r1 [1] 33,8,26
+    - s2_r1 [1] 33,8,30
+    - front_r4 [1] 9,15,2
+    - front_r5 [1] 36,11,2
+    - front_r6 [1] 40,38,2
+    - s_r3 [1] 8,22,56
+    - front_r1 [1] 6,16,2
+    - s_r2 [1] 8,15,56
+    - front_r2 [1] 40,38,2
+    - s_r5 [1] 20,8,54
+    - front_r3 [1] 33,12,2
+    - s_r4 [1] 22,8,56
+    - s_r1 [1] 30,8,56
+  - Tumors
+    - Tumor_r11 [1] 11,11,11
+    - Tumor_r12 [1] 12,12,12
+    - Tumor_r1 [1] 11,11,11
+    - Tumor_r10 [1] 11,11,11
+    - Tumor_r15 [1] 16,16,16
+    - Tumor_r13 [1] 14,14,14
+    - Tumor_r14 [1] 16,16,16
+    - Tumor_r7 [1] 13,13,13
+    - Tumor_r6 [1] 15,15,15
+    - Tumor_r9 [1] 19,19,19
+    - Tumor_r8 [1] 15,15,15
+    - Tumor_r3 [1] 12,12,12
+    - Tumor_r2 [1] 11,11,11
+    - Tumor_r5 [1] 12,12,12
+    - Tumor_r4 [1] 13,13,13
+
+## hollen (170 parts)
+
+- part0
+  - body [1] 10,8,6
+    - foliage
+      - cube_r95 [1] 7,7,0
+      - cube_r91 [1] 7,7,0
+      - cube_r92 [1] 7,7,0
+      - cube_r93 [1] 7,7,0
+      - cube_r94 [1] 7,7,0
+    - tail [1] 8,6,7
+      - crown1
+        - Petal4_r1 [1] 7,7,0
+        - Petal3_r1 [1] 7,7,0
+        - Petal2_r1 [1] 7,7,0
+        - Petal1_r1 [1] 7,7,0
+      - tail2 [1] 6,4,11
+        - tail3 [1] 4,2,4
+          - splittail [1] 2,2,7
+          - splittail2 [1] 2,2,9
+        - spine5 [1] 2,1,8
+      - vestigialleg [1] 3,3,2
+        - knee [1] 2,2,3
+      - spine4
+        - cube_r1 [1] 2,1,7
+    - body2 [1] 11,9,9
+      - foliage2
+        - Fungus_r7 [1] 7,0,7
+        - Fungus_r8 [1] 7,0,7
+        - Fungus_r5 [1] 7,0,7
+        - Fungus_r6 [1] 7,0,7
+      - upperbody [1] 10,8,8
+        - head [2] 8,5,8 <== eyes
+          - jaw [1] 7,5,1
+            - cube_r40 [1] 2,5,1
+            - cube_r41 [1] 7,2,1
+            - cube_r42 [1] 7,0,2
+            - cube_r43 [1] 7,0,3
+            - cube_r38 [1] 2,5,1
+            - cube_r39 [1] 0,5,1
+            - cube_r44 [1] 7,0,2
+            - cube_r45 [1] 7,0,2
+          - crown2
+            - Petal1_r2 [1] 7,7,0
+            - Petal4_r2 [1] 7,7,0
+            - Petal3_r2 [1] 7,7,0
+            - Petal2_r2 [1] 7,7,0
+          - rightjaw [1] 4,6,1
+            - cube_r20 [1] 4,2,1
+            - cube_r21 [1] 4,0,2
+            - cube_r19 [1] 2,6,1
+            - cube_r18 [1] 2,6,1
+            - cube_r22 [1] 4,0,2
+            - cube_r23 [1] 4,0,2
+          - tongue [1] 4,7,1
+            - tongue2 [1] 3,7,1
+              - tongue3 [1] 2,6,1
+          - leftjaw [1] 4,6,1
+            - cube_r30 [1] 4,2,1
+            - cube_r26 [1] 4,0,2
+            - cube_r27 [1] 4,0,2
+            - cube_r28 [1] 4,0,2
+            - cube_r29 [1] 4,0,2
+            - cube_r24 [1] 2,6,1
+            - cube_r25 [1] 2,6,1
+          - rightsidejaw [1] 4,1,6
+            - cube_r51 [1] 4,2,0
+            - cube_r52 [1] 4,2,0
+            - cube_r50 [1] 4,2,0
+            - cube_r48 [1] 2,1,6
+            - cube_r49 [1] 2,1,6
+            - cube_r46 [1] 4,1,2
+            - cube_r47 [1] 0,2,6
+          - leftsidejaw [1] 4,1,6
+            - cube_r53 [1] 4,1,2
+            - cube_r54 [1] 2,1,6
+            - cube_r60 [1] 4,2,0
+            - cube_r59 [1] 4,2,0
+            - cube_r55 [1] 0,2,6
+            - cube_r56 [1] 2,1,6
+            - cube_r57 [1] 4,2,0
+            - cube_r58 [1] 4,2,0
+          - midjaw [1] 3,5,1
+            - cube_r31 [1] 0,5,2
+            - cube_r32 [1] 2,5,1
+            - cube_r37 [1] 3,0,2
+            - cube_r33 [1] 2,5,1
+            - cube_r34 [1] 3,2,1
+            - cube_r35 [1] 3,0,2
+            - cube_r36 [1] 3,0,2
+        - tumors
+          - cube_r62 [1] 3,3,3
+          - cube_r63 [1] 2,2,2
+          - cube_r61 [1] 3,3,3
+        - rightarm [1] 14,3,3
+          - rightelbowclaw2 [1] 5,7,0
+          - rightelbow [1] 16,2,2
+            - righthand
+              - rightfinger [1] 8,4,0
+              - rightfinger2 [1] 8,4,0
+              - rightfinger3 [1] 8,4,0
+        - spine3
+          - cube_r10 [1] 4,1,1
+          - cube_r4 [1] 1,9,1
+          - cube_r15 [1] 1,9,1
+          - cube_r5 [1] 5,1,1
+          - cube_r16 [1] 4,1,1
+          - cube_r6 [1] 1,9,1
+          - cube_r17 [1] 4,1,1
+          - cube_r7 [1] 4,1,1
+          - cube_r11 [1] 3,1,1
+          - cube_r12 [1] 4,1,1
+          - cube_r2 [4] 3,3,1
+          - cube_r13 [1] 1,9,1
+          - cube_r3 [1] 4,1,1
+          - cube_r14 [1] 5,1,1
+          - cube_r8 [1] 1,9,1
+          - cube_r9 [1] 4,1,1
+        - leftgrabarm [1] 10,2,2
+          - leftgrabelbow [1] 12,2,2
+            - leftgrabhand [1] 13,2,1
+              - leftgrabber [1] 6,17,0
+        - leftarm [1] 14,3,3
+          - leftelbowclaw [1] 5,7,0
+          - leftelbow [1] 16,2,2
+            - lefthand
+              - leftfinger2 [1] 8,4,0
+              - leftfinger3 [1] 8,4,0
+              - leftfinger [1] 8,4,0
+            - armfoliage
+              - Fungus_r3 [1] 7,0,7
+              - Fungus_r4 [1] 7,0,7
+              - Fungus_r1 [1] 7,0,7
+              - Fungus_r2 [1] 7,0,7
+        - rightgrabarm [1] 10,2,2
+          - rightgrabelbow [1] 12,2,2
+            - rightgrabhand [1] 13,2,1
+              - rightgrabber [1] 6,17,0
+      - crown3
+        - Petal1_r3 [1] 7,7,0
+        - Petal2_r3 [1] 7,7,0
+        - Petal4_r3 [1] 7,7,0
+        - Petal3_r3 [1] 7,7,0
+      - spine2
+        - cube_r73 [1] 4,1,1
+        - cube_r74 [1] 4,1,1
+        - cube_r64 [3] 3,4,2
+        - cube_r75 [1] 1,10,1
+        - cube_r65 [1] 6,1,1
+        - cube_r76 [1] 6,1,1
+        - cube_r80 [1] 3,1,4
+        - cube_r70 [1] 1,10,1
+        - cube_r71 [1] 5,1,1
+        - cube_r72 [1] 5,1,1
+        - cube_r66 [1] 1,10,1
+        - cube_r77 [1] 1,10,1
+        - cube_r67 [1] 4,1,1
+        - cube_r78 [1] 5,1,1
+        - cube_r68 [1] 1,10,1
+        - cube_r79 [1] 5,1,1
+        - cube_r69 [1] 6,1,1
+    - spine
+      - cube_r84 [1] 4,1,1
+      - cube_r85 [1] 1,8,1
+      - cube_r86 [1] 5,1,1
+      - cube_r87 [1] 1,9,1
+      - cube_r81 [3] 3,3,1
+      - cube_r82 [1] 4,1,1
+      - cube_r83 [1] 1,9,1
+      - cube_r90 [1] 4,1,1
+      - cube_r88 [1] 5,1,1
+      - cube_r89 [1] 4,1,1
+
+## howit_arm (79 parts)
+
+- part0
+  - RightArm [1] 31,21,21
+    - Body19
+      - Arm_r3 [1] 3,3,7
+      - TorsoBottom_r2 [1] 7,3,6
+      - TorsoBottom_r1 [1] 3,3,8
+      - TorsoTop_r2 [1] 8,4,6
+      - Arm_r2 [1] 3,3,8
+    - Body18
+      - Head_r1 [1] 8,7,8
+      - TorsoTop_r1 [1] 4,7,8
+      - Arm_r1 [1] 3,7,3
+      - TorsoBase_r1 [1] 3,6,7
+      - Leg_r2 [1] 3,4,3
+      - Leg_r1 [1] 3,8,3
+    - RightArmSeg2 [1] 33,17,18
+      - RightArmSeg3 [1] 34,21,20
+        - RightArmSeg4 [1] 19,18,17
+          - Body27
+            - Arm_r20 [1] 8,3,3
+            - TorsoTop_r9 [1] 6,4,8
+            - TorsoBase_r7 [1] 6,3,7
+          - Body26
+            - TorsoBase_r6 [2] 6,3,7
+            - Jaw_r1 [1] 8,8,1
+            - Head_r6 [1] 8,8,7
+          - RightHand
+            - RightFinger2 [1] 5,8,6
+              - Arm_r15 [1] 4,4,8
+              - Torso_r1 [1] 5,7,6
+              - Arm_r16 [1] 4,4,8
+            - RightArmSeg_r1 [1] 6,21,19
+            - RightFinger1
+              - RightFingerHead1 [1] 6,8,8
+              - Arm_r14 [1] 3,3,8
+              - TopTorso_r1 [1] 5,7,6
+            - RightFinger4
+              - RightFingerHead4 [2] 7,8,8
+              - BottomTorso_r1 [1] 5,7,6
+              - Arm_r18 [1] 3,3,8
+              - Arm_r19 [1] 3,3,8
+            - RightFinger3
+              - TopTorso_r2 [1] 5,7,6
+              - Arm_r17 [1] 3,3,8
+        - Body23
+          - TorsoBottom_r4 [1] 8,4,6
+          - Arm_r10 [1] 3,3,7
+          - Arm_r9 [1] 3,3,8
+          - TorsoTop_r5 [1] 3,3,8
+          - TorsoTop_r6 [1] 7,3,6
+        - Body22
+          - TorsoBase_r4 [1] 7,3,6
+          - TorsoBottom_r3 [1] 8,4,6
+          - Arm_r7 [1] 3,3,8
+          - Arm_r8 [1] 3,3,6
+          - Head_r3 [1] 8,8,8
+        - Body25
+          - TorsoBase_r5 [1] 7,3,6
+          - Arm_r12 [1] 3,3,8
+          - Arm_r13 [1] 3,3,8
+          - TorsoTop_r8 [1] 8,4,6
+          - Head_r5 [1] 8,8,7
+        - Body24 [1] 7,3,6
+          - Arm_r11 [1] 3,3,9
+          - Leg_r5 [1] 8,3,3
+          - TorsoTop_r7 [1] 8,4,6
+          - Head_r4 [1] 8,7,8
+      - Body21
+        - Head_r2 [1] 8,8,8
+        - TorsoBase_r3 [1] 7,3,6
+        - TorsoTop_r4 [1] 8,4,6
+        - Arm_r5 [1] 3,3,8
+        - Arm_r6 [1] 3,3,6
+    - Body20
+      - TorsoTop_r3 [1] 4,7,8
+      - Arm_r4 [1] 3,7,3
+      - TorsoBase_r2 [1] 3,6,7
+      - Leg_r4 [1] 3,4,3
+      - Leg_r3 [1] 3,8,3
+
+## howitzer (851 parts)
+
+- part0
+  - MainBodyBodies
+    - Body39
+      - TorsoBase_r6 [1] 7,3,6
+      - Arm_r10 [1] 3,3,8
+      - Leg_r8 [1] 3,3,10
+      - Leg_r7 [1] 3,3,10
+      - Head_r5 [1] 8,8,7
+      - Arm_r9 [1] 3,3,8
+      - TorsoTop_r6 [1] 8,4,6
+    - Body34
+      - Arm_r3 [1] 3,7,3
+      - Head_r1 [1] 8,7,8
+      - TorsoTop_r2 [1] 4,7,8
+      - TorsoBase_r2 [1] 3,6,7
+      - Leg_r3 [1] 3,6,3
+      - Leg_r2 [1] 3,8,3
+    - Body45
+      - TorsoBase_r12 [1] 7,3,6
+      - TorsoBottom_r5 [1] 8,4,6
+      - Leg_r13 [1] 3,3,10
+      - Arm_r17 [1] 3,3,8
+    - Body33
+      - TorsoTop_r1 [2] 6,4,8
+      - Arm_r1 [1] 9,3,3
+      - Arm_r2 [1] 6,3,3
+      - TorsoBase_r1 [1] 6,3,7
+      - Jaw_r1 [1] 1,8,8
+      - Leg_r1 [1] 8,3,3
+    - Body44
+      - TorsoBottom_r4 [1] 6,5,8
+      - TorsoBottom_r3 [1] 9,3,3
+      - Head_r8 [1] 8,8,8
+      - TorsoBase_r11 [1] 6,3,8
+    - Body43
+      - TorsoTop_r10 [1] 8,4,6
+      - Leg_r12 [1] 3,3,10
+      - Arm_r16 [1] 3,3,8
+      - TorsoBase_r10 [1] 7,3,6
+    - Body42
+      - Arm_r14 [1] 3,3,8
+      - Arm_r15 [1] 3,3,8
+      - Leg_r11 [1] 3,3,10
+      - TorsoTop_r9 [1] 8,4,6
+      - TorsoBase_r9 [1] 7,3,6
+    - Body38
+      - TorsoBottom_r2 [1] 8,4,6
+      - TorsoBase_r5 [1] 7,3,6
+      - Leg_r6 [1] 3,3,10
+      - Arm_r7 [1] 3,3,8
+      - Arm_r8 [1] 3,3,6
+    - Body49 [1] 7,3,6
+      - Leg_r18 [1] 8,3,3
+      - Arm_r23 [1] 3,3,9
+      - TorsoTop_r14 [1] 8,4,6
+      - Head_r11 [1] 8,7,8
+    - Body37
+      - TorsoBase_r4 [1] 6,3,8
+      - TorsoTop_r4 [1] 9,3,3
+      - TorsoTop_r5 [1] 6,5,8
+      - Head_r4 [1] 8,8,8
+    - Body48
+      - TorsoBase_r15 [1] 7,3,6
+      - TorsoTop_r13 [1] 8,4,6
+      - Arm_r21 [1] 3,3,8
+      - Arm_r22 [1] 3,3,8
+      - Leg_r17 [1] 3,3,10
+      - Head_r10 [1] 8,8,7
+    - Body36 [1] 7,3,6
+      - TorsoTop_r3 [1] 8,4,6
+      - Arm_r6 [1] 3,3,9
+      - Leg_r5 [1] 8,3,3
+      - Head_r3 [1] 8,7,8
+    - Body47
+      - TorsoTop_r12 [1] 4,7,8
+      - TorsoBase_r14 [1] 3,6,7
+      - Arm_r20 [1] 3,7,3
+      - Head_r9 [1] 8,7,8
+      - Leg_r16 [1] 3,6,3
+      - Leg_r15 [1] 3,8,3
+    - Body35
+      - Head_r2 [1] 8,8,7
+      - TorsoBase_r3 [1] 7,3,6
+      - Arm_r4 [1] 3,3,8
+      - TorsoBottom_r1 [1] 8,4,6
+      - Arm_r5 [1] 3,3,8
+      - Leg_r4 [1] 3,3,10
+    - Body46
+      - TorsoBase_r13 [1] 6,3,7
+      - TorsoTop_r11 [2] 6,4,8
+      - Jaw_r2 [1] 1,8,8
+      - Arm_r18 [1] 9,3,3
+      - Arm_r19 [1] 6,3,3
+      - Leg_r14 [1] 8,3,3
+    - Body41
+      - Leg_r9 [1] 3,3,10
+      - Arm_r12 [1] 3,3,8
+      - Leg_r10 [1] 3,3,10
+      - Arm_r13 [1] 3,3,8
+      - Head_r7 [1] 8,8,7
+      - TorsoBase_r8 [1] 7,3,6
+      - TorsoTop_r8 [1] 8,4,6
+    - Body52
+      - TorsoBase_r18 [1] 7,3,6
+      - Arm_r26 [1] 3,3,8
+      - Head_r12 [1] 8,8,8
+      - TorsoTop_r17 [1] 8,4,6
+    - Body40
+      - Arm_r11 [1] 3,3,8
+      - TorsoTop_r7 [1] 8,4,6
+      - Head_r6 [1] 8,8,8
+      - TorsoBase_r7 [1] 7,3,6
+    - Body51
+      - Leg_r19 [1] 3,3,10
+      - TorsoBase_r17 [1] 7,3,6
+      - TorsoBottom_r6 [1] 8,4,6
+      - Arm_r25 [1] 3,3,6
+      - Arm_r24 [1] 3,3,8
+    - Body50
+      - TorsoBase_r16 [1] 6,3,8
+      - TorsoTop_r15 [1] 9,3,3
+      - TorsoTop_r16 [2] 6,5,8
+  - Legs
+    - RightLegJoint
+      - RightLeg
+        - Body28
+          - Jaw_r6 [1] 1,8,8
+          - Arm_r36 [1] 6,3,3
+          - TorsoTop_r19 [2] 6,4,8
+          - Leg_r22 [1] 8,3,3
+          - Arm_r35 [1] 9,3,3
+          - TorsoBase_r20 [1] 6,3,7
+        - RightLeg3 [1] 15,19,16
+          - Body29
+            - Head_r18 [1] 8,7,8
+            - TorsoTop_r20 [1] 4,7,8
+            - Leg_r24 [1] 3,6,3
+            - Leg_r23 [1] 3,8,3
+            - Arm_r37 [1] 3,7,3
+            - TorsoBase_r21 [1] 3,6,7
+          - RightLeg2 [1] 17,26,18
+            - Body30
+              - TorsoTop_r21 [1] 8,4,6
+              - Head_r19 [1] 8,8,7
+              - TorsoBase_r22 [1] 7,3,6
+              - Arm_r38 [1] 3,3,8
+              - Leg_r25 [1] 3,3,10
+              - Arm_r39 [1] 3,3,8
+            - Tendril5 [1] 4,4,11
+              - Seg2Tendril5 [1] 3,3,10
+                - Seg3Tendril5 [1] 2,2,10
+                  - Seg4Tendril2 [1] 1,1,10
+            - Tendril7
+              - Seg2Tendril7 [1] 2,2,10
+                - Seg3Tendril7 [1] 1,1,10
+              - TendrilSeg_r2 [1] 3,3,11
+            - Tendril6 [1] 3,3,9
+              - Seg2Tendril6
+                - Seg3Tendril6 [1] 1,1,5
+                - TendrilSeg_r1 [1] 2,2,10
+            - RightFoot [1] 19,5,20
+              - RightToe1
+                - Arm_r40 [1] 3,3,8
+                - RightToe1Head [1] 8,6,8
+                - TopTorso_r4 [1] 7,5,6
+              - RightToe4
+                - Arm_r43 [1] 3,3,8
+                - Arm_r42 [1] 3,3,8
+                - BottomTorso_r2 [1] 7,5,6
+              - RightToe3
+                - RightToe3Head [1] 8,6,8
+                - Arm_r41 [1] 3,3,8
+                - TopTorso_r6 [1] 7,5,6
+              - RightToe2
+                - RightToe2Head
+                  - Head_r20 [1] 8,6,8
+                - TopTorso_r5 [1] 7,5,6
+        - Tendril8 [1] 4,4,11
+          - Seg2Tendril8 [1] 3,3,10
+            - Seg3Tendril8 [1] 2,2,10
+              - Seg4Tendril3 [1] 1,1,10
+        - LegSeg1_r2 [1] 20,28,18
+    - LeftLegJoint
+      - LeftLeg
+        - LeftLeg2 [1] 15,24,16
+          - LeftFoot [1] 17,5,19
+            - LeftToe4
+              - Arm_r33 [1] 3,3,8
+              - BottomTorso_r1 [1] 7,5,6
+              - Arm_r34 [1] 3,3,8
+              - LeftToe4Head
+                - Head_r17 [1] 8,6,8
+                - Jaw_r5 [1] 8,1,8
+            - LeftToe3
+              - Arm_r32 [1] 3,3,8
+              - TopTorso_r3 [1] 7,5,6
+              - LeftToe3Head
+                - Head_r16 [1] 8,6,8
+            - LeftToe2
+              - LeftToe2Head
+                - Head_r15 [1] 8,6,8
+              - TopTorso_r2 [1] 7,5,6
+            - LeftToe1
+              - Arm_r30 [1] 3,3,8
+              - Arm_r31 [1] 3,3,8
+              - TopTorso_r1 [1] 7,5,6
+              - LeftToe1Head
+                - Jaw_r4 [1] 8,1,8
+                - Head_r14 [1] 8,6,8
+          - Tendril9
+            - RootSeg_r1 [1] 12,6,6
+            - Seg2Tendril9 [1] 16,4,4
+              - Seg3Tendril9 [1] 16,2,2
+                - Seg4Tendril9 [1] 14,1,1
+          - Body32 [1] 7,3,6
+            - TorsoTop_r18 [1] 8,4,6
+            - Leg_r21 [1] 8,3,3
+            - Head_r13 [1] 8,7,8
+            - Arm_r29 [1] 3,3,9
+          - Body31
+            - Leg_r20 [1] 8,3,3
+            - Jaw_r3 [1] 1,8,8
+            - TorsoBase_r19 [1] 6,3,7
+            - TorsoBottom_r7 [2] 6,4,8
+            - Arm_r27 [1] 9,3,3
+            - Arm_r28 [1] 6,3,3
+        - LegSeg1_r1 [1] 20,21,18
+  - Maw
+    - jaw1
+      - MawLip1 [1] 26,16,4
+        - MawLip1Seg2 [2] 14,12,4
+          - MawLip1Seg3 [1] 8,7,3
+          - Teeth_r48 [1] 0,8,2
+          - Teeth_r49 [1] 6,0,2
+          - Teeth_r50 [1] 0,9,2
+        - Teeth_r46 [1] 21,0,3
+        - Teeth_r47 [1] 17,0,2
+    - Tongue [1] 10,12,6
+      - TongueSeg2 [1] 9,9,4
+        - TongueSeg3 [1] 7,7,3
+          - TongueSeg4 [1] 6,11,2
+            - TongueSplit1 [1] 2,9,1
+            - TongueSplit2 [1] 3,9,1
+    - jaw3
+      - MawLip3 [1] 26,16,4
+        - Teeth_r57 [1] 24,0,2
+        - Teeth_r56 [1] 17,0,2
+        - MawLip3Seg2 [2] 14,13,4
+          - Teeth_r59 [1] 6,0,2
+          - Teeth_r58 [1] 0,11,2
+          - MawLip3Seg3 [1] 8,7,3
+          - Teeth_r60 [1] 0,11,2
+    - jaw2
+      - MawLip2 [1] 26,16,4
+        - Teeth_r52 [1] 17,0,2
+        - MawLip2Seg2 [2] 14,11,4
+          - Teeth_r53 [1] 0,8,2
+          - Teeth_r55 [1] 0,9,2
+          - Teeth_r54 [1] 6,0,2
+          - MawLip2Seg3 [1] 8,7,3
+        - Teeth_r51 [1] 24,0,2
+    - Tree
+      - Decorations
+        - Ornaments
+          - OrnamentBall6_r1 [1] 4,4,4
+          - OrnamentBall12_r1 [1] 4,4,4
+          - OrnamentBall11_r1 [1] 4,4,4
+          - OrnamentBall7_r1 [1] 4,4,4
+          - OrnamentBall13_r1 [1] 4,4,4
+          - OrnamentBall8_r1 [1] 4,4,4
+          - OrnamentBall14_r1 [1] 4,4,4
+          - OrnamentBall9_r1 [1] 4,4,4
+          - OrnamentBall10_r1 [1] 4,4,4
+          - OrnamentBall5_r1 [1] 4,4,4
+          - OrnamentBall2_r1 [1] 4,4,4
+          - OrnamentBall4_r1 [1] 4,4,4
+          - OrnamentBall3_r1 [1] 4,4,4
+          - OrnamentBall15_r1 [1] 4,4,4
+          - OrnamentBall1_r1 [1] 4,4,4
+        - TreeLightStrands
+          - Lights3
+            - LightStrand8_r3 [1] 2,13,2
+            - LightStrand7_r3 [1] 2,13,2
+            - LightStrand5_r3 [1] 2,17,2
+            - LightStrand10_r1 [1] 2,13,2
+            - LightStrand6_r3 [1] 2,17,2
+            - LightStrand9_r2 [1] 2,15,2
+            - LightStrand4_r3 [1] 2,17,2
+            - LightStrand3_r3 [1] 2,17,2
+          - Lights4
+            - LightStrand8_r4 [1] 2,13,2
+            - LightStrand10_r2 [1] 2,15,2
+            - LightStrand7_r4 [1] 2,17,2
+            - LightStrand6_r4 [1] 2,17,2
+            - LightStrand11_r1 [1] 2,13,2
+            - LightStrand9_r3 [1] 2,13,2
+            - LightStrand5_r4 [1] 2,17,2
+            - LightStrand4_r4 [1] 2,17,2
+          - Lights1
+            - LightStrand4_r1 [1] 2,17,2
+            - LightStrand3_r1 [1] 2,17,2
+            - LightStrand8_r1 [1] 2,13,2
+            - LightStrand5_r1 [1] 2,13,2
+            - LightStrand7_r1 [1] 2,15,2
+            - LightStrand6_r1 [1] 2,13,2
+            - LightStrand1_r1 [1] 2,17,2
+            - LightStrand2_r1 [1] 2,17,2
+          - Lights2
+            - LightStrand7_r2 [1] 2,13,2
+            - LightStrand9_r1 [1] 2,13,2
+            - LightStrand5_r2 [1] 2,17,2
+            - LightStrand4_r2 [1] 2,17,2
+            - LightStrand6_r2 [1] 2,13,2
+            - LightStrand8_r2 [1] 2,15,2
+            - LightStrand2_r2 [1] 2,17,2
+            - LightStrand3_r2 [1] 2,17,2
+        - TreeLightBulbs
+          - Bulb9 [3] 2,1,2
+          - Bulb13 [3] 2,1,2
+          - Bulb12 [3] 2,1,2
+          - Bulb11 [3] 2,1,2
+          - Bulb10 [3] 2,1,2
+          - Bulb17 [3] 2,1,2
+          - Bulb16 [3] 2,1,2
+          - Bulb15 [3] 2,1,2
+          - Bulb14 [3] 2,1,2
+          - Bulb1 [3] 2,1,2
+          - Bulb2 [3] 2,1,2
+          - Bulb3 [3] 2,1,2
+          - Bulb19 [3] 2,1,2
+          - Bulb4 [3] 2,1,2
+          - Bulb18 [3] 2,1,2
+          - Bulb5 [3] 2,1,2
+          - Bulb6 [3] 2,1,2
+          - Bulb7 [3] 2,1,2
+          - Bulb8 [3] 2,1,2
+        - ImpaledStarBody [1] 5,5,7
+          - Spike3
+            - WOODEN_SPIKE_MINISKETCHY_r5 [1] 4,0,1
+            - WOODEN_SPIKE_MINISKETCHY_r6 [1] 5,1,1
+          - Arm_r95 [1] 9,4,4
+          - Spike2
+            - WOODEN_SPIKE_MINISKETCHY_r3 [1] 4,0,1
+            - WOODEN_SPIKE_MINISKETCHY_r4 [1] 5,1,1
+          - Spike4
+            - WOODEN_SPIKE_MINISKETCHY_r7 [1] 4,0,1
+            - WOODEN_SPIKE_MINISKETCHY_r8 [1] 5,1,1
+          - Leg_r51 [1] 9,4,4
+          - Arm_r96 [1] 9,4,4
+          - Spike1
+            - WOODEN_SPIKE_MINISKETCHY_r1 [1] 4,0,1
+            - WOODEN_SPIKE_MINISKETCHY_r2 [1] 5,1,1
+          - Leg_r50 [1] 9,4,4
+          - Head_r43 [1] 8,7,8
+          - UpperTorso_r2 [1] 6,6,8
+          - Jaw_r10 [1] 8,1,8
+      - MainTree [7] 9,60,9
+    - Center_r1 [1] 28,12,25
+    - MawInnerTeeth
+      - Teeth_r42 [1] 15,3,0
+      - Teeth_r41 [1] 22,3,0
+      - Teeth_r44 [1] 15,3,0
+      - Teeth_r43 [1] 22,3,0
+      - Teeth_r45 [1] 22,3,0
+  - BileSacs
+    - BallSac4 [1] 11,18,4
+    - BallSac5 [1] 15,29,6
+    - BallSac2
+      - Bile_r2 [1] 25,28,9
+    - BallSac3 [1] 12,18,11
+    - MajorBallSack [1] 32,10,32
+      - Bile_r4 [1] 28,10,29
+      - Bile_r3 [1] 20,10,19
+    - BallSac1
+      - Bile_r1 [1] 13,28,24
+    - BallSac6 [1] 6,23,16
+  - Chunk2_r1 [1] 48,48,48
+  - Chunk3_r1 [1] 64,64,64
+  - Chunk1_r1 [1] 56,56,56
+  - Belly
+    - BellyBase_r1 [1] 37,9,44
+  - BodyRoots
+    - Root5
+      - R3Seg4
+        - R3Seg5 [1] 16,2,2
+          - R3Seg6 [1] 15,1,1
+        - RootSeg_r5 [1] 16,4,4
+      - RootSeg_r4 [1] 12,6,6
+    - Root4 [1] 20,7,7
+      - R4Seg1
+        - RootSeg_r3 [1] 22,5,5
+        - R4Seg2 [1] 14,3,3
+          - R4Seg3 [1] 13,2,2
+    - Root3 [1] 12,6,6
+      - R3Seg1
+        - RootSeg_r2 [1] 16,4,4
+        - R3Seg2 [1] 16,2,2
+          - R3Seg3 [1] 15,1,1
+    - Root2 [1] 20,8,8
+      - R2Seg1 [1] 23,6,6
+        - R2Seg2 [1] 16,4,4
+          - R2Seg3 [1] 16,3,3
+    - Root1 [1] 20,7,7
+      - R1Seg2 [1] 22,5,5
+        - R1Seg3 [1] 14,3,3
+          - R1Seg4 [1] 13,2,2
+  - Arms
+    - RightArmJoint
+      - RightArm [1] 31,21,21
+        - Body19
+          - TorsoTop_r23 [1] 8,4,6
+          - TorsoBottom_r8 [1] 3,3,8
+          - TorsoBottom_r9 [1] 7,3,6
+          - Arm_r45 [1] 3,3,8
+          - Arm_r46 [1] 3,3,7
+        - Body18
+          - TorsoTop_r22 [1] 4,7,8
+          - TorsoBase_r23 [1] 3,6,7
+          - Arm_r44 [1] 3,7,3
+          - Head_r21 [1] 8,7,8
+          - Leg_r27 [1] 3,4,3
+          - Leg_r26 [1] 3,8,3
+        - RightArmSeg2 [1] 33,17,18
+          - RightArmSeg3 [1] 34,21,20
+            - RightArmSeg4 [1] 19,18,17
+              - Body27
+                - Arm_r63 [1] 8,3,3
+                - TorsoTop_r30 [1] 6,4,8
+                - TorsoBase_r29 [1] 6,3,7
+              - Body26
+                - Jaw_r7 [1] 8,8,1
+                - TorsoBase_r28 [2] 6,3,7
+                - Head_r26 [1] 8,8,7
+              - RightHand
+                - RightFinger2 [1] 5,8,6
+                  - Arm_r58 [1] 4,4,8
+                  - Arm_r59 [1] 4,4,8
+                  - Torso_r1 [1] 5,7,6
+                - RightArmSeg_r1 [1] 6,21,19
+                - RightFinger1
+                  - RightFingerHead1 [1] 6,8,8
+                  - Arm_r57 [1] 3,3,8
+                  - TopTorso_r7 [1] 5,7,6
+                - RightFinger4
+                  - Arm_r61 [1] 3,3,8
+                  - Arm_r62 [1] 3,3,8
+                  - RightFingerHead4 [2] 7,8,8
+                  - BottomTorso_r3 [1] 5,7,6
+                - RightFinger3
+                  - Arm_r60 [1] 3,3,8
+                  - TopTorso_r8 [1] 5,7,6
+            - Body23
+              - Arm_r52 [1] 3,3,8
+              - Arm_r53 [1] 3,3,7
+              - TorsoBottom_r11 [1] 8,4,6
+              - TorsoTop_r26 [1] 3,3,8
+              - TorsoTop_r27 [1] 7,3,6
+            - Body22
+              - Arm_r50 [1] 3,3,8
+              - Arm_r51 [1] 3,3,6
+              - TorsoBase_r26 [1] 7,3,6
+              - TorsoBottom_r10 [1] 8,4,6
+              - Head_r23 [1] 8,8,8
+            - Body25
+              - TorsoBase_r27 [1] 7,3,6
+              - Arm_r55 [1] 3,3,8
+              - TorsoTop_r29 [1] 8,4,6
+              - Head_r25 [1] 8,8,7
+              - Arm_r56 [1] 3,3,8
+            - Body24 [1] 7,3,6
+              - Arm_r54 [1] 3,3,9
+              - Leg_r30 [1] 8,3,3
+              - Head_r24 [1] 8,7,8
+              - TorsoTop_r28 [1] 8,4,6
+          - Body21
+            - TorsoBase_r25 [1] 7,3,6
+            - Arm_r48 [1] 3,3,8
+            - TorsoTop_r25 [1] 8,4,6
+            - Head_r22 [1] 8,8,8
+            - Arm_r49 [1] 3,3,6
+        - Body20
+          - TorsoBase_r24 [1] 3,6,7
+          - Leg_r29 [1] 3,4,3
+          - TorsoTop_r24 [1] 4,7,8
+          - Arm_r47 [1] 3,7,3
+          - Leg_r28 [1] 3,8,3
+    - LeftArmJoint
+      - LeftArm [1] 31,21,21
+        - LeftArmSeg2 [1] 33,17,18
+          - Body6
+            - Arm_r70 [1] 3,3,8
+            - Arm_r71 [1] 3,3,6
+            - TorsoBottom_r13 [1] 8,4,6
+            - TorsoBase_r33 [1] 7,3,6
+            - Leg_r36 [1] 3,3,10
+          - Body7
+            - Arm_r72 [1] 3,3,8
+            - TorsoBase_r34 [1] 7,3,6
+            - Arm_r73 [1] 3,3,8
+            - TorsoTop_r36 [1] 8,4,6
+            - Head_r31 [1] 8,8,7
+          - LeftArmSeg3 [1] 23,21,20
+            - Body8
+              - TorsoBase_r35 [1] 7,3,6
+              - Arm_r74 [1] 3,3,8
+              - Head_r32 [1] 8,8,8
+              - TorsoTop_r37 [1] 8,4,6
+            - Tendril1 [1] 4,4,11
+              - Seg2Tendril1 [1] 3,3,10
+                - Seg3Tendril1 [1] 2,2,10
+                  - Seg4Tendril1 [1] 1,1,10
+            - Body9
+              - TorsoBottom_r14 [1] 8,4,6
+              - TorsoBase_r36 [1] 7,3,6
+              - Arm_r76 [1] 3,3,8
+              - Arm_r75 [1] 3,3,8
+              - Leg_r38 [1] 3,3,10
+              - Head_r33 [1] 8,8,7
+              - Leg_r37 [1] 3,3,10
+            - LeftArmSeg4 [1] 18,28,27
+              - LeftArmSeg5 [1] 13,31,29
+                - Body17
+                  - TorsoTop_r40 [1] 9,3,3
+                  - TorsoTop_r41 [1] 6,5,8
+                  - TorsoBase_r40 [1] 6,3,8
+                  - Head_r35 [1] 8,8,8
+                - Body16
+                  - TorsoBottom_r15 [1] 8,4,6
+                  - TorsoBase_r39 [1] 7,3,6
+                  - Leg_r41 [1] 3,3,10
+                  - Arm_r79 [1] 3,3,8
+                  - Arm_r80 [1] 3,3,6
+                - Body15
+                  - TorsoBase_r38 [1] 7,3,6
+                  - Leg_r40 [1] 3,3,10
+                  - TorsoTop_r39 [1] 8,4,6
+                - Body14
+                  - TorsoBase_r37 [1] 7,3,6
+                  - Arm_r77 [1] 3,3,8
+                  - Arm_r78 [1] 3,3,6
+                  - Head_r34 [1] 8,8,8
+                  - Leg_r39 [1] 3,3,10
+                  - TorsoTop_r38 [1] 8,4,6
+              - Tendril4
+                - Seg2Tendril4 [1] 2,2,10
+                  - Seg3Tendril4 [1] 1,1,10
+                - TendrilSeg_r5 [1] 3,3,11
+              - Tendril3
+                - Seg2Tendril3
+                  - Seg3Tendril3 [1] 1,1,5
+                  - TendrilSeg_r4 [1] 2,2,10
+                - TendrilSeg_r3 [1] 3,3,8
+              - Body12
+                - TorsoBottom_r16 [1] 9,3,3
+                - TorsoBottom_r17 [1] 6,5,8
+                - Head_r36 [1] 8,8,8
+                - TorsoBase_r43 [1] 6,3,8
+              - Body11
+                - Arm_r83 [1] 3,3,8
+                - TorsoTop_r43 [1] 8,4,6
+                - Leg_r43 [1] 3,3,10
+                - TorsoBase_r42 [1] 7,3,6
+              - Body10
+                - Arm_r81 [1] 3,3,8
+                - Arm_r82 [1] 3,3,8
+                - Leg_r42 [1] 3,3,10
+                - TorsoTop_r42 [1] 8,4,6
+                - TorsoBase_r41 [1] 7,3,6
+              - Body13
+                - Arm_r84 [1] 3,3,8
+                - Leg_r44 [1] 3,3,10
+                - TorsoBase_r44 [1] 7,3,6
+                - TorsoBottom_r18 [1] 8,4,6
+            - Tendril2
+              - Seg2Tendril2 [1] 2,2,10
+                - Seg3Tendril2 [1] 1,1,10
+              - TendrilSeg_r6 [1] 3,3,11
+          - Body5
+            - TorsoTop_r34 [1] 9,3,3
+            - TorsoTop_r35 [1] 6,5,8
+            - Head_r30 [1] 8,8,8
+            - TorsoBase_r32 [1] 6,3,8
+        - Body4 [1] 7,3,6
+          - TorsoTop_r33 [1] 8,4,6
+          - Head_r29 [1] 8,7,8
+          - Leg_r35 [1] 8,3,3
+          - Arm_r69 [1] 3,3,9
+        - FrontSeg2CorpseDetails
+        - Body2 [1] 3,6,7
+          - TorsoTop_r32 [1] 4,7,8
+          - Arm_r66 [1] 3,7,3
+          - Head_r27 [1] 8,7,8
+          - Leg_r33 [1] 3,6,3
+          - Leg_r32 [1] 3,8,3
+        - Body3
+          - TorsoBottom_r12 [1] 8,4,6
+          - Head_r28 [1] 8,8,7
+          - Leg_r34 [1] 3,3,10
+          - Arm_r67 [1] 3,3,8
+          - Arm_r68 [1] 3,3,8
+          - TorsoBase_r31 [1] 7,3,6
+        - Body1
+          - Jaw_r8 [1] 1,8,8
+          - Leg_r31 [1] 8,3,3
+          - Arm_r65 [1] 6,3,3
+          - Arm_r64 [1] 9,3,3
+          - TorsoTop_r31 [2] 6,4,8
+          - TorsoBase_r30 [1] 6,3,7
+  - CannonClusters
+    - FailedCannon [3] 20,6,20
+      - FailedCannonFlower [1] 8,2,8
+        - TumorBase
+          - SouthTendril
+            - STendieSeg2
+              - STendieSeg2_r1 [1] 2,2,9
+            - STendieSeg1_r1 [1] 3,3,8
+          - EastTendril [1] 8,2,2
+            - ETendieSeg2
+              - ETendieSeg2_r1 [1] 6,2,2
+          - Tumor_r1 [1] 5,5,5
+          - WestTendril [1] 6,3,3
+            - WTendieSeg2 [1] 5,2,2
+          - Tumor_r3 [1] 6,6,6
+          - Tumor_r2 [1] 6,6,6
+          - Tumor_r5 [1] 8,8,8
+          - Tumor_r4 [1] 7,7,7
+        - FlowerMaw
+          - SouthMaw [1] 10,7,2
+            - Tooth_r2 [1] 0,4,2
+            - Tooth_r1 [1] 0,7,2
+            - SMawSeg2 [1] 9,7,2
+              - SMawSeg3 [1] 8,5,2
+                - Tooth_r6 [1] 0,3,2
+                - Tooth_r5 [1] 0,3,2
+              - Tooth_r4 [1] 0,6,2
+              - Tooth_r3 [1] 0,6,2
+          - NWMaw
+            - NWMawSeg1_r1 [1] 10,7,2
+            - NWMawSeg2
+              - NWMawSeg2_r1 [1] 9,6,2
+              - Tooth_r9 [1] 0,5,2
+              - Tooth_r8 [1] 0,4,2
+            - Tooth_r7 [1] 0,7,2
+          - NSMaw
+            - Tooth_r11 [1] 0,5,2
+            - Tooth_r10 [1] 0,5,2
+            - NSMawSeg1_r1 [1] 8,7,2
+            - NSMawSeg2
+              - NSMawSeg3
+                - NSMawSeg3_r1 [1] 6,6,2
+                - Tooth_r14 [1] 0,5,2
+                - Tooth_r13 [1] 0,5,2
+              - NSMawSeg2_r1 [1] 7,6,2
+              - Tooth_r12 [1] 0,4,2
+    - Cluster1
+      - C1C3 [2] 24,10,24
+        - C1C3Top
+          - North_r3 [1] 12,7,2
+          - West_r3 [1] 12,5,2
+          - South_r3 [1] 12,7,2
+          - East_r3 [1] 12,8,2
+          - Teeth3
+            - Teeth_r11 [2] 2,5,0
+            - Teeth_r10 [2] 2,6,0
+            - Teeth_r12 [2] 2,7,0
+            - Teeth_r9 [2] 2,6,0
+        - Top_r3 [1] 12,22,12
+      - C1C2 [2] 24,10,24
+        - CannonBady2
+          - TorsoBase_r46 [1] 7,3,6
+          - Arm_r87 [1] 3,3,6
+          - Head_r38 [1] 8,8,8
+          - Arm_r86 [1] 3,3,8
+          - TorsoBottom_r19 [1] 8,4,6
+        - Present2 [2] 16,16,16
+          - SmallRibbon_r4 [1] 3,0,7
+          - SmallRibbon_r3 [1] 3,0,7
+          - Ribbon_r3 [1] 6,2,4
+          - Ribbon_r4 [1] 6,2,4
+        - Top_r2 [1] 16,23,16
+        - C1C2Top
+          - North_r2 [1] 16,7,2
+          - West_r2 [1] 16,5,2
+          - East_r2 [1] 16,8,2
+          - Teeth2
+            - Teeth_r7 [2] 2,5,0
+            - Teeth_r8 [2] 2,7,0
+            - Teeth_r5 [2] 2,6,0
+            - Teeth_r6 [2] 2,6,0
+          - South_r2 [1] 16,7,2
+      - C1C1 [2] 24,10,24
+        - CannonBody5
+          - TorsoBase_r45 [1] 6,3,8
+          - TorsoTop_r45 [1] 9,3,3
+          - TorsoTop_r46 [2] 6,5,8
+        - CannonBody4 [1] 7,3,6
+          - TorsoTop_r44 [1] 8,4,6
+          - Arm_r85 [1] 3,3,9
+          - Leg_r45 [1] 8,3,3
+          - Head_r37 [1] 8,7,8
+        - CorrosivePresent1 [2] 16,16,16
+          - SmallRibbon_r1 [1] 3,0,7
+          - Ribbon_r1 [1] 6,2,4
+          - Ribbon_r2 [1] 6,2,4
+          - SmallRibbon_r2 [1] 3,0,7
+        - Top_r1 [1] 16,28,16
+        - C1C1Top
+          - North_r1 [1] 16,7,2
+          - Teeth
+            - Teeth_r1 [2] 2,6,0
+            - Teeth_r2 [2] 2,6,0
+            - Teeth_r3 [2] 2,5,0
+            - Teeth_r4 [2] 2,7,0
+          - West_r1 [1] 16,5,2
+          - South_r1 [1] 16,7,2
+          - East_r1 [1] 16,8,2
+    - Cluster3
+      - C3C2 [2] 24,10,24
+        - BilePresent1 [2] 16,16,16
+          - SmallRibbon_r9 [1] 3,0,7
+          - Ribbon_r9 [1] 6,2,4
+          - SmallRibbon_r10 [1] 3,0,7
+          - Ribbon_r10 [1] 6,2,4
+        - C3C2Top
+          - West_r8 [1] 16,5,2
+          - East_r8 [1] 16,8,2
+          - Teeth8
+            - Teeth_r33 [2] 2,6,0
+            - Teeth_r35 [2] 2,5,0
+            - Teeth_r34 [2] 2,6,0
+            - Teeth_r36 [2] 2,7,0
+          - South_r8 [1] 16,7,2
+          - North_r8 [1] 16,7,2
+        - Top_r8 [1] 16,23,16
+        - CannonBody8
+          - Arm_r94 [1] 3,3,8
+          - TorsoTop_r54 [1] 8,4,6
+          - Arm_r93 [1] 3,3,8
+          - TorsoBase_r51 [1] 7,3,6
+          - Leg_r49 [1] 3,3,10
+          - Leg_r48 [1] 3,3,10
+          - Head_r42 [1] 8,8,7
+      - C3C1 [2] 24,10,24
+        - CannonBody6
+          - TorsoTop_r52 [1] 9,3,3
+          - TorsoTop_r53 [2] 6,5,8
+          - TorsoBase_r50 [1] 6,3,8
+        - C3C1Top
+          - North_r7 [1] 16,7,2
+          - ThisIsSporeSlasher [1] 5,2,7
+            - Arm_r92 [1] 8,4,4
+            - Jaw_r9 [1] 8,1,8
+            - CommanderHat
+              - HatBase_r1 [1] 8,1,11
+              - Hat2_r1 [1] 8,4,9
+              - Hat4_r1 [2] 7,6,7
+              - Hat1_r1 [1] 8,3,11
+            - Arm_r91 [1] 8,4,4
+            - Head_r41 [1] 8,7,8
+            - UpperTorso_r1 [1] 6,6,8
+          - West_r7 [1] 16,5,2
+          - South_r7 [1] 16,7,2
+          - East_r7 [1] 16,8,2
+          - Teeth7
+            - Teeth_r31 [2] 2,5,0
+            - Teeth_r30 [2] 2,6,0
+            - Teeth_r32 [2] 2,7,0
+            - Teeth_r29 [2] 2,6,0
+        - Top_r7 [1] 16,25,16
+      - C3C3 [2] 24,10,24
+        - C3C3Top
+          - West_r9 [1] 12,5,2
+          - South_r9 [1] 12,7,2
+          - East_r9 [1] 12,8,2
+          - Teeth9
+            - Teeth_r37 [2] 2,6,0
+            - Teeth_r39 [2] 2,5,0
+            - Teeth_r38 [2] 2,6,0
+            - Teeth_r40 [2] 2,7,0
+          - North_r9 [1] 12,7,2
+        - Top_r9 [1] 12,21,12
+    - Cluster2
+      - C2C3 [2] 24,10,24
+        - Top_r6 [1] 12,22,12
+        - C2C3Top
+          - North_r6 [1] 12,7,2
+          - West_r6 [1] 12,5,2
+          - East_r6 [1] 12,8,2
+          - Teeth6
+            - Teeth_r26 [2] 2,6,0
+            - Teeth_r25 [2] 2,6,0
+            - Teeth_r28 [2] 2,7,0
+            - Teeth_r27 [2] 2,5,0
+          - South_r6 [1] 12,7,2
+      - C2C2 [2] 24,10,24
+        - CannonBody3
+          - TorsoBase_r49 [1] 7,3,6
+          - TorsoTop_r51 [1] 8,4,6
+          - Arm_r90 [1] 3,3,8
+          - Leg_r47 [1] 3,3,10
+        - Top_r5 [1] 16,22,16
+        - C2C2Top
+          - West_r5 [1] 16,5,2
+          - North_r5 [1] 16,7,2
+          - South_r5 [1] 16,7,2
+          - East_r5 [1] 16,8,2
+          - Teeth5
+            - Teeth_r22 [2] 2,6,0
+            - Teeth_r21 [2] 2,6,0
+            - Teeth_r24 [2] 2,7,0
+            - Teeth_r23 [2] 2,5,0
+        - IncendiaryPresent1 [2] 16,16,16
+          - SmallRibbon_r8 [1] 3,0,7
+          - SmallRibbon_r7 [1] 3,0,7
+          - Ribbon_r7 [1] 6,2,4
+          - Ribbon_r8 [1] 6,2,4
+      - C2C1 [2] 26,10,26
+        - C2C1Top
+          - West_r4 [1] 18,6,2
+          - North_r4 [1] 18,8,2
+          - East_r4 [1] 18,10,2
+          - Teeth4
+            - Teeth_r20 [1] 2,8,0
+            - Teeth_r13 [1] 2,6,0
+            - Teeth_r15 [1] 2,8,0
+            - Teeth_r14 [1] 2,6,0
+            - Teeth_r17 [1] 2,6,0
+            - Teeth_r16 [1] 2,8,0
+            - Teeth_r19 [1] 2,9,0
+            - Teeth_r18 [1] 2,6,0
+          - South_r4 [1] 18,10,2
+        - CannonBody1 [1] 7,3,6
+          - Arm_r88 [1] 3,3,9
+          - Head_r39 [1] 8,7,8
+          - Leg_r46 [1] 8,3,3
+          - TorsoTop_r47 [1] 8,4,6
+        - Present1 [2] 16,16,16
+          - SmallRibbon_r5 [1] 3,0,7
+          - Ribbon_r5 [1] 6,2,4
+          - Ribbon_r6 [1] 6,2,4
+          - SmallRibbon_r6 [1] 3,0,7
+        - CannonBody2
+          - TorsoBase_r47 [1] 6,3,8
+          - TorsoTop_r48 [1] 9,3,3
+          - TorsoTop_r49 [2] 6,5,8
+        - Top_r4 [1] 18,34,18
+        - CannonBody7
+          - Head_r40 [1] 8,8,8
+          - TorsoBase_r48 [1] 7,3,6
+          - TorsoTop_r50 [1] 8,4,6
+          - Arm_r89 [1] 3,3,8
+
+## howler (72 parts)
+
+- part0
+  - RightArm [1] 3,6,4
+    - cube_r32 [1] 8,0,8
+    - RightForArm [1] 3,7,4
+    - cube_r33 [1] 8,0,8
+    - cube_r34 [1] 8,0,8
+  - LeftLeg [2] 3,8,4
+    - leftForLeg [1] 3,8,4
+  - Head [1] 8,2,4 <== eyes
+    - flower3
+      - cube_r19 [1] 6,0,6
+      - cube_r16 [1] 7,0,6
+      - cube_r17 [1] 7,0,6
+      - cube_r18 [1] 6,0,6
+    - cube_r10 [2] 2,4,2
+    - flower4
+      - cube_r30 [1] 6,0,6
+      - cube_r31 [1] 6,0,6
+      - cube_r28 [1] 7,0,6
+      - cube_r29 [1] 7,0,6
+    - topLegFangs
+      - cube_r15 [1] 0,1,2
+      - cube_r14 [1] 0,1,2
+    - cube_r4 [1] 8,0,8
+    - cube_r5 [1] 5,5,5
+    - cube_r6 [1] 5,5,5
+    - cube_r7 [1] 5,5,5
+    - cube_r1 [1] 8,0,8
+    - flower2
+      - cube_r20 [1] 7,0,6
+      - cube_r21 [1] 7,0,6
+      - cube_r22 [1] 6,0,6
+      - cube_r23 [1] 6,0,6
+    - cube_r2 [1] 8,0,8
+    - cube_r3 [1] 8,0,8
+    - flower
+      - cube_r26 [1] 6,0,6
+      - cube_r27 [1] 6,0,6
+      - cube_r24 [1] 7,0,6
+      - cube_r25 [1] 7,0,6
+    - cube_r8 [1] 5,5,5
+    - cube_r9 [1] 5,5,5
+    - topRightFangs
+      - cube_r11 [1] 0,1,2
+      - cube_r12 [1] 0,1,2
+      - cube_r13 [1] 0,1,2
+  - LeftArm [2] 3,6,4
+    - LeftForArm [1] 3,7,4
+    - cube_r35 [1] 8,0,8
+  - RightLeg [2] 3,8,4
+    - rightForLeg [1] 3,8,4
+  - body [2] 8,3,4
+    - cube_r40 [1] 5,5,5
+    - cube_r41 [1] 8,0,8
+    - cube_r42 [1] 8,0,8
+    - cube_r43 [1] 11,9,6
+    - spine2 [1] 8,6,6
+      - cube_r46 [1] 4,5,5
+      - cube_r47 [1] 4,5,5
+    - cube_r37 [1] 5,5,5
+    - cube_r38 [1] 0,1,2
+    - cube_r39 [1] 5,5,5
+    - spine [1] 4,5,5
+      - cube_r44 [1] 3,4,4
+      - cube_r45 [1] 3,4,4
+    - bottomRightFangs
+      - cube_r48 [1] 0,1,2
+      - cube_r49 [1] 0,1,2
+    - bottomLeftFangs
+      - cube_r51 [1] 0,1,2
+      - cube_r50 [1] 0,1,2
+    - cube_r36 [1] 5,5,5
+
+## hvindicator (153 parts)
+
+- root
+  - Legs
+    - LeftLeg [1] 5,12,5
+      - LeftLegClothes_r1 [1] 5,13,5
+      - LeftLegSeg2 [3] 6,12,6
+        - LeftLegFungus
+          - Fungus_r5 [1] 7,0,7
+          - Fungus_r3 [1] 7,0,7
+          - Fungus_r4 [1] 7,0,7
+          - Fungus_r1 [1] 7,0,7
+          - Fungus_r2 [1] 7,0,7
+        - Plate_r1 [1] 3,3,2
+    - RightLeg [1] 5,12,5
+      - RightLegSeg2 [2] 6,12,6
+        - RightLegFungus
+          - Fungus_r7 [1] 7,0,7
+          - Fungus_r6 [1] 7,0,7
+      - Plate_r4 [1] 3,7,3
+      - Plate_r3 [1] 3,4,1
+      - Plate_r2 [1] 5,4,2
+  - LowerTorso [2] 13,7,7
+    - MiddleTorso [1] 15,7,8
+      - MiddleChestFungus
+        - Fungus_r20 [1] 7,0,7
+        - Fungus_r27 [1] 7,0,7
+        - Fungus_r26 [1] 7,0,7
+        - Fungus_r25 [1] 7,0,7
+        - Fungus_r24 [1] 7,0,7
+        - Fungus_r23 [1] 7,0,7
+        - Fungus_r22 [1] 7,0,7
+        - Fungus_r21 [1] 7,0,7
+      - TopTorso [2] 16,9,10
+        - TopChestFungus
+          - bone
+          - Fungus_r53 [1] 7,0,7
+          - Fungus_r52 [1] 7,0,7
+          - Fungus_r51 [1] 7,0,7
+          - Fungus_r50 [1] 7,0,7
+          - Fungus_r49 [1] 7,0,7
+          - Fungus_r48 [1] 7,0,7
+          - Fungus_r59 [1] 7,0,7
+          - Fungus_r58 [1] 7,0,7
+          - Fungus_r57 [1] 7,0,7
+          - Fungus_r56 [1] 7,0,7
+          - Fungus_r55 [1] 7,0,7
+          - Fungus_r54 [1] 7,0,7
+        - Arms
+          - RightArm [1] 6,12,6
+            - RightArmSeg2 [1] 5,12,5
+              - ArmRightFungus
+                - Fungus_r31 [1] 7,0,7
+                - Fungus_r30 [1] 7,0,7
+                - Fungus_r29 [1] 7,0,7
+                - Fungus_r28 [1] 7,0,7
+                - Fungus_r39 [1] 7,0,7
+                - Fungus_r38 [1] 7,0,7
+                - Fungus_r37 [1] 7,0,7
+                - Fungus_r36 [1] 7,0,7
+                - Fungus_r35 [1] 7,0,7
+                - Fungus_r34 [1] 7,0,7
+                - Fungus_r33 [1] 7,0,7
+                - Fungus_r32 [1] 7,0,7
+            - RightArmFungalArmor
+              - plate_r5 [1] 3,9,1
+              - plate_r12 [1] 4,7,4
+              - plate_r6 [2] 2,3,2
+              - plate_r7 [2] 2,5,3
+              - plate_r10 [1] 4,5,3
+              - plate_r8 [1] 2,9,5
+              - plate_r11 [1] 3,3,3
+              - plane_r1 [1] 6,9,0
+              - plane_r2 [1] 6,9,0
+              - plane_r3 [1] 6,9,0
+              - plate_r9 [1] 3,5,3
+            - RightShoulderPad [2] 8,7,8
+          - LeftArm [2] 8,12,8
+            - LeftArmSeg2 [3] 6,12,6
+              - LeftArmSeg3 [1] 5,14,5
+                - Beyblade [1] 4,9,2
+                  - Plate_r14 [1] 1,2,6
+                  - Plate_r15 [1] 1,11,3
+                  - Plate_r16 [3] 1,4,5
+                  - Plate_r17 [1] 1,4,2
+                  - Plate_r13 [1] 2,3,6
+                  - FrontBlade
+                    - bottomconnection_r1 [1] 1,2,11
+                    - topBrace_r1 [1] 1,14,2
+                    - topconnection_r1 [1] 1,2,8
+                    - Plane_r4 [1] 0,23,14
+                    - bottomBrace_r1 [1] 1,12,2
+                  - Plate_r20 [1] 3,2,3
+                  - BackBlade
+                    - bottomconnection_r2 [1] 1,2,8
+                    - topconnection_r2 [1] 1,2,7
+                    - Plane_r5 [1] 0,19,11
+                    - topBrace_r2 [1] 1,12,2
+                    - bottomBrace_r2 [1] 1,9,2
+                  - Plate_r18 [1] 2,3,3
+                  - Plate_r19 [1] 2,7,2
+              - LeftArmFungus
+                - Fungus_r42 [1] 7,0,7
+                - Fungus_r41 [1] 7,0,7
+                - Fungus_r40 [1] 7,0,7
+                - Fungus_r45 [1] 7,0,7
+                - Fungus_r44 [1] 7,0,7
+                - Fungus_r43 [1] 7,0,7
+            - LeftShoulderPad [1] 8,9,8
+              - crown1
+                - Petal4_r1 [1] 7,0,7
+                - Petal3_r1 [1] 7,0,7
+                - Petal2_r1 [1] 7,0,7
+                - Petal1_r1 [1] 7,0,7
+              - Nose_r1 [1] 2,4,2
+        - Neck [1] 8,2,8
+          - Head [2] 10,10,10 <== eyes
+            - Jaw [2] 10,2,5
+            - Nose [1] 3,6,3
+            - HeadFungus
+              - flower3
+                - cube_r10 [1] 7,0,7
+                - cube_r9 [1] 7,0,7
+                - cube_r11 [1] 7,0,7
+                - cube_r12 [1] 7,0,7
+              - flower4
+                - cube_r15 [1] 7,0,7
+                - cube_r16 [1] 7,0,7
+                - cube_r13 [1] 7,0,7
+                - cube_r14 [1] 7,0,7
+              - Fungus_r47 [1] 7,0,7
+              - Fungus_r46 [1] 7,0,7
+              - flower2
+                - cube_r8 [1] 7,0,7
+                - cube_r5 [1] 7,0,7
+                - cube_r6 [1] 7,0,7
+                - cube_r7 [1] 7,0,7
+              - flower
+                - cube_r4 [1] 7,0,7
+                - cube_r1 [1] 7,0,7
+                - cube_r2 [1] 7,0,7
+                - cube_r3 [1] 7,0,7
+    - LowerChestFungus
+      - Fungus_r9 [1] 7,0,7
+      - Fungus_r19 [1] 7,0,7
+      - Fungus_r18 [1] 7,0,7
+      - Fungus_r17 [1] 7,0,7
+      - Fungus_r8 [1] 7,0,7
+      - Fungus_r16 [1] 7,0,7
+      - Fungus_r15 [1] 7,0,7
+      - Fungus_r14 [1] 7,0,7
+      - Fungus_r13 [1] 7,0,7
+      - Fungus_r12 [1] 7,0,7
+      - Fungus_r11 [1] 7,0,7
+      - Fungus_r10 [1] 7,0,7
+
+## inebriater (59 parts)
+
+- part0
+  - theboogaloo
+    - Torso [2] 8,12,4
+      - Fungus_r7 [1] 7,0,7
+      - Fungus_r6 [1] 7,0,7
+      - Tumor_r5 [1] 3,3,3
+    - LeftLeg [2] 4,6,4
+      - leftForleg [1] 4,6,4
+    - Head [4] 8,8,8 <== eyes
+      - topthing_r1 [2] 0,1,5
+      - Fungus_r5 [1] 7,0,7
+      - Tumor_r3 [1] 3,3,3
+      - Fungus_r3 [1] 7,0,7
+      - Fungus_r4 [1] 7,0,7
+      - Fungus_r1 [1] 7,0,7
+      - Tumor_r4 [1] 3,3,3
+      - Fungus_r2 [1] 7,0,7
+    - RightLeg [1] 4,6,3
+      - Tumor_r1 [1] 3,3,3
+      - Tumor_r2 [1] 3,3,3
+      - rigtForLeg [2] 2,6,2
+    - LeftArm [3] 4,6,4
+    - TheCard [1] 3,4,1
+      - CordLeft_r1 [1] 1,6,1
+      - CordRight_r1 [1] 1,6,1
+  - RightArm [2] 4,6,4
+    - cube_r4 [1] 5,8,0
+    - cube_r5 [1] 5,8,0
+    - cube_r1 [1] 1,5,0
+    - cube_r2 [1] 1,4,0
+    - cube_r3 [1] 1,4,0
+    - rightForArm [1] 4,7,4
+      - cube_r10 [1] 3,6,0
+      - fungus_r9 [1] 7,0,7
+      - cube_r6 [1] 1,4,1
+      - cube_r7 [1] 3,6,0
+      - cube_r11 [1] 3,6,0
+      - fungus_r10 [1] 7,0,7
+      - cube_r12 [1] 1,3,2
+      - cube_r13 [1] 2,7,3
+      - cube_r14 [1] 3,5,3
+      - tumor3
+        - cube_r21 [1] 5,5,5
+        - cube_r26 [1] 3,3,3
+        - cube_r22 [1] 3,3,3
+        - cube_r23 [1] 3,3,3
+        - cube_r24 [1] 3,3,3
+        - cube_r25 [1] 3,3,3
+      - cube_r8 [1] 3,6,0
+      - cube_r9 [1] 3,6,0
+      - tumor2
+        - cube_r20 [1] 5,5,5
+        - cube_r19 [1] 5,5,5
+        - cube_r18 [1] 5,5,5
+      - tumor
+        - cube_r15 [1] 5,5,5
+        - cube_r16 [1] 5,5,5
+        - cube_r17 [1] 5,5,5
+      - fungus_r8 [1] 7,0,7
+
+## inf_contruct (157 parts)
+
+- part0
+  - Torso [1] 9,5,6
+    - UpperTorso [7] 5,12,11
+      - Pilot [1] 8,6,5
+        - StuckArm [1] 4,6,4
+        - PilotHead [3] 8,7,8
+          - crown1
+            - Petal1_r3 [1] 7,0,7
+            - Petal4_r5 [1] 7,0,7
+            - Petal3_r5 [1] 7,0,7
+            - Petal2_r4 [1] 7,0,7
+          - Jaw [1] 8,1,5
+        - PilotArm [1] 4,6,4
+          - PilotArmSeg2
+            - Arm_r1 [1] 4,6,4
+      - UpperChestFungus
+        - UpperChestCrown1
+          - Petal4_r2 [1] 7,0,7
+          - Petal3_r2 [1] 7,0,7
+          - Petal2_r1 [1] 7,0,7
+          - Petal1_r1 [1] 7,0,7
+        - Fungus_r7 [1] 7,0,7
+        - Fungus_r8 [1] 7,0,7
+        - Fungus_r5 [1] 7,0,7
+        - Fungus_r6 [1] 7,0,7
+      - Dispenser
+        - cube_r1 [1] 16,16,16
+      - Wires
+        - Head [1] 8,10,8 <== eyes
+          - Nose_r1 [1] 2,4,2
+          - GolemHeadCrown
+            - Petal1_r2 [1] 7,0,7
+            - Petal3_r4 [1] 7,0,7
+            - Petal2_r3 [1] 7,0,7
+            - Petal4_r4 [1] 7,0,7
+        - Wire3_r1 [1] 1,1,11
+        - Wire2_r1 [1] 1,1,8
+        - Wire1_r1 [1] 1,1,6
+      - TorsoDetails
+        - TorsoTendrils
+          - Tendril1 [1] 2,9,2
+            - Seg2Tendril1 [1] 2,10,2
+              - Seg3Tendril1 [1] 1,10,1
+          - Tendril5 [1] 2,9,2
+            - Seg2Tendril5 [1] 2,10,2
+              - Seg3Tendril5 [1] 1,10,1
+          - Tendril4 [1] 2,7,2
+            - Seg2Tendril4 [1] 2,10,2
+              - Seg3Tendril4 [1] 1,10,1
+          - Tendril3
+            - TendrilSegment_r8 [1] 2,4,2
+            - Seg2Tendril3
+              - TendrilSegment_r9 [1] 2,6,2
+              - Seg3Tendril3 [1] 1,8,1
+          - Tendril2
+            - Seg2Tendril2
+              - Seg3Tendril2 [1] 1,8,1
+              - TendrilSegment_r7 [1] 2,8,2
+            - TendrilSegment_r6 [1] 2,8,2
+        - FrontTumors
+          - Tumor_r11 [1] 5,5,5
+          - Tumor_r12 [1] 4,4,4
+          - Tumor_r10 [1] 4,4,4
+          - Tumor_r15 [1] 6,6,6
+          - Tumor_r13 [1] 6,6,6
+          - Tumor_r14 [1] 4,4,4
+          - Tumor_r9 [1] 3,3,3
+          - Tumor_r8 [1] 4,4,4
+        - BackTumors
+          - Tumor_r22 [1] 4,4,4
+          - Tumor_r23 [1] 5,5,5
+          - Tumor_r20 [1] 3,3,3
+          - Tumor_r21 [1] 4,4,4
+          - Tumor_r16 [1] 4,4,4
+          - Tumor_r24 [1] 4,4,4
+          - Tumor_r25 [1] 5,5,5
+          - Tumor_r19 [1] 3,3,3
+          - Tumor_r17 [1] 4,4,4
+          - Tumor_r18 [1] 4,4,4
+      - Arms
+        - RightArm
+          - RightArmSolo [1] 4,10,6
+            - RightArmCrown
+              - Petal5_r2 [1] 7,0,7
+              - Petal4_r3 [1] 7,0,7
+              - Petal3_r3 [1] 7,0,7
+              - Petal2_r2 [1] 7,0,7
+            - RightArmMiddle [2] 4,9,6
+              - Wire_r8 [1] 1,3,1
+              - RightArmFungus
+                - Fungus_r12 [1] 7,0,7
+                - Fungus_r11 [1] 7,0,7
+              - RightArmTendril1
+                - Seg2RightArmTendril1 [1] 2,7,2
+                  - Seg3RightArmTendril1 [1] 1,7,1
+                - Tendril_r1 [1] 2,4,2
+              - RightArmTendril2
+                - Tendril_r2 [1] 2,4,2
+                - Seg2RightArmTendril2 [1] 2,7,2
+                  - Seg3RightArmTendril2 [1] 1,7,1
+              - Wire_r7 [1] 1,4,1
+          - RightArmTendril [1] 2,5,2
+            - Seg2RightArmTendril [1] 2,6,2
+              - Seg3RightArmTendril [1] 1,8,1
+          - RightArmTumors
+            - Tumor_r7 [1] 5,5,5
+            - Tumor_r6 [1] 6,6,6
+            - Tumor_r5 [1] 5,5,5
+        - LeftArm
+          - LeftArmJoint [1] 4,10,6
+            - LeftArmMiddle [3] 4,6,6
+              - LeftArmMiddleFungus
+                - Fungus_r9 [1] 7,0,7
+                - Fungus_r10 [1] 7,0,7
+              - LeftArmEnd [2] 3,6,5
+              - Wire_r4 [1] 1,3,1
+              - Wire_r5 [1] 1,3,1
+              - LeftArmTendril2
+                - Seg2LeftArmTendril2
+                  - Seg3LeftArmTendril2 [1] 1,8,1
+                  - TendrilSegment_r5 [1] 2,6,2
+                - TendrilSegment_r4 [1] 2,4,2
+              - Wire_r6 [1] 1,3,1
+            - LeftArmTendril [1] 2,4,2
+              - Seg2LeftArmTendril
+                - TendrilSegment_r3 [1] 2,6,2
+                - Seg3LeftArmTendril [1] 1,8,1
+  - Legs
+    - LeftLeg [2] 6,6,5
+      - LeftLegCrown
+        - Petal4_r1 [1] 7,0,7
+        - Petal3_r1 [1] 7,0,7
+        - Petal6_r1 [1] 7,0,7
+        - Petal5_r1 [1] 7,0,7
+      - LeftLegSeg2 [2] 5,2,4
+        - RightLegTumors
+          - Tumor_r1 [1] 3,3,3
+          - Tumor_r3 [1] 3,3,3
+          - Tumor_r2 [1] 3,3,3
+          - Tumor_r4 [1] 3,3,3
+        - Wires_r1 [1] 1,8,1
+        - Wires_r2 [1] 1,6,1
+    - RightLeg [2] 6,7,5
+      - RightLegTendril
+        - Seg2RightLegTendril
+          - Seg3RightLegTendril [1] 1,8,1
+          - TendrilSegment_r2 [1] 2,6,2
+        - TendrilSegment_r1 [1] 2,4,2
+      - RightLegSeg2 [1] 6,7,5
+      - Wire_r1 [1] 1,3,1
+      - Wire_r2 [1] 1,3,1
+      - RightLegFungus
+        - Fungus_r3 [1] 7,0,7
+        - Fungus_r4 [1] 7,0,7
+        - Fungus_r1 [1] 7,0,7
+        - Fungus_r2 [1] 7,0,7
+      - Wire_r3 [1] 1,3,1
+
+## inf_diseased_villager (20 parts)
+
+- part0 [5] 8,8,8
+  - nose [1] 2,4,2
+  - jaw [1] 8,2,6
+- part1 [1] 8,3,6
+  - tendril
+    - cube_r2 [1] 0,8,8
+  - body_r1 [1] 8,3,6
+  - body_r2 [1] 8,7,6
+  - tendril2
+    - cube_r3 [1] 0,8,8
+- part2 [1] 8,18,6
+- part3 [1] 3,6,3
+  - RightForArm [1] 3,6,3
+- part4 [1] 3,6,3
+  - LeftForArm
+    - cube_r1 [1] 3,6,3
+- part5 [1] 3,6,5
+  - rightForLeg [1] 3,6,5
+- part6 [1] 3,6,5
+  - leftForLeg [1] 3,6,5
+
+## inf_drowned (26 parts)
+
+- part0 [1] 8,2,4
+  - head [4] 8,6,8 <== eyes
+    - jaw [1] 7,2,4
+    - ear2 [1] 0,5,5
+    - ear [1] 0,5,5
+  - LeftLeg [1] 3,6,4
+    - tendril6 [1] 0,8,4
+    - leftForLeg [1] 3,6,4
+  - RightArm [1] 3,6,3
+    - RightForArm [1] 3,6,3
+  - RightLeg [1] 3,6,4
+    - rightForLeg [1] 3,6,4
+    - tendril5 [1] 0,8,4
+  - LeftArm [1] 3,6,3
+    - LeftForArm
+      - cube_r1 [1] 3,6,3
+  - spine2 [1] 8,6,5
+    - back3 [1] 3,4,4
+    - back4 [1] 3,4,4
+  - tendril [1] 0,8,4
+  - spine [1] 4,5,5
+    - back [1] 3,4,4
+    - back2 [1] 3,4,4
+  - tendril3 [1] 0,8,4
+  - tendril2 [1] 0,8,4
+  - tendril4 [1] 0,8,4
+
+## inf_evoker (44 parts)
+
+- part0 [5] 7,1,0
+  - nose [1] 2,4,2
+  - jaw [1] 8,2,6
+  - cube_r1 [1] 0,7,10
+  - cube_r2 [1] 0,7,10
+- part1 [1] 8,3,6
+  - body_r1 [1] 8,3,6
+  - body_r2 [1] 8,7,6
+- part2 [1] 3,6,3
+  - RightForArm [1] 3,6,3
+    - item
+- part3 [1] 3,6,5
+  - rightForLeg [1] 3,6,5
+- part4 [1] 3,6,5
+  - leftForLeg [1] 3,6,5
+- part5
+  - base [1] 3,6,3
+    - fingerT2
+      - jointT2 [1] 1,7,2
+        - fingerG2
+          - jointG2 [1] 1,7,2
+            - claw2 [1] 0,7,3
+    - middleF [1] 3,6,3
+      - middleF2
+        - middleF3
+          - cube_r5 [1] 0,7,4
+        - cube_r4 [1] 2,7,3
+    - fingerT
+      - jointT [1] 1,7,2
+        - fingerG
+          - jointG [1] 1,7,2
+            - claw [1] 0,7,3
+    - fingerT3
+      - jointT3 [1] 1,7,2
+        - fingerG3
+          - jointG3 [1] 1,7,2
+            - claw3 [1] 0,7,3
+    - cube_r3 [1] 3,6,3
+    - fingerT4
+      - jointT4 [1] 2,7,2
+        - fingerG4
+          - jointG4 [1] 2,7,2
+            - claw4 [1] 0,9,5
+- part6 [1] 8,18,6
+
+## inf_hazmat (60 parts)
+
+- part0 [2] 7,5,5
+  - TorsoTop [1] 7,5,5
+    - Head [1] 8,8,7 <== eyes
+      - Helmet
+        - HelmetBase [5] 9,9,8
+        - Glass [3] 2,7,0
+          - Glass_r3 [1] 2,3,0
+          - Glass_r4 [1] 1,2,0
+          - Glass_r1 [1] 2,4,0
+          - Glass_r2 [1] 3,2,0
+      - GasMask
+        - Basefilter
+          - Filter
+            - Filter1
+              - FilterStrands
+                - Stringy_r2 [1] 1,4,1
+                - Stringy_r1 [1] 1,3,1
+                - Filter1end [1] 2,2,2
+                  - Filter1Cap_r1 [1] 3,1,3
+            - Filter2
+              - Filter1Cap_r2 [2] 3,3,1
+          - Base2 [5] 8,4,2
+            - baseLeftSmoohside_r1 [2] 2.9,1.5,1
+      - funnyfungus
+        - Tendril1
+          - tendril1Seg1
+            - tendril1Seg1_r2 [1] 2,2,4
+          - tendril1Base_r1 [1] 2,2,4
+        - Tendril3
+          - tendril3Seg1
+            - tendril3Seg1_r1 [1] 1,1,3
+          - tendril3Base_r1 [1] 1,1,3
+        - Tendril2
+          - tendril2Base_r1 [1] 1,1,3
+          - tendril2Seg1
+            - tendril2Seg1_r2 [1] 1,1,3
+        - Smolltendies [1] 1,1,2
+    - TorsoTopFluff [4] 3,5,6
+    - arms
+      - Larm [2] 3,5,3
+        - LarmEnd [3] 3,3,3
+      - Rarm [2] 3,5,3
+        - RarmEnd [2] 3,5,3
+    - TorsoWound
+      - Fungy
+        - torsotendie2 [1] 2,2,4
+          - Torsotendril2seg1
+            - tendril2seg1_r1 [1] 2,2,4
+        - torsotendie1 [1] 2,2,4
+          - Torsotendril1seg1
+            - tendril1seg1_r1 [1] 2,2,4
+      - Tumor
+        - Tumor1_r1 [1] 3,3,3
+        - Tumor2_r1 [1] 2,2,2
+- part1
+  - LlegBase [2] 3,6,3
+    - LlegEnd [2] 3,6,3
+- part2
+  - RlegBase [2] 3,6,3
+    - RlegEnd [2] 3,6,3
+
+## inf_human (20 parts)
+
+- part0 [1] 8,2,4
+  - head [3] 8,6,8 <== eyes
+    - jaw [1] 7,2,4
+  - LeftLeg [1] 3,6,4
+    - leftForLeg [1] 3,6,4
+  - RightArm [1] 3,6,3
+    - RightForArm [1] 3,6,3
+  - RightLeg [1] 3,6,4
+    - rightForLeg [1] 3,6,4
+  - LeftArm [1] 3,6,3
+    - LeftForArm
+      - cube_r1 [1] 3,6,3
+  - spine2 [1] 8,6,5
+    - back3 [1] 3,4,4
+    - back4 [1] 3,4,4
+  - tendril [1] 0,8,8
+  - spine [1] 4,5,5
+    - back [1] 3,4,4
+    - back2 [1] 3,4,4
+  - tendril2 [1] 0,8,8
+
+## inf_husk (20 parts)
+
+- part0 [1] 8,2,4
+  - head [3] 8,6,8 <== eyes
+    - jaw [1] 7,2,4
+  - LeftLeg [1] 3,6,4
+    - leftForLeg [1] 3,6,4
+  - RightArm [1] 3,6,3
+    - RightForArm [1] 3,6,3
+  - RightLeg [1] 3,6,4
+    - rightForLeg [1] 3,6,4
+  - LeftArm [1] 3,6,3
+    - LeftForArm
+      - cube_r1 [1] 3,6,3
+  - spine2 [1] 8,6,5
+    - back3 [1] 3,4,4
+    - back4 [1] 3,4,4
+  - tendril [1] 0,8,8
+  - spine [1] 4,5,5
+    - back [1] 3,4,4
+    - back2 [1] 3,4,4
+  - tendril2 [1] 0,8,8
+
+## inf_pillager (16 parts)
+
+- part0 [5] 7,1,0
+  - nose [1] 2,4,2
+  - jaw [1] 8,2,6
+- part1 [1] 8,3,6
+  - body_r1 [1] 8,3,6
+  - body_r2 [1] 8,7,6
+- part2 [1] 8,18,6
+- part3 [1] 3,6,3
+  - RightForArm [1] 3,6,3
+- part4 [1] 3,6,3
+  - LeftForArm
+    - cube_r1 [1] 3,6,3
+- part5 [1] 3,6,5
+  - rightForLeg [1] 3,6,5
+- part6 [1] 3,6,5
+  - leftForLeg [1] 3,6,5
+
+## inf_player (8 parts)
+
+- head [4] 8,6,8 <== eyes
+  - jaw [1] 8,2,3
+- body [4] 8,6,4
+- body1 [3] 4,6,3
+- body2 [3] 4,6,3
+- body3 [2] 4,6,4
+- body4 [2] 4,7,4
+- body5 [1] 8,8,8
+
+## inf_villager (16 parts)
+
+- part0 [5] 7,1,0
+  - nose [1] 2,4,2
+  - jaw [1] 8,2,6
+- part1 [1] 8,3,6
+  - body_r1 [1] 8,3,6
+  - body_r2 [1] 8,7,6
+- part2 [1] 8,18,6
+- part3 [1] 3,6,3
+  - RightForArm [1] 3,6,3
+- part4 [1] 3,6,3
+  - LeftForArm
+    - cube_r1 [1] 3,6,3
+- part5 [1] 3,6,5
+  - rightForLeg [1] 3,6,5
+- part6 [1] 3,6,5
+  - leftForLeg [1] 3,6,5
+
+## inf_vindicator (20 parts)
+
+- part0 [5] 7,1,0
+  - nose [1] 2,4,2
+  - jaw [1] 8,2,6
+- part1 [1] 8,3,6
+  - body_r1 [1] 8,3,6
+  - body_r2 [1] 8,7,6
+- part2 [1] 8,18,6
+- part3 [1] 3,7,4
+  - RightForArm [1] 3,6,4
+    - axe
+  - armthing [3] 3,4,4
+    - cube_r1 [1] 3,6,0
+    - cube_r2 [1] 3,6,0
+- part4 [1] 3,6,3
+  - LeftForArm
+    - cube_r3 [1] 3,6,3
+- part5 [1] 3,6,5
+  - rightForLeg [1] 3,6,5
+- part6 [1] 3,6,5
+  - leftForLeg [1] 3,6,5
+
+## inf_wanderer (16 parts)
+
+- part0 [5] 7,1,0
+  - nose [1] 2,4,2
+  - jaw [1] 8,2,6
+- part1 [1] 8,3,6
+  - body_r1 [1] 8,3,6
+  - body_r2 [1] 8,7,6
+- part2 [1] 8,18,6
+- part3 [1] 3,6,3
+  - RightForArm [1] 3,6,3
+- part4 [1] 3,6,3
+  - LeftForArm
+    - cube_r1 [1] 3,6,3
+- part5 [1] 3,6,5
+  - rightForLeg [1] 3,6,5
+- part6 [1] 3,6,5
+  - leftForLeg [1] 3,6,5
+
+## inf_witch (19 parts)
+
+- part0 [2] 8,6,5
+- part1 [1] 3,6,4
+  - leftForLeg [1] 3,6,4
+- part2 [1] 3,6,4
+  - rightForLeg [1] 3,6,4
+- part3 [2] 8,6,6
+  - head [3] 8,2,4 <== eyes
+    - nose [2] 2,4,2
+    - jaw [1] 8,2,4
+    - headwear [1] 10,2,10
+      - hat2 [1] 7,4,7
+        - hat3 [1] 4,4,4
+          - hat4 [1] 1,2,1
+- part4 [1] 3,6,3
+  - RightForArm [1] 3,6,3
+- part5 [1] 3,6,3
+  - LeftForArm
+    - item
+    - cube_r1 [1] 3,6,3
+
+## inquisitor (76 parts)
+
+- part0
+  - Torso [1] 11,7,5
+    - LowerTorsoGrowth [6] 6,8,7
+      - LowerTorsoGrowthFungus
+        - FungalPlanes_r5 [1] 7,0,7
+        - FungalPlanes_r6 [1] 7,0,7
+        - FungalPlanes_r3 [2] 7,0,7
+        - FungalPlanes_r4 [1] 7,0,7
+        - FungalPlanes_r1 [1] 7,0,7
+        - FungalPlanes_r2 [1] 7,0,7
+      - LowerTGrowthFungalPlate [4] 8,2,8
+      - GrowthSeg7_r1 [1] 6,4,1
+      - GrowthSeg1_r1 [1] 6,11,6
+    - UpperTorso [1] 12,7,6
+      - RightArm [1] 5,8,5
+        - RightArmSeg2 [2] 4,8,4
+          - RightArmClaw
+            - Claw1 [1] 6,12,0
+            - Claw2 [1] 6,12,0
+            - Claw3
+              - Claw3_r1 [1] 0,12,6
+            - Claw4
+              - Claw4_r1 [1] 0,12,6
+        - ShoulderPad [1] 2,6,6
+          - PadFront_r1 [1] 3,6,1
+          - PadBack_r1 [1] 3,5,1
+          - PadCenter_r1 [1] 5,3,6
+          - Fungus_r1 [1] 7,0,7
+      - Head [1] 8,8,8 <== eyes
+        - Helmet
+          - HelmBackUpperLeft_r1 [1] 3,7,1
+          - HelmBackLowerLeft_r1 [1] 7,3,2
+          - HelmRightBase_r1 [1] 2,9,3
+          - HelmJawRight_r1 [1] 8,4,2
+          - HelmCrest [1] 0,7,7
+            - RightFungus_r1 [1] 0,7,7
+            - LeftFungus_r1 [1] 0,7,7
+          - HelmJawLeft_r1 [1] 8,4,2
+          - HelmTopRight_r1 [1] 4,2,8
+          - HelmBackRight_r1 [1] 7,10,6
+          - HelmRightEyepatch_r1 [2] 3,4,1
+          - HelmTopCenter_r1 [1] 4,2,8
+          - HelmExtraDetails
+            - FungalPlate3
+              - FungalRidgeEdge_r3 [4] 9,1,2
+            - FungalPlate4 [4] 8,1,8
+            - FungalPlate1
+              - FungalRidgeEdge_r1 [4] 9,1,2
+            - FungalPlate2
+              - FungalRidgeEdge_r2 [4] 9,1,2
+          - HelmBackRightTorsoConnection_r1 [1] 7,3,2
+          - HelmFrontMiddleRight_r1 [1] 2,3,4
+      - UpperTorsoGrowth [1] 3,5,7
+        - UpperTorsoGrowthFungus
+          - FungalPlanes_r9 [1] 7,0,7
+          - FungalPlanes_r7 [1] 7,0,7
+          - FungalPlanes_r8 [1] 7,0,7
+          - FungalPlanes_r12 [1] 7,0,7
+          - FungalPlanes_r10 [1] 7,0,7
+          - FungalPlanes_r11 [1] 7,0,7
+        - GrowthSeg1_r2 [1] 5,10,8
+        - GrowthSeg2_r1 [1] 4,7,8
+        - UpperTGrowthFungalPlate [4] 8,2,8
+        - GrowthSeg4_r1 [1] 3,9,7
+        - GrowthSeg3_r1 [1] 4,7,7
+      - UpperTorsoFungalPlate [4] 8,2,8
+  - Legs
+    - LeftLeg [1] 5,8,5
+      - LeftLegSeg2 [1] 5,8,5
+        - LeftLegFungus
+          - Fungus_r3 [1] 7,0,7
+          - Fungus_r4 [1] 7,0,7
+          - Fungus_r2 [1] 7,0,7
+    - RightLeg [2] 4,8,4
+      - RightLegSeg2 [1] 5,7,5
+        - RightLegSeg2_r1 [1] 4,8,4
+
+## jagd (114 parts)
+
+- root
+  - Digger
+    - Legs
+      - RightLegJoint
+        - RightLeg [2] 3,4,3
+          - RightLegFoot [2] 3,2,3
+      - LeftLegJoint
+        - LeftLeg [1] 3,6,3
+          - RightLegFungus
+            - Fungus_r14 [1] 7,0,7
+            - Fungus_r13 [1] 7,0,7
+          - LeftLegFoot [2] 3,3,3
+    - LowerTorso [7] 7,1,4
+      - ChestTumors
+        - Tumor_r1 [1] 4,4,4
+        - Tumor_r3 [1] 5,5,5
+        - Tumor_r2 [1] 3,3,3
+      - LowerRibs
+        - Rib1 [3] 4,1,1
+        - Rib2 [2] 3,1,1
+        - Rib5 [3] 3,1,1
+        - Rib6 [2] 4,1,1
+        - Spine_r1 [1] 2,7,2
+        - Rib3 [3] 4,1,1
+        - Rib4 [2] 4,1,1
+      - UpperTorso [2] 8,7,4
+        - UpperTorsoFungus
+          - Fungus_r3 [1] 7,0,7
+          - Fungus_r4 [1] 7,0,7
+          - Fungus_r1 [1] 7,0,7
+          - Fungus_r2 [1] 7,0,7
+        - UpperRibs
+          - TopRib4 [3] 4,1,1
+          - Spine_r2 [1] 2,7,2
+          - TopRib5 [3] 3,1,1
+          - TopRib2 [3] 3,1,1
+          - TopRib3 [3] 3,1,1
+          - TopRib1 [3] 3,1,1
+        - Arms
+          - RightArmJoint
+            - RightArm [1] 8,3,3
+              - RightArmFungus
+                - Fungus_r9 [1] 0,7,7
+                - Fungus_r12 [1] 0,7,7
+                - Fungus_r11 [1] 0,7,7
+                - Fungus_r10 [1] 0,7,7
+              - RightArmSeg2 [1] 2,16,2
+                - SharpElbows [1] 4,6,0
+                - RightArmSeg3 [1] 2,5,2
+                  - RightClaw
+                    - RightClawPlane2 [1] 6,3,0
+                    - RightClawPlane1 [1] 6,3,0
+                    - RightClawPlane3
+                      - ClawPlane_r2 [1] 6,3,0
+          - LeftArmJoint
+            - LeftArm [1] 8,3,3
+              - LeftArmSeg2 [1] 2,16,2
+                - LeftArm2
+                  - Fungus_r7 [1] 7,0,7
+                  - Fungus_r8 [1] 7,0,7
+                  - Fungus_r5 [1] 7,0,7
+                  - Fungus_r6 [1] 7,0,7
+                - LeftArmSeg3 [1] 2,5,2
+                  - LeftClaw
+                    - LeftClawPlane2 [1] 6,3,0
+                    - LeftClawPlane3
+                      - ClawPlane_r1 [1] 6,3,0
+                    - LeftClawPlane1 [1] 6,3,0
+                - SharpElbows2 [1] 4,6,0
+        - Neck [1] 4,4,4
+          - NeckSeg2 [1] 4,5,4
+            - Head [1] 8,8,5 <== eyes
+              - crown1
+                - Petal4_r1 [1] 7,7,0
+                - Petal3_r1 [1] 7,7,0
+                - Petal2_r1 [1] 7,7,0
+                - Petal1_r1 [1] 7,7,0
+              - Jaw [1] 8,1,4
+                - TopJawJoint
+                  - TopJaw
+                    - Teeth_r11 [1] 0,5,2
+                    - JawFront_r3 [1] 6,1,2
+                    - JawRight_r1 [1] 3,9,1
+                    - Teeth_r13 [1] 0,5,2
+                    - JawBase_r1 [1] 5,9,1
+                    - Teeth_r12 [1] 0,6,2
+                    - Teeth_r15 [1] 6,2,0
+                    - JawInner_r3 [1] 3,9,1
+                    - Teeth_r14 [1] 0,6,2
+                - Tongue [1] 4,1,6
+                  - BTongue2 [1] 3,1,6
+                    - BTongue3 [1] 2,1,6
+                - LeftJawJoint
+                  - LeftJaw [1] 3,7,1
+                    - JawFront_r1 [1] 5,1,2
+                    - Teeth_r1 [1] 0,7,2
+                    - Teeth_r2 [1] 0,3,2
+                    - JawInner_r1 [1] 2,7,1
+                    - JawOuter_r1 [1] 2,7,1
+                    - Teeth_r3 [1] 0,3,2
+                    - Teeth_r4 [1] 0,7,2
+                    - Teeth_r5 [1] 5,2,0
+                - RightJawJoint
+                  - RightJaw [1] 3,7,1
+                    - Teeth_r10 [1] 5,2,0
+                    - JawFront_r2 [1] 5,1,2
+                    - JawInner_r2 [1] 2,7,1
+                    - Teeth_r7 [1] 0,3,2
+                    - Teeth_r8 [1] 0,3,2
+                    - Teeth_r9 [1] 0,7,2
+                    - Teeth_r6 [1] 0,7,2
+                    - JawOuter_r2 [1] 2,7,1
+            - SpineSeg_r2 [1] 2,6,1
+          - SpineSeg_r1 [1] 2,3,1
+
+## knight (25 parts)
+
+- part0 [8] 8,5,4
+  - RightArm [1] 3,6,3
+    - RightForArm [1] 3,6,3
+      - tumb [1] 0,6,3
+      - fingers [2] 4,9,0
+  - LeftLeg [1] 3,6,4
+    - leftForLeg [1] 3,6,4
+  - tendril
+  - tendril3
+  - cube_r1 [2] 7,0,6
+  - tendril2
+  - cube_r2 [1] 7,0,6
+  - cube_r3 [4] 7,0,6
+  - tendril4
+  - flower
+    - cube_r4 [1] 6,0,6
+    - cube_r5 [1] 6,0,6
+    - cube_r6 [1] 7,0,6
+    - cube_r7 [1] 7,0,6
+  - head [3] 8,6,8 <== eyes
+    - jaw [1] 7,2,4
+    - mushroom2 [4] 0,8,11
+  - RightLeg [1] 3,6,4
+    - rightForLeg [1] 3,6,4
+  - mushroom
+
+## kraken (639 parts)
+
+- part0
+  - head [2] 15,9,12 <== eyes
+    - HeadOuterRight_r2 [1] 8,7,8
+    - HeadOuterRight_r1 [1] 8,7,8
+    - teeth_r9 [2] 8,1,3
+    - HeadInnerLeft_r1 [1] 8,6,8
+  - FrontJaw
+    - rightJaw
+      - head15
+        - teeth_r5 [2] 8,1,8
+      - head17
+        - teeth_r6 [2] 8,2,8
+      - cube_r26 [1] 12,6,18
+      - head19 [2] 8,6,8
+      - cube_r25 [1] 10,6,10
+    - leftJaw
+      - head16
+        - teeth_r7 [2] 8,1,8
+      - head18
+        - teeth_r8 [2] 8,2,8
+      - cube_r27 [1] 10,6,10
+      - cube_r28 [1] 12,6,18
+      - head20 [2] 8,6,8
+    - jawTop
+      - MouthTopCenterpiece
+        - MTCPLimbs
+          - RArm_r1 [1] 4,4,9
+          - Leg_r28 [1] 4,4,8
+        - MTCPHead
+          - MTCPJaw
+            - MTCPJaw_r1 [1] 8,1,8
+          - MTCPHead_r1 [1] 8,7,8
+        - CenterTorsoTop_r1 [1] 8,4,6
+        - CenterTorsoBack_r1 [1] 7,3,6
+      - cube_r21 [1] 21,16,9
+      - MouthTopCenterpiece2
+        - MTCPLimbs2
+          - Leg_r29 [1] 4,4,8
+          - RArm_r2 [1] 4,4,9
+        - CenterTorsoTop_r2 [1] 8,4,6
+        - MTCPHead2
+          - MTCPHead_r2 [1] 8,7,8
+          - MTCPJaw2
+            - MTCPJaw_r2 [1] 8,1,8
+        - CenterTorsoBack_r2 [1] 7,3,6
+      - head10
+        - teeth_r4 [2] 8,2,8
+      - cube_r22 [1] 13,5,8
+      - cube_r23 [1] 20,6,10
+      - cube_r24 [1] 21,6,18
+      - head8
+        - teeth_r3 [2] 8,1,8
+      - head9
+        - Head_r29 [2] 8,6,8
+      - head11
+        - Head_r30 [2] 8,6,8
+      - head12 [2] 8,6,8
+      - head13 [2] 8,6,8
+      - head14 [2] 8,6,8
+    - jawBottom
+      - cube_r20 [1] 21,6,18
+      - cube_r17 [1] 21,16,9
+      - cube_r18 [1] 13,5,8
+      - RMouthBody3 [1] 8,4,6
+        - Arm_r65 [1] 3,3,9
+        - Arm_r66 [1] 3,3,9
+        - Head_r28 [1] 8,8,7
+        - TorsoBase_r30 [1] 7,3,6
+      - cube_r19 [1] 20,6,10
+      - RMouthBody2 [1] 8,4,6
+        - Arm_r63 [1] 3,3,9
+        - Head_r27 [1] 8,8,7
+        - Arm_r64 [1] 3,3,9
+        - TorsoBase_r29 [1] 7,3,6
+      - head1
+        - teeth_r1 [2] 8,1,8
+      - head2
+        - Head_r25 [2] 8,6,8
+      - head3 [2] 8,6,8
+      - head4
+        - teeth_r2 [2] 8,2,8
+      - head5
+        - Head_r26 [2] 8,6,8
+      - head6 [2] 8,6,8
+      - head7 [2] 8,6,8
+  - LeftArmConnectPoint
+    - Biomass_r1 [1] 11,11,11
+    - Biomass_r2 [1] 10,10,10
+    - Biomass_r3 [1] 8,8,8
+    - Biomass_r4 [1] 9,9,9
+  - RightArmConnectPoint
+    - Biomass_r7 [1] 8,8,8
+    - Biomass_r8 [1] 9,9,9
+    - Biomass_r5 [1] 11,11,11
+    - Biomass_r6 [1] 10,10,10
+  - BackBodyMouthProtection
+    - HindeRotation
+      - Hinge1
+        - LeftHinge [1] 3,24,4
+          - HingeMiddleHinge [1] 3,16,4
+            - HingeTopHinge [3] 3,16,4
+              - LeftTopMemebrane
+                - LeftRidgeTopMemebrane_r1 [2] 0,15,12
+                - LeftRidgeTopMemebraneTip_r2 [2] 0,8,8
+                - LeftRidgeTopMemebrane_r2 [2] 0,15,12
+                - LeftRidgeTopMemebraneTip_r1 [2] 0,8,8
+              - TopRidgeRib3Tip_r1 [2] 3,4,8
+              - TopRidgeRib3_r1 [2] 3,4,12
+              - TopRidgeRib2_r1 [1] 3,4,12
+              - TopRidgeRib2Tip_r1 [1] 3,4,8
+            - HingeMiddleMemebrane
+              - MiddleRidgeFrontMembraneTip_r1 [1] 0,15,8
+              - MiddleRidgeFrontMembrane_r1 [1] 0,16,12
+              - MiddleRidgeBackMembrane_r1 [1] 0,16,12
+              - MiddleRidgeBackMembraneTip_r1 [1] 0,15,8
+            - MiddleRidgeRib2Tip_r1 [2] 3,4,8
+            - MiddleRidgeRib2_r1 [2] 3,4,12
+          - HingeLowerMemebrane
+            - LowerRidgeFrontMembraneTip_r2 [1] 0,22,8
+            - LowerRidgeFrontMembraneTip_r1 [1] 0,22,8
+            - LowerRidgeFrontMembrane_r1 [1] 0,22,12
+            - LowerRidgeFrontMembrane_r2 [1] 0,22,12
+          - LowerRidgeRib3Tip_r1 [2] 3,4,8
+          - LowerRidgeRib2Tip_r1 [1] 3,4,8
+          - LowerRidgeRib2_r1 [1] 3,4,12
+          - LowerRidgeRib3_r1 [2] 3,4,12
+    - HindeRotation5
+      - Hinge5
+        - LeftHinge5 [1] 3,24,4
+          - LowerRidgeRib2Tip_r5 [1] 3,4,8
+          - LowerRidgeRib6_r2 [1] 3,4,12
+          - HingeMiddleHinge5 [1] 3,16,4
+            - MiddleRidgeRib6_r1 [2] 3,4,12
+            - HingeMiddleMemebrane5
+              - MiddleRidgeFrontMembraneTip_r5 [1] 0,15,8
+              - MiddleRidgeBackMembrane_r5 [1] 0,16,12
+              - MiddleRidgeFrontMembrane_r5 [1] 0,16,12
+              - MiddleRidgeBackMembraneTip_r5 [1] 0,15,8
+            - HingeTopHinge5 [3] 3,16,4
+              - TopRidgeRib3Tip_r5 [2] 3,4,8
+              - TopRidgeRib6_r2 [1] 3,4,12
+              - TopRidgeRib7_r1 [2] 3,4,12
+              - TopRidgeRib2Tip_r5 [1] 3,4,8
+              - LeftTopMemebrane5
+                - LeftRidgeTopMemebraneTip_r9 [2] 0,8,8
+                - LeftRidgeTopMemebrane_r10 [2] 0,15,12
+                - LeftRidgeTopMemebraneTip_r10 [2] 0,8,8
+                - LeftRidgeTopMemebrane_r9 [2] 0,15,12
+            - MiddleRidgeRib2Tip_r5 [2] 3,4,8
+          - LowerRidgeRib3Tip_r5 [2] 3,4,8
+          - HingeLowerMemebrane5
+            - LowerRidgeFrontMembrane_r9 [1] 0,22,12
+            - LowerRidgeFrontMembrane_r10 [1] 0,22,12
+            - LowerRidgeFrontMembraneTip_r10 [1] 0,22,8
+            - LowerRidgeFrontMembraneTip_r9 [1] 0,22,8
+          - LowerRidgeRib7_r1 [2] 3,4,12
+    - HindeRotation4
+      - Hinge4
+        - LeftHinge4 [1] 3,24,4
+          - LowerRidgeRib5_r2 [1] 3,4,12
+          - LowerRidgeRib6_r1 [2] 3,4,12
+          - LowerRidgeRib2Tip_r4 [1] 3,4,8
+          - HingeMiddleHinge4 [1] 3,16,4
+            - MiddleRidgeRib5_r1 [2] 3,4,12
+            - HingeMiddleMemebrane4
+              - MiddleRidgeFrontMembraneTip_r4 [1] 0,15,8
+              - MiddleRidgeBackMembrane_r4 [1] 0,16,12
+              - MiddleRidgeBackMembraneTip_r4 [1] 0,15,8
+              - MiddleRidgeFrontMembrane_r4 [1] 0,16,12
+            - MiddleRidgeRib2Tip_r4 [2] 3,4,8
+            - HingeTopHinge4 [3] 3,16,4
+              - TopRidgeRib3Tip_r4 [2] 3,4,8
+              - TopRidgeRib5_r2 [1] 3,4,12
+              - TopRidgeRib6_r1 [2] 3,4,12
+              - TopRidgeRib2Tip_r4 [1] 3,4,8
+              - LeftTopMemebrane4
+                - LeftRidgeTopMemebraneTip_r8 [2] 0,8,8
+                - LeftRidgeTopMemebraneTip_r7 [2] 0,8,8
+                - LeftRidgeTopMemebrane_r7 [2] 0,15,12
+                - LeftRidgeTopMemebrane_r8 [2] 0,15,12
+          - LowerRidgeRib3Tip_r4 [2] 3,4,8
+          - HingeLowerMemebrane4
+            - LowerRidgeFrontMembrane_r7 [1] 0,22,12
+            - LowerRidgeFrontMembrane_r8 [1] 0,22,12
+            - LowerRidgeFrontMembraneTip_r7 [1] 0,22,8
+            - LowerRidgeFrontMembraneTip_r8 [1] 0,22,8
+    - HindeRotation3
+      - Hinge3
+        - LeftHinge3 [1] 3,24,4
+          - LowerRidgeRib3Tip_r3 [2] 3,4,8
+          - HingeLowerMemebrane3
+            - LowerRidgeFrontMembrane_r5 [1] 0,22,12
+            - LowerRidgeFrontMembrane_r6 [1] 0,22,12
+            - LowerRidgeFrontMembraneTip_r6 [1] 0,22,8
+            - LowerRidgeFrontMembraneTip_r5 [1] 0,22,8
+          - LowerRidgeRib5_r1 [2] 3,4,12
+          - LowerRidgeRib2Tip_r3 [1] 3,4,8
+          - HingeMiddleHinge3 [1] 3,16,4
+            - MiddleRidgeRib4_r1 [2] 3,4,12
+            - HingeMiddleMemebrane3
+              - MiddleRidgeBackMembrane_r3 [1] 0,16,12
+              - MiddleRidgeFrontMembraneTip_r3 [1] 0,15,8
+              - MiddleRidgeBackMembraneTip_r3 [1] 0,15,8
+              - MiddleRidgeFrontMembrane_r3 [1] 0,16,12
+            - MiddleRidgeRib2Tip_r3 [2] 3,4,8
+            - HingeTopHinge3 [3] 3,16,4
+              - TopRidgeRib5_r1 [2] 3,4,12
+              - TopRidgeRib3Tip_r3 [2] 3,4,8
+              - TopRidgeRib4_r2 [1] 3,4,12
+              - TopRidgeRib2Tip_r3 [1] 3,4,8
+              - LeftTopMemebrane3
+                - LeftRidgeTopMemebrane_r5 [2] 0,15,12
+                - LeftRidgeTopMemebraneTip_r6 [2] 0,8,8
+                - LeftRidgeTopMemebrane_r6 [2] 0,15,12
+                - LeftRidgeTopMemebraneTip_r5 [2] 0,8,8
+          - LowerRidgeRib4_r2 [1] 3,4,12
+    - HindeRotation2
+      - Hinge2
+        - LeftHinge2 [1] 3,24,4
+          - HingeMiddleHinge2 [1] 3,16,4
+            - HingeMiddleMemebrane2
+              - MiddleRidgeFrontMembraneTip_r2 [1] 0,15,8
+              - MiddleRidgeBackMembraneTip_r2 [1] 0,15,8
+              - MiddleRidgeFrontMembrane_r2 [1] 0,16,12
+              - MiddleRidgeBackMembrane_r2 [1] 0,16,12
+            - HingeTopHinge2 [3] 3,16,4
+              - TopRidgeRib3Tip_r2 [2] 3,4,8
+              - TopRidgeRib4_r1 [2] 3,4,12
+              - TopRidgeRib3_r2 [1] 3,4,12
+              - LeftTopMemebrane2
+                - LeftRidgeTopMemebrane_r3 [2] 0,15,12
+                - LeftRidgeTopMemebrane_r4 [2] 0,15,12
+                - LeftRidgeTopMemebraneTip_r4 [2] 0,8,8
+                - LeftRidgeTopMemebraneTip_r3 [2] 0,8,8
+              - TopRidgeRib2Tip_r2 [1] 3,4,8
+            - MiddleRidgeRib2Tip_r2 [2] 3,4,8
+            - MiddleRidgeRib3_r1 [2] 3,4,12
+          - LowerRidgeRib3Tip_r2 [2] 3,4,8
+          - LowerRidgeRib2Tip_r2 [1] 3,4,8
+          - LowerRidgeRib4_r1 [2] 3,4,12
+          - HingeLowerMemebrane2
+            - LowerRidgeFrontMembraneTip_r3 [1] 0,22,8
+            - LowerRidgeFrontMembrane_r3 [1] 0,22,12
+            - LowerRidgeFrontMembraneTip_r4 [1] 0,22,8
+            - LowerRidgeFrontMembrane_r4 [1] 0,22,12
+          - LowerRidgeRib3_r2 [1] 3,4,12
+  - body [2] 30,13,38
+    - CenterCorpseDetails2
+      - CenterBody5
+        - Arm_r7 [1] 3,7,3
+        - TorsoTop_r5 [1] 4,7,8
+        - Head_r3 [1] 8,7,8
+      - CenterBody6
+        - TorsoBottom_r4 [1] 7,3,6
+        - TorsoBottom_r3 [1] 3,3,8
+        - Arm_r8 [1] 3,3,8
+        - Arm_r9 [1] 3,3,7
+        - TorsoTop_r6 [1] 8,4,6
+      - CenterBody8
+        - TorsoBase_r3 [1] 7,3,6
+        - Arm_r10 [1] 3,3,8
+        - Arm_r11 [1] 3,3,6
+        - TorsoTop_r7 [1] 8,4,6
+        - Head_r4 [1] 8,8,8
+    - CenterCorpseDetails3
+      - CenterBody10
+        - TorsoBase_r4 [1] 7,3,6
+        - TorsoTop_r10 [1] 8,4,6
+        - Arm_r15 [1] 3,3,8
+        - Head_r6 [1] 8,8,8
+        - Arm_r16 [1] 3,3,6
+      - CenterBody7
+        - Arm_r12 [1] 3,7,3
+        - Head_r5 [1] 8,7,8
+        - TorsoTop_r8 [1] 4,7,8
+      - CenterBody9
+        - TorsoBottom_r6 [1] 7,3,6
+        - TorsoBottom_r5 [1] 3,3,8
+        - Arm_r14 [1] 3,3,7
+        - TorsoTop_r9 [1] 8,4,6
+        - Arm_r13 [1] 3,3,8
+    - CenterCorpseDetails4
+      - CenterBody11
+        - TorsoTop_r11 [1] 4,7,8
+        - Head_r7 [1] 8,7,8
+        - Arm_r17 [1] 3,7,3
+      - CenterBody14
+        - TorsoBase_r6 [1] 7,3,6
+        - Arm_r21 [1] 3,3,8
+        - Arm_r22 [1] 3,3,6
+        - Head_r8 [1] 8,8,8
+        - TorsoTop_r14 [1] 8,4,6
+      - CenterBody12
+        - TorsoTop_r12 [1] 8,4,6
+        - TorsoBottom_r8 [1] 7,3,6
+        - TorsoBottom_r7 [1] 3,3,8
+        - Arm_r18 [1] 3,3,8
+        - Arm_r19 [1] 3,3,7
+      - CenterBody13
+        - TorsoTop_r13 [1] 4,7,8
+        - TorsoBase_r5 [1] 3,6,7
+        - Arm_r20 [1] 3,7,3
+        - Leg_r4 [1] 3,4,3
+        - Leg_r3 [1] 3,8,3
+    - CenterCorpseDetails5
+      - CenterBody15
+        - Head_r9 [1] 8,7,8
+        - Arm_r23 [1] 3,7,3
+        - TorsoTop_r15 [1] 4,7,8
+      - CenterBody16
+        - TorsoBottom_r10 [1] 7,3,6
+        - Arm_r25 [1] 3,3,7
+        - TorsoBottom_r9 [1] 3,3,8
+        - Arm_r24 [1] 3,3,8
+        - TorsoTop_r16 [1] 8,4,6
+      - CenterBody17
+        - Arm_r26 [1] 3,3,8
+        - Head_r10 [1] 8,8,8
+        - TorsoBase_r7 [1] 7,3,6
+        - Arm_r27 [1] 3,3,6
+        - TorsoTop_r17 [1] 8,4,6
+    - CenterCorpseDetails6
+      - CenterBody20
+        - Arm_r32 [1] 3,3,6
+        - Arm_r31 [1] 3,3,8
+        - TorsoTop_r20 [1] 8,4,6
+        - Head_r12 [1] 8,8,8
+        - TorsoBase_r8 [1] 7,3,6
+      - CenterBody18
+        - TorsoTop_r18 [1] 4,7,8
+        - Head_r11 [1] 8,7,8
+        - Arm_r28 [1] 3,7,3
+      - CenterBody19
+        - TorsoBottom_r12 [1] 7,3,6
+        - Arm_r30 [1] 3,3,7
+        - TorsoBottom_r11 [1] 3,3,8
+        - TorsoTop_r19 [1] 8,4,6
+        - Arm_r29 [1] 3,3,8
+    - FungalBloom
+      - Plane2_r1 [1] 0,12,14
+      - Plane1_r1 [1] 0,12,14
+      - Spetal_r1 [1] 16,0,16
+      - Npetal_r1 [1] 16,0,16
+      - Wpetal_r1 [1] 16,0,16
+      - Epetal_r1 [1] 16,0,16
+    - cube_r4 [1] 30,13,38
+    - body2 [2] 30,13,50
+      - cube_r10 [1] 30,13,21
+      - cube_r8 [1] 30,13,41
+      - cube_r9 [1] 30,7,25
+      - cube_r15 [1] 30,13,21
+      - cube_r5 [1] 30,10,21
+      - cube_r6 [1] 30,13,40
+      - cube_r7 [1] 30,8,27
+      - cube_r11 [1] 30,13,46
+      - cube_r12 [1] 16,11,23
+      - bile_r1 [1] 35,29,0
+      - cube_r13 [1] 32,10,25
+      - cube_r14 [1] 30,13,43
+    - FungalBloom2
+      - Plane2_r2 [1] 0,12,14
+      - Wpetal_r2 [1] 16,0,16
+      - Plane3_r1 [1] 0,12,14
+      - Spetal_r2 [1] 16,0,16
+      - Epetal_r2 [1] 16,0,16
+      - Npetal_r2 [1] 16,0,16
+    - cube_r1 [1] 30,13,38
+    - cube_r2 [1] 30,13,38
+    - cube_r3 [1] 30,13,38
+    - CenterCorpseDetails
+      - CenterBody1
+        - Head_r1 [1] 8,7,8
+        - TorsoTop_r1 [1] 4,7,8
+        - Arm_r1 [1] 3,7,3
+      - CenterBody2
+        - Arm_r3 [1] 3,3,7
+        - TorsoBottom_r2 [1] 7,3,6
+        - TorsoBottom_r1 [1] 3,3,8
+        - TorsoTop_r2 [1] 8,4,6
+        - Arm_r2 [1] 3,3,8
+      - CenterBody3
+        - TorsoTop_r3 [1] 4,7,8
+        - Arm_r4 [1] 3,7,3
+        - TorsoBase_r1 [1] 3,6,7
+        - Leg_r2 [1] 3,4,3
+        - Leg_r1 [1] 3,8,3
+      - CenterBody4
+        - Head_r2 [1] 8,8,8
+        - TorsoTop_r4 [1] 8,4,6
+        - Arm_r5 [1] 3,3,8
+        - Arm_r6 [1] 3,3,6
+        - TorsoBase_r2 [1] 7,3,6
+    - FrontSeg2CorpseDetails
+      - FS2Body9
+        - TorsoBase_r24 [1] 7,3,6
+        - Leg_r24 [1] 3,3,10
+        - Arm_r58 [1] 3,3,8
+        - Leg_r23 [1] 3,3,10
+        - Head_r23 [1] 8,8,7
+        - Arm_r57 [1] 3,3,8
+        - TorsoTop_r37 [1] 8,4,6
+      - FS2Body8
+        - TorsoBase_r23 [1] 7,3,6
+        - Arm_r56 [1] 3,3,8
+        - TorsoTop_r36 [1] 8,4,6
+        - Head_r22 [1] 8,8,8
+      - FS2Body7
+        - TorsoTop_r35 [1] 8,4,6
+        - Arm_r54 [1] 3,3,8
+        - Arm_r55 [1] 3,3,8
+        - Leg_r22 [1] 3,3,10
+        - Leg_r21 [1] 3,3,10
+        - Head_r21 [1] 8,8,7
+        - TorsoBase_r22 [1] 7,3,6
+      - FS2Body6
+        - TorsoBottom_r15 [1] 8,4,6
+        - Leg_r20 [1] 3,3,10
+        - Arm_r52 [1] 3,3,8
+        - Arm_r53 [1] 3,3,6
+        - TorsoBase_r21 [1] 7,3,6
+      - FS2Body5
+        - TorsoTop_r33 [1] 9,3,3
+        - TorsoTop_r34 [1] 6,5,8
+        - TorsoBase_r20 [1] 6,3,8
+        - Head_r20 [1] 8,8,8
+      - FS2Body4 [1] 7,3,6
+        - TorsoTop_r32 [1] 8,4,6
+        - Arm_r51 [1] 3,3,9
+        - Leg_r19 [1] 8,3,3
+        - Head_r19 [1] 8,7,8
+      - FS2Body12
+        - TorsoBottom_r16 [1] 9,3,3
+        - TorsoBottom_r17 [1] 6,5,8
+        - TorsoBase_r27 [1] 6,3,8
+        - Head_r24 [1] 8,8,8
+      - FS2Body3
+        - Arm_r50 [1] 3,3,8
+        - TorsoBottom_r14 [1] 8,4,6
+        - Leg_r18 [1] 3,3,10
+        - Head_r18 [1] 8,8,7
+        - TorsoBase_r19 [1] 7,3,6
+        - Arm_r49 [1] 3,3,8
+      - FS2Body13
+        - Arm_r62 [1] 3,3,8
+        - TorsoBase_r28 [1] 7,3,6
+        - Leg_r27 [1] 3,3,10
+        - TorsoBottom_r18 [1] 8,4,6
+      - FS2Body2
+        - Head_r17 [1] 8,7,8
+        - TorsoTop_r31 [1] 4,7,8
+        - TorsoBase_r18 [1] 3,6,7
+        - Arm_r48 [1] 3,7,3
+        - Leg_r17 [1] 3,6,3
+        - Leg_r16 [1] 3,8,3
+      - FS2Body1
+        - TorsoBase_r17 [1] 6,3,7
+        - Jaw_r4 [1] 1,8,8
+        - TorsoTop_r30 [2] 6,4,8
+        - Arm_r47 [1] 6,3,3
+        - Arm_r46 [1] 9,3,3
+        - Leg_r15 [1] 8,3,3
+      - FS2Body10
+        - TorsoBase_r25 [1] 7,3,6
+        - Arm_r60 [1] 3,3,8
+        - Arm_r59 [1] 3,3,8
+        - TorsoTop_r38 [1] 8,4,6
+        - Leg_r25 [1] 3,3,10
+      - FS2Body11
+        - Arm_r61 [1] 3,3,8
+        - TorsoBase_r26 [1] 7,3,6
+        - Leg_r26 [1] 3,3,10
+        - TorsoTop_r39 [1] 8,4,6
+    - FrontSeg1CorpseDetails
+      - FS1Body1
+        - TorsoTop_r21 [2] 6,4,8
+        - Arm_r33 [1] 9,3,3
+        - Arm_r34 [1] 6,3,3
+        - Leg_r5 [1] 8,3,3
+        - Jaw_r1 [1] 1,8,8
+        - TorsoBase_r9 [1] 6,3,7
+      - FS1Body4 [1] 7,3,6
+        - TorsoTop_r24 [1] 8,4,6
+        - Leg_r9 [1] 8,3,3
+        - Head_r15 [1] 8,7,8
+        - Arm_r38 [1] 3,3,9
+      - FS1Body5
+        - TorsoBase_r12 [1] 6,3,8
+        - TorsoTop_r25 [1] 9,3,3
+        - TorsoTop_r26 [2] 6,5,8
+      - FS1Body2
+        - TorsoTop_r22 [1] 4,7,8
+        - Leg_r7 [1] 3,6,3
+        - Leg_r6 [1] 3,8,3
+        - Arm_r35 [1] 3,7,3
+        - Head_r13 [1] 8,7,8
+        - TorsoBase_r10 [1] 3,6,7
+      - FS1Body3
+        - TorsoTop_r23 [1] 8,4,6
+        - Leg_r8 [1] 3,3,10
+        - Arm_r36 [1] 3,3,8
+        - Head_r14 [1] 8,8,7
+        - Arm_r37 [1] 3,3,8
+        - TorsoBase_r11 [1] 7,3,6
+      - FS1Body8
+        - TorsoBase_r15 [1] 6,3,7
+        - Arm_r43 [1] 9,3,3
+        - Arm_r44 [1] 6,3,3
+        - Leg_r13 [1] 8,3,3
+        - Jaw_r2 [1] 1,8,8
+        - TorsoTop_r28 [2] 6,4,8
+      - FS1Body9
+        - TorsoBase_r16 [1] 6,3,7
+        - Jaw_r3 [1] 1,8,8
+        - TorsoTop_r29 [2] 6,4,8
+        - Arm_r45 [1] 9,3,3
+        - Leg_r14 [1] 8,3,3
+      - FS1Body6
+        - TorsoBase_r13 [1] 7,3,6
+        - Arm_r40 [1] 3,3,6
+        - TorsoBottom_r13 [1] 8,4,6
+        - Leg_r10 [1] 3,3,10
+        - Arm_r39 [1] 3,3,8
+      - FS1Body7
+        - TorsoBase_r14 [1] 7,3,6
+        - Arm_r41 [1] 3,3,8
+        - Head_r16 [1] 8,8,7
+        - Arm_r42 [1] 3,3,8
+        - Leg_r12 [1] 3,3,10
+        - Leg_r11 [1] 3,3,10
+        - TorsoTop_r27 [1] 8,4,6
+    - Innerteeth [4] 34,26,0
+  - Tumors
+    - Tumor9
+      - Biomass_r41 [1] 11,11,11
+      - Biomass_r42 [1] 10,10,10
+      - Biomass_r43 [1] 8,8,8
+      - Biomass_r44 [1] 9,9,9
+    - Tumor8
+      - Biomass_r40 [1] 9,9,9
+      - Biomass_r38 [1] 10,10,10
+      - Biomass_r39 [1] 8,8,8
+      - Biomass_r37 [1] 11,11,11
+    - Tumor7
+      - Biomass_r33 [1] 11,11,11
+      - Biomass_r34 [1] 10,10,10
+      - Biomass_r35 [1] 8,8,8
+      - Biomass_r36 [1] 9,9,9
+    - Tumor2
+      - Biomass_r16 [1] 9,9,9
+      - Biomass_r13 [1] 11,11,11
+      - Biomass_r14 [1] 10,10,10
+      - Biomass_r15 [1] 8,8,8
+    - Tumor10
+      - Biomass_r45 [1] 11,11,11
+      - Biomass_r46 [1] 10,10,10
+      - Biomass_r47 [1] 8,8,8
+      - Biomass_r48 [1] 9,9,9
+    - Tumor
+      - Biomass_r9 [1] 11,11,11
+      - Biomass_r10 [1] 10,10,10
+      - Biomass_r11 [1] 8,8,8
+      - Biomass_r12 [1] 9,9,9
+    - Tumor11
+      - Biomass_r52 [1] 9,9,9
+      - Biomass_r50 [1] 10,10,10
+      - Biomass_r51 [1] 8,8,8
+      - Biomass_r49 [1] 11,11,11
+    - Tumor6
+      - Biomass_r30 [1] 10,10,10
+      - Biomass_r31 [1] 8,8,8
+      - Biomass_r32 [1] 9,9,9
+      - Biomass_r29 [1] 11,11,11
+    - Tumor5
+      - Biomass_r27 [1] 8,8,8
+      - Biomass_r28 [1] 9,9,9
+      - Biomass_r25 [1] 11,11,11
+      - Biomass_r26 [1] 10,10,10
+    - Tumor4
+      - Biomass_r21 [1] 11,11,11
+      - Biomass_r22 [1] 10,10,10
+      - Biomass_r23 [1] 8,8,8
+      - Biomass_r24 [1] 9,9,9
+    - Tumor3
+      - Biomass_r20 [1] 9,9,9
+      - Biomass_r17 [1] 11,11,11
+      - Biomass_r18 [1] 10,10,10
+      - Biomass_r19 [1] 8,8,8
+  - BackJaw [1] 43,41,0
+    - cube_r16 [1] 46,44,0
+    - Outer
+      - OuterRingDetails
+        - Teeth
+          - t_r19 [1] 0,15,5
+          - t_r18 [1] 0,15,4
+          - t_r17 [1] 0,10,4
+          - t_r16 [1] 0,10,4
+          - t_r9 [1] 0,15,4
+          - t_r15 [1] 0,12,5
+          - t_r14 [1] 0,10,4
+          - t_r7 [1] 0,19,4
+          - t_r13 [1] 0,15,4
+          - t_r8 [1] 0,10,4
+          - t_r12 [1] 0,15,5
+          - t_r11 [1] 0,10,4
+          - t_r10 [1] 0,15,5
+          - t_r20 [1] 0,15,4
+          - t_r5 [1] 0,15,4
+          - t_r6 [1] 0,12,5
+          - t_r3 [1] 0,10,4
+          - t_r4 [1] 0,15,5
+          - t_r1 [1] 0,10,4
+          - t_r2 [1] 0,12,4
+      - OuterRingBase
+        - Internal
+          - In_r1 [1] 11,2,15
+          - In_r2 [1] 21,5,16
+          - In_r3 [1] 3,22,11
+          - In_r4 [1] 17,4,10
+          - In_r5 [1] 22,5,10
+          - In_r6 [1] 4,24,14
+          - In_r7 [1] 3,27,10
+          - In_r8 [1] 24,4,10
+          - In_r9 [1] 21,3,11
+  - bodyDetails
+    - bodies
+    - fin [4] 0,26,33
+      - FinsupportFront_r5 [1] 3,18,3
+      - FinsupportFront_r4 [1] 3,15,3
+      - cube_r30 [1] 0,27,37
+      - FinsupportFront_r7 [1] 3,24,3
+      - cube_r31 [1] 0,26,47
+      - FinsupportFront_r6 [1] 3,32,3
+      - FinsupportFront_r1 [1] 3,30,3
+      - FinsupportFront_r3 [1] 3,15,3
+      - FinsupportFront_r2 [1] 3,15,3
+      - cube_r29 [1] 0,25,42
+    - growth
+      - cube_r32 [1] 17,6,50
+      - cube_r33 [1] 15,6,28
+
+## lacerator (78 parts)
+
+- part0
+  - torso [1] 7,6,4
+    - torsofungus
+      - Fungus_r3 [1] 7,0,7
+      - Fungus_r4 [1] 7,0,7
+      - Fungus_r1 [1] 7,0,7
+      - Fungus_r2 [1] 7,0,7
+    - uppertorso [1] 8,6,5
+      - head [2] 8,5,8 <== eyes
+        - Jaw
+          - LowerHeadBase_r1 [1] 8,2,4
+        - headcrowns
+          - Petal4_r1 [1] 7,0,7
+          - Petal3_r1 [1] 7,0,7
+          - Petal2_r1 [1] 7,0,7
+          - Petal5_r1 [1] 7,0,7
+        - headsaw [3] 1,8,8
+          - BackTeeth_r1 [1] 1,9,2
+          - BottomTeeth_r1 [1] 1,2,9
+        - mask [8] 8,3,1
+      - uppertorsochain [4] 3,1,1
+        - uppertorsochainseg2 [4] 3,1,1
+          - uppertorsochainseg3 [4] 3,1,1
+            - uppertorsochainseg4 [4] 3,1,1
+              - uppertorsochainseg5 [4] 3,1,1
+                - uppertorsochainseg6 [4] 3,1,1
+                  - uppertorsochainseg7 [4] 3,1,1
+                    - uppertorsochainseg8 [4] 3,1,1
+                      - uppertorsochainseg9 [4] 3,1,1
+                        - uppertorsochainseg10 [4] 3,1,1
+                          - uppertorsochainseg11 [4] 3,1,1
+                            - uppertorsochainseg12 [4] 3,1,1
+      - arms
+        - rightarm [1] 4,6,4
+          - ShoulderPad_r1 [1] 5,4,5
+          - rightarmseg2 [2] 4,6,3
+            - SawAttachment_r1 [1] 2,4,4
+            - saw [3] 1,8,8
+              - BackTeeth_r2 [1] 1,9,2
+              - BottomTeeth_r2 [1] 1,2,9
+        - leftarm [1] 4,6,4
+          - leftarmseg2 [1] 2,3,3
+            - leftarmchainseg1 [4] 3,1,1
+              - leftarmchainseg2 [4] 3,1,1
+                - leftarmchainseg3 [4] 3,1,1
+      - Engine [1] 8,5,3
+        - Thermostat [5] 3,3,1
+          - Needle_r1 [1] 1,2,1
+        - Gears
+          - Gear3 [3] 1,2,2
+            - Tooth_r9 [2] 1,1,1
+            - Tooth_r8 [2] 1,1,1
+            - Tooth_r7 [2] 1,1,1
+          - Gear2 [3] 1,2,2
+            - Tooth_r6 [2] 1,1,1
+            - Tooth_r5 [2] 1,1,1
+            - Tooth_r4 [2] 1,1,1
+          - Gear1 [3] 1,2,2
+            - Tooth_r2 [2] 1,1,1
+            - Tooth_r1 [2] 1,1,1
+            - Tooth_r3 [2] 1,1,1
+        - Wires
+          - Wires_r3 [1] 1,3,1
+          - Wires_r1 [1] 1,2,1
+          - Wires_r2 [1] 1,3,1
+        - Bottom_r1 [1] 7,4,3
+        - enginevents
+          - event1 [2] 2,3,2
+            - V1Seg1_r1 [1] 2,4,2
+          - event2 [2] 2,3,2
+            - V2Seg2_r1 [1] 2,3,2
+  - legs
+    - rightleg [2] 3,6,3
+      - rightlegseg2
+        - Seg2_r1 [1] 3,6,3
+    - leftleg [1] 4,6,4
+      - leftlegseg2 [1] 4,3,4
+        - Seg2_r2 [1] 4,6,4
+
+## leaper (53 parts)
+
+- part0
+  - hips [1] 10,3,5
+    - legs
+      - left_leg [2] 6,11,6
+        - left_foot [1] 6,11,6
+      - right_leg [2] 6,11,6
+        - right_foot [1] 6,11,6
+          - cube_r33 [1] 6,0,6
+    - waist [2] 9,6,4
+      - cube_r2 [1] 2,4,2
+      - upper_torso [3] 10,7,6
+        - cube_r10 [1] 3,3,3
+        - right_arm [2] 4,10,4
+          - right_forearm [1] 4,7,4
+            - right_claws [2] 5,6,0
+        - cube_r4 [1] 6,0,6
+        - cube_r15 [1] 5,4,3
+        - cube_r5 [1] 6,0,6
+        - cube_r16 [1] 5,4,3
+        - cube_r6 [1] 6,0,6
+        - cube_r17 [1] 7,3,3
+        - cube_r7 [1] 6,0,4
+        - cube_r18 [1] 7,3,3
+        - cube_r11 [1] 4,4,4
+        - cube_r12 [1] 3,3,3
+        - cube_r13 [1] 3,5,3
+        - cube_r3 [1] 8,0,8
+        - cube_r14 [1] 2,7,2
+        - head [3] 8,1,6 <== eyes
+          - jaw [3] 7,1,5
+          - fungus [1] 6,0,6
+            - cube_r30 [1] 6,0,6
+            - cube_r31 [1] 6,0,6
+            - cube_r32 [1] 6,0,6
+            - cube_r29 [1] 6,0,6
+          - flower
+            - cube_r21 [1] 6,0,6
+            - cube_r22 [1] 7,0,6
+            - cube_r23 [1] 7,0,6
+            - flower2
+              - cube_r26 [1] 9,0,8
+              - cube_r27 [1] 6,0,6
+              - cube_r28 [1] 9,0,8
+              - cube_r24 [1] 8,0,8
+              - cube_r25 [1] 8,0,8
+        - cube_r8 [1] 0,8,3
+        - cube_r9 [1] 0,5,3
+        - left_arm [2] 4,10,4
+          - cube_r20 [1] 8,0,8
+          - cube_r19 [1] 8,0,8
+          - left_forearm [1] 4,7,4
+            - left_claws [2] 5,6,0
+    - cube_r1 [1] 8,4,0
+
+## leviathan (603 parts)
+
+- part0
+  - Head <== eyes
+    - TopJaw
+      - Body9 [1] 8,8,8
+        - Arm_r55 [1] 8,3,3
+        - Torso_r7 [1] 8,4,6
+      - Head_r27 [1] 8,6,8
+      - Head_r25 [1] 8,1,8
+      - cube_r5 [1] 21,16,9
+      - Head_r26 [1] 8,6,8
+      - Head_r23 [1] 8,6,8
+      - cube_r6 [1] 20,5,10
+      - Body10 [1] 8,8,8
+        - Arm_r54 [1] 8,3,3
+        - Torso_r6 [1] 8,4,6
+      - Head_r24 [1] 8,2,8
+      - cube_r7 [1] 21,6,18
+      - Head_r21 [1] 8,2,8
+      - Head_r22 [1] 8,2,8
+      - Head_r20 [1] 8,6,8
+    - AcidCannon [1] 12,9,10
+      - Flower
+        - TumorBase
+          - Tumor_r1 [1] 8,8,8
+        - FlowerMaw
+          - SouthMaw [1] 10,7,2
+            - Tooth_r2 [1] 0,4,2
+            - Tooth_r1 [1] 0,7,2
+            - SMawSeg2 [1] 9,7,2
+              - SMawSeg3 [1] 8,5,2
+                - Tooth_r5 [1] 0,3,2
+              - Tooth_r4 [1] 0,6,2
+              - Tooth_r3 [1] 0,6,2
+          - NWMaw
+            - NWMawSeg1_r1 [1] 10,7,2
+            - Tooth_r6 [1] 0,7,2
+            - NWMawSeg2
+              - NWMawSeg2_r1 [1] 9,6,2
+              - Tooth_r8 [1] 0,5,2
+              - Tooth_r7 [1] 0,4,2
+          - NSMaw
+            - Tooth_r10 [1] 0,5,2
+            - Tooth_r9 [1] 0,5,2
+            - NSMawSeg1_r1 [1] 8,7,2
+            - NSMawSeg2
+              - Tooth_r11 [1] 0,4,2
+              - NSMawSeg3
+                - NSMawSeg3_r1 [1] 6,6,2
+                - Tooth_r13 [1] 0,5,2
+                - Tooth_r12 [1] 0,5,2
+              - NSMawSeg2_r1 [1] 7,6,2
+    - DownJaw
+      - Head_r18 [2] 8,2,8
+      - Head_r19 [2] 8,1,8
+      - Head_r16 [2] 8,6,8
+      - Head_r17 [2] 8,2,8
+      - cube_r4 [1] 21,6,18
+      - cube_r2 [1] 21,16,9
+      - cube_r3 [1] 20,5,10
+  - acidSacks
+    - leftSack
+      - cube_r11 [1] 8,10,14
+      - cube_r12 [1] 6,15,14
+    - leftSack2
+      - cube_r15 [1] 6,15,14
+      - cube_r13 [1] 8,10,14
+      - cube_r14 [1] 8,15,14
+    - rightSack
+      - cube_r10 [1] 6,17,17
+      - cube_r8 [1] 8,10,14
+      - cube_r9 [1] 8,10,14
+  - RightJaw [1] 11,5,25
+    - topJawLeft_r1 [1] 20,4,23
+    - topJawRight_r1 [1] 19,5,26
+    - BackPart [1] 11,5,21
+      - topJawLeft_r3 [1] 22,6,22
+      - topJawRight_r3 [1] 24,6,21
+    - FrontBase [1] 11,4,19
+      - topJawLeft_r2 [1] 12,3,19
+      - topJawRight_r2 [1] 11,4,14
+      - FrontTopMouthCorpseDetails
+        - MouthTopCenterpiece
+          - MTCPLimbs
+            - RArm_r1 [1] 4,4,9
+            - Leg_r1 [1] 4,4,8
+          - MTCPHead
+            - MTCPHead_r1 [1] 8,7,8
+          - CenterTorsoTop_r1 [1] 8,4,6
+          - CenterTorsoBack_r1 [1] 7,3,6
+        - OutsideExtras
+          - Body4
+            - Limb_r1 [1] 10,4,4
+          - Body2 [1] 8,8,8
+            - Arm_r1 [1] 8,3,3
+            - Torso_r1 [1] 8,4,6
+          - Body3
+            - Arm_r3 [1] 8,3,3
+            - TorsoBottom_r1 [1] 6,3,7
+            - TorsoTop_r1 [1] 6,4,8
+            - Arm_r2 [1] 8,3,3
+          - Body12 [1] 8,8,8
+            - Arm_r5 [1] 8,3,3
+            - Torso_r2 [1] 8,4,6
+          - Body1
+            - TorsoTop1_r1 [1] 6,4,8
+            - TorsoBottom1_r1 [1] 6,3,7
+            - Arm1_r1 [1] 8,3,3
+            - Arm2_r1 [1] 8,3,3
+          - Body11
+            - TorsoBottom_r2 [1] 6,3,7
+            - Arm_r4 [1] 8,3,3
+            - TorsoTop_r2 [1] 6,4,8
+          - Body14
+            - TorsoTop_r3 [1] 6,4,8
+            - Arm_r6 [1] 8,3,3
+            - TorsoBottom_r3 [1] 6,3,7
+            - Arm_r7 [1] 8,3,3
+          - Body13
+            - Arm2_r2 [1] 8,3,3
+            - TorsoBottom1_r2 [1] 6,3,7
+            - Arm1_r2 [1] 8,3,3
+            - TorsoTop1_r2 [1] 6,4,8
+        - HeadOuterLeft_r1 [1] 8,7,8
+        - HeadInnerLeft_r1 [1] 8,6,8
+        - HeadOuterRightTeeth_r1 [1] 8,2,2
+        - HeadOuterRightTeeth_r2 [2] 8,2,2
+        - HeadOuterRightTeeth_r3 [2] 8,2,2
+        - HeadInnerRight_r1 [1] 8,6,8
+    - RightTusk [2] 10,10,29
+      - tuskbody2
+        - Head_r2 [1] 8,8,8
+        - Arm_r10 [1] 3,3,8
+        - TorsoBase_r2 [1] 7,3,6
+        - TorsoTop_r5 [1] 8,4,6
+      - rtusk2 [1] 6,6,34
+        - tuskbody18
+          - TorsoTop_r10 [1] 8,4,6
+          - Arm_r18 [1] 3,3,8
+          - TorsoBase_r7 [1] 7,3,6
+        - tuskbody19
+          - TorsoTop_r11 [1] 8,4,6
+          - TorsoBase_r8 [1] 7,3,6
+          - Arm_r19 [1] 3,3,8
+        - tuskbody8
+          - TorsoBase_r4 [1] 7,3,6
+          - Arm_r14 [1] 3,3,6
+          - Arm_r13 [1] 3,3,8
+          - TorsoTop_r7 [1] 8,4,6
+          - Head_r4 [1] 8,8,8
+        - tuskbody7
+          - TorsoBase_r3 [1] 7,3,6
+          - Arm_r11 [1] 3,3,8
+          - Arm_r12 [1] 3,3,6
+          - TorsoTop_r6 [1] 8,4,6
+          - Head_r3 [1] 8,8,8
+        - cube_r1 [1] 0,9,34
+        - tuskbody5
+          - TorsoBase_r6 [1] 7,3,6
+          - TorsoTop_r9 [1] 8,4,6
+          - Arm_r17 [1] 3,3,8
+        - rightTurskJoint
+          - tuskbody17
+            - TorsoBase_r12 [1] 7,3,6
+            - Arm_r25 [1] 3,3,6
+            - Arm_r24 [1] 3,3,8
+            - Head_r7 [1] 8,8,8
+            - TorsoTop_r15 [1] 8,4,6
+          - rtusk3 [2] 4,4,30
+            - tuskbody6
+              - TorsoTop_r13 [1] 8,4,6
+              - Arm_r21 [1] 3,3,8
+              - Arm_r22 [1] 3,3,6
+              - Head_r6 [1] 8,8,8
+              - TorsoBase_r10 [1] 7,3,6
+          - tuskbody4
+            - Arm_r23 [1] 3,3,8
+            - TorsoTop_r14 [1] 8,4,6
+            - TorsoBase_r11 [1] 7,3,6
+        - tuskbody3
+          - TorsoBase_r5 [1] 7,3,6
+          - Arm_r15 [1] 3,3,8
+          - TorsoTop_r8 [1] 8,4,6
+          - Head_r5 [1] 8,8,8
+          - Arm_r16 [1] 3,3,6
+        - tuskbody20
+          - TorsoTop_r12 [1] 8,4,6
+          - Arm_r20 [1] 3,3,8
+          - TorsoBase_r9 [1] 7,3,6
+      - tuskbody
+        - TorsoTop_r4 [1] 8,4,6
+        - Head_r1 [1] 8,8,8
+        - TorsoBase_r1 [1] 7,3,6
+        - Arm_r8 [1] 3,3,8
+        - Arm_r9 [1] 3,3,6
+  - details
+    - RightSidefin
+      - RFinmemebrane_r1 [1] 37,24,0
+      - RfinTop_r1 [1] 2,20,2
+      - RfinBottom_r1 [1] 2,23,2
+    - LeftSidefin
+      - RfinTop_r2 [1] 2,29,2
+      - RFinmemebrane_r2 [1] 37,24,0
+      - RfinBottom_r2 [1] 2,23,2
+    - CenterCorpseDetails2
+      - CenterBody5
+        - Arm_r62 [1] 3,7,3
+        - TorsoTop_r35 [1] 4,7,8
+        - Head_r30 [1] 8,7,8
+      - CenterBody6
+        - Arm_r63 [1] 3,3,8
+        - TorsoBottom_r10 [1] 7,3,6
+        - Arm_r64 [1] 3,3,7
+        - TorsoBottom_r9 [1] 3,3,8
+        - TorsoTop_r36 [1] 8,4,6
+      - CenterBody7
+        - Arm_r65 [1] 3,7,3
+        - TorsoBase_r27 [1] 3,6,7
+        - Leg_r6 [1] 3,4,3
+        - Leg_r5 [1] 3,8,3
+        - TorsoTop_r37 [1] 4,7,8
+      - CenterBody8
+        - TorsoBase_r28 [1] 7,3,6
+        - Arm_r66 [1] 3,3,8
+        - Arm_r67 [1] 3,3,6
+        - TorsoTop_r38 [1] 8,4,6
+        - Head_r31 [1] 8,8,8
+      - CenterBody29
+        - TorsoBase_r29 [1] 7,3,6
+        - Arm_r69 [1] 3,3,6
+        - Arm_r68 [1] 3,3,8
+        - Head_r32 [1] 8,8,8
+        - TorsoTop_r39 [1] 8,4,6
+    - CenterCorpseDetails3
+      - CenterBody10
+        - Arm_r72 [1] 3,3,7
+        - Arm_r71 [1] 3,3,8
+        - TorsoBottom_r12 [1] 7,3,6
+        - TorsoTop_r41 [1] 8,4,6
+        - TorsoBottom_r11 [1] 3,3,8
+      - CenterBody11
+        - Arm_r73 [1] 3,7,3
+        - TorsoTop_r42 [1] 4,7,8
+        - Leg_r8 [1] 3,4,3
+        - Leg_r7 [1] 3,8,3
+        - TorsoBase_r30 [1] 3,6,7
+      - CenterBody9
+        - Arm_r70 [1] 3,7,3
+        - TorsoTop_r40 [1] 4,7,8
+        - Head_r33 [1] 8,7,8
+      - CenterBody12
+        - TorsoTop_r43 [1] 8,4,6
+        - Arm_r74 [1] 3,3,8
+        - Arm_r75 [1] 3,3,6
+        - Head_r34 [1] 8,8,8
+        - TorsoBase_r31 [1] 7,3,6
+    - CenterCorpseDetails4
+      - CenterBody14
+        - TorsoBottom_r14 [1] 7,3,6
+        - TorsoTop_r45 [1] 8,4,6
+        - Arm_r77 [1] 3,3,8
+        - TorsoBottom_r13 [1] 3,3,8
+        - Arm_r78 [1] 3,3,7
+      - CenterBody15
+        - TorsoTop_r46 [1] 4,7,8
+        - Leg_r9 [1] 3,8,3
+        - Leg_r10 [1] 3,4,3
+        - Arm_r79 [1] 3,7,3
+        - TorsoBase_r32 [1] 3,6,7
+      - CenterBody13
+        - TorsoTop_r44 [1] 4,7,8
+        - Arm_r76 [1] 3,7,3
+        - Head_r35 [1] 8,7,8
+      - CenterBody16
+        - Arm_r81 [1] 3,3,6
+        - Head_r36 [1] 8,8,8
+        - TorsoTop_r47 [1] 8,4,6
+        - Arm_r80 [1] 3,3,8
+        - TorsoBase_r33 [1] 7,3,6
+    - CenterCorpseDetails5
+      - CenterBody20
+        - TorsoBase_r35 [1] 7,3,6
+        - Arm_r87 [1] 3,3,6
+        - TorsoTop_r51 [1] 8,4,6
+        - Head_r38 [1] 8,8,8
+        - Arm_r86 [1] 3,3,8
+      - CenterBody18
+        - Arm_r83 [1] 3,3,8
+        - TorsoBottom_r16 [1] 7,3,6
+        - Arm_r84 [1] 3,3,7
+        - TorsoBottom_r15 [1] 3,3,8
+        - TorsoTop_r49 [1] 8,4,6
+      - CenterBody19
+        - TorsoBase_r34 [1] 3,6,7
+        - TorsoTop_r50 [1] 4,7,8
+        - Arm_r85 [1] 3,7,3
+        - Leg_r12 [1] 3,4,3
+        - Leg_r11 [1] 3,8,3
+      - CenterBody17
+        - Arm_r82 [1] 3,7,3
+        - Head_r37 [1] 8,7,8
+        - TorsoTop_r48 [1] 4,7,8
+    - fin5
+      - FinSupport_r6 [1] 4,20,3
+      - FinMemebrane2_r1 [1] 0,17,20
+      - FinSupport_r5 [1] 4,14,3
+    - CenterCorpseDetails6
+      - CenterBody21
+        - Arm_r88 [1] 3,7,3
+        - TorsoTop_r52 [1] 4,7,8
+        - Head_r39 [1] 8,7,8
+      - CenterBody22
+        - TorsoBottom_r17 [1] 3,3,8
+        - TorsoTop_r53 [1] 8,4,6
+        - Arm_r89 [1] 3,3,8
+        - Arm_r90 [1] 3,3,7
+        - TorsoBottom_r18 [1] 7,3,6
+      - CenterBody23
+        - TorsoTop_r54 [1] 4,7,8
+        - TorsoBase_r36 [1] 3,6,7
+        - Leg_r13 [1] 3,8,3
+        - Arm_r91 [1] 3,7,3
+        - Leg_r14 [1] 3,4,3
+      - CenterBody24
+        - TorsoTop_r55 [1] 8,4,6
+        - Head_r40 [1] 8,8,8
+        - TorsoBase_r37 [1] 7,3,6
+        - Arm_r92 [1] 3,3,8
+        - Arm_r93 [1] 3,3,6
+    - fin4 [1] 0,21,21
+      - FinSupport_r4 [1] 4,24,3
+    - CenterCorpseDetails7
+      - CenterBody25
+        - Arm_r94 [1] 3,7,3
+        - TorsoTop_r56 [1] 4,7,8
+        - Head_r41 [1] 8,7,8
+      - CenterBody26
+        - Arm_r95 [1] 3,3,8
+        - TorsoTop_r57 [1] 8,4,6
+        - Arm_r96 [1] 3,3,7
+        - TorsoBottom_r20 [1] 7,3,6
+        - TorsoBottom_r19 [1] 3,3,8
+      - CenterBody27
+        - TorsoBase_r38 [1] 3,6,7
+        - Arm_r97 [1] 3,7,3
+        - TorsoTop_r58 [1] 4,7,8
+        - Leg_r16 [1] 3,4,3
+        - Leg_r15 [1] 3,8,3
+      - CenterBody28
+        - TorsoBase_r39 [1] 7,3,6
+        - Arm_r98 [1] 3,3,8
+        - Arm_r99 [1] 3,3,6
+        - TorsoTop_r59 [1] 8,4,6
+        - Head_r42 [1] 8,8,8
+    - fin3 [1] 0,25,21
+      - FinSupport_r3 [1] 4,27,4
+    - fin2 [1] 0,25,21
+      - FinSupport_r2 [1] 4,25,2
+    - Tumors2
+      - Tumor_r10 [1] 16,16,16
+      - Tumor_r7 [1] 11,11,11
+      - Tumor_r6 [1] 13,13,13
+      - Tumor_r9 [1] 16,16,16
+      - Tumor_r8 [1] 14,14,14
+      - Tumor_r3 [1] 11,11,11
+      - Tumor_r2 [1] 11,11,11
+      - Tumor_r5 [1] 15,15,15
+      - Tumor_r4 [1] 12,12,12
+    - fin
+      - FinSupport_r1 [1] 2,13,2
+      - FinMembrane1_r1 [1] 0,25,23
+    - CenterCorpseDetails
+      - CenterBody1
+        - Head_r28 [1] 8,7,8
+        - TorsoTop_r31 [1] 4,7,8
+        - Arm_r56 [1] 3,7,3
+      - CenterBody2
+        - TorsoTop_r32 [1] 8,4,6
+        - TorsoBottom_r8 [1] 7,3,6
+        - TorsoBottom_r7 [1] 3,3,8
+        - Arm_r58 [1] 3,3,7
+        - Arm_r57 [1] 3,3,8
+      - CenterBody3
+        - TorsoTop_r33 [1] 4,7,8
+        - TorsoBase_r25 [1] 3,6,7
+        - Arm_r59 [1] 3,7,3
+        - Leg_r4 [1] 3,4,3
+        - Leg_r3 [1] 3,8,3
+      - CenterBody4
+        - Arm_r61 [1] 3,3,6
+        - TorsoBase_r26 [1] 7,3,6
+        - TorsoTop_r34 [1] 8,4,6
+        - Arm_r60 [1] 3,3,8
+        - Head_r29 [1] 8,8,8
+  - Base
+    - s_r7 [1] 24,8,32
+    - s_r6 [1] 34,8,54
+    - s_r9 [1] 27,8,54
+    - s_r8 [1] 24,8,54
+    - s2_r2 [1] 27,8,30
+    - s1_r1 [1] 22,8,26
+    - s2_r1 [1] 28,8,30
+    - front_r4 [1] 33,33,2
+    - s_r3 [1] 8,22,56
+    - front_r1 [1] 6,16,2
+    - s_r2 [1] 8,22,39
+    - front_r2 [1] 33,26,2
+    - s_r5 [1] 34,5,40
+    - front_r3 [1] 9,15,2
+    - s_r4 [1] 22,8,56
+    - s_r1 [1] 28,8,42
+  - LeftJaw [1] 11,5,25
+    - topJawLeft_r4 [1] 19,5,26
+    - BackPart2 [1] 11,5,21
+      - topJawRight_r6 [1] 22,6,22
+      - topJawLeft_r6 [1] 24,6,21
+    - LeftTusk [2] 10,10,29
+      - tuskbody9
+        - TorsoBase_r13 [1] 7,3,6
+        - Arm_r36 [1] 3,3,6
+        - TorsoTop_r19 [1] 8,4,6
+        - Head_r8 [1] 8,8,8
+        - Arm_r35 [1] 3,3,8
+      - rtusk4 [2] 6,6,34
+        - leftTurskJoint
+          - rtusk5 [2] 4,4,30
+            - tuskbody16
+              - Arm_r50 [1] 3,3,6
+              - Head_r14 [1] 8,8,8
+              - TorsoBase_r22 [1] 7,3,6
+              - Arm_r49 [1] 3,3,8
+              - TorsoTop_r28 [1] 8,4,6
+          - tuskbody14
+            - TorsoBase_r23 [1] 7,3,6
+            - Arm_r51 [1] 3,3,8
+            - TorsoTop_r29 [1] 8,4,6
+          - tuskbody21
+            - TorsoBase_r24 [1] 7,3,6
+            - Arm_r52 [1] 3,3,8
+            - TorsoTop_r30 [1] 8,4,6
+            - Arm_r53 [1] 3,3,6
+            - Head_r15 [1] 8,8,8
+          - tuskbody22
+            - Arm_r48 [1] 3,3,8
+            - TorsoTop_r27 [1] 8,4,6
+            - TorsoBase_r21 [1] 7,3,6
+        - tuskbody15
+          - TorsoTop_r24 [1] 8,4,6
+          - Arm_r44 [1] 3,3,8
+          - TorsoBase_r18 [1] 7,3,6
+        - tuskbody12
+          - Arm_r40 [1] 3,3,8
+          - TorsoTop_r22 [1] 8,4,6
+          - TorsoBase_r16 [1] 7,3,6
+          - Arm_r41 [1] 3,3,6
+          - Head_r11 [1] 8,8,8
+        - tuskbody23
+          - TorsoBase_r19 [1] 7,3,6
+          - Arm_r45 [1] 3,3,8
+          - TorsoTop_r25 [1] 8,4,6
+        - tuskbody13
+          - TorsoTop_r23 [1] 8,4,6
+          - TorsoBase_r17 [1] 7,3,6
+          - Arm_r43 [1] 3,3,6
+          - Arm_r42 [1] 3,3,8
+          - Head_r12 [1] 8,8,8
+        - tuskbody24
+          - Arm_r47 [1] 3,3,6
+          - Arm_r46 [1] 3,3,8
+          - Head_r13 [1] 8,8,8
+          - TorsoBase_r20 [1] 7,3,6
+          - TorsoTop_r26 [1] 8,4,6
+        - tuskbody11
+          - TorsoTop_r21 [1] 8,4,6
+          - TorsoBase_r15 [1] 7,3,6
+          - Head_r10 [1] 8,8,8
+          - Arm_r38 [1] 3,3,8
+          - Arm_r39 [1] 3,3,6
+      - tuskbody10
+        - TorsoBase_r14 [1] 7,3,6
+        - TorsoTop_r20 [1] 8,4,6
+        - Arm_r37 [1] 3,3,8
+        - Head_r9 [1] 8,8,8
+    - topJawRight_r4 [1] 20,4,23
+    - FrontBase2 [1] 11,4,19
+      - topJawRight_r5 [1] 12,3,19
+      - FrontTopMouthCorpseDetails2
+        - OutsideExtras3
+          - Body18
+            - Limb_r3 [1] 10,4,4
+          - Body17
+            - TorsoBottom_r5 [1] 6,3,7
+            - Arm_r30 [1] 8,3,3
+            - Arm_r31 [1] 8,3,3
+            - TorsoTop_r17 [1] 6,4,8
+          - Body16 [1] 8,8,8
+            - Torso_r4 [1] 8,4,6
+            - Arm_r29 [1] 8,3,3
+          - Body15
+            - Arm1_r4 [1] 8,3,3
+            - TorsoTop1_r4 [1] 6,4,8
+            - Arm2_r4 [1] 8,3,3
+            - TorsoBottom1_r4 [1] 6,3,7
+        - OutsideExtras2
+          - Body8
+            - Limb_r2 [1] 10,4,4
+          - Body6 [1] 8,8,8
+            - Arm_r26 [1] 8,3,3
+            - Torso_r3 [1] 8,4,6
+          - Body7
+            - TorsoBottom_r4 [1] 6,3,7
+            - Arm_r27 [1] 8,3,3
+            - TorsoTop_r16 [1] 6,4,8
+            - Arm_r28 [1] 8,3,3
+          - Body5
+            - TorsoBottom1_r3 [1] 6,3,7
+            - Arm1_r3 [1] 8,3,3
+            - TorsoTop1_r3 [1] 6,4,8
+            - Arm2_r3 [1] 8,3,3
+        - HeadOuterRight_r1 [1] 8,7,8
+        - HeadInnerLeft_r2 [1] 8,6,8
+        - HeadOuterLeft_r2 [1] 8,7,8
+        - OutsideExtras4
+          - Body19
+            - Arm1_r5 [1] 8,3,3
+            - Arm2_r5 [1] 8,3,3
+            - TorsoTop1_r5 [1] 6,4,8
+            - TorsoBottom1_r5 [1] 6,3,7
+          - Body22
+            - Limb_r4 [1] 10,4,4
+          - Body21
+            - TorsoBottom_r6 [1] 6,3,7
+            - Arm_r33 [1] 8,3,3
+            - TorsoTop_r18 [1] 6,4,8
+            - Arm_r34 [1] 8,3,3
+          - Body20 [1] 8,8,8
+            - Arm_r32 [1] 8,3,3
+            - Torso_r5 [1] 8,4,6
+        - MouthTopCenterpiece2
+          - MTCPLimbs2
+            - RArm_r2 [1] 4,4,9
+            - Leg_r2 [1] 4,4,8
+          - CenterTorsoTop_r2 [1] 8,4,6
+          - MTCPHead2
+            - MTCPHead_r2 [1] 8,7,8
+          - CenterTorsoBack_r2 [1] 7,3,6
+        - HeadInnerRight_r2 [1] 8,6,8
+      - topJawLeft_r5 [1] 11,4,14
+  - Tumors
+    - Tumor9
+      - Biomass_r33 [1] 11,11,11
+      - Biomass_r34 [1] 10,10,10
+      - Biomass_r35 [1] 8,8,8
+      - Biomass_r36 [1] 9,9,9
+    - Tumor8
+      - Biomass_r30 [1] 10,10,10
+      - Biomass_r31 [1] 8,8,8
+      - Biomass_r32 [1] 9,9,9
+      - Biomass_r29 [1] 11,11,11
+    - Tumor7
+      - Biomass_r27 [1] 8,8,8
+      - Biomass_r28 [1] 9,9,9
+      - Biomass_r25 [1] 11,11,11
+      - Biomass_r26 [1] 10,10,10
+    - Tumor2
+      - Biomass_r7 [1] 8,8,8
+      - Biomass_r8 [1] 9,9,9
+      - Biomass_r5 [1] 11,11,11
+      - Biomass_r6 [1] 10,10,10
+    - Tumor10
+      - Biomass_r40 [1] 9,9,9
+      - Biomass_r38 [1] 10,10,10
+      - Biomass_r39 [1] 8,8,8
+      - Biomass_r37 [1] 11,11,11
+    - Tumor
+      - Biomass_r1 [1] 11,11,11
+      - Biomass_r2 [1] 10,10,10
+      - Biomass_r3 [1] 8,8,8
+      - Biomass_r4 [1] 9,9,9
+    - Tumor11
+      - Biomass_r41 [1] 11,11,11
+      - Biomass_r42 [1] 10,10,10
+      - Biomass_r43 [1] 8,8,8
+      - Biomass_r44 [1] 9,9,9
+    - Tumor6
+      - Biomass_r21 [1] 11,11,11
+      - Biomass_r22 [1] 10,10,10
+      - Biomass_r23 [1] 8,8,8
+      - Biomass_r24 [1] 9,9,9
+    - Tumor5
+      - Biomass_r20 [1] 9,9,9
+      - Biomass_r17 [1] 11,11,11
+      - Biomass_r18 [1] 10,10,10
+      - Biomass_r19 [1] 8,8,8
+    - Tumor4
+      - Biomass_r16 [1] 9,9,9
+      - Biomass_r13 [1] 11,11,11
+      - Biomass_r14 [1] 10,10,10
+      - Biomass_r15 [1] 8,8,8
+    - Tumor3
+      - Biomass_r9 [1] 11,11,11
+      - Biomass_r10 [1] 10,10,10
+      - Biomass_r11 [1] 8,8,8
+      - Biomass_r12 [1] 9,9,9
+
+## leviathan_seg (228 parts)
+
+- part0
+  - Base
+    - CenterCorpseDetails2
+      - CenterBody3
+        - Arm_r26 [1] 3,7,3
+        - Head_r9 [1] 8,7,8
+        - TorsoTop_r17 [1] 4,7,8
+      - CenterBody5
+        - TorsoBottom_r8 [1] 7,3,6
+        - TorsoBottom_r7 [1] 3,3,8
+        - TorsoTop_r18 [1] 8,4,6
+        - Arm_r27 [1] 3,3,8
+        - Arm_r28 [1] 3,3,7
+      - CenterBody6
+        - Arm_r30 [1] 3,3,6
+        - TorsoTop_r19 [1] 8,4,6
+        - Arm_r29 [1] 3,3,8
+        - Head_r10 [1] 8,8,8
+        - TorsoBase_r11 [1] 7,3,6
+    - CenterCorpseDetails4
+      - CenterBody14
+        - TorsoTop_r21 [1] 8,4,6
+        - Arm_r32 [1] 3,3,8
+        - Arm_r33 [1] 3,3,7
+        - TorsoBottom_r10 [1] 7,3,6
+        - TorsoBottom_r9 [1] 3,3,8
+      - CenterBody15
+        - TorsoTop_r22 [1] 4,7,8
+        - TorsoBase_r12 [1] 3,6,7
+        - Leg_r12 [1] 3,4,3
+        - Leg_r11 [1] 3,8,3
+        - Arm_r34 [1] 3,7,3
+      - CenterBody13
+        - Arm_r31 [1] 3,7,3
+        - TorsoTop_r20 [1] 4,7,8
+        - Head_r11 [1] 8,7,8
+      - CenterBody16
+        - TorsoBase_r13 [1] 7,3,6
+        - TorsoTop_r23 [1] 8,4,6
+        - Arm_r36 [1] 3,3,6
+        - Head_r12 [1] 8,8,8
+        - Arm_r35 [1] 3,3,8
+    - tail [1] 20,3,42
+      - tailFlipper
+        - leftTailFlipper
+          - FinMemebrane2_r5 [1] 0,33,24
+          - CenterBody22
+            - TorsoBase_r4 [1] 7,3,6
+            - Head_r2 [1] 8,8,8
+            - TorsoTop_r4 [1] 8,4,6
+            - Arm_r6 [1] 3,3,8
+            - Arm_r7 [1] 3,3,6
+          - FinMemebrane2_r6 [1] 0,27,27
+          - FinMemebrane2_r7 [1] 0,30,27
+          - cube_r4 [1] 55,6,10
+          - cube_r5 [1] 55,8,10
+          - CenterBody23
+            - TorsoBase_r5 [1] 3,6,7
+            - Leg_r6 [1] 3,4,3
+            - Leg_r5 [1] 3,8,3
+            - Arm_r8 [1] 3,7,3
+            - TorsoTop_r5 [1] 4,7,8
+          - FinSupport_r9 [1] 4,28,5
+          - FinSupport_r8 [1] 4,20,3
+          - FinSupport_r12 [1] 4,24,5
+          - FinMemebrane2_r8 [1] 0,25,21
+          - FinSupport_r10 [1] 4,33,5
+          - FinSupport_r11 [1] 4,28,5
+        - rightTailFlipper
+          - FinMemebrane2_r1 [1] 0,33,24
+          - FinMemebrane2_r2 [1] 0,27,27
+          - FinMemebrane2_r3 [1] 0,30,27
+          - FinMemebrane2_r4 [1] 0,25,21
+          - CenterBody21
+            - TorsoTop_r3 [1] 4,7,8
+            - Arm_r4 [1] 3,7,3
+            - TorsoBase_r3 [1] 3,6,7
+            - Leg_r4 [1] 3,4,3
+            - Leg_r3 [1] 3,8,3
+          - CenterBody20
+            - Arm_r3 [1] 3,7,3
+            - TorsoTop_r2 [1] 4,7,8
+            - TorsoBase_r2 [1] 3,6,7
+            - Leg_r2 [1] 3,4,3
+            - Leg_r1 [1] 3,8,3
+          - Body10 [1] 8,8,8
+            - Arm_r5 [1] 8,3,3
+            - Torso_r1 [1] 8,4,6
+          - CenterBody19
+            - Head_r1 [1] 8,8,8
+            - TorsoTop_r1 [1] 8,4,6
+            - Arm_r1 [1] 3,3,8
+            - TorsoBase_r1 [1] 7,3,6
+            - Arm_r2 [1] 3,3,6
+          - cube_r2 [1] 55,6,10
+          - FinSupport_r7 [1] 4,24,5
+          - cube_r3 [1] 55,8,10
+          - FinSupport_r6 [1] 4,28,5
+          - FinSupport_r5 [1] 4,33,5
+          - FinSupport_r4 [1] 4,28,5
+          - FinSupport_r3 [1] 4,20,3
+      - CenterCorpseDetails3
+        - CenterBody10
+          - Arm_r14 [1] 3,3,6
+          - TorsoTop_r9 [1] 8,4,6
+          - Arm_r13 [1] 3,3,8
+          - TorsoBase_r7 [1] 7,3,6
+          - Head_r4 [1] 8,8,8
+        - CenterBody7
+          - Arm_r9 [1] 3,7,3
+          - Head_r3 [1] 8,7,8
+          - TorsoTop_r6 [1] 4,7,8
+        - CenterBody8
+          - TorsoBottom_r2 [1] 7,3,6
+          - TorsoBottom_r1 [1] 3,3,8
+          - Arm_r10 [1] 3,3,8
+          - Arm_r11 [1] 3,3,7
+          - TorsoTop_r7 [1] 8,4,6
+        - CenterBody9
+          - TorsoBase_r6 [1] 3,6,7
+          - Leg_r8 [1] 3,4,3
+          - Leg_r7 [1] 3,8,3
+          - Arm_r12 [1] 3,7,3
+          - TorsoTop_r8 [1] 4,7,8
+      - CenterCorpseDetails5
+        - CenterBody11
+          - TorsoTop_r10 [1] 4,7,8
+          - Arm_r15 [1] 3,7,3
+          - Head_r5 [1] 8,7,8
+        - CenterBody12
+          - TorsoTop_r11 [1] 8,4,6
+          - TorsoBottom_r4 [1] 7,3,6
+          - TorsoBottom_r3 [1] 3,3,8
+          - Arm_r16 [1] 3,3,8
+          - Arm_r17 [1] 3,3,7
+        - CenterBody18
+          - TorsoTop_r13 [1] 8,4,6
+          - Arm_r20 [1] 3,3,6
+          - Head_r6 [1] 8,8,8
+          - Arm_r19 [1] 3,3,8
+          - TorsoBase_r9 [1] 7,3,6
+        - CenterBody17
+          - TorsoTop_r12 [1] 4,7,8
+          - Leg_r9 [1] 3,8,3
+          - Leg_r10 [1] 3,4,3
+          - Arm_r18 [1] 3,7,3
+          - TorsoBase_r8 [1] 3,6,7
+      - fin2
+        - FinSupport_r2 [1] 2,13,2
+        - FinSupport_r1 [1] 2,11,3
+        - FinMembrane1_r1 [1] 0,14,23
+      - s_r5 [1] 23,5,40
+      - s2_r2 [1] 19,4,40
+      - cube_r1 [1] 15,15,15
+    - fin
+      - FinSupport_r14 [1] 2,21,3
+      - FinSupport_r15 [1] 2,13,2
+      - FinSupport_r13 [1] 2,17,3
+      - FinMembrane1_r2 [1] 0,19,25
+      - FinMembrane1_r3 [1] 0,19,23
+    - s1_r1 [1] 16,4,26
+    - CenterCorpseDetails
+      - CenterBody1
+        - Arm_r21 [1] 3,7,3
+        - Head_r7 [1] 8,7,8
+        - TorsoTop_r14 [1] 4,7,8
+      - CenterBody2
+        - TorsoBottom_r6 [1] 7,3,6
+        - Arm_r22 [1] 3,3,8
+        - TorsoBottom_r5 [1] 3,3,8
+        - Arm_r23 [1] 3,3,7
+        - TorsoTop_r15 [1] 8,4,6
+      - CenterBody4
+        - Arm_r25 [1] 3,3,6
+        - Head_r8 [1] 8,8,8
+        - Arm_r24 [1] 3,3,8
+        - TorsoTop_r16 [1] 8,4,6
+        - TorsoBase_r10 [1] 7,3,6
+    - s2_r1 [1] 17,4,24
+    - front_r4 [1] 17,18,2
+    - s_r3 [1] 24,4,50
+    - front_r1 [1] 5,12,2
+    - s_r2 [1] 20,5,49
+    - front_r2 [1] 5,12,2
+    - front_r3 [1] 17,20,2
+    - s_r4 [1] 11,4,48
+    - s_r1 [1] 22,4,49
+    - Tumors
+      - Tumor8
+        - Biomass_r30 [1] 10,10,10
+        - Biomass_r31 [1] 8,8,8
+        - Biomass_r32 [1] 9,9,9
+        - Biomass_r29 [1] 11,11,11
+      - Tumor7
+        - Biomass_r27 [1] 8,8,8
+        - Biomass_r28 [1] 9,9,9
+        - Biomass_r25 [1] 11,11,11
+        - Biomass_r26 [1] 10,10,10
+      - Tumor2
+        - Biomass_r7 [1] 8,8,8
+        - Biomass_r8 [1] 9,9,9
+        - Biomass_r5 [1] 11,11,11
+        - Biomass_r6 [1] 10,10,10
+      - Tumor
+        - Biomass_r1 [1] 11,11,11
+        - Biomass_r2 [1] 10,10,10
+        - Biomass_r3 [1] 8,8,8
+        - Biomass_r4 [1] 9,9,9
+      - Tumor6
+        - Biomass_r21 [1] 11,11,11
+        - Biomass_r22 [1] 10,10,10
+        - Biomass_r23 [1] 8,8,8
+        - Biomass_r24 [1] 9,9,9
+      - Tumor5
+        - Biomass_r20 [1] 9,9,9
+        - Biomass_r17 [1] 11,11,11
+        - Biomass_r18 [1] 10,10,10
+        - Biomass_r19 [1] 8,8,8
+      - Tumor4
+        - Biomass_r16 [1] 9,9,9
+        - Biomass_r13 [1] 11,11,11
+        - Biomass_r14 [1] 10,10,10
+        - Biomass_r15 [1] 8,8,8
+      - Tumor3
+        - Biomass_r9 [1] 11,11,11
+        - Biomass_r10 [1] 10,10,10
+        - Biomass_r11 [1] 8,8,8
+        - Biomass_r12 [1] 9,9,9
+
+## licker (24 parts)
+
+- part0
+  - LickerSeg2
+    - LickerSeg3
+      - RightArm [1] 3,5,3
+        - RightArmSeg2
+          - RightArmSeg2_r1 [1] 2,5,2
+      - TorsoTop_r1 [1] 6,4,7
+      - ToungeHead
+        - JawLeft
+          - JawLeft_r1 [1] 5,2,8
+        - JawRight
+          - JawRight_r1 [1] 4,1,6
+        - HeadBase_r1 [2] 8,2,4
+        - ToungeCorpseHeadTumor
+          - ToungeCorpseHeadTumor_r2 [1] 4,4,4
+          - ToungeCorpseHeadTumor_r1 [1] 2,2,2
+      - LeftArm [1] 3,9,3
+      - Tumor1 [1] 4,4,4
+    - TorsoBase_r1 [1] 5,3,7
+  - tendrils
+    - cube_r1 [5] 2,2,9
+  - Tumors [1] 8,8,8
+    - TumorBase1_r1 [1] 9,9,9
+    - TumorBase3_r1 [1] 7,7,7
+
+## mephitic (155 parts)
+
+- part0
+  - HipJoint
+    - Torso [2] 8,4,4
+      - LowerTorso
+        - Robe_r1 [2] 7,7,4
+        - StomachTumors
+          - SmallTumor_r1 [1] 3,3,3
+          - SmallTumor_r2 [1] 3,3,3
+          - MediumTumor_r1 [1] 4,4,4
+        - UpperTorso
+          - Robe_r2 [2] 7,4,2
+          - Head <== eyes
+            - Jaw [2] 8,1,6
+              - LowerFangs
+                - RightLowerFang
+                  - Fang_r3 [2] 0,5,6
+                - RightLowerFang2
+                  - Fang_r4 [2] 0,5,6
+              - AcidDripple_r1 [1] 6,3,0
+            - MouthPotion [4] 4,2,4
+            - NeckTumors
+              - TinyTumor_r1 [1] 2,2,2
+              - SmallTumor_r14 [1] 3,3,3
+              - SmallTumor_r13 [1] 3,3,3
+            - UpperHead
+              - UpperFangs
+                - RightUpperFang
+                  - Fang_r1 [2] 0,5,6
+                - LeftUpperFang
+                  - Fang_r2 [2] 0,5,6
+              - JawConnectingTissue
+                - Tissue_r1 [1] 0,4,1
+                - Tissue_r3 [1] 0,4,1
+                - Tissue_r2 [1] 0,4,1
+                - Tissue_r5 [1] 0,4,1
+                - Tissue_r4 [1] 0,4,1
+              - Petal_r8 [1] 8,0,8
+              - Petal_r7 [1] 8,0,8
+              - Petal_r6 [1] 8,0,8
+              - Nose
+                - Wart_r1 [1] 1,1,1
+                - Nose_r1 [1] 2,4,2
+              - Petal_r5 [1] 8,0,8
+              - UpperTeeth_r1 [2] 8,1,5
+              - HeadTumors
+                - MediumTumor_r6 [1] 4,4,4
+                - SmallTumor_r15 [1] 3,3,3
+                - SmallTumor_r16 [1] 3,3,3
+              - HatConnection
+                - HatConnectingTissue
+                  - Tissue_r7 [1] 0,5,1
+                  - Tissue_r10 [1] 0,4,1
+                  - Tissue_r6 [1] 0,4,1
+                  - Tissue_r9 [1] 0,4,1
+                  - Tissue_r8 [1] 0,5,1
+                - HatConnectingTumors
+                  - MediumTumor_r7 [1] 4,4,4
+                  - MediumTumor_r8 [1] 4,4,4
+                  - SmallTumor_r17 [1] 3,3,3
+                - Hat [1] 10,2,10
+                  - HatPotion [4] 4,2,4
+                  - Hat2 [1] 7,4,7
+                    - Petal_r9 [1] 8,0,8
+                    - Hat3 [1] 4,4,4
+                      - Hat4 [1] 1,2,1
+                        - PotionLiquidDrip_r1 [1] 2,3,0
+                    - Petal_r10 [1] 8,0,8
+            - Neck_r1 [1] 8,3,2
+          - Arms
+            - RightArm
+              - Shoulder_r1 [1] 4,7,4
+              - RightShoulderBoneGrowth
+                - BoneGrowthStart_r1 [1] 2,4,2
+                - BoneGrowthSpine_r1 [1] 1,3,1
+              - RightArmShoulderTumors
+                - SmallTumor_r9 [1] 3,3,3
+                - SmallTumor_r7 [1] 3,3,3
+                - MediumTumor_r5 [1] 4,4,4
+                - SmallTumor_r8 [1] 3,3,3
+                - SmallTumor_r5 [1] 3,3,3
+                - SmallTumor_r6 [1] 3,3,3
+                - MediumTumor_r3 [1] 4,4,4
+                - MediumTumor_r4 [1] 4,4,4
+              - Petal_r2 [1] 8,0,8
+              - RightForearm
+                - RightForearmBoneGrowth
+                  - BoneGrowthSpine_r4 [1] 1,3,1
+                  - BoneGrowthSpine_r3 [1] 1,3,1
+                  - BoneGrowthSpine_r6 [1] 1,3,1
+                  - BoneGrowthSpine_r5 [1] 1,3,1
+                  - BoneGrowthSpine_r2 [1] 1,3,1
+                  - BoneGrowthMid_r1 [1] 2,8,2
+                - Forearm_r1 [1] 4,7,4
+                - RightArmForearmTumors
+                  - SmallTumor_r11 [1] 3,3,3
+                  - SmallTumor_r10 [1] 3,3,3
+                - RightHand
+                  - RightHandBoneGrowth
+                    - BoneGrowthSpine_r8 [1] 1,3,1
+                    - BoneGrowthSpine_r7 [1] 1,3,1
+                    - BoneGrowthEnd_r1 [1] 2,5,2
+                  - RightFingers
+                    - RightThumb
+                      - Claw_r4 [1] 4,6,0
+                      - Finger_r4 [1] 2,3,1
+                    - RightFinger2
+                      - Finger_r2 [1] 2,3,1
+                      - Claw_r2 [1] 4,6,0
+                    - RightFinger1
+                      - Finger_r1 [1] 2,3,1
+                      - Claw_r1 [1] 4,6,0
+                    - RightFinger3
+                      - Finger_r3 [1] 2,3,1
+                      - Claw_r3 [1] 4,6,0
+                  - Hand_r1 [1] 3,7,3
+            - LeftArm
+              - LeftForearm
+                - Forearm_r2 [1] 4,6,4
+                - LeftHand
+                  - Hand_r2 [1] 3,6,3
+                  - Petal_r4 [1] 8,0,8
+                  - LeftFingers
+                    - LeftFinger2
+                      - Finger_r6 [1] 2,3,1
+                      - Claw_r6 [1] 4,6,0
+                    - LeftFinger3
+                      - Finger_r7 [1] 2,3,1
+                      - Claw_r7 [1] 4,6,0
+                    - LeftThumb
+                      - Finger_r8 [1] 2,3,1
+                      - Claw_r8 [1] 4,6,0
+                    - LeftFinger1
+                      - Claw_r5 [1] 4,6,0
+                      - Finger_r5 [1] 2,3,1
+                - Petal_r3 [1] 8,0,8
+              - LeftShoulderTumor
+                - SmallTumor_r12 [1] 3,3,3
+              - Robe_r4 [2] 4,5,4
+          - Petal_r1 [1] 8,0,8
+          - Robe_r3 [2] 9,7,5
+        - BackTumors
+          - SmallTumor_r3 [1] 3,3,3
+          - SmallTumor_r4 [1] 3,3,3
+          - MediumTumor_r2 [1] 4,4,4
+      - Tailbone [1] 2,2,1
+        - Tail_r1 [1] 1,3,1
+        - TailSpine_r2 [1] 1,2,1
+        - TailSpine_r1 [1] 1,2,1
+    - Legs
+      - LeftLeg [2] 4,9,4
+        - LeftKneeJoint [3] 4,7,4
+        - Petal_r12 [1] 8,0,8
+      - RightLeg [2] 4,9,4
+        - RightKneeJoint [2] 4,7,4
+          - Petal_r11 [1] 8,0,8
+
+## mound (21 parts)
+
+- part0 [2] 4,6,4
+  - cube_r1 [1] 4,4,4
+- part1
+  - tendril
+    - cube_r2 [1] 7,13,0
+  - tendril3
+    - cube_r4 [1] 7,13,0
+  - tendril2
+    - cube_r3 [1] 0,13,7
+  - tendril4
+    - cube_r5 [1] 0,13,7
+- part2
+  - tendril7
+    - cube_r8 [1] 7,13,0
+  - tendril6
+    - cube_r7 [1] 0,13,7
+  - tendril8
+    - cube_r9 [1] 0,13,7
+  - tendril5
+    - cube_r6 [1] 7,13,0
+- part3 [1] 12,0,12
+
+## naiad (122 parts)
+
+- part0
+  - Torso
+    - Head [2] 8,6,8 <== eyes
+      - Ear2_r1 [2] 0,7,5
+      - Fins
+        - HeadFin3_r1 [1] 0,4,7
+        - HeadFin2_r1 [1] 0,4,4
+        - HeadFin1_r1 [1] 0,4,4
+      - HeadFoliage [1] 5,6,5
+        - SeaGrass1_r1 [1] 0,3,5
+        - SeaGrass2_r1 [1] 0,3,5
+      - LowerJaw
+        - FrontTeeth_r1 [1] 8,2,0
+        - SideTeeth1_r1 [1] 4,1,0
+        - SideTeeth2_r1 [1] 4,1,0
+        - LowerJawMain_r1 [1] 8,1,5
+    - Arms
+      - RightArm
+        - RightArmBottom
+          - RightArmBottom_r1 [1] 3,6,3
+          - RightArmFin_r1 [1] 0,6,4
+        - RightArmTop
+          - Coral
+            - CoralFan4_r1 [1] 5,5,0
+            - CoralFan1_r1 [1] 5,5,0
+            - CoralFan3_r1 [1] 5,5,0
+            - CoralFan2_r1 [1] 5,5,0
+          - RightArmTop_r1 [1] 3,6,3
+      - LeftArm
+        - LeftArmBottom
+          - LeftArmBottom_r1 [1] 3,6,3
+          - LeftArmFin_r1 [1] 0,6,4
+        - LeftArmTop
+          - Shell [3] 4,3,6
+          - LeftArmTop_r1 [1] 3,6,3
+    - ActualTorso
+      - LowerChest
+        - GillFoliage6_r1 [1] 0,3,4
+        - BackFin2_r1 [1] 0,5,5
+        - LowerChest_r1 [1] 8,5,4
+        - WaistTumors
+          - WaistTumorGroup2
+            - WaistTumor6_r1 [1] 4,4,4
+            - WaistTumor5_r1 [1] 4,4,4
+            - WaistTumor4_r1 [1] 4,4,4
+          - WaistTumorGroup3
+            - WaistTumor8_r1 [1] 4,4,4
+            - WaistTumor9_r1 [1] 4,4,4
+            - WaistTumor7_r1 [1] 4,4,4
+          - WaistTumorGroup1
+            - WaistTumor2_r1 [1] 4,4,4
+            - WaistTumor3_r1 [1] 4,4,4
+            - WaistTumor1_r1 [1] 4,4,4
+          - WaistTumorGroup4
+            - WaistTumor12_r1 [1] 4,4,4
+            - WaistTumor11_r1 [1] 4,4,4
+            - WaistTumor10_r1 [1] 4,4,4
+        - Tendrils2
+          - Tendril7_r1 [1] 0,8,4
+        - GillFoliage5_r1 [1] 0,3,4
+        - GillFoliage3_r1 [1] 0,3,4
+        - GillFoliage2_r1 [1] 0,3,4
+      - UpperChest [1] 9,7,5
+        - BackFin1_r1 [1] 0,6,5
+        - GillFoliage1_r1 [1] 0,3,4
+        - Tendrils1
+          - Tendril2_r1 [1] 0,8,4
+          - Tendril1_r1 [1] 0,8,4
+          - Tendril5_r1 [1] 0,8,4
+          - Tendril4_r1 [1] 0,8,4
+        - UpperChest_r1 [1] 9,7,5
+        - ActualBra_r1 [2] 8,4,3
+        - GillFoliage4_r1 [1] 0,3,4
+  - Tail
+    - TailMid2
+      - TailMid2Fin_r1 [1] 0,4,5
+      - TailTumor3
+        - TailTumor3_r1 [1] 4,4,4
+      - Fin
+        - TailTumorsLeft
+          - TailTumorLeft4_r1 [1] 3,3,3
+          - TailTumorLeft1_r1 [1] 3,3,3
+          - TailTumorLeft3_r1 [1] 3,3,3
+          - TailTumorLeft2_r1 [1] 3,3,3
+        - TailFinRight_r1 [1] 10,0,7
+        - TailTumorMid
+          - TailTumorMid_r1 [1] 4,4,4
+        - TailTumorsRight
+          - TailTumorRight2_r1 [1] 3,3,3
+          - TailTumorRight3_r1 [1] 3,3,3
+          - TailTumorRight1_r1 [1] 3,3,3
+        - TailFrame1_r1 [1] 10,1,1
+        - TailBaseEnd_r1 [1] 3,9,3
+        - TailEndFin1_r1 [1] 0,6,4
+        - TailFrame2_r1 [1] 10,1,1
+        - TailFinLeft_r1 [1] 10,0,7
+        - TailEndFin2_r1 [1] 0,7,3
+      - TailTendril2_r1 [1] 0,8,4
+      - TailBaseMid2_r1 [1] 8,6,4
+    - TailTop
+      - TailFin2_r1 [1] 0,7,5
+      - TailMid
+        - Tendril1
+          - TendrilEnd_r2 [1] 1,8,1
+          - TendrilBase_r2 [1] 2,6,2
+        - Tendril2
+          - TendrilEnd_r3 [1] 1,8,1
+          - TendrilBase_r3 [1] 2,6,2
+        - TailTendril1_r1 [1] 0,8,4
+        - TailTumor2
+          - TailTumor2_r1 [1] 4,4,4
+        - TailMidFin_r1 [1] 0,5,5
+        - TailBaseMid_r1 [1] 8,5,4
+      - TailBase
+        - Tendril3
+          - TendrilBase_r1 [1] 2,6,2
+          - TendrilEnd_r1 [1] 1,8,1
+        - TailBase_r1 [1] 8,4,4
+        - TailBaseFin_r1 [1] 0,5,5
+      - TailTumor1
+        - TailTumor1_r1 [1] 4,4,4
+      - TailFin1_r1 [1] 0,7,5
+
+## nuclea (117 parts)
+
+- root
+  - Front
+    - FrontBodyDetails
+      - BodySpinePlane_r2 [1] 0,3,3
+      - BodyArmor_r1 [1] 9,7,14
+      - FrontBodyTumor
+        - Tumor_r1 [1] 6,6,6
+      - BodySpinePlane_r1 [1] 0,3,3
+      - BodySpine_r1 [1] 2,1,4
+      - BodySpine_r2 [1] 2,1,4
+      - LowerChestFungus
+        - Fungus_r3 [1] 7,0,7
+        - Fungus_r4 [1] 7,0,7
+        - Fungus_r1 [1] 7,0,7
+        - Fungus_r2 [1] 7,0,7
+    - Human [2] 6,5,4
+      - TorsoTop [2] 8,6,4
+        - Head [3] 8,7,8 <== eyes
+          - Jaw [1] 8,1,5
+            - Teeth_r1 [1] 0,2,3
+            - Teeth_r2 [1] 0,2,4
+            - Fang3_r1 [1] 1,2,0
+            - Teeth_r3 [1] 0,1,4
+          - upperflower1
+            - cube_r1 [1] 7,0,7
+            - cube_r2 [1] 7,0,7
+            - cube_r3 [1] 7,0,7
+          - upperflower2
+            - cube_r4 [1] 7,0,7
+            - cube_r5 [1] 7,0,7
+            - cube_r6 [1] 7,0,7
+          - HeadWear [1] 32,32,32
+          - Horns
+            - LeftHorn [1] 2,3,2
+              - HornSeg_r2 [1] 2,4,2
+              - HornSeg_r1 [1] 1,2,1
+            - RightHorn [1] 2,3,2
+              - HornSeg_r3 [1] 2,3,2
+        - SpinePlane_r1 [1] 0,3,3
+        - Arms
+          - RightArm [2] 4,6,4
+            - RightArmWear [1] 16,16,16
+            - RightArmSeg2 [1] 4,6,4
+            - rightarmfungus
+              - Fungus_r7 [1] 7,0,7
+              - Fungus_r8 [1] 7,0,7
+          - LeftArm [1] 4,6,4
+            - LeftArmSeg2 [1] 4,6,4
+              - LeftArmFungus
+                - Fungus_r5 [1] 7,0,7
+                - Fungus_r6 [1] 7,0,7
+            - LeftArmWear [1] 16,16,16
+        - Spine_r1 [1] 2,7,1
+    - FrontLegs
+      - FrontRight [1] 4,11,4
+        - FRLegTumor
+          - Tumor_r6 [1] 4,4,4
+          - Tumor_r5 [1] 2,2,2
+        - RightLegFungus
+          - Fungus_r12 [1] 7,0,7
+          - Fungus_r11 [1] 7,0,7
+        - FrontRight2 [2] 3,13,3
+          - FrontRightFootWear [1] 16,16,16
+      - FrontLeft [1] 4,11,4
+        - FrontRightLegWear [1] 16,24,16
+        - FrontLeft2 [1] 3,13,3
+          - FootTumor
+            - Tumor_r3 [1] 3,3,3
+            - Tumor_r2 [1] 3,3,3
+            - Tumor_r4 [1] 4,4,4
+          - LeftLegFungus2
+            - Fungus_r9 [1] 7,0,7
+            - Fungus_r10 [1] 7,0,7
+    - BodyBase_r1 [1] 9,7,14
+  - BodyBack [1] 8,6,12
+    - BackBodyDetails [1] 8,6,7
+      - BodySpinePlane_r3 [1] 0,3,3
+      - BodySpinePlane_r5 [1] 0,3,3
+      - BodySpinePlane_r4 [2] 0,3,3
+      - BodySpine_r4 [1] 2,1,6
+      - BodySpine_r5 [1] 2,1,3
+      - BodySpine_r6 [1] 2,1,6
+      - BackBodyTumor
+        - Tumor_r7 [1] 6,6,6
+      - BackFlower
+        - cube_r10 [1] 7,0,7
+        - cube_r8 [1] 7,0,7
+        - cube_r9 [1] 7,0,7
+        - cube_r7 [1] 7,0,7
+      - MiddleArmor_r1 [1] 8,5,6
+      - BodySpine_r3 [1] 2,1,3
+      - TorsoFlower
+        - cube_r11 [1] 7,0,7
+        - cube_r12 [1] 7,0,7
+        - cube_r13 [1] 7,0,7
+        - cube_r14 [1] 7,0,7
+    - Middle_r1 [1] 8,5,6
+    - BackLegs
+      - BackLeft [1] 4,14,4
+        - BackLeft2 [2] 3,11,3
+          - BackLeftFootWear [1] 16,16,16
+        - LeftLegFungus
+          - Fungus_r16 [1] 7,0,7
+          - Fungus_r15 [1] 7,0,7
+          - Fungus_r14 [1] 7,0,7
+          - Fungus_r13 [1] 7,0,7
+      - BackRight [1] 4,14,4
+        - BRLegTumor
+          - Tumor_r9 [1] 5,5,5
+          - Tumor_r8 [1] 4,4,4
+        - BackRight2 [1] 3,11,3
+          - RightLegFungus2
+            - Fungus_r20 [1] 7,0,7
+            - Fungus_r19 [1] 7,0,7
+            - Fungus_r18 [1] 7,0,7
+            - Fungus_r17 [1] 7,0,7
+        - BackRightLegWear [1] 16,24,16
+
+## ogre (224 parts)
+
+- part0
+  - Legs
+    - LeftLeg [1] 10,16,10
+      - LeftLegSeg2 [1] 12,13,12
+        - LeftLegCrown
+          - Petal4_r10 [1] 7,0,7
+          - Petal3_r10 [1] 7,0,7
+          - Petal5_r8 [1] 7,0,7
+          - Petal6_r2 [1] 7,0,7
+      - LeftLegFungus
+        - Fungus_r40 [1] 7,0,7
+        - Fungus_r39 [1] 7,0,7
+        - Fungus_r38 [1] 7,0,7
+        - Fungus_r37 [1] 7,0,7
+    - RightLeg [1] 10,13,10
+      - RightLegSeg2 [1] 12,15,12
+      - RightLegCrown
+        - Petal4_r11 [1] 7,0,7
+        - Petal3_r11 [1] 7,0,7
+        - Petal2_r9 [1] 7,0,7
+        - Petal5_r9 [1] 7,0,7
+  - LowerTorso [1] 20,14,10
+    - UpperTorso [5] 28,23,11
+      - Jaw [1] 16,11,4
+        - Teeth_r11 [1] 0,10,4
+        - Teeth_r10 [1] 0,10,4
+        - Teeth_r13 [1] 0,10,4
+        - Teeth_r12 [1] 0,10,4
+        - Teeth_r14 [1] 0,10,4
+        - Teeth_r9 [1] 0,10,4
+        - TorsoMiddle [1] 15,9,4
+          - TorsoTop [1] 14,8,4
+            - Teeth_r20 [1] 0,8,3
+            - Teeth_r21 [1] 0,8,3
+            - Teeth_r19 [1] 0,6,3
+            - JawTip [1] 12,12,3
+              - crown2
+                - Petal1_r2 [1] 7,0,7
+                - Petal4_r7 [1] 7,0,7
+                - Petal3_r7 [1] 7,0,7
+                - Petal2_r6 [1] 7,0,7
+              - Teeth_r22 [1] 0,7,3
+              - Teeth_r24 [1] 0,10,3
+              - Teeth_r23 [1] 0,7,3
+              - Teeth_r25 [1] 0,11,3
+          - Teeth_r15 [1] 0,8,3
+          - Teeth_r17 [1] 0,8,3
+          - Teeth_r16 [1] 0,8,3
+          - Teeth_r18 [1] 0,8,3
+      - LeftShoulder_r1 [1] 12,12,12
+      - TorsoTeeth
+        - Teeth_r30 [1] 0,18,4
+        - Teeth_r26 [1] 0,9,3
+        - Teeth_r28 [1] 0,12,3
+        - Teeth_r27 [1] 0,12,3
+        - Teeth_r29 [1] 0,18,4
+      - ChestFungus
+        - Fungus_r19 [1] 7,0,7
+        - Fungus_r18 [1] 7,0,7
+        - Fungus_r29 [1] 7,0,7
+        - RightShoulderFungus
+          - Petal3_r8 [1] 7,0,7
+          - Petal2_r7 [1] 7,0,7
+          - Petal5_r6 [1] 7,0,7
+          - Petal4_r8 [1] 7,0,7
+        - Fungus_r20 [1] 7,0,7
+        - Fungus_r31 [1] 7,0,7
+        - Fungus_r30 [1] 7,0,7
+        - Bloom [1] 8,6,8
+          - SPetal_r2 [1] 16,0,16
+          - EPetal_r2 [1] 16,0,16
+          - NPetal_r2 [1] 16,0,16
+          - WPetal_r2 [1] 16,0,16
+        - Fungus_r17 [1] 7,0,7
+        - Fungus_r28 [1] 7,0,7
+        - Fungus_r16 [1] 7,0,7
+        - Fungus_r27 [1] 7,0,7
+        - Fungus_r15 [1] 7,0,7
+        - Fungus_r26 [1] 7,0,7
+        - Fungus_r14 [1] 7,0,7
+        - Fungus_r25 [1] 7,0,7
+        - Fungus_r13 [1] 7,0,7
+        - Fungus_r24 [1] 7,0,7
+        - Fungus_r23 [1] 7,0,7
+        - Fungus_r22 [1] 7,0,7
+        - Fungus_r21 [1] 7,0,7
+        - Fungus_r32 [1] 7,0,7
+      - Arms
+        - RightArm [1] 17,15,15
+          - RightArmSeg2 [1] 17,12,12
+            - RightArmFungus
+              - Fungus_r7 [1] 7,0,7
+              - Fungus_r8 [1] 7,0,7
+              - Fungus_r5 [1] 7,0,7
+              - Fungus_r6 [1] 7,0,7
+              - Fungus_r3 [1] 7,0,7
+              - Fungus_r4 [1] 7,0,7
+              - Fungus_r1 [1] 7,0,7
+              - Fungus_r2 [1] 7,0,7
+            - RightArmSeg3 [1] 8,12,12
+              - RightArmFist [1] 12,14,14
+                - CrownFist
+                  - Petal5_r3 [1] 7,0,7
+                  - Petal4_r3 [1] 7,0,7
+                  - Petal3_r3 [1] 7,0,7
+                  - Petal2_r2 [1] 7,0,7
+          - ArmCrown1
+            - Petal4_r1 [1] 7,0,7
+            - Petal3_r1 [1] 7,0,7
+            - Petal2_r1 [1] 7,0,7
+            - Petal5_r1 [1] 7,0,7
+          - ArmCrown2
+            - Petal4_r2 [1] 7,0,7
+            - Petal5_r2 [1] 7,0,7
+            - Petal3_r2 [1] 7,0,7
+            - Petal6_r1 [1] 7,0,7
+        - LeftArm [1] 17,15,15
+          - LeftArmSeg2 [1] 17,12,12
+            - LeftArmSeg3 [1] 8,12,12
+              - LeftArmFist [1] 12,14,14
+                - CrownFist2
+                  - Petal4_r5 [1] 7,0,7
+                  - Petal3_r5 [1] 7,0,7
+                  - Petal2_r4 [1] 7,0,7
+                  - Petal5_r5 [1] 7,0,7
+            - LeftArmFungus
+              - Fungus_r9 [1] 7,0,7
+              - Fungus_r12 [1] 7,0,7
+              - Fungus_r11 [1] 7,0,7
+              - Fungus_r10 [1] 7,0,7
+          - LeftShoulderFungus
+            - Petal3_r4 [1] 7,0,7
+            - Petal2_r3 [1] 7,0,7
+            - Petal4_r4 [1] 7,0,7
+            - Petal5_r4 [1] 7,0,7
+      - RightShoulder_r1 [1] 12,12,12
+      - Neck [1] 16,9,12
+        - Head [2] 12,12,12 <== eyes
+          - crown1
+            - Petal4_r6 [1] 7,0,7
+            - Petal3_r6 [1] 7,0,7
+            - Petal2_r5 [1] 7,0,7
+            - Petal1_r1 [1] 7,0,7
+          - FungalBloom
+            - Plane2_r1 [1] 0,12,14
+            - Plane1_r1 [1] 0,12,14
+            - Spetal_r1 [1] 16,0,16
+            - Npetal_r1 [1] 16,0,16
+            - Wpetal_r1 [1] 16,0,16
+            - Epetal_r1 [1] 16,0,16
+          - HeadTeeth
+            - Teeth_r7 [1] 0,10,3
+            - Teeth_r8 [1] 0,9,3
+            - Teeth_r5 [1] 0,7,3
+            - Teeth_r6 [1] 0,7,3
+        - NeckTeeth
+          - Teeth_r1 [1] 0,7,3
+          - Teeth_r2 [1] 0,7,4
+          - Teeth_r3 [1] 0,10,4
+          - Teeth_r4 [1] 0,9,3
+    - LowerTorsoFungus
+      - crown3
+        - Petal4_r9 [1] 7,0,7
+        - Petal3_r9 [1] 7,0,7
+        - Petal2_r8 [1] 7,0,7
+        - Petal5_r7 [1] 7,0,7
+      - Fungus_r36 [1] 7,0,7
+      - Fungus_r35 [1] 7,0,7
+      - Fungus_r34 [1] 7,0,7
+      - Fungus_r33 [1] 7,0,7
+  - Tail [1] 7,7,10
+    - Tail1Fungus
+      - Fungus_r50 [1] 7,0,7
+      - Fungus_r49 [1] 7,0,7
+    - TailSeg2 [1] 7,7,16
+      - Tail2Fungus
+        - Fungus_r42 [1] 7,0,7
+        - Fungus_r41 [1] 7,0,7
+        - Fungus_r44 [1] 7,0,7
+        - Fungus_r43 [1] 7,0,7
+      - TailSeg3 [1] 6,6,16
+        - TailSeg4 [1] 5,5,12
+          - TumorTip
+            - Thorns
+              - Thorn7 [1] 2,5,2
+                - Plane_r14 [1] 0,5,2
+                - Plane_r13 [1] 0,5,2
+              - Thorn3 [1] 2,5,2
+                - Plane_r5 [1] 0,5,2
+                - Plane_r6 [1] 0,5,2
+              - Thorn4 [1] 2,5,2
+                - Plane_r7 [1] 0,5,2
+                - Plane_r8 [1] 0,5,2
+              - Thorn5 [1] 2,5,2
+                - Plane_r10 [1] 0,5,2
+                - Plane_r9 [1] 0,5,2
+              - Thorn6 [1] 2,5,2
+                - Plane_r11 [1] 0,5,2
+                - Plane_r12 [1] 0,5,2
+              - Thorn1 [1] 2,5,2
+                - Plane_r1 [1] 0,5,2
+                - Plane_r2 [1] 0,5,2
+              - Thorn2 [1] 2,5,2
+                - Plane_r3 [1] 0,5,2
+                - Plane_r4 [1] 0,5,2
+            - Impaled
+              - Head_r1 [1] 8,7,8
+              - LowerTorso_r1 [1] 8,6,5
+              - Jaw_r1 [1] 8,1,8
+              - LowerTorso_r2 [1] 7,6,4
+              - Leg_r3 [1] 4,8,4
+              - Leg_r2 [1] 4,8,4
+              - Leg_r1 [1] 3,5,3
+            - Tumors
+              - Tumor_r1 [1] 7,7,7
+              - Tumor_r3 [1] 6,6,6
+              - Tumor_r2 [1] 6,6,6
+              - Tumor_r5 [1] 8,8,8
+              - Tumor_r4 [1] 5,5,5
+        - Tail3Fungus
+          - Fungus_r48 [1] 7,0,7
+          - Fungus_r47 [1] 7,0,7
+          - Fungus_r46 [1] 7,0,7
+          - Fungus_r45 [1] 7,0,7
+
+## plagued (55 parts)
+
+- part0
+  - Torso [2] 7,6,3
+    - TorsoBaseSyringes
+      - Syringe3 [3] 2,4,2
+        - ThumbPress5 [2] 1,2,1
+    - TorsoTop [2] 8,6,4
+      - Head [8] 8,1,8 <== eyes
+        - Jaw [1] 8,1,4
+          - Teeth_r1 [1] 0,1,1
+          - Teeth_r2 [1] 0,1,3
+          - Fang4_r1 [1] 1,1,0
+          - Fang3_r1 [1] 1,2,0
+          - Teeth_r3 [1] 0,2,4
+          - Teeth_r4 [1] 0,1,4
+        - JuicyBrain [1] 6,5,6
+        - HeadFungus
+          - fungus_r5 [1] 7,0,7
+          - fungus_r6 [1] 7,0,7
+          - fungus_r3 [1] 7,0,7
+          - fungus_r4 [1] 7,0,7
+        - HeadSyringe [3] 2,4,2
+          - ThumbPress4 [2] 1,2,1
+        - topTeeth
+          - Toothie_r2 [1] 1,2,0
+          - Toothie_r1 [1] 1,2,0
+          - Toothie_r4 [1] 1,2,0
+          - Toothie_r3 [1] 1,1,0
+          - BigAssToothie_r1 [1] 4,2,0
+        - Tumors
+          - Tumor_r1 [1] 3,3,3
+          - Tumor_r3 [1] 3,3,3
+          - Tumor_r2 [1] 3,3,3
+      - Arms
+        - LeftTumors
+          - Tumor_r6 [1] 3,3,3
+          - Tumor_r5 [1] 3,3,3
+          - Tumor_r4 [1] 3,3,3
+        - RightLump [2] 4,5,4
+          - RightArmSyringe [3] 2,4,2
+            - ThumbPress3 [2] 1,2,1
+      - TorsoSyringes
+        - Syringe2 [3] 2,4,2
+          - ThumbPress2 [2] 1,2,1
+        - Syringe1 [3] 2,4,2
+          - ThumbPress [2] 1,2,1
+    - TorsoBasefungus
+      - fungus_r1 [1] 7,0,7
+      - fungus_r2 [1] 7,0,7
+  - legs
+    - LeftLeg [1] 3,6,3
+      - LeftLegSeg2
+        - LeftLeg_r1 [1] 3,6,3
+    - RightLeg [1] 3,7,3
+      - RightLegSeg2 [1] 3,6,3
+      - RightLeg_r1 [1] 3,6,3
+
+## protector (74 parts)
+
+- part0
+  - Legs
+    - LeftLeg [3] 4,5,4
+      - Petal_r6 [1] 7,0,7
+      - LeftBoot [1] 16,16,16
+    - RightLeg [3] 4,5,4
+      - RightBoot [1] 16,16,16
+  - FullBody
+    - Head [2] 8,6,8 <== eyes
+      - headWear [1] 32,32,32
+      - Jaw [2] 8,1,6
+      - CalciumArmor_r7 [1] 5,3,4
+      - CalciumArmor_r6 [1] 5,3,4
+      - Petal_r5 [1] 7,0,7
+      - CalciumArmor_r8 [1] 5,3,4
+      - Petal_r4 [1] 7,0,7
+      - CalciumArmor_r5 [1] 5,3,4
+    - Arms
+      - ShieldArm
+        - rightArm [1] 4,7,4
+          - rightForArm [1] 5,8,5
+            - shield
+              - ShieldBase_r3 [1] 7,11,3
+              - ShieldBase_r4 [1] 6,10,3
+              - ShieldBase_r1 [1] 8,11,3
+              - ShieldBase_r2 [1] 8,11,3
+              - ShieldTumor_r1 [1] 4,4,4
+              - ShieldBase_r5 [1] 8,12,3
+              - ShieldFoliage
+                - Petal1_r3 [1] 6,0,6
+                - Petal2_r3 [1] 6,0,6
+                - Petal4_r3 [1] 6,0,6
+                - Petal3_r3 [1] 6,0,6
+              - tumors
+                - ShieldTumor_r3 [1] 3,3,3
+                - ShieldTumor_r2 [1] 3,3,2
+              - CalciumArmor_r3 [1] 5,3,4
+              - CalciumArmor_r2 [1] 5,3,4
+              - ShieldFoliage2
+                - Petal1_r2 [1] 6,0,6
+                - Petal4_r2 [1] 6,0,6
+                - Petal3_r2 [1] 6,0,6
+                - Petal2_r2 [1] 6,0,6
+              - CalciumArmor_r4 [1] 5,3,4
+              - ShieldFoliage3
+                - Petal4_r1 [1] 6,0,6
+                - Petal3_r1 [1] 6,0,6
+                - Petal2_r1 [1] 6,0,6
+                - Petal1_r1 [1] 6,0,6
+              - ConnectiveBone_r3 [1] 3,2,2
+              - ConnectiveBone_r1 [1] 3,2,2
+              - ConnectiveBone_r2 [1] 2,3,2
+    - Body [2] 8,9,5
+      - CalciumChunk_r2 [1] 6,5,7
+      - CalciumChunk_r1 [1] 5,4,6
+      - RibHeart
+        - Heart
+          - HeartTumor_r3 [1] 4,4,4
+          - HeartTumor_r2 [1] 3,3,3
+          - HeartTumor_r1 [1] 2,2,2
+        - RibCage2
+          - Rib_r4 [1] 3,2,2
+          - Rib_r3 [1] 3,2,2
+        - RibCage1
+          - Rib_r1 [1] 3,2,2
+          - Rib_r2 [1] 3,2,2
+      - Petal_r3 [1] 7,0,7
+      - Petal_r2 [1] 7,0,7
+      - Petal_r1 [1] 7,0,7
+      - CalciumArmor_r1 [1] 5,3,4
+- part1 [2] 4,7,4
+  - CalciumArmor_r9 [1] 5,3,4
+  - CalciumArmor_r11 [1] 5,3,4
+  - CalciumArmor_r10 [1] 5,3,4
+
+## proto (351 parts)
+
+- part0
+  - TumorBase
+    - Tumor_r1 [1] 14,14,14
+    - Tumor_r3 [1] 11,11,11
+    - Tumor_r2 [1] 11,11,11
+    - Tumor_r5 [1] 15,15,15
+    - Tumor_r4 [1] 13,13,13
+  - Tendrils
+    - Tendril1
+      - BiomassBase
+        - Biomass_r1 [1] 9,9,9
+        - Biomass_r2 [1] 7,7,7
+        - Biomass_r3 [1] 8,8,8
+        - Biomass_r4 [1] 11,11,11
+      - T1Body1 [1] 4,6,7
+        - Head_r1 [1] 8,7,8
+        - Arm_r1 [2] 4,8,4
+        - Jaw_r1 [1] 8,1,8
+        - T1Body2 [1] 4,6,7
+          - BodyTop_r1 [1] 5,6,8
+          - Arm_r2 [1] 4,8,4
+          - T1Body2TorsoFungus
+            - Fungus_r3 [1] 7,0,7
+            - Fungus_r4 [1] 7,0,7
+            - Fungus_r1 [1] 7,0,7
+            - Fungus_r2 [1] 7,0,7
+          - T1Body3 [1] 4,6,7
+            - Head_r2 [1] 8,7,8
+            - Arm_r3 [1] 4,8,4
+            - BodyTop_r2 [1] 5,6,8
+            - Jaw_r2 [1] 8,1,8
+            - T1Body4
+              - T1Body4TorsoFungus
+                - Fungus_r7 [1] 7,0,7
+                - Fungus_r8 [1] 7,0,7
+                - Fungus_r5 [1] 7,0,7
+                - Fungus_r6 [1] 7,0,7
+              - BodyTop_r3 [1] 5,6,8
+              - BodyBase_r1 [1] 4,6,7
+              - T1Body5
+                - H5TorsoRight
+                  - H5TorsoRight_r1 [1] 2,8,2
+                - T1Body5Head [1] 8,6,8
+                  - Teeth_r1 [1] 8,2,2
+                  - T1Body5HeadCrown3
+                    - Petal2_r3 [1] 6,0,6
+                    - Petal5_r2 [1] 6,0,6
+                    - Petal4_r3 [1] 6,0,6
+                    - Petal3_r3 [1] 6,0,6
+                  - T1Body5HeadCrown2
+                    - Petal4_r2 [1] 6,0,6
+                    - Petal3_r2 [1] 6,0,6
+                    - Petal2_r2 [1] 6,0,6
+                    - Petal1_r1 [1] 6,0,6
+                  - T1Body5HeadCrown1
+                    - Petal4_r1 [1] 6,0,6
+                    - Petal3_r1 [1] 6,0,6
+                    - Petal2_r1 [1] 6,0,6
+                    - Petal5_r1 [1] 6,0,6
+                  - Tumors
+                    - Tumor_r7 [1] 3,3,3
+                    - Tumor_r6 [1] 3,3,3
+                    - Tumor_r8 [1] 4,4,4
+                - T1Ribs
+                  - T1Rib1
+                    - Rib1Seg1_r1 [1] 2,2,7
+                    - T1Rib1Seg2
+                      - Rib1Seg2_r1 [1] 2,2,4
+                      - T1Rib1Seg3
+                        - Rib1Seg3_r1 [1] 2,2,6
+                  - T1Rib2
+                    - T1Rib2Seg2
+                      - T1Rib2Seg3
+                        - Rib2Seg3_r1 [1] 2,2,6
+                      - Rib2Seg2_r1 [1] 2,2,8
+                    - Rib2Seg1_r1 [1] 2,2,6
+                  - T1Rib3
+                    - T1Rib3Seg2
+                      - T1Rib3Seg3
+                        - Rib3Seg3_r1 [1] 2,2,6
+                      - Rib3Seg2_r1 [1] 2,2,4
+                    - Rib3Seg1_r1 [1] 2,2,7
+                  - T1Rib4
+                    - T1Rib4Seg2
+                      - Rib4Seg2_r1 [1] 2,2,8
+                    - Rib4Seg1_r1 [1] 2,2,6
+                  - T1Rib5
+                    - T1Rib5Seg2
+                      - Rib5Seg2_r1 [1] 2,2,8
+                      - T1Rib5Seg3
+                        - Rib5Seg3_r1 [1] 2,2,6
+                    - Rib5Seg1_r1 [1] 2,2,9
+                - Torso_r1 [1] 8,8,4
+                - H5TorsoLeft
+                  - H5TorsoLeft_r1 [1] 2,8,2
+    - Tendril4
+      - T4Body1 [1] 4,6,7
+        - Arm_r10 [2] 4,8,4
+        - T4Body1TorsoFungus
+          - Fungus_r20 [1] 7,0,7
+          - Fungus_r19 [1] 7,0,7
+          - Fungus_r18 [1] 7,0,7
+          - Fungus_r17 [1] 7,0,7
+        - T4Body2 [1] 4,6,7
+          - BodyTop_r11 [1] 5,6,8
+          - Arm_r11 [1] 4,8,4
+          - TornEnd [1] 2,2,3
+            - Tumor_r10 [1] 4,4,4
+            - Tumor_r9 [2] 3,3,3
+            - Tip2_r1 [1] 2,3,3
+      - BiomassT4
+        - Biomass_r16 [1] 11,11,11
+        - Biomass_r13 [1] 9,9,9
+        - Biomass_r14 [1] 7,7,7
+        - Biomass_r15 [1] 8,8,8
+    - Tendril3
+      - T3Body1 [1] 4,6,7
+        - Arm_r6 [2] 4,8,4
+        - Jaw_r5 [1] 8,1,8
+        - T3Body2 [1] 4,6,7
+          - BodyTop_r8 [1] 5,6,8
+          - T3Body3 [1] 4,6,7
+            - T3Body3TorsoFungus
+              - Fungus_r16 [1] 7,0,7
+              - Fungus_r15 [1] 7,0,7
+              - Fungus_r14 [1] 7,0,7
+              - Fungus_r13 [1] 7,0,7
+            - BodyTop_r9 [1] 5,6,8
+            - T3Body4
+              - BodyTop_r10 [1] 5,6,8
+              - BodyBase_r3 [1] 4,6,7
+              - T3Body4Head
+                - T3Body4HeadCrown
+                  - Petal4_r6 [1] 6,0,6
+                  - Petal3_r6 [1] 6,0,6
+                  - Petal2_r6 [1] 6,0,6
+                  - Petal5_r5 [1] 6,0,6
+                - Jaw_r6 [1] 8,1,8
+                - Head_r6 [1] 8,7,8
+              - T3Body4Ribs
+                - T3Rib4
+                  - Rib4Seg1_r2 [1] 2,7,2
+                  - T3Rib4Seg2
+                    - Rib4Seg2_r2 [1] 2,4,2
+                    - T3Rib4Seg3
+                      - Rib4Seg3_r1 [1] 2,6,2
+                - T3Rib5
+                  - T3Rib5Seg2
+                    - T3Rib5Seg3
+                      - Rib5Seg3_r2 [1] 2,6,2
+                      - Rib5Seg7
+                        - Rib5Seg4_r1 [1] 2,6,2
+                    - Rib5Seg2_r2 [1] 2,6,2
+                  - Rib5Seg1_r2 [1] 2,5,2
+                - T3Rib2
+                  - Rib2Seg1_r2 [1] 2,9,2
+                  - T3Rib2Seg2
+                    - T3Rib2Seg3
+                      - Rib2Seg3_r2 [1] 2,4,2
+                    - Rib2Seg2_r2 [1] 2,6,2
+                - T3Rib3
+                  - Rib3Seg1_r2 [1] 2,6,2
+                  - T3Rib3Seg2
+                    - Rib3Seg2_r2 [1] 2,8,2
+                    - T3Rib3Seg3
+                      - Rib3Seg3_r2 [1] 2,6,2
+            - Arm_r8 [1] 4,8,4
+            - Arm_r9 [1] 4,8,4
+          - Arm_r7 [1] 4,8,4
+        - Head_r5 [1] 8,7,8
+      - BiomassBaseT3
+        - Biomass_r9 [1] 9,9,9
+        - Biomass_r10 [1] 7,7,7
+        - Biomass_r11 [1] 8,8,8
+        - Biomass_r12 [1] 11,11,11
+    - Tendril2
+      - T2BiomassBase
+        - Biomass_r7 [1] 8,8,8
+        - Biomass_r8 [1] 11,11,11
+        - Biomass_r5 [1] 9,9,9
+        - Biomass_r6 [1] 7,7,7
+      - T2Body1 [1] 4,6,7
+        - Arm_r4 [2] 4,8,4
+        - T2Body2 [1] 4,6,7
+          - T2Body3 [1] 4,6,7
+            - BodyTop_r5 [1] 5,6,8
+            - T2Body4
+              - BodyBase_r2 [1] 4,6,7
+              - Jaw_r4 [1] 8,1,8
+              - tongue [1] 4,1,6
+                - tongue2 [1] 3,1,6
+                  - tongue3 [1] 2,1,5
+              - T2Body4HeadCrown
+                - Petal4_r5 [1] 6,0,6
+                - Petal3_r5 [1] 6,0,6
+                - Petal2_r5 [1] 6,0,6
+                - Petal5_r4 [1] 6,0,6
+              - BodyTop_r6 [1] 4,8,4
+              - BodyTop_r7 [1] 5,6,8
+              - Head_r4 [1] 8,7,8
+            - T2Body3TorsoFungus2
+              - Fungus_r9 [1] 7,0,7
+              - Fungus_r12 [1] 7,0,7
+              - Fungus_r11 [1] 7,0,7
+              - Fungus_r10 [1] 7,0,7
+          - Arm_r5 [1] 4,8,4
+          - BodyTop_r4 [1] 5,6,8
+        - Jaw_r3 [1] 8,1,8
+        - T2Body1HeadCrown
+          - Petal3_r4 [1] 6,0,6
+          - Petal2_r4 [1] 6,0,6
+          - Petal5_r3 [1] 6,0,6
+          - Petal4_r4 [1] 6,0,6
+        - Head_r3 [1] 8,7,8
+  - Body
+    - CoolingSystem
+      - LeftHingeRotation
+        - LeftHinge [1] 3,24,4
+          - LeftLowerMemebrane
+            - LowerRidgeFrontMembraneTip_r2 [1] 0,22,8
+            - LowerRidgeFrontMembraneTip_r1 [1] 0,22,8
+            - LowerRidgeFrontMembrane_r1 [1] 0,22,12
+            - LowerRidgeFrontMembrane_r2 [1] 0,22,12
+          - LowerRidgeRib3Tip_r1 [2] 3,4,8
+          - LowerRidgeRib2Tip_r1 [1] 3,4,8
+          - LeftMiddleHinge [1] 3,16,4
+            - LeftTopHinge [1] 3,16,4
+              - LeftTopMemebrane
+                - LeftRidgeTopMemebrane_r1 [1] 0,16,12
+                - LeftRidgeTopMemebraneTip_r2 [1] 0,15,8
+                - LeftRidgeTopMemebrane_r2 [1] 0,16,12
+                - LeftRidgeTopMemebraneTip_r1 [1] 0,15,8
+              - TopRidgeRib3Tip_r1 [2] 3,4,8
+              - TopRidgeRib3_r1 [2] 3,4,12
+              - TopRidgeRib2_r1 [1] 3,4,12
+              - TopRidgeRib2Tip_r1 [1] 3,4,8
+            - MiddleRidgeRib2Tip_r1 [2] 3,4,8
+            - LeftMiddleMemebrane
+              - MiddleRidgeFrontMembraneTip_r1 [1] 0,15,8
+              - MiddleRidgeFrontMembrane_r1 [1] 0,16,12
+              - MiddleRidgeBackMembrane_r1 [1] 0,16,12
+              - MiddleRidgeBackMembraneTip_r1 [1] 0,15,8
+            - MiddleRidgeRib2_r1 [2] 3,4,12
+          - LowerRidgeRib2_r1 [1] 3,4,12
+          - LowerRidgeRib3_r1 [2] 3,4,12
+      - RightHingeRotation
+        - RightHinge [1] 3,24,4
+          - RightLowerMemebrane
+            - LowerRidgeFrontMembraneTip_r3 [1] 0,22,8
+            - LowerRidgeFrontMembrane_r3 [1] 0,22,12
+            - LowerRidgeFrontMembraneTip_r4 [1] 0,22,8
+            - LowerRidgeFrontMembrane_r4 [1] 0,22,12
+          - RightMiddleHinge [1] 3,16,4
+            - MiddleRidgeRib2Tip_r2 [1] 3,4,8
+            - MiddleRidgeRib1Tip_r1 [1] 3,4,8
+            - RightMiddleMemebrane
+              - MiddleRidgeFrontMembraneTip_r2 [1] 0,15,8
+              - MiddleRidgeBackMembraneTip_r2 [1] 0,15,8
+              - MiddleRidgeFrontMembrane_r2 [1] 0,16,12
+              - MiddleRidgeBackMembrane_r2 [1] 0,16,12
+            - RightTopHinge [1] 3,16,4
+              - RightTopMemebrane
+                - RightRidgeTopMemebrane_r2 [1] 0,16,12
+                - RightRidgeTopMemebrane_r1 [1] 0,16,12
+                - RightRidgeTopMemebraneTip_r1 [1] 0,15,8
+                - RightRidgeTopMemebraneTip_r2 [1] 0,15,8
+              - TopRidgeRib4_r1 [2] 3,4,12
+              - TopRidgeRib3Tip_r2 [2] 3,4,8
+              - TopRidgeRib4Tip_r1 [2] 3,4,8
+              - TopRidgeRib3_r2 [2] 3,4,12
+            - MiddleRidgeRib2_r2 [1] 3,4,12
+            - MiddleRidgeRib1_r1 [1] 3,4,12
+          - LowerRidgeRib1Tip_r1 [1] 3,4,8
+          - LowerRidgeRib3Tip_r2 [2] 3,4,8
+          - LowerRidgeRib3_r2 [2] 3,4,12
+          - LowerRidgeRib1_r1 [1] 3,4,12
+    - EyeMouth
+      - Eye [1] 8,8,8
+        - Pupil [1] 5,5,1
+      - Jaw
+        - TopJaw
+          - HeadCenter_r1 [1] 8,6,8
+          - HeadLeftTeeth_r1 [2] 8,2,3
+          - HeadRightTeeth_r1 [2] 8,2,3
+        - BottomJaw
+          - HeadCenter_r2 [1] 8,7,8
+          - HeadRight_r1 [1] 8,7,8
+          - HeadLeftTeeth_r2 [2] 8,2,3
+    - BodyBase [4] 22,12,23
+      - LeftSegments
+        - Top_r3 [1] 2,10,18
+        - Middle_r3 [1] 2,12,22
+        - Bottom_r3 [1] 2,8,24
+      - RightSegments
+        - Top_r2 [1] 2,10,18
+        - Middle_r2 [1] 2,12,22
+        - Bottom_r2 [1] 2,8,24
+      - FungalBloom
+        - Plane2_r1 [1] 0,12,14
+        - Plane1_r1 [1] 0,12,14
+        - Spetal_r1 [1] 16,0,16
+        - Npetal_r1 [1] 16,0,16
+        - Wpetal_r1 [1] 16,0,16
+        - Epetal_r1 [1] 16,0,16
+      - BackSegments
+        - Middle_r4 [1] 22,12,1
+        - Top_r4 [1] 18,10,2
+        - Bottom_r4 [1] 22,8,1
+      - Brains
+        - RightBrains
+          - Brain17 [3] 6,5,8
+          - Brain18 [3] 6,5,8
+          - Brain19 [3] 6,5,8
+          - Brain24 [3] 6,5,8
+          - Brain25 [3] 6,5,8
+          - Brain26 [3] 6,5,8
+          - Brain20 [3] 6,5,8
+          - Brain21 [3] 6,5,8
+          - Brain22 [3] 6,5,8
+          - Brain23 [3] 6,5,8
+        - BackBrains
+          - Brain6 [3] 6,5,8
+          - Brain14 [3] 6,5,8
+          - Brain8 [3] 6,5,8
+          - Brain15 [3] 6,5,8
+          - Brain9 [3] 6,5,8
+          - Brain16 [3] 6,5,8
+          - Brain10 [3] 6,5,8
+          - Brain12 [3] 6,5,8
+        - FrontBrains
+          - Brain2 [3] 6,5,8
+          - Brain3 [3] 6,5,8
+          - Brain11 [3] 6,5,8
+          - Brain4 [3] 6,5,8
+          - Brain5 [3] 6,5,8
+          - Brain1 [3] 6,5,8
+        - LeftBrains
+          - Brain28 [3] 6,5,8
+          - Brain29 [3] 6,5,8
+          - Brain35 [3] 6,5,8
+          - Brain36 [3] 6,5,8
+          - Brain27 [3] 6,5,8
+          - Brain31 [3] 6,5,8
+          - Brain32 [3] 6,5,8
+          - Brain33 [3] 6,5,8
+          - Brain34 [3] 6,5,8
+          - Brain30 [3] 6,5,8
+      - FrontSegments
+        - Bottom_r1 [1] 22,8,1
+        - Middle_r1 [1] 22,12,1
+        - Top_r1 [1] 18,10,2
+
+## reaper (149 parts)
+
+- part0
+  - Legs
+    - LeftLeg
+      - Petal_r15 [1] 6,0,6
+      - LeftLegMidSeg
+        - LegSeg_r12 [1] 3,3,8
+        - LeftLegEndSeg [2] 0,3,5
+          - LegSeg_r13 [1] 3,11,2
+          - ToeClawdrool_r2 [1] 0,2,4
+        - KneeClaw_r2 [1] 0,4,6
+      - TornClothing_r15 [2] 4,8,4
+      - TornClothing_r14 [1] 0,7,3
+    - RightLeg
+      - TornClothing_r11 [1] 0,7,3
+      - TornClothing_r12 [1] 0,7,3
+      - RightLegMidSeg
+        - LegSeg_r10 [1] 3,3,8
+        - RightLegEndSeg [2] 0,3,5
+          - Petal_r14 [1] 6,0,6
+          - ToeClawdrool_r1 [1] 0,2,4
+          - LegSeg_r11 [1] 3,11,2
+          - Tumor
+            - Tumor_r5 [1] 5,5,5
+        - KneeClaw_r1 [1] 0,4,6
+      - Petal_r13 [1] 6,0,6
+      - TornClothing_r13 [2] 4,8,4
+      - Petal_r12 [1] 6,0,6
+  - Body
+    - Arms
+      - RightArm
+        - TornClothing_r7 [1] 4,9,4
+        - ElbowClaw_r3 [1] 0,4,3
+        - ArmSeg_r4 [1] 3,13,3
+        - TumorClump3
+          - cube_r13 [1] 5,5,5
+          - cube_r14 [1] 5,5,5
+        - RightArmMidSeg
+          - TornClothing_r9 [1] 0,7,3
+          - ElbowClaw_r4 [1] 0,6,3
+          - ArmSpikes_r2 [1] 0,3,6
+          - TornClothing_r8 [1] 0,7,3
+          - ArmSeg_r5 [1] 3,10,3
+          - TornClothing_r10 [1] 0,7,3
+          - RightSickle
+            - ArmSeg_r6 [1] 2,11,3
+            - RightSickleEndSeg
+              - Blade_r2 [1] 0,17,7
+              - SickleSeg_r2 [1] 2,6,3
+        - Petal_r11 [1] 6,0,6
+      - LeftArm
+        - ElbowClaw_r1 [1] 0,4,3
+        - Petal_r9 [1] 6,0,6
+        - TornClothing_r4 [1] 4,9,4
+        - LeftArmMidSeg
+          - ArmSpikes_r1 [1] 0,3,6
+          - ElbowClaw_r2 [1] 0,6,3
+          - TornClothing_r6 [1] 0,7,3
+          - TornClothing_r5 [1] 0,7,3
+          - ArmSeg_r2 [1] 3,10,3
+          - Tumor6
+            - Tumor_r4 [1] 5,5,5
+          - LeftSickle
+            - ArmSeg_r3 [1] 2,11,3
+            - LeftSickleEndSeg
+              - Blade_r1 [1] 0,17,7
+              - SickleSeg_r1 [1] 2,6,3
+        - ArmSeg_r1 [1] 3,13,3
+        - Petal_r10 [1] 6,0,6
+    - TorsoHead
+      - Torso
+        - Details
+          - WeakenedLimbs
+            - RightLimb
+              - WeakenedLimb_r1 [1] 3,9,3
+            - LeftLimb
+              - WeakenedLimb_r2 [1] 3,10,3
+          - TornClothing_r3 [1] 10,14,2
+          - TornClothing_r2 [1] 0,14,7
+          - Tendrils
+            - Tendril5
+              - cube_r10 [1] 1,9,1
+              - cube_r11 [1] 2,8,2
+            - Tendril4
+              - T4 [1] 1,8,1
+              - cube_r9 [1] 2,7,2
+            - Tendril3
+              - cube_r8 [1] 2,6,2
+              - T3 [1] 1,7,1
+            - Tendril2
+              - cube_r7 [1] 2,6,2
+              - T2 [1] 1,7,1
+            - Tendril
+              - T [1] 1,5,1
+              - cube_r12 [1] 2,6,2
+          - Tumor2
+            - Tumour_r1 [1] 5,5,5
+          - TornClothing_r1 [1] 0,14,7
+          - Petal_r1 [1] 6,0,6
+          - BackLegs
+            - BackLeg
+              - LegSeg_r5 [1] 3,3,5
+              - LegSeg_r4 [1] 3,8,2
+              - LegSeg_r6 [1] 4,7,4
+              - cube_r4 [1] 6,0,6
+              - cube_r5 [1] 6,0,6
+            - TumourousBackLeg
+              - LegSeg_r1 [1] 4,7,4
+              - BLTumours
+                - LegSeg_r3 [1] 3,3,5
+                - LegSeg_r2 [1] 3,8,2
+                - TumorClump2
+                  - cube_r1 [1] 5,5,5
+                  - cube_r2 [1] 5,5,5
+                - Tumor4
+                  - cube_r3 [1] 5,5,5
+            - SecondaryBackLeg
+              - LegSeg_r9 [1] 4,7,4
+              - LegSeg_r8 [1] 3,3,5
+              - LegSeg_r7 [1] 3,8,2
+              - Tumor3
+                - cube_r6 [1] 5,5,5
+          - TumorClump
+            - Tumor_r1 [1] 5,5,5
+            - Tumor_r3 [1] 5,5,5
+            - Tumor_r2 [1] 5,5,5
+        - BackNeckLump_r1 [1] 6,4,4
+        - BodyRight_r1 [1] 8,12,4
+        - FrontNeckLump_r1 [1] 6,4,4
+        - BodyBack_r1 [1] 8,12,4
+        - BodyLeft_r1 [1] 8,12,4
+        - composter [2] 12,12,12
+          - compost [1] 8,6,8
+      - Head <== eyes
+        - Jaw [2] 8,1,6
+        - headwear [1] 8,4,8
+          - headwear2_r1 [1] 16,16,1
+        - Nose [2] 2,5,2
+          - NoseGrowth_r1 [1] 2,3,2
+        - Petal_r4 [1] 6,0,6
+        - Petal_r3 [1] 6,0,6
+        - Petal_r2 [1] 6,0,6
+        - HeadTop [5] 8,2,8
+          - PetalCrown
+            - Petal_r8 [1] 6,0,6
+            - Petal_r7 [1] 6,0,6
+            - Petal_r6 [1] 6,0,6
+            - Petal_r5 [1] 6,0,6
+        - Tumor5
+          - NeckTumour_r1 [1] 5,5,5
+
+## reconstructor (100 parts)
+
+- part0
+  - TumorBase
+    - Biomass_r1 [1] 11,11,11
+    - Biomass_r2 [1] 10,10,10
+    - Biomass_r5 [1] 12,12,12
+    - Biomass_r3 [1] 8,8,8
+    - Biomass_r4 [1] 9,9,9
+  - Tendrils
+    - Tendril1 [1] 2,9,2
+      - Seg2Tendril1 [1] 2,10,2
+        - Seg3Tendril1 [1] 1,10,1
+    - Tendril2 [1] 2,9,2
+      - Seg2Tendril2 [1] 2,10,2
+        - Seg3Tendril2 [1] 1,10,1
+  - Base
+    - Body
+      - Jaw [1] 14,12,5
+        - RightJaw
+          - HeadLeftTeeth_r1 [2] 8,2,3
+          - RightJawFoliage
+            - Petal4_r1 [1] 6,0,6
+            - Petal3_r1 [1] 6,0,6
+            - Petal2_r1 [1] 6,0,6
+            - Petal1_r1 [1] 6,0,6
+          - HeadRightTeeth_r1 [2] 8,2,3
+          - RightJawFoliage3
+            - Petal1_r3 [1] 6,0,6
+            - Petal2_r3 [1] 6,0,6
+            - Petal4_r3 [1] 6,0,6
+            - Petal3_r3 [1] 6,0,6
+          - RightJawFoliage2
+            - Petal1_r2 [1] 6,0,6
+            - Petal4_r2 [1] 6,0,6
+            - Petal3_r2 [1] 6,0,6
+            - Petal2_r2 [1] 6,0,6
+        - LeftJaw
+          - HeadLeft_r1 [1] 8,6,8
+          - RightJawFoliage6
+            - Petal4_r6 [1] 6,0,6
+            - Petal3_r6 [1] 6,0,6
+            - Petal2_r6 [1] 6,0,6
+            - Petal1_r6 [1] 6,0,6
+          - HeadRight_r1 [1] 8,7,8
+          - RightJawFoliage5
+            - Petal1_r5 [1] 6,0,6
+            - Petal4_r5 [1] 6,0,6
+            - Petal3_r5 [1] 6,0,6
+            - Petal2_r5 [1] 6,0,6
+          - RightJawFoliage4
+            - Petal1_r4 [1] 6,0,6
+            - Petal3_r4 [1] 6,0,6
+            - Petal2_r4 [1] 6,0,6
+            - Petal4_r4 [1] 6,0,6
+          - HeadLeftTeeth_r2 [1] 8,2,3
+      - BodyFungus
+        - Fungus_r3 [1] 7,0,7
+        - Fungus_r1 [1] 7,0,7
+        - Fungus_r2 [1] 7,0,7
+      - Segment2
+        - BodyBase_r4 [1] 4,6,7
+        - BodyBase_r5 [1] 4,6,7
+        - BodyBase_r6 [1] 4,6,7
+      - Segment4
+        - BodyBase_r11 [1] 4,6,7
+        - BodyBase_r12 [1] 4,6,7
+        - BodyBase_r10 [1] 4,6,7
+      - Tendrils2
+        - Tendril4 [1] 2,9,2
+          - Seg2Tendril4 [1] 2,10,2
+            - Seg3Tendril4 [1] 1,10,1
+        - Tendril3 [1] 2,9,2
+          - Seg2Tendril3 [1] 2,10,2
+            - Seg3Tendril3 [1] 1,10,1
+      - Segment3
+        - BodyBase_r7 [1] 4,6,7
+        - BodyBase_r8 [1] 4,6,7
+        - BodyBase_r9 [1] 4,6,7
+      - Brains
+        - Brain2 [3] 6,5,8
+        - Brain3 [3] 6,5,8
+        - Brain4 [3] 6,5,8
+        - Brain1 [3] 6,5,8
+      - BodyFungus3
+        - Fungus_r9 [1] 7,0,7
+        - Fungus_r8 [1] 7,0,7
+        - Fungus_r11 [1] 7,0,7
+        - Fungus_r10 [1] 7,0,7
+      - Segment5
+        - BodyBase_r15 [1] 4,6,7
+        - BodyBase_r13 [1] 4,7,9
+        - BodyBase_r14 [1] 5,7,7
+      - BodyFungus2
+        - Fungus_r7 [1] 7,0,7
+        - Fungus_r5 [1] 7,0,7
+        - Fungus_r6 [1] 7,0,7
+        - Fungus_r4 [1] 7,0,7
+      - Segment
+        - BodyBase_r2 [1] 4,6,7
+        - BodyBase_r3 [1] 4,6,7
+        - BodyBase_r1 [1] 4,6,8
+
+## saugling (76 parts)
+
+- part0
+  - head <== eyes
+    - tentacle1
+      - minit
+        - cube_r4 [1] 1,1,7
+      - cube_r3 [1] 2,2,6
+    - tentacle
+      - cube_r5 [1] 2,2,6
+      - bone22
+        - cube_r6 [1] 1,1,7
+    - top
+      - head_r2 [1] 6,2,6
+    - Fungus_r7 [1] 7,0,7
+    - head_r1 [2] 6,1,2
+    - Fungus_r5 [1] 7,0,7
+    - Fungus_r6 [1] 7,0,7
+    - brain
+      - Right_r1 [3] 1,3,4
+    - Fungus_r4 [1] 7,0,7
+    - tentacle2
+      - cube_r1 [1] 2,2,6
+      - minit2
+        - cube_r2 [1] 1,1,7
+    - tentacle3
+      - cube_r7 [1] 2,2,6
+      - minit3
+        - cube_r8 [1] 1,1,7
+  - rightArm2 [1] 3,6,3
+    - leftFormArm2 [1] 2,5,2
+      - leftTentacle4
+        - cube_r24 [1] 0,7,3
+        - cube_r25 [1] 1,4,2
+  - rightLeg [1] 3,4,3
+    - rightForleg [1] 3,4,3
+  - tail
+    - tail2
+      - tail3
+        - tail4
+          - tail5
+            - tail6
+              - tail7
+                - tail8
+                  - cube_r17 [1] 0,3,7
+                - cube_r16 [1] 2,2,3
+              - cube_r15 [1] 1,2,3
+            - cube_r14 [1] 2,2,3
+          - cube_r13 [1] 1,2,3
+        - cube_r12 [1] 2,2,3
+      - cube_r11 [1] 1,2,3
+    - cube_r10 [1] 1,2,3
+    - cube_r9 [1] 2,2,3
+  - rightArm [1] 3,6,3
+    - leftFormArm [1] 2,5,2
+      - leftTentacle2
+        - cube_r20 [1] 0,7,3
+        - cube_r21 [1] 1,4,2
+  - leftArm [1] 3,6,3
+    - leftForArm [1] 2,5,2
+      - leftTentacle
+        - cube_r19 [1] 1,4,2
+        - cube_r18 [1] 0,7,3
+  - leftArm2 [1] 3,6,3
+    - leftForArm2 [1] 2,5,2
+      - leftTentacle3
+        - cube_r22 [1] 0,7,3
+        - cube_r23 [1] 1,4,2
+  - leftLeg [1] 3,4,3
+    - leftForleg [1] 3,4,3
+  - body [1] 6,8,4
+    - tumor
+      - Tumor_r1 [1] 3,3,3
+      - Tumor_r3 [1] 3,3,3
+      - Tumor_r2 [1] 4,4,4
+    - Fungus_r3 [1] 7,0,7
+    - Fungus_r1 [1] 7,0,7
+    - Fungus_r2 [1] 7,0,7
+
+## scamper (47 parts)
+
+- part0 [2] 8,2,4
+  - spine2 [1] 8,6,5
+    - back3 [1] 3,4,4
+    - back4 [1] 3,4,4
+  - spine [1] 4,5,5
+    - back [1] 2,4,4
+    - back2 [1] 2,4,4
+  - cube_r1 [1] 7,0,7
+  - cube_r2 [1] 2,3,3
+  - cube_r3 [1] 3,3,3
+- part1 [1] 3,6,3.5
+  - leftForLeg [1] 3,6,3.5
+- part2 [1] 3,6,3.5
+  - rightForLeg [1] 3,6,3.5
+- part3 [1] 3,6,3
+  - LeftForArm
+    - cube_r4 [1] 3,6,3
+- part4 [1] 3,6,3
+  - RightForArm [1] 3,6,3
+- part5 [4] 8,6,8
+  - flower3
+    - cube_r19 [1] 6.06,0,6.06
+    - cube_r16 [1] 7.07,0,6.06
+    - cube_r17 [1] 6.06,0,6.06
+    - cube_r18 [1] 7.07,0,6.06
+  - cube_r5 [1] 7,0,7
+  - cube_r6 [1] 7,0,7
+  - cube_r7 [1] 4,4,2
+  - flower2
+    - cube_r10 [1] 7.07,0,6.06
+    - cube_r8 [1] 7.07,0,6.06
+    - cube_r9 [1] 6.06,0,6.06
+    - cube_r11 [1] 6.06,0,6.06
+  - flower
+    - cube_r15 [1] 8.28,0,8.28
+    - cube_r12 [1] 9.66,0,8.28
+    - cube_r13 [1] 8.28,0,8.28
+    - cube_r14 [1] 9.66,0,8.28
+- part6
+  - body2 [2] 4,6,4
+    - cube_r20 [1] 4,4,4
+- part7
+  - body3 [2] 4,6,4
+    - cube_r21 [1] 4,4,4
+- part8
+  - body4 [2] 4,6,4
+    - cube_r22 [1] 4,4,4
+
+## scavenger (99 parts)
+
+- root
+  - Legs
+    - LeftLeg [1] 3,6,3
+      - LeftLegSeg2 [1] 2,2,6
+        - LeftLegFoot [1] 3,3,2
+          - FrontFoot_r1 [1] 3,4,2
+          - FrontTalon1_r1 [1] 0,3,4
+          - FrontTalon3_r1 [1] 0,3,4
+          - BackTalon_r1 [1] 0,6,4
+          - FrontTalon2_r1 [1] 0,3,4
+    - RightLeg [1] 3,6,3
+      - RightLegSeg2 [1] 2,2,6
+        - RightLegFoot [1] 3,3,2
+          - FrontTalon1_r2 [1] 0,3,4
+          - BackTalon_r2 [1] 0,6,4
+          - FrontTalon3_r2 [1] 0,3,4
+          - FrontTalon2_r2 [1] 0,3,4
+          - FrontFoot_r2 [1] 3,4,2
+  - LowerTorso [1] 8,7,4
+    - Tail [1] 3,7,3
+      - Tail2 [1] 3,7,3
+        - Tail2Tumors
+          - Tumor_r11 [1] 2,2,2
+          - Tumor_r10 [1] 3,3,3
+          - Tumor_r9 [1] 3,3,3
+        - Tail3 [1] 2,7,2
+          - Tail4 [1] 2,7,2
+            - Tail5 [1] 1,7,1
+              - TailTalon_r1 [1] 5,10,0
+              - TailTalon_r2 [1] 5,10,0
+    - UpperTorso [1] 10,9,5
+      - UpperTorsoFungus
+        - Fungus_r9 [1] 7,0,7
+        - Fungus_r7 [1] 7,0,7
+        - Fungus_r8 [1] 7,0,7
+        - Fungus_r10 [1] 7,0,7
+      - HunchPlaneFront_r1 [2] 0,7,3
+      - Arms
+        - Left [1] 3,4,4
+          - LeftSeg1 [2] 10,3,3
+            - LeftSeg2 [2] 2,10,2
+              - LeftSeg3 [2] 9,2,2
+                - LeftTipFungus
+                  - Plane_r5 [1] 0,7,7
+                - LeftWingTalons
+                  - Plane_r6 [1] 0,6,3
+                  - Plane_r7 [1] 0,6,3
+                  - Plane_r8 [1] 0,6,3
+            - LeftArmFungus
+              - Fungus_r3 [1] 7,0,7
+              - Fungus_r4 [1] 7,0,7
+              - Fungus_r1 [1] 7,0,7
+              - Fungus_r2 [1] 7,0,7
+        - Right [1] 3,4,4
+          - RightSeg1 [2] 10,3,3
+            - RightSeg2 [2] 2,10,2
+              - RightSeg3 [2] 9,2,2
+                - RightTumors
+                  - Tumor_r5 [1] 3,3,3
+                  - Tumor_r4 [1] 4,4,4
+                - RightWingTalons
+                  - Plane_r11 [1] 0,6,3
+                  - Plane_r10 [1] 0,6,3
+                  - Plane_r9 [1] 0,6,3
+              - RightFungus
+                - Fungus_r5 [1] 7,0,7
+                - Fungus_r6 [1] 7,0,7
+      - Neck [2] 4,5,4
+        - Neck2 [2] 4,5,4
+          - Neck3 [2] 3,6,3
+            - Head [1] 8,8,6 <== eyes
+              - Jaw [1] 8,6,2
+                - LowerRightFang [1] 2,4,2
+                  - Plane_r1 [1] 0,6,3
+                - LowerLeftFang [1] 2,4,2
+                  - Plane_r2 [1] 0,6,3
+              - UpperLeftFang [1] 2,3,2
+                - Plane_r4 [1] 0,6,3
+              - HeadCrown
+                - Petal4_r1 [1] 7,0,7
+                - Petal3_r1 [1] 7,0,7
+                - Petal2_r1 [1] 7,0,7
+                - Petal1_r1 [1] 7,0,7
+              - UpperRightFang [1] 2,3,2
+                - Plane_r3 [1] 0,6,3
+              - Tumors
+                - Tumor_r1 [1] 4,4,4
+                - Tumor_r3 [1] 4,4,4
+                - Tumor_r2 [1] 3,3,3
+      - HunchPlaneBack_r1 [2] 0,10,3
+      - TorsoFlower
+        - cube_r4 [1] 7,0,7
+        - cube_r1 [1] 7,0,7
+        - cube_r2 [1] 7,0,7
+        - cube_r3 [1] 7,0,7
+    - TailTumors
+      - Tumor_r7 [1] 4,4,4
+      - Tumor_r6 [1] 4,4,4
+      - Tumor_r8 [1] 4,4,4
+
+## sieger (582 parts)
+
+- part0
+  - cube_r1 [1] 21,5,5
+  - cube_r2 [1] 14,6,6
+- part1 [9] 30,13,38
+  - cube_r10 [3] 5,5,5
+  - body11 [2] 8,5,4
+    - head8 [3] 8,6,8
+      - jaw9 [1] 7,2,4
+    - RightLeg9
+      - rightForLeg9
+    - LeftLeg9
+      - leftForLeg9
+    - LeftArm9 [1] 3,6,3
+      - LeftForArm9
+        - cube_r25 [1] 3,6,3
+    - RightArm10 [1] 3,7.75,3
+      - RightForArm10 [1] 3,12,3
+    - cube_r24 [1] 7,6,4
+  - body12 [1] 7,6,4
+    - head9 [3] 8,6,8
+      - jaw10 [1] 7,2,4
+    - RightArm11 [1] 3,6,3
+      - RightForArm11 [1] 3,6,3
+    - cube_r26 [1] 8,5,4
+    - LeftArm10 [1] 3,6,3
+      - LeftForArm10
+        - cube_r27 [1] 3,6,3
+  - body10 [2] 8,5,4
+    - RightLeg8 [1] 3,6,4
+      - rightForLeg8
+    - LeftLeg8 [1] 3,6,4
+      - leftForLeg8 [1] 3,6,4
+    - head7 [3] 8,6,8
+      - jaw8 [1] 7,2,4
+  - cube_r4 [1] 6,6,6
+  - cube_r15 [2] 23,9,17
+  - body2 [3] 8,5,4
+    - RightArm2 [1] 3,6,3
+      - RightForArm2 [1] 3,6,3
+    - LeftArm2
+      - LeftForArm2
+    - RightLeg2 [1] 3,6,4
+      - rightForLeg2 [1] 3,6,4
+    - LeftLeg2
+      - leftForLeg2
+  - cube_r5 [1] 6,6,6
+  - cube_r16 [1] 12,14,12
+  - body3 [3] 8,5,4
+    - LeftArm3 [1] 3,6,3
+      - LeftForArm3
+        - cube_r19 [1] 3,6,3
+    - RightArm3 [1] 3,6,3
+      - RightForArm3 [1] 3,6,3
+    - RightLeg3
+      - rightForLeg3
+    - LeftLeg3
+      - leftForLeg3
+  - cube_r6 [1] 6,6,6
+  - cube_r17 [1] 12,14,12
+  - body4 [1] 7,6,4
+    - LeftArm4
+      - LeftForArm4
+    - cube_r20 [1] 8,5,4
+    - RightArm4 [1] 3,6,3
+      - RightForArm4 [1] 3,6,3
+    - head2 [3] 8,6,8
+      - jaw3 [1] 7,2,4
+  - cube_r7 [1] 6,6,6
+  - cube_r18 [1] 29,13,39
+  - body5 [3] 8,5,4
+    - RightLeg4
+      - rightForLeg4
+    - RightArm5 [1] 3,6,3
+      - RightForArm5 [1] 3,6,3
+    - head3 [3] 8,6,8
+      - jaw4 [1] 7,2,4
+    - LeftLeg4 [1] 3,6,4
+      - leftForLeg4 [1] 3,6,4
+  - cube_r11 [1] 5,5,5
+  - body6 [3] 8,5,4
+    - RightArm6
+      - RightForArm6
+    - head4 [3] 8,6,8
+      - jaw5 [1] 7,2,4
+    - LeftArm5 [1] 3,6,3
+      - LeftForArm5
+        - cube_r21 [1] 3,6,3
+  - bigFlower2
+    - cube_r44 [1] 8,0,8
+    - cube_r45 [1] 8,0,8
+    - cube_r46 [1] 9,0,8
+    - cube_r47 [1] 9,0,8
+  - cube_r12 [1] 4,4,4
+  - body7 [3] 8,5,4
+    - RightLeg5
+      - rightForLeg5
+    - RightArm7 [1] 3,6,3
+      - RightForArm7 [1] 3,6,3
+    - head5 [3] 8,6,8
+      - jaw6 [1] 7,2,4
+    - LeftLeg5
+      - leftForLeg5
+    - LeftArm6 [1] 3,6,3
+      - LeftForArm6
+        - cube_r22 [1] 3,6,3
+  - bloomingFungus2
+    - cube_r37 [1] 16,0,16
+    - cube_r38 [2] 16,0,16
+    - cube_r39 [1] 16,0,16
+    - cube_r34 [1] 0,12,14
+    - cube_r35 [1] 0,12,14
+    - cube_r36 [1] 16,0,16
+  - cube_r13 [1] 4,4,4
+  - body8 [3] 8,5,4
+    - RightLeg6 [1] 3,6,4
+      - rightForLeg6 [1] 3,9,4
+    - RightArm8
+      - RightForArm8
+    - LeftArm7
+      - LeftForArm7
+    - LeftLeg6 [1] 3,6,4
+      - leftForLeg6 [1] 3,6,4
+  - cube_r3 [2] 4,3,3
+  - cube_r14 [1] 9,11,9
+  - body9 [3] 8,5,4
+    - RightLeg7
+      - rightForLeg7
+    - LeftLeg7
+      - leftForLeg7
+    - RightArm9 [1] 3,6,3
+      - RightForArm9
+        - cube_r23 [1] 3,6,3
+    - LeftArm8 [1] 3,6,3
+      - LeftForArm8
+    - head6 [3] 8,6,8
+      - jaw7 [1] 7,2,4
+  - cube_r8 [1] 6,6,6
+  - cube_r9 [1] 4,4,4
+  - flower5
+    - cube_r51 [1] 7,0,6
+    - cube_r50 [1] 7,0,6
+    - cube_r48 [1] 6,0,6
+    - cube_r49 [1] 6,0,6
+  - flower4
+    - cube_r40 [1] 6,0,6
+    - cube_r41 [1] 6,0,6
+    - cube_r42 [1] 7,0,6
+    - cube_r43 [1] 7,0,6
+  - bloomingFungus
+    - cube_r30 [1] 16,0,16
+    - cube_r31 [1] 16,0,16
+    - cube_r32 [1] 16,0,16
+    - cube_r28 [1] 0,12,14
+    - cube_r29 [1] 0,12,14
+    - cube_r33 [1] 16,0,16
+- part2 [3] 10,8,10
+  - Head_r2 [2] 8,2,8
+  - cube_r52 [1] 21,11.25,20
+  - Head_r1 [2] 8,2,8
+  - flower6
+    - cube_r84 [1] 6,0,6
+    - cube_r85 [1] 7,0,6
+    - cube_r86 [1] 7,0,6
+    - cube_r83 [1] 6,0,6
+  - cube_r53 [1] 19,11,16
+  - flower3
+    - cube_r75 [1] 6,0,6
+    - cube_r76 [1] 6,0,6
+    - cube_r77 [1] 7,0,6
+    - cube_r78 [1] 7,0,6
+  - bigFlower4
+    - cube_r87 [1] 8,0,8
+    - cube_r90 [1] 9,0,8
+    - cube_r88 [1] 8,0,8
+    - cube_r89 [1] 9,0,8
+  - cube_r54 [1] 0,13,15
+  - bigFlower3
+    - cube_r80 [1] 8,0,8
+    - cube_r81 [1] 9,0,8
+    - cube_r82 [1] 9,0,8
+    - cube_r79 [1] 8,0,8
+  - cube_r55 [1] 0,13,15
+  - cube_r56 [1] 30,9,12
+  - flower2
+    - cube_r73 [1] 7,0,6
+    - cube_r74 [1] 7,0,6
+    - cube_r71 [1] 6,0,6
+    - cube_r72 [1] 6,0,6
+  - bloomingFungus3
+    - cube_r62 [1] 16,0,16
+    - cube_r60 [1] 16,0,16
+    - cube_r61 [2] 16,0,16
+    - cube_r59 [1] 16,0,16
+    - cube_r57 [1] 0,12,14
+    - cube_r58 [1] 0,12,14
+  - flower
+    - cube_r63 [1] 6,0,6
+    - cube_r64 [1] 6,0,6
+    - cube_r65 [1] 7,0,6
+    - cube_r66 [1] 7,0,6
+  - bigFlower
+    - cube_r70 [1] 9,0,8
+    - cube_r67 [1] 8,0,8
+    - cube_r68 [1] 8,0,8
+    - cube_r69 [1] 9,0,8
+  - e_r1 [1] 0,12,20
+  - Head_r4 [2] 9,2,9
+  - Head_r3 [2] 9,2,9
+- part3 [1] 10,10,27
+  - tail2 [1] 9,10,27
+    - tail3 [1] 8,10,27
+      - tail4 [1] 7,10,27
+        - tumor [2] 16,16,16
+          - TumorBase
+            - Biomass_r9 [1] 12,12,12
+            - Biomass_r7 [1] 8,8,8
+            - Biomass_r8 [1] 9,9,9
+            - Biomass_r5 [1] 11,11,11
+            - Biomass_r6 [1] 10,10,10
+          - TumorBase2
+            - Biomass_r10 [1] 11,11,11
+            - Biomass_r11 [1] 10,10,10
+            - Biomass_r12 [1] 8,8,8
+            - Biomass_r13 [1] 9,9,9
+            - Biomass_r14 [1] 12,12,12
+      - TumorBase3
+        - Biomass_r1 [1] 11,11,11
+        - Biomass_r2 [1] 10,10,10
+        - Biomass_r3 [1] 8,8,8
+        - Biomass_r4 [1] 9,9,9
+      - flower29 [3] 7,0,6
+        - cube_r93 [1] 6,0,6
+      - flower28 [3] 7,0,6
+        - cube_r92 [1] 6,0,6
+    - flower27 [3] 7,0,6
+      - cube_r91 [1] 6,0,6
+- part4
+  - RightLeg [1] 10,18,15
+    - cube_r95 [1] 15,13,11
+    - cube_r96 [1] 14,15,12
+    - body13 [1] 7,6,4
+      - cube_r117 [1] 8,5,4
+      - RightArm12 [1] 3,6,3
+        - RightForArm12 [1] 3,6,3
+      - head10 [3] 8,6,8
+      - LeftArm11 [1] 3,6,3
+        - LeftForArm11
+          - cube_r118 [1] 3,6,3
+    - cube_r94 [1] 16,11,9
+    - RightForleg [2] 12,20,12
+      - body15 [1] 7,6,4
+        - cube_r104 [1] 8,5,4
+        - RightArm14 [1] 3,6,3
+          - RightForArm14 [1] 3,6,3
+        - LeftArm13 [1] 3,6,3
+          - LeftForArm13
+            - cube_r105 [1] 3,6,3
+      - bloomingFungus5
+        - cube_r113 [1] 16,0,16
+        - cube_r112 [1] 16,0,16
+        - cube_r111 [1] 16,0,16
+        - cube_r110 [1] 16,0,16
+        - cube_r109 [1] 0,12,14
+        - cube_r108 [1] 0,12,14
+      - body16 [1] 7,6,4
+        - RightArm15 [1] 3,6,3
+          - RightForArm15 [1] 3,6,3
+        - cube_r106 [1] 8,5,4
+        - head13 [3] 8,6,8
+        - LeftArm14 [1] 3,6,3
+          - LeftForArm14
+            - cube_r107 [1] 3,6,3
+      - cube_r97 [1] 9,29,9
+      - cube_r98 [1] 9,32,9
+      - body14 [1] 7,6,4
+        - cube_r102 [1] 8,5,4
+        - head11 [3] 8,6,8
+        - RightArm13 [1] 3,6,3
+          - RightForArm13 [1] 3,6,3
+        - LeftArm12 [1] 3,6,3
+          - LeftForArm12
+            - cube_r103 [1] 3,6,3
+      - flower9 [3] 7,0,6
+        - cube_r115 [1] 6,0,6
+      - flower7 [3] 7,0,6
+        - cube_r114 [1] 6,0,6
+      - flower8 [3] 7,0,6
+        - cube_r116 [1] 6,0,6
+      - body17 [1] 7,6,4
+        - RightArm16 [1] 3,6,3
+          - RightForArm16 [1] 3,6,3
+        - cube_r100 [1] 8,5,4
+        - head12 [3] 8,6,8
+        - LeftArm15 [1] 3,6,3
+          - LeftForArm15
+            - cube_r101 [1] 3,6,3
+        - cube_r99 [1] 7,6,4
+    - body19 [1] 7,6,4
+      - head16 [3] 8,6,8
+      - cube_r121 [1] 8,5,4
+      - RightArm18 [1] 3,6,3
+        - RightForArm18 [1] 3,6,3
+      - LeftArm17 [1] 3,6,3
+        - LeftForArm17
+          - cube_r122 [1] 3,6,3
+    - body18 [1] 7,6,4
+      - head15 [3] 8,6,8
+      - RightArm17 [1] 3,6,3
+        - RightForArm17 [1] 3,6,3
+      - LeftArm16 [1] 3,6,3
+        - LeftForArm16
+          - cube_r120 [1] 3,6,3
+      - head14 [3] 8,6,8
+      - cube_r119 [1] 8,5,4
+    - bloomingFungus4
+      - cube_r124 [1] 0,12,14
+      - cube_r123 [1] 0,12,14
+      - cube_r128 [1] 16,0,16
+      - cube_r127 [1] 16,0,16
+      - cube_r126 [1] 16,0,16
+      - cube_r125 [1] 16,0,16
+- part5
+  - LeftLeg
+    - body26 [1] 7,6,4
+      - cube_r133 [1] 8,5,4
+      - head23 [3] 8,6,8
+      - RightArm25 [1] 3,6,3
+        - RightForArm25 [1] 3,6,3
+      - LeftArm24 [1] 3,6,3
+        - LeftForArm24
+          - cube_r134 [1] 3,6,3
+    - flower12 [3] 7,0,6
+      - cube_r163 [1] 6,0,6
+    - body22 [1] 7,6,4
+      - RightArm21 [1] 3,6,3
+        - RightForArm21 [1] 3,6,3
+      - cube_r131 [1] 8,5,4
+      - head19 [3] 8,6,8
+      - LeftArm20 [1] 3,6,3
+        - LeftForArm20
+          - cube_r132 [1] 3,6,3
+    - flower11 [3] 7,0,6
+      - cube_r162 [1] 6,0,6
+    - flower10 [3] 7,0,6
+      - cube_r161 [1] 6,0,6
+    - leg2
+      - twitstedleg2
+        - cube_r135 [1] 9,50,8
+        - flower15 [3] 7,0,6
+          - cube_r147 [1] 6,0,6
+        - flower14 [3] 7,0,6
+          - cube_r146 [1] 6,0,6
+        - body24 [1] 7,6,4
+          - RightArm23 [1] 3,6,3
+            - RightForArm23 [1] 3,6,3
+          - head21 [3] 8,6,8
+          - LeftArm22 [1] 3,6,3
+            - LeftForArm22
+              - cube_r142 [1] 3,6,3
+          - cube_r141 [1] 8,5,4
+        - flower13 [3] 7,0,6
+          - cube_r145 [1] 6,0,6
+        - body25 [1] 7,6,4
+          - cube_r143 [1] 8,5,4
+          - head22 [3] 8,6,8
+          - RightArm24 [1] 3,6,3
+            - RightForArm24 [1] 3,6,3
+          - LeftArm23 [1] 3,6,3
+            - LeftForArm23
+              - cube_r144 [1] 3,6,3
+        - body23 [1] 7,6,4
+          - cube_r139 [1] 8,5,4
+          - RightArm22 [1] 3,6,3
+            - RightForArm22 [1] 3,6,3
+          - head20 [3] 8,6,8
+          - LeftArm21 [1] 3,6,3
+            - LeftForArm21
+              - cube_r140 [1] 3,6,3
+        - body28 [1] 7,6,4
+          - RightArm27 [1] 3,6,3
+            - RightForArm27 [1] 3,6,3
+          - cube_r136 [1] 8,5,4
+          - head25 [3] 8,6,8
+          - LeftArm26 [1] 3,6,3
+            - LeftForArm26
+              - cube_r137 [1] 3,6,3
+        - twistedleg2J
+          - cube_r138 [1] 8,38,5
+      - twitstedleg
+        - body27
+          - RightArm26 [1] 3,6,3
+            - RightForArm26 [1] 3,6,3
+          - cube_r156 [1] 8,5,4
+          - cube_r155 [1] 7,6,4
+          - head24 [3] 8,6,8
+          - LeftArm25 [1] 3,6,3
+            - LeftForArm25
+              - cube_r157 [1] 3,6,3
+        - cube_r148 [1] 7,50,8
+        - twistedLegJ
+          - cube_r149 [1] 6,38,5
+          - body20 [1] 7,6,4
+            - head17 [3] 8,6,8
+            - LeftArm18 [1] 3,6,3
+              - LeftForArm18
+                - cube_r151 [1] 3,6,3
+            - RightArm19 [1] 3,6,3
+              - RightForArm19 [1] 3,6,3
+            - cube_r150 [1] 8,5,4
+          - body21 [1] 7,6,4
+            - head18 [2] 8,6,8
+              - cube_r153 [1] 8,2,4
+            - LeftArm19 [1] 3,6,3
+              - LeftForArm19
+                - cube_r154 [1] 3,6,3
+            - RightArm20 [1] 3,6,3
+              - RightForArm20 [1] 3,6,3
+            - cube_r152 [1] 8,5,4
+        - flower18 [3] 7,0,6
+          - cube_r160 [1] 6,0,6
+        - flower17 [3] 7,0,6
+          - cube_r159 [1] 6,0,6
+        - flower16 [3] 7,0,6
+          - cube_r158 [1] 6,0,6
+    - cube_r129 [1] 22,14,10
+    - cube_r130 [1] 22,14,10
+- part6
+  - cube_r166 [1] 21,6,18
+  - cube_r165 [1] 20,5,10
+  - Head_r8 [2] 8,1,8
+  - Head_r7 [2] 8,2,8
+  - cube_r164 [1] 21,16,9
+  - Head_r6 [2] 8,2,8
+  - Head_r5 [2] 8,6,8
+- part7
+  - legback3 [1] 13,16,37
+    - flower24 [3] 7,0,6
+      - cube_r190 [1] 6,0,6
+    - bloomingFungus8
+      - cube_r168 [1] 0,12,14
+      - cube_r167 [1] 0,12,14
+      - cube_r169 [1] 16,0,16
+      - cube_r171 [1] 16,0,16
+      - cube_r170 [1] 16,0,16
+      - cube_r172 [1] 16,0,16
+    - flower23 [3] 7,0,6
+      - cube_r189 [1] 6,0,6
+    - BackRightLeg2
+      - legback4
+        - body37 [1] 7,6,4
+          - cube_r179 [1] 8,5,4
+          - head34 [3] 8,6,8
+          - RightArm36 [1] 3,6,3
+            - RightForArm36 [1] 3,6,3
+          - LeftArm35 [1] 3,6,3
+            - LeftForArm35
+              - cube_r180 [1] 3,6,3
+        - flower26 [3] 7,0,6
+          - cube_r188 [1] 6,0,6
+        - body38 [1] 7,6,4
+          - RightArm37 [1] 3,6,3
+            - RightForArm37 [1] 3,6,3
+          - head35 [3] 8,6,8
+          - LeftArm36 [1] 3,6,3
+            - LeftForArm36
+              - cube_r182 [1] 3,6,3
+          - cube_r181 [1] 8,5,4
+        - flower25 [3] 7,0,6
+          - cube_r187 [1] 6,0,6
+        - body35 [1] 7,6,4
+          - RightArm34 [1] 3,6,3
+            - RightForArm34 [1] 3,6,3
+          - head32 [3] 8,6,8
+          - LeftArm33 [1] 3,6,3
+            - LeftForArm33
+              - cube_r176 [1] 3,6,3
+          - cube_r175 [1] 8,5,4
+        - body36 [1] 7,6,4
+          - cube_r177 [1] 8,5,4
+          - head33 [3] 8,6,8
+          - RightArm35 [1] 3,6,3
+            - RightForArm35 [1] 3,6,3
+          - LeftArm34 [1] 3,6,3
+            - LeftForArm34
+              - cube_r178 [1] 3,6,3
+        - body40 [1] 7,6,4
+          - head37 [3] 8,6,8
+          - RightArm39 [1] 3,6,3
+            - RightForArm39 [1] 3,6,3
+          - LeftArm38 [1] 3,6,3
+            - LeftForArm38
+              - cube_r186 [1] 3,6,3
+          - cube_r185 [1] 8,5,4
+        - cube_r174 [1] 10,10,46
+        - cube_r173 [1] 14,14,33
+        - body39 [1] 7,6,4
+          - RightArm38 [1] 3,6,3
+            - RightForArm38 [1] 3,6,3
+          - head36 [3] 8,6,8
+          - LeftArm37 [1] 3,6,3
+            - LeftForArm37
+              - cube_r184 [1] 3,6,3
+          - cube_r183 [1] 8,5,4
+- part8
+  - legback [1] 15,19,22
+    - bloomingFungus6
+      - cube_r216 [1] 16,0,16
+      - cube_r215 [1] 0,12,14
+      - cube_r214 [1] 0,12,14
+      - cube_r219 [1] 16,0,16
+      - cube_r218 [1] 16,0,16
+      - cube_r217 [1] 16,0,16
+    - body33 [1] 7,6,4
+      - cube_r193 [1] 8,5,4
+      - head30 [3] 8,6,8
+      - RightArm32 [1] 3,6,3
+        - RightForArm32 [1] 3,6,3
+      - LeftArm31 [1] 3,6,3
+        - LeftForArm31
+          - cube_r194 [1] 3,6,3
+    - flower22 [3] 7,0,6
+      - cube_r223 [1] 6,0,6
+    - body34 [1] 7,6,4
+      - RightArm33 [1] 3,6,3
+        - RightForArm33 [1] 3,6,3
+      - head31 [3] 8,6,8
+      - LeftArm32 [1] 3,6,3
+        - LeftForArm32
+          - cube_r196 [1] 3,6,3
+      - cube_r195 [1] 8,5,4
+    - flower21 [3] 7,0,6
+      - cube_r222 [1] 6,0,6
+    - flower20 [3] 7,0,6
+      - cube_r221 [1] 6,0,6
+    - cube_r192 [1] 13,14,27
+    - cube_r191 [1] 13,14,18
+    - BackLeftLeg2
+      - bloomingFungus7
+        - cube_r212 [1] 16,0,16
+        - cube_r211 [1] 16,0,16
+        - cube_r210 [1] 16,0,16
+        - cube_r213 [1] 16,0,16
+        - cube_r209 [1] 0,12,14
+        - cube_r208 [1] 0,12,14
+      - legback2
+        - cube_r199 [1] 10,10,25
+        - cube_r198 [1] 10,10,21
+        - body31 [1] 7,6,4
+          - head28 [3] 8,6,8
+          - LeftArm29 [1] 3,6,3
+            - LeftForArm29
+              - cube_r205 [1] 3,6,3
+          - cube_r204 [1] 8,5,4
+          - RightArm30 [1] 3,6,3
+            - RightForArm30 [1] 3,6,3
+        - body32 [1] 7,6,4
+          - head29 [3] 8,6,8
+          - RightArm31 [1] 3,6,3
+            - RightForArm31 [1] 3,6,3
+          - cube_r206 [1] 8,5,4
+          - LeftArm30 [1] 3,6,3
+            - LeftForArm30
+              - cube_r207 [1] 3,6,3
+        - body30 [1] 7,6,4
+          - head27 [3] 8,6,8
+          - RightArm29 [1] 3,6,3
+            - RightForArm29 [1] 3,6,3
+          - LeftArm28 [1] 3,6,3
+            - LeftForArm28
+              - cube_r203 [1] 3,6,3
+          - cube_r202 [1] 8,5,4
+        - cube_r197 [1] 10,10,37
+        - body29 [1] 7,6,4
+          - head26 [3] 8,6,8
+          - cube_r200 [1] 8,5,4
+          - RightArm28 [1] 3,6,3
+            - RightForArm28 [1] 3,6,3
+          - LeftArm27 [1] 3,6,3
+            - LeftForArm27
+              - cube_r201 [1] 3,6,3
+    - flower19 [3] 7,0,6
+      - cube_r220 [1] 6,0,6
+
+## sieger_tail (29 parts)
+
+- part0 [5] 2,3,10
+- part1 [1] 10,10,27
+  - tail6 [1] 9,10,27
+    - tail7 [1] 8,10,27
+      - TumorBase3
+        - Biomass_r1 [1] 11,11,11
+        - Biomass_r2 [1] 10,10,10
+        - Biomass_r3 [1] 8,8,8
+        - Biomass_r4 [1] 9,9,9
+      - tail8 [1] 7,10,27
+        - tumor2 [2] 16,16,16
+          - TumorBase
+            - Biomass_r9 [1] 12,12,12
+            - Biomass_r7 [1] 8,8,8
+            - Biomass_r8 [1] 9,9,9
+            - Biomass_r5 [1] 11,11,11
+            - Biomass_r6 [1] 10,10,10
+          - TumorBase2
+            - Biomass_r10 [1] 11,11,11
+            - Biomass_r11 [1] 10,10,10
+            - Biomass_r12 [1] 8,8,8
+            - Biomass_r13 [1] 9,9,9
+            - Biomass_r14 [1] 12,12,12
+      - flower29 [3] 7,0,6
+        - cube_r3 [1] 6,0,6
+      - flower28 [3] 7,0,6
+        - cube_r2 [1] 6,0,6
+    - flower27 [3] 7,0,6
+      - cube_r1 [1] 6,0,6
+
+## slasher (36 parts)
+
+- part0 [3] 8,3,6
+  - cube_r4 [1] 7,0,7
+  - cube_r5 [1] 7,0,7
+  - cube_r6 [1] 4,4,4
+  - body_r1 [1] 8,3,6
+  - cube_r7 [2] 5,2,6
+  - body_r2 [2] 6,7,6
+  - cube_r1 [1] 7,0,7
+  - cube_r2 [1] 7,0,7
+  - cube_r3 [1] 7,0,7
+- part1 [1] 8,18,6
+- part2 [1] 3,6,3
+  - LeftForArm
+    - cube_r8 [1] 3,6,3
+- part3 [1] 3,6,5
+  - rightForLeg [1] 3,6,5
+- part4 [1] 3,6,5
+  - leftForLeg [1] 3,6,5
+- part5
+  - head [5] 7,1,0 <== eyes
+    - nose [1] 2,4,2
+    - jaw [1] 8,2,6
+  - flower2
+    - cube_r10 [1] 7.68,0,7.68
+    - cube_r9 [1] 7.68,0,7.68
+    - cube_r11 [1] 8.96,0,7.68
+    - cube_r12 [1] 8.96,0,7.68
+  - flower
+    - cube_r15 [1] 7,0,6
+    - cube_r13 [1] 6,0,6
+    - cube_r14 [1] 7,0,6
+- part6
+  - MarmJoint [2] 4,5,4
+    - MArm2
+      - MarmJoint2 [1] 2,2,13
+        - claw [1] 0,16,16
+
+## specter (125 parts)
+
+- part0
+  - Legs
+    - RightLegJoint
+      - RightLeg [2] 4,12,4
+        - RightLegSeg2 [1] 3,3,8
+          - RightLegSeg3 [1] 3,9,2
+        - RightLegFungus
+          - Fungus_r5 [1] 7,0,7
+          - Fungus_r6 [1] 7,0,7
+          - Fungus_r3 [1] 7,0,7
+          - Fungus_r4 [1] 7,0,7
+    - LeftLegJoint
+      - LeftLeg [2] 4,12,4
+        - LeftLegSeg2 [1] 3,3,8
+          - LeftLegSeg3 [1] 3,9,2
+          - LeftLegFungus
+            - Fungus_r1 [1] 7,0,7
+            - Fungus_r2 [1] 7,0,7
+  - LowerTorso [2] 10,6,6
+    - LowerTorsoTumor
+      - Tumor_r11 [1] 4,4,4
+      - Tumor_r12 [1] 5,5,5
+      - Tumor_r10 [1] 3,3,3
+      - Tumor_r15 [1] 4,4,4
+      - Tumor_r16 [1] 6,6,6
+      - Tumor_r13 [1] 4,4,4
+      - Tumor_r14 [1] 6,6,6
+      - Tumor_r9 [1] 4,4,4
+    - LowerTorsoTendrils
+      - Tendril1 [1] 2,9,2
+        - Seg2Tendril1 [1] 2,10,2
+          - Seg3Tendril1 [1] 1,10,1
+      - Tendril4 [1] 2,9,2
+        - Seg2Tendril4 [1] 2,10,2
+          - Seg3Tendril4 [1] 1,10,1
+      - Tendril3
+        - TendrilSegment_r8 [1] 2,4,2
+        - Seg2Tendril3
+          - TendrilSegment_r9 [1] 2,6,2
+          - Seg3Tendril3 [1] 1,8,1
+      - Tendril2
+        - Seg2Tendril2
+          - Seg3Tendril2 [1] 1,8,1
+          - TendrilSegment_r7 [1] 2,8,2
+        - TendrilSegment_r6 [1] 2,6,2
+    - MiddleTorso [2] 11,6,7
+      - MiddleChestFungus
+        - Fungus_r14 [1] 7,0,7
+        - Fungus_r13 [1] 7,0,7
+        - Fungus_r12 [1] 7,0,7
+        - Fungus_r11 [1] 7,0,7
+      - LeftArmJoint
+        - LeftArm [1] 9,3,3
+          - LeftArmSeg2Joint
+            - LeftArmSeg2 [1] 8,2,2
+              - LeftClaw
+                - LeftClawPlane2 [1] 6,3,0
+                - LeftClawPlane3
+                  - ClawPlane_r3 [1] 6,3,0
+                - LeftClawPlane4
+                  - ClawPlane_r4 [1] 6,3,0
+                - LeftClawPlane1 [1] 6,3,0
+      - MiddleTorsoTendrils
+        - Tendril5 [1] 2,9,2
+          - Seg2Tendril5 [1] 2,10,2
+            - Seg3Tendril5 [1] 1,10,1
+        - Tendril9
+          - Seg2Tendril9
+            - Seg3Tendril9 [1] 1,8,1
+            - TendrilSegment_r5 [1] 2,6,2
+          - TendrilSegment_r4 [1] 2,7,2
+        - Tendril8
+          - Seg2Tendril8
+            - TendrilSegment_r3 [1] 2,6,2
+            - Seg3Tendril8 [1] 1,8,1
+          - TendrilSegment_r2 [1] 2,7,2
+        - Tendril7 [1] 2,4,2
+          - Seg2Tendril7
+            - Seg3Tendril7 [1] 1,8,1
+            - TendrilSegment_r1 [1] 2,6,2
+        - Tendril6 [1] 2,9,2
+          - Seg2Tendril6 [1] 2,10,2
+            - Seg3Tendril6 [1] 1,10,1
+      - MiddleTorsoTumor
+        - Tumor_r1 [1] 4,4,4
+        - Tumor_r7 [1] 4,4,4
+        - Tumor_r6 [1] 6,6,6
+        - Tumor_r8 [1] 6,6,6
+        - Tumor_r3 [1] 4,4,4
+        - Tumor_r2 [1] 3,3,3
+        - Tumor_r5 [1] 4,4,4
+        - Tumor_r4 [1] 5,5,5
+      - TopTorso [1] 8,6,5
+        - RightArmJoint
+          - RightArm [1] 11,3,3
+            - RightArmJoint2Seg
+              - RightArmSeg2 [1] 11,2,2
+                - RightClaw
+                  - RightClawPlane2 [1] 7,3,0
+                  - RightClawPlane1 [1] 7,3,0
+                  - RightClawPlane4
+                    - ClawPlane_r2 [1] 7,3,0
+                  - RightClawPlane3
+                    - ClawPlane_r1 [1] 7,3,0
+        - Head [2] 8,8,8 <== eyes
+          - Jaw [2] 8,1,5
+            - LowerJawTeeth
+              - Plane_r5 [1] 5,0,2
+              - Plane_r6 [1] 8,0,3
+              - Plane_r4 [1] 5,0,2
+          - UpperJawTeeth
+            - Plane_r1 [1] 5,0,2
+            - Plane_r2 [1] 5,0,2
+            - Plane_r3 [1] 7,0,3
+          - Nose [1] 2,2,4
+          - HeadFlower
+            - cube_r4 [1] 7,0,7
+            - cube_r1 [1] 7,0,7
+            - cube_r2 [1] 7,0,7
+            - cube_r3 [1] 7,0,7
+    - LowerChestFungus
+      - Fungus_r9 [1] 7,0,7
+      - Fungus_r7 [1] 7,0,7
+      - Fungus_r8 [1] 7,0,7
+      - Fungus_r10 [1] 7,0,7
+
+## spitter (48 parts)
+
+- part0 [1] 8,3,6
+  - body_r1 [2] 0,3,4
+  - body_r2 [2] 0,7,4
+  - cube_r1 [1] 6,0,5
+  - cube_r2 [1] 6,0,5
+  - cube_r3 [1] 6,0,7
+- part1 [1] 8,9,6
+- part2 [1] 3,6,3
+  - RightForArm [1] 3,2,3
+    - cube_r4 [1] 0,4,3
+    - cube_r5 [1] 0,4,3
+- part3 [1] 3,6,3
+  - LeftForArm [1] 3,2,3
+    - cube_r6 [1] 0,6,3
+    - cube_r7 [1] 0,6,3
+- part4 [1] 3,6,5
+  - rightForLeg [1] 3,6,5
+- part5 [1] 3,6,5
+  - leftForLeg [1] 3,6,5
+- part6
+  - mutated_tube [1] 3,3,3
+    - mutated_tube2 [1] 3,3,2
+      - mutated_tube3 [1] 3,3,3
+        - mutated_tube4 [1] 3,3,2
+          - mutated_tube5 [2] 3,3,3
+  - neckJoint [1] 5,2,5
+    - neck2
+      - neckJoint2 [1] 5,2,5
+        - head [6] 7,1,0 <== eyes
+          - nose
+            - cube_r15 [1] 1,0,2
+            - cube_r16 [1] 1,0,2
+            - cube_r17 [1] 1,0,2
+            - cube_r12 [1] 1,0,2
+            - cube_r13 [1] 1,0,2
+            - cube_r14 [1] 1,0,2
+          - cube_r10 [1] 6,0,7
+          - cube_r8 [1] 7,0,7
+          - cube_r9 [1] 7,0,7
+          - cube_r11 [1] 6,0,7
+      - RightMandible
+        - RMJ [2] 0,2,6
+          - RightMandible2
+            - RMJ2 [2] 0,2,6
+      - LeftMandible
+        - LMJ [2] 0,2,6
+          - LeftMandible2
+            - LMJ2 [2] 0,2,6
+
+## stahl (588 parts)
+
+- root <== eyes
+  - Leftleg [2] 10,16,10
+    - LeftForLeg [2] 9,10,9
+      - Infectedbody51
+        - Infectedbody_r23 [1] 4,12,4
+        - Infectedbody_r24 [1] 8,8,8
+        - Infectedbody_r21 [1] 4,12,4
+        - Infectedbody_r22 [1] 4,12,4
+        - Infectedbody_r25 [1] 8,7,4
+        - Infectedbody_r26 [1] 7,7,4
+        - Infectedbody_r20 [1] 3,7,4
+      - LowerLeftleg2 [1] 8,15,10
+        - Infectedbody52 [1] 7,5,4
+          - Infectedbody_r27 [1] 3,12,4
+          - Infectedbody_r28 [1] 4,6,4
+          - Infectedbody_r29 [1] 6,10,5
+          - Infectedbody_r30 [1] 8,7,4
+        - cube_r8 [1] 4,17,4
+        - cube_r9 [1] 4,17,5
+        - Infectedarm21 [1] 4,6,4
+          - Infectedarm22 [1] 2,10,4
+        - cube_r5 [1] 3,14,4
+        - cube_r6 [1] 4,12,4
+        - cube_r7 [1] 4,14,4
+        - Infectedarm15 [1] 4,6,4
+          - Infectedarm16 [1] 4,6,4
+    - leftLegTumor
+      - Infectedbody_r1 [1] 5,6,4
+      - Infectedbody_r2 [1] 4,5,8
+      - Infectedbody_r3 [1] 7,7,10
+    - Infectedbody99
+      - Infectedbody_r5 [1] 4,6,4
+      - Infectedbody_r6 [1] 8,8,8
+      - Infectedbody_r7 [1] 8,7,4
+      - Infectedbody_r8 [1] 7,6,4
+      - Infectedbody_r4 [1] 3,10,4
+    - bloom
+      - cube_r4 [1] 0,12,14
+      - cube_r1 [1] 7,7,7
+      - cube_r2 [1] 7,7,7
+      - cube_r3 [1] 0,12,14
+    - Infectedbody53
+      - Infectedbody_r12 [1] 8,8,8
+      - Infectedbody_r13 [1] 8,7,4
+      - Infectedbody_r10 [1] 4,12,4
+      - Infectedbody_r11 [1] 4,6,4
+      - Infectedbody_r14 [1] 7,7,4
+      - Infectedbody_r9 [1] 3,12,4
+    - Infectedbody54
+      - Infectedbody_r16 [1] 4,12,4
+      - Infectedbody_r17 [1] 8,8,8
+      - Infectedbody_r15 [1] 3,12,4
+      - Infectedbody_r18 [1] 8,7,4
+      - Infectedbody_r19 [1] 7,5,4
+  - Rightleg [1] 10,19,10
+    - Infectedarm [1] 4,6,4
+      - Infectedarm2 [1] 4,10,4
+    - Infectedarm5 [1] 4,6,4
+      - Infectedarm6 [1] 4,9,4
+    - cube_r10 [1] 10,9,12
+    - Infectedbody50
+      - Infectedbody_r34 [1] 8,5,4
+      - Infectedbody_r35 [1] 7,4,4
+      - Infectedbody_r32 [1] 3,8,4
+      - Infectedbody_r33 [1] 4,12,4
+      - Infectedbody_r31 [1] 3,8,4
+    - Infectedarm3 [1] 4,6,4
+      - Infectedarm4 [1] 4,6,4
+    - Infectedbody42
+      - Infectedbody_r38 [1] 4,12,4
+      - Infectedbody_r39 [1] 8,8,8
+      - Infectedbody_r36 [1] 4,8,4
+      - Infectedbody_r37 [1] 3,10,4
+      - Infectedbody_r41 [1] 7,7,4
+      - Infectedbody_r40 [1] 8,7,4
+    - rightLegTumor
+      - cube_r11 [1] 7,6,6
+      - cube_r12 [1] 10,6,6
+    - RightForLeg
+      - bloom6
+        - cube_r20 [1] 16,0,16
+        - cube_r19 [1] 16,0,16
+        - cube_r15 [1] 0,12,14
+        - cube_r16 [1] 0,12,14
+        - cube_r17 [1] 16,0,16
+        - cube_r18 [1] 16,0,16
+      - Infectedbody48
+        - Infectedbody_r45 [1] 8,7,4
+        - Infectedbody_r46 [1] 7,7,4
+        - Infectedbody_r43 [1] 8,1,8
+        - Infectedbody_r44 [1] 8,7,8
+        - Infectedbody_r42 [1] 3,12,4
+      - cube_r13 [1] 10,11,10
+      - cube_r14 [1] 10,11,8
+      - LowerRightleg2 [1] 9,22,8
+        - Infectedarm95 [1] 4,6,4
+          - Infectedarm96 [1] 4,9,4
+        - Infectedbody_r47 [1] 4,8,4
+        - Infectedbody43
+          - Infectedbody96 [1] 3,8,3
+            - Infectedbody97 [1] 2,9,2
+          - Infectedbody_r49 [1] 4,5,4
+          - Infectedbody44 [1] 3,7,4
+            - Infectedbody45 [1] 2,9,2
+          - Infectedbody_r48 [1] 3,8,4
+          - Infectedbody46 [1] 3,8,3
+            - Infectedbody47 [1] 2,9,2
+          - Infectedbody_r52 [1] 7,6,4
+          - Infectedbody_r50 [1] 8,8,5
+          - Infectedbody_r51 [1] 8,8,4
+        - Infectedarm11 [1] 4,8,4
+          - Infectedarm12 [1] 2,7,4
+        - Infectedarm9 [1] 4,6,4
+          - Infectedarm10 [1] 2,10,4
+  - Hipsguh [1] 9,7,13
+    - cube_r21 [1] 7,8,9
+    - Lowerbody
+      - Upperbody [1] 22,22,18
+        - cube_r30 [1] 19,20,16
+        - LowerRightarm
+          - cube_r135 [1] 23,7,8
+          - LowerRightarmLowerSegmentButFreakyToo [1] 25,10,10
+            - Infectedarm201 [1] 4,6,4
+              - Infectedarm202 [1] 4,9,4
+                - Infectedarm204 [1] 4,12,0
+                - Infectedarm203 [1] 4,12,0
+            - Infectedarm211
+              - Infectedarm212
+            - Infectedbody114
+              - Infectedbody_r77 [1] 7,10,4
+              - Infectedarm205 [1] 4,6,4
+                - Infectedarm206 [1] 4,9,4
+                  - Infectedarm208 [1] 4,12,0
+                  - Infectedarm207 [1] 4,12,0
+            - cube_r139 [1] 16,0,16
+            - hand2
+              - LowerRightfinger [1] 18,3,2
+                - Infectedarm233
+                  - Infectedarm234
+                    - Infectedarm236
+                    - Infectedarm235
+                - Infectedarm237 [1] 4,6,4
+                  - Infectedarm238 [1] 4,9,4
+                    - Infectedarm239 [1] 4,12,0
+                    - Infectedarm240 [1] 4,12,0
+              - cube_r143 [1] 19,10,7
+              - Infectedarm215
+                - Infectedarm216
+              - Infectedarm217 [1] 4,6,4
+                - Infectedarm218 [1] 4,9,4
+              - cube_r142 [1] 9,10,7
+              - LowerRightfinger2
+                - cube_r146 [1] 13,7,5
+                - Infectedarm230 [1] 3,9,3
+                  - Infectedarm92
+                    - Infectedarm_r8 [1] 4,12,0
+                  - Infectedarm93
+                    - Infectedarm_r6 [1] 4,12,0
+                  - Infectedarm232
+                    - Infectedarm_r10 [1] 4,12,0
+                  - Infectedarm94
+                    - Infectedarm_r7 [1] 4,12,0
+                  - Infectedarm231
+                    - Infectedarm_r9 [1] 4,12,0
+                  - Infectedarm_r5 [2] 2,15,2
+              - cube_r141 [1] 8,10,7
+              - LowerRightfinger3
+                - Infectedarm223 [1] 4,6,4
+                  - Infectedarm224 [1] 4,9,4
+                - cube_r145 [1] 12,3,2
+                - cube_r144 [1] 4,7,0
+                - Infectedarm225 [1] 4,6,4
+                  - Infectedarm226 [1] 4,9,4
+                - Infectedarm219 [1] 4,6,4
+                  - Infectedarm220 [1] 4,9,4
+                    - Infectedarm222 [1] 4,12,0
+                    - Infectedarm221
+                      - Infectedarm_r4 [1] 4,12,0
+              - cube_r140 [1] 8,10,7
+            - cube_r138 [2] 15,10,0
+            - cube_r137 [1] 10,8,10
+            - cube_r136 [1] 13,8,8
+            - Infectedarm213 [1] 4,6,4
+              - Infectedarm214 [1] 4,9,4
+            - Infectedarm209 [1] 4,6,4
+              - Infectedarm210 [1] 4,9,4
+            - Infectedarm197 [1] 4,6,4
+              - Infectedarm198 [1] 4,9,4
+                - Infectedarm200 [1] 4,12,0
+                - Infectedarm199 [1] 4,12,0
+          - cube_r134 [1] 6,0,6
+          - cube_r133 [1] 6,0,6
+          - cube_r132 [1] 6,0,6
+          - cube_r128 [1] 6,0,6
+          - cube_r129 [1] 6,0,6
+          - cube_r131 [1] 6,0,6
+          - cube_r130 [1] 6,0,6
+        - cube_r31 [1] 27,20,17
+        - Evilshoulder
+          - cube_r51 [1] 12,3,0
+          - cube_r52 [1] 12,3,0
+          - cube_r53 [1] 12,3,0
+          - cube_r50 [1] 18,31,19
+          - Infectedbody109
+            - Infectedbody_r74 [1] 8,5,6
+            - Infectedbody_r73 [1] 3,8,4
+          - Leftarmmain [1] 19,19,19
+            - cube_r62 [1] 12,3,0
+            - cube_r63 [1] 12,3,0
+            - cube_r54 [1] 13,16,18
+            - Leftarm [2] 14,15,14
+              - cube_r73 [1] 18,12,18
+              - cube_r74 [3] 8,7,8
+              - cube_r75 [1] 24,22,0
+              - cube_r76 [1] 24,22,0
+              - Root5 [1] 6,3,3
+                - R3Seg16
+                  - RootSeg_r6 [1] 8,2,2
+                  - R3Seg17 [1] 8,1,1
+                    - R3Seg18
+                      - RootSeg3
+              - cube_r70 [2] 8,6,10
+              - Root4 [1] 6,3,3
+                - R3Seg13
+                  - R3Seg14
+                    - RootSeg_r4 [1] 8,1,1
+                    - R3Seg15
+                      - RootSeg_r5 [1] 11,1,1
+                      - RootSeg2
+                  - RootSeg_r3 [1] 8,2,2
+              - cube_r71 [1] 37,20,0
+              - Root3
+                - R3Seg1
+                  - RootSeg_r2 [1] 8,2,2
+                  - R3Seg2 [1] 8,1,1
+                    - R3Seg3 [1] 11,1,1
+                      - RootSeg [1] 11,1,1
+              - cube_r72 [1] 10,9,6
+              - Lowersegleftarm [1] 2,2,2
+                - bloom3
+                  - cube_r84 [1] 0,12,14
+                  - cube_r85 [1] 16,0,16
+                  - cube_r86 [1] 16,0,16
+                  - cube_r87 [1] 16,0,16
+                  - cube_r83 [1] 0,12,14
+                  - cube_r88 [1] 16,0,16
+                - bloom4
+                  - cube_r91 [1] 16,0,16
+                  - cube_r92 [1] 16,0,16
+                  - cube_r93 [1] 16,0,16
+                  - cube_r94 [1] 16,0,16
+                  - cube_r90 [1] 0,12,14
+                  - cube_r89 [1] 0,12,14
+                - BladeArmTumor [1] 30,10,10
+                  - cube_r95 [1] 18,14,10
+                  - cube_r102 [1] 15,11,12
+                  - cube_r96 [1] 18,9,13
+                  - cube_r101 [1] 13,10,12
+                  - cube_r97 [1] 12,3,0
+                  - cube_r100 [1] 12,3,0
+                  - cube_r98 [1] 12,3,0
+                  - cube_r99 [1] 12,3,0
+                - cube_r80 [1] 20,8,8
+                - cube_r81 [1] 23,11,10
+                - Infectedarm41 [1] 4,6,4
+                  - Infectedarm42 [1] 4,9,4
+                    - Infectedarm43 [1] 4,12,0
+                    - Infectedarm44 [1] 4,12,0
+                - cube_r82 [1] 21,8,9
+                - Infectedarm33 [1] 4,6,4
+                  - Infectedarm34 [1] 4,9,4
+                    - Infectedarm35 [1] 4,12,0
+                    - Infectedarm36 [1] 4,12,0
+                - Infectedarm37 [1] 4,6,4
+                  - Infectedarm38 [1] 4,9,4
+                    - Infectedarm40 [1] 4,12,0
+                    - Infectedarm39 [1] 4,12,0
+                - Evilhand
+                  - Bigahhblade
+                    - cube_r112 [1] 17,14,4
+                    - cube_r111 [1] 75,32,0
+                    - cube_r110 [1] 10,8,4
+                    - cube_r106 [2] 54,98,0
+                    - cube_r105 [1] 6,28,2
+                    - Spitter2 [1] 8,8,6
+                      - Spitterarmright2 [2] 3,4,4
+                      - Spitterneck2
+                        - Infectedbody67 [1] 3,3,6
+                          - Infectedbody102 [1] 1,3,7
+                            - Infectedbody103 [1] 1,3,4
+                          - Infectedbody69 [1] 1,3,7
+                            - Infectedbody101 [1] 1,3,4
+                        - Infectedbody_r71 [1] 6,6,6
+                        - Infectedbody_r72 [1] 4,5,3
+                        - Spitterhead2 [2] 8,8,8
+                          - Spitterjawleft2 [2] 1,9,1
+                            - Lowerspitterjawleft2 [2] 1,9,1
+                          - Spitterjawright2 [2] 1,9,1
+                            - Lowerspitterjawrigth2 [2] 1,9,1
+                      - Infectedbody_r70 [1] 8,8,6
+                      - Spitterarmleft2 [2] 3,6,4
+                    - cube_r109 [1] 10,8,6
+                    - cube_r108 [2] 15,5,5
+                    - cube_r107 [1] 28,11,2
+                    - Spitter [1] 8,8,6
+                      - Infectedbody_r67 [1] 8,8,6
+                      - Spitterarmright [2] 3,4,4
+                      - Spitterarmleft [2] 3,6,4
+                      - Spitterneck
+                        - Infectedbody_r68 [1] 6,6,6
+                        - Infectedbody_r69 [1] 4,5,3
+                        - Infectedbody87 [1] 3,3,6
+                          - Infectedbody88 [1] 1,3,7
+                            - Infectedbody89 [1] 1,3,4
+                          - Infectedbody90 [1] 1,3,7
+                            - Infectedbody91 [1] 1,3,4
+                        - Spitterhead [2] 8,8,8
+                          - Spitterjawright [2] 1,9,1
+                            - Lowerspitterjawrigth [2] 1,9,1
+                          - Spitterjawleft [2] 1,9,1
+                            - Lowerspitterjawleft [2] 1,9,1
+                  - cube_r104 [2] 11,13,11
+                  - cube_r103 [1] 11,7,7
+                - cube_r79 [1] 8,8,7
+              - cube_r77 [1] 24,22,0
+              - cube_r78 [1] 17,16,17
+            - cube_r60 [1] 15,3,0
+            - cube_r61 [1] 15,3,0
+            - cube_r59 [1] 15,3,0
+            - cube_r55 [1] 19,24,19
+            - cube_r56 [1] 21,21,21
+            - cube_r57 [1] 8,7,3
+            - cube_r58 [1] 11,11,19
+            - bloom2
+              - cube_r64 [1] 0,12,14
+              - cube_r65 [1] 0,12,14
+              - cube_r66 [1] 16,0,16
+              - cube_r67 [1] 16,0,16
+              - cube_r68 [1] 16,0,16
+              - cube_r69 [1] 16,0,16
+        - cube_r32 [1] 19,17,19
+        - Mouth
+          - Lowerjaw [1] 16,6,15
+            - cube_r41 [1] 10,4,11
+            - cube_r42 [1] 10,4,11
+            - cube_r43 [1] 0,6,15
+            - Infectedbody31 [2] 7,5,3
+              - Infectedbody34
+              - Infectedbody32 [3] 8,6,8
+                - Infectedbody33 [1] 8,1,5
+              - Infectedbody_r63 [1] 0,8,7
+              - Infectedbody_r64 [1] 0,8,7
+            - Infectedbody26 [1] 7,5,3
+              - Infectedbody27 [1] 8,7,4
+                - Infectedbody28
+                - Infectedbody29 [2] 8,6,8
+                  - Infectedbody30 [1] 8,1,5
+                  - Infectedbody_r58 [1] 1,1,0
+                  - Infectedbody_r59 [1] 1,1,0
+                  - Infectedbody108
+                    - Infectedbody_r60 [1] 1,1,0
+                    - Infectedbody_r61 [1] 1,2,0
+                    - Infectedbody_r62 [1] 1,2,0
+            - Infectedbody35 [1] 7,5,3
+              - Infectedbody36 [2] 8,7,4
+                - Infectedbody_r65 [1] 0,6,6
+                - Infectedbody37 [2] 8,6,8
+                  - Tumor2
+                    - cube_r48 [1] 5,5,5
+                    - cube_r49 [1] 7,7,7
+                  - Infectedbody38 [1] 5,1,5
+            - cube_r44 [1] 0,6,15
+            - cube_r45 [1] 0,6,15
+            - cube_r46 [1] 0,6,15
+            - Infectedbody39
+              - Infectedbody40 [1] 8,8,4
+                - Infectedbody41 [2] 8,6,8
+                  - Infectedbody98 [1] 8,1,5
+              - Infectedbody_r66 [1] 7,6,3
+            - cube_r47 [1] 0,6,15
+          - Upperjaw [1] 16,6,15
+            - cube_r40 [1] 0,6,15
+            - Infectedbody2 [2] 7,5,3
+              - Infectedbody3 [3] 8,6,8
+                - Infectedbody4 [1] 8,1,5
+              - Infectedbody_r54 [1] 0,8,7
+              - Infectedbody_r55 [1] 0,8,7
+              - Infectedbody
+            - Infectedbody5 [1] 7,5,3
+              - Infectedbody8 [2] 8,7,4
+                - Infectedbody_r56 [1] 0,6,6
+                - Infectedbody6 [3] 8,6,8
+            - cube_r37 [1] 0,6,15
+            - cube_r38 [1] 0,6,15
+            - cube_r39 [1] 0,6,15
+            - cube_r34 [1] 10,4,11
+            - cube_r35 [1] 10,4,11
+            - cube_r36 [1] 0,6,15
+            - Infectedbody14 [1] 7,5,3
+              - Infectedbody15 [1] 8,7,4
+                - Infectedbody16 [3] 8,6,8
+                  - Infectedbody17 [1] 8,1,5
+            - Infectedbody_r53 [1] 0,8,7
+            - Infectedbody9 [1] 7,5,3
+              - Infectedbody10 [1] 8,7,4
+                - Infectedbody11 [3] 8,6,8
+                  - Infectedbody12 [1] 8,1,5
+                - Infectedbody13
+            - Infectedbody18 [1] 7,6,3
+              - Infectedbody19 [1] 8,8,4
+                - Infectedbody20 [3] 8,6,8
+                  - Infectedbody21
+                    - Infectedbody_r57 [1] 8,1,5
+        - bodies
+          - Infectedbody62
+            - Infectedbody_r98 [1] 4,8,4
+            - Infectedbody_r99 [1] 3,10,4
+            - Infectedbody_r101 [1] 8,8,8
+            - Infectedbody_r100 [1] 4,12,4
+            - Infectedbody_r103 [1] 7,7,4
+            - Infectedbody_r102 [1] 8,7,4
+          - Infectedbody63
+            - Infectedbody_r105 [1] 8,5,6
+            - Infectedbody_r104 [1] 3,8,4
+            - Infectedbody_r107 [1] 1,1,9
+            - Infectedbody_r106 [1] 1,1,6
+            - Infectedbody_r109 [1] 7,5,4
+            - Infectedbody_r108 [2] 2,1,9
+          - Infectedbody55 [1] 7,5,4
+            - Infectedbody_r89 [1] 8,7,4
+            - Infectedbody_r87 [1] 4,12,4
+            - Infectedbody_r88 [1] 8,8,8
+            - Infectedbody_r86 [1] 4,12,4
+          - Infectedbody56 [2] 7,5,4
+            - Infectedbody_r78 [1] 3,12,4
+            - Infectedbody_r79 [1] 4,12,4
+            - Infectedbody_r81 [1] 8,8,8
+            - Infectedbody_r80 [1] 4,12,4
+          - Infectedbody100
+            - Infectedbody_r92 [1] 3,9,4
+            - Infectedbody_r93 [1] 3,12,4
+            - Infectedbody_r91 [1] 3,10,4
+            - Infectedbody_r96 [1] 8,7,4
+            - Infectedbody_r97 [1] 7,6,4
+            - Infectedbody_r94 [1] 4,8,4
+            - Infectedbody_r95 [1] 8,8,8
+          - Infectedbody57 [1] 8,7,4
+            - bone20 [4] 3,3,3
+            - Infectedbody_r82 [1] 4,12,4
+            - Infectedbody_r85 [1] 7,5,4
+            - Infectedbody_r83 [1] 4,12,4
+            - Infectedbody_r84 [1] 8,8,8
+          - Infectedbody58
+            - Infectedbody59 [1] 8,7,4
+              - Infectedbody60
+                - Infectedbody_r90 [1] 8,8,8
+        - cube_r28 [1] 9,9,9
+        - details
+          - R3Seg7
+            - R3Seg8 [1] 16,2,2
+              - R3Seg9 [1] 15,1,1
+            - RootSeg_r8 [1] 16,4,4
+          - spike2
+            - cube_r149 [1] 16,0,16
+            - cube_r148 [1] 0,12,14
+            - cube_r147 [1] 0,12,14
+            - cube_r152 [1] 16,0,16
+            - cube_r151 [1] 16,0,16
+            - cube_r150 [1] 16,0,16
+          - Root2 [1] 12,6,6
+            - R3Seg10
+              - R3Seg11 [1] 16,2,2
+                - R3Seg12 [1] 15,1,1
+              - RootSeg_r7 [1] 16,4,4
+          - shroom
+            - cube_r157 [1] 16,0,16
+            - cube_r156 [1] 16,0,16
+            - cube_r155 [1] 16,0,16
+            - cube_r154 [1] 0,12,14
+            - cube_r158 [1] 16,0,16
+            - Tumor
+              - cube_r159 [1] 13,13,13
+            - cube_r153 [1] 0,12,14
+          - shroom3 [5] 3,16,3
+            - bone29 [5] 3,16,3
+              - bone30 [4] 3,3,3
+          - spike [5] 3,16,3
+            - bone57 [5] 3,16,3
+              - bone58 [4] 3,3,3
+        - cube_r29 [1] 13,13,13
+        - cube_r33 [1] 26,27,18
+        - UpperRightarm [2] 9,10,10
+          - cube_r113 [1] 9,9,6
+          - bloom5
+            - cube_r121 [1] 16,0,16
+            - cube_r117 [1] 0,12,14
+            - cube_r116 [1] 0,12,14
+            - cube_r119 [1] 16,0,16
+            - cube_r118 [1] 16,0,16
+            - cube_r120 [1] 16,0,16
+          - LowersegRightarm [1] 25,10,10
+            - cube_r124 [2] 15,10,0
+            - cube_r123 [1] 10,8,10
+            - cube_r122 [1] 13,8,8
+            - Infectedarm83 [1] 4,6,4
+              - Infectedarm84
+                - Infectedarm85
+                - Infectedarm86
+            - Infectedbody66 [1] 8,7,4
+              - Infectedarm79 [1] 4,6,4
+                - Infectedarm80
+                  - Infectedarm81
+                  - Infectedarm82
+              - Infectedbody68 [1] 8,6,8
+                - Infectedbody_r76 [1] 6,4,5
+                - Infectedbody70 [1] 8,2,8
+              - Infectedbody_r75 [1] 7,5,4
+            - cube_r125 [1] 16,0,16
+            - Infectedarm87 [1] 4,6,4
+              - Infectedarm88 [1] 4,9,4
+                - Infectedarm89 [1] 4,12,0
+                - Infectedarm90 [1] 4,12,0
+            - Infectedbody65 [1] 2,9,2
+            - Infectedarm23 [1] 4,6,4
+              - Infectedarm24 [1] 4,9,4
+            - Infectedarm25 [1] 4,6,4
+              - Infectedarm26 [1] 2,9,4
+            - Infectedarm27 [1] 4,6,4
+              - Infectedarm28 [1] 4,9,4
+            - hand
+              - UpperRightfinger [1] 18,3,2
+                - Infectedarm71 [1] 4,6,4
+                  - Infectedarm72 [1] 4,9,4
+                    - Infectedarm73 [1] 4,12,0
+                    - Infectedarm74 [1] 4,12,0
+                - Infectedarm75 [1] 4,6,4
+                  - Infectedarm76 [1] 4,9,4
+                - Infectedarm69 [1] 4,6,4
+                  - Infectedarm70 [1] 4,9,4
+              - UpperRightfinger1 [1] 18,3,2
+                - Infectedarm63
+                  - Infectedarm64
+                    - Infectedarm65
+                    - Infectedarm66
+                - Infectedarm55 [1] 4,6,4
+                  - Infectedarm56 [1] 4,9,4
+                    - Infectedarm57 [1] 4,12,0
+                    - Infectedarm58 [1] 4,12,0
+              - UpperRightfinger2 [1] 18,3,2
+                - Infectedarm67
+                  - Infectedarm68
+                - Infectedarm59 [1] 4,6,4
+                  - Infectedarm60 [1] 4,9,4
+                    - Infectedarm61 [1] 4,12,0
+                    - Infectedarm62 [1] 4,12,0
+              - Infectedarm51 [1] 4,6,4
+                - Infectedarm52 [1] 4,9,4
+                  - Infectedarm_r3 [1] 2,9,2
+                  - Infectedarm_r2 [1] 2,9,2
+              - cube_r127 [1] 19,10,7
+              - cube_r126 [1] 19,4,4
+              - Infectedarm53
+                - Infectedarm54
+          - cube_r115 [1] 12,9,10
+          - Infectedarm31 [1] 4,6,4
+            - Infectedarm32 [1] 4,9,4
+          - cube_r114 [1] 15,11,10
+          - Infectedarm77 [1] 4,6,4
+            - Infectedarm78 [1] 4,9,4
+          - Infectedarm45 [1] 4,6,4
+            - Infectedarm46 [1] 4,9,4
+          - Infectedarm47 [1] 4,6,4
+            - Infectedarm48 [1] 4,9,4
+          - Infectedarm49
+            - Infectedarm50 [1] 2,9,2
+            - Infectedarm_r1 [1] 3,6,4
+      - AssTumor
+        - cube_r26 [1] 13,13,13
+        - cube_r27 [1] 15,15,15
+      - Tendril2
+        - Seg2Tendril2 [1] 16,4,4
+          - Seg3Tendril2 [1] 16,2,2
+            - Seg4Tendril2 [1] 14,1,1
+        - RootSeg_r1 [1] 12,6,6
+      - cube_r24 [1] 14,12,12
+      - cube_r25 [1] 17,11,12
+    - cube_r22 [1] 11,9,6
+    - cube_r23 [1] 10,9,15
+
+## stahl_arm (142 parts)
+
+- part0
+  - cube_r4 [1] 12,3,0
+  - Infectedbody109
+    - Infectedbody_r7 [1] 3,8,4
+    - Infectedbody_r8 [1] 8,5,6
+  - cube_r1 [1] 18,31,19
+  - Leftarmmain [1] 19,19,19
+    - cube_r10 [1] 15,3,0
+    - Leftarm [2] 14,15,14
+      - cube_r21 [2] 8,6,10
+      - Root5 [1] 6,3,3
+        - R3Seg16
+          - RootSeg_r5 [1] 8,2,2
+          - R3Seg17 [1] 8,1,1
+            - R3Seg18
+              - RootSeg3
+      - Root4 [1] 6,3,3
+        - R3Seg13
+          - R3Seg14
+            - RootSeg_r3 [1] 8,1,1
+            - R3Seg15
+              - RootSeg_r4 [1] 11,1,1
+              - RootSeg2
+          - RootSeg_r2 [1] 8,2,2
+      - Root3
+        - R3Seg1
+          - RootSeg_r1 [1] 8,2,2
+          - R3Seg2 [1] 8,1,1
+            - R3Seg3 [1] 11,1,1
+              - RootSeg [1] 11,1,1
+      - cube_r26 [1] 24,22,0
+      - cube_r27 [1] 24,22,0
+      - Lowersegleftarm [1] 2,2,2
+        - bloom3
+          - cube_r37 [1] 16,0,16
+          - cube_r38 [1] 16,0,16
+          - cube_r39 [1] 16,0,16
+          - cube_r34 [1] 0,12,14
+          - cube_r35 [1] 0,12,14
+          - cube_r36 [1] 16,0,16
+        - cube_r30 [1] 8,8,7
+        - bloom4
+          - cube_r40 [1] 0,12,14
+          - cube_r41 [1] 0,12,14
+          - cube_r42 [1] 16,0,16
+          - cube_r43 [1] 16,0,16
+          - cube_r44 [1] 16,0,16
+          - cube_r45 [1] 16,0,16
+        - BladeArmTumor [1] 30,10,10
+          - cube_r51 [1] 12,3,0
+          - cube_r52 [1] 13,10,12
+          - cube_r53 [1] 15,11,12
+          - cube_r50 [1] 12,3,0
+          - cube_r48 [1] 12,3,0
+          - cube_r49 [1] 12,3,0
+          - cube_r46 [1] 18,14,10
+          - cube_r47 [1] 18,9,13
+        - cube_r31 [1] 20,8,8
+        - cube_r32 [1] 23,11,10
+        - Infectedarm41 [1] 4,6,4
+          - Infectedarm42 [1] 4,9,4
+            - Infectedarm43 [1] 4,12,0
+            - Infectedarm44 [1] 4,12,0
+        - Infectedarm33 [1] 4,6,4
+          - Infectedarm34 [1] 4,9,4
+            - Infectedarm35 [1] 4,12,0
+            - Infectedarm36 [1] 4,12,0
+        - cube_r33 [1] 21,8,9
+        - Infectedarm37 [1] 4,6,4
+          - Infectedarm38 [1] 4,9,4
+            - Infectedarm40 [1] 4,12,0
+            - Infectedarm39 [1] 4,12,0
+        - Evilhand
+          - Bigahhblade
+            - cube_r62 [1] 75,32,0
+            - cube_r63 [1] 17,14,4
+            - cube_r60 [1] 10,8,6
+            - cube_r61 [1] 10,8,4
+            - cube_r59 [2] 15,5,5
+            - Spitter2 [1] 8,8,6
+              - Spitterarmright2 [2] 3,4,4
+              - Spitterneck2
+                - Infectedbody_r5 [1] 6,6,6
+                - Infectedbody_r6 [1] 4,5,3
+                - Infectedbody67 [1] 3,3,6
+                  - Infectedbody102 [1] 1,3,7
+                    - Infectedbody103 [1] 1,3,4
+                  - Infectedbody69 [1] 1,3,7
+                    - Infectedbody101 [1] 1,3,4
+                - Spitterhead2 [2] 8,8,8
+                  - Spitterjawleft2 [2] 1,9,1
+                    - Lowerspitterjawleft2 [2] 1,9,1
+                  - Spitterjawright2 [2] 1,9,1
+                    - Lowerspitterjawrigth2 [2] 1,9,1
+              - Infectedbody_r4 [1] 8,8,6
+              - Spitterarmleft2 [2] 3,6,4
+            - Spitter [1] 8,8,6
+              - Infectedbody_r1 [1] 8,8,6
+              - Spitterarmright [2] 3,4,4
+              - Spitterarmleft [2] 3,6,4
+              - Spitterneck
+                - Infectedbody_r2 [1] 6,6,6
+                - Infectedbody_r3 [1] 4,5,3
+                - Infectedbody87 [1] 3,3,6
+                  - Infectedbody88 [1] 1,3,7
+                    - Infectedbody89 [1] 1,3,4
+                  - Infectedbody90 [1] 1,3,7
+                    - Infectedbody91 [1] 1,3,4
+                - Spitterhead [2] 8,8,8
+                  - Spitterjawright [2] 1,9,1
+                    - Lowerspitterjawrigth [2] 1,9,1
+                  - Spitterjawleft [2] 1,9,1
+                    - Lowerspitterjawleft [2] 1,9,1
+            - cube_r56 [1] 6,28,2
+            - cube_r57 [2] 54,98,0
+            - cube_r58 [1] 28,11,2
+          - cube_r54 [1] 11,7,7
+          - cube_r55 [2] 11,13,11
+      - cube_r28 [1] 24,22,0
+      - cube_r29 [1] 17,16,17
+      - cube_r22 [1] 37,20,0
+      - cube_r23 [1] 10,9,6
+      - cube_r24 [1] 18,12,18
+      - cube_r25 [3] 8,7,8
+    - cube_r8 [1] 8,7,3
+    - cube_r9 [1] 11,11,19
+    - cube_r5 [1] 13,16,18
+    - cube_r6 [1] 19,24,19
+    - cube_r7 [1] 21,21,21
+    - cube_r11 [1] 15,3,0
+    - cube_r12 [1] 15,3,0
+    - cube_r13 [1] 12,3,0
+    - cube_r14 [1] 12,3,0
+    - bloom2
+      - cube_r20 [1] 16,0,16
+      - cube_r19 [1] 16,0,16
+      - cube_r15 [1] 0,12,14
+      - cube_r16 [1] 0,12,14
+      - cube_r17 [1] 16,0,16
+      - cube_r18 [1] 16,0,16
+  - cube_r2 [1] 12,3,0
+  - cube_r3 [1] 12,3,0
+
+## stalker (45 parts)
+
+- part0 [7] 7,1,0
+  - nose [1] 2,4,2
+  - jaw [1] 8,2,6
+  - fungus [1] 6,0,6
+    - cube_r4 [1] 6,0,6
+    - cube_r5 [1] 6,0,6
+    - cube_r3 [1] 6,0,6
+  - Fangs
+    - Fang1_r1 [1] 1,2,0
+    - Fang3_r1 [1] 1,2,0
+  - Seg3
+    - AntlerSeg4_r1 [1] 4,2,2
+    - AntlerSeg5_r1 [1] 4,2,2
+    - AnterShootoff4_r1 [1] 5,1,1
+    - AntlerSeg6_r1 [1] 5,2,2
+  - LeftShootoff1
+    - AntlerShootoff1_r1 [1] 6,2,2
+    - AntlerShootoff2_r1 [1] 3,1,1
+    - AntlerShootoff1Shootoff_r1 [1] 3,1,1
+  - cube_r1 [1] 2,2,2
+  - cube_r2 [1] 3,3,3
+  - flower
+    - cube_r6 [1] 7,0,6
+    - cube_r7 [1] 6,0,6
+    - flower2
+      - cube_r10 [1] 9,0,8
+      - cube_r8 [1] 9,0,8
+      - cube_r9 [1] 6,0,6
+      - cube_r11 [1] 8,0,8
+      - cube_r12 [1] 8,0,8
+- part1 [3] 8.5,3,4.75
+  - spine2 [5] 6,0,6
+    - cube_r15 [1] 4,4,4
+    - cube_r16 [1] 10,8,7
+    - cube_r13 [1] 6,0,6
+    - cube_r14 [1] 6,0,6
+- part2 [1] 3,8,4
+  - RightForArm [3] 3,7,4
+  - cube_r17 [1] 3,3,3
+- part3 [1] 3,8,4
+  - LeftForArm [3] 3,7,4
+- part4 [1] 4,7,4
+  - rightForLeg [1] 4,6,4
+- part5 [1] 4,7,4
+  - leftForLeg [1] 4,6,4
+
+## tentacle (85 parts)
+
+- part0
+  - RightLeg [1] 10,18,15
+    - body13 [1] 7,6,4
+      - RightArm12 [1] 3,6,3
+        - RightForArm12 [1] 3,6,3
+      - head10 [3] 8,6,8
+      - LeftArm11 [1] 3,6,3
+        - LeftForArm11
+          - cube_r25 [1] 3,6,3
+      - cube_r24 [1] 8,5,4
+    - RightForleg [2] 12,20,12
+      - body15 [1] 7,6,4
+        - RightArm14 [1] 3,6,3
+          - RightForArm14 [1] 3,6,3
+        - LeftArm13 [1] 3,6,3
+          - LeftForArm13
+            - cube_r12 [1] 3,6,3
+        - cube_r11 [1] 8,5,4
+      - bloomingFungus5
+        - cube_r20 [1] 16,0,16
+        - cube_r19 [1] 16,0,16
+        - cube_r15 [1] 0,12,14
+        - cube_r16 [1] 0,12,14
+        - cube_r17 [1] 16,0,16
+        - cube_r18 [1] 16,0,16
+      - body16 [1] 7,6,4
+        - RightArm15 [1] 3,6,3
+          - RightForArm15 [1] 3,6,3
+        - head13 [3] 8,6,8
+        - LeftArm14 [1] 3,6,3
+          - LeftForArm14
+            - cube_r14 [1] 3,6,3
+        - cube_r13 [1] 8,5,4
+      - body14 [1] 7,6,4
+        - head11 [3] 8,6,8
+        - cube_r9 [1] 8,5,4
+        - RightArm13 [1] 3,6,3
+          - RightForArm13 [1] 3,6,3
+        - LeftArm12 [1] 3,6,3
+          - LeftForArm12
+            - cube_r10 [1] 3,6,3
+      - flower9 [3] 7,0,6
+        - cube_r22 [1] 6,0,6
+      - flower7 [3] 7,0,6
+        - cube_r21 [1] 6,0,6
+      - flower8 [3] 7,0,6
+        - cube_r23 [1] 6,0,6
+      - cube_r4 [1] 9,29,9
+      - cube_r5 [1] 9,32,9
+      - body17 [1] 7,6,4
+        - RightArm16 [1] 3,6,3
+          - RightForArm16 [1] 3,6,3
+        - head12 [3] 8,6,8
+        - LeftArm15 [1] 3,6,3
+          - LeftForArm15
+            - cube_r8 [1] 3,6,3
+        - cube_r6 [1] 7,6,4
+        - cube_r7 [1] 8,5,4
+    - body19 [1] 7,6,4
+      - head16 [3] 8,6,8
+      - RightArm18 [1] 3,6,3
+        - RightForArm18 [1] 3,6,3
+      - LeftArm17 [1] 3,6,3
+        - LeftForArm17
+          - cube_r29 [1] 3,6,3
+      - cube_r28 [1] 8,5,4
+    - cube_r1 [1] 16,11,9
+    - cube_r2 [1] 15,13,11
+    - cube_r3 [1] 14,15,12
+    - body18 [1] 7,6,4
+      - head15 [3] 8,6,8
+      - RightArm17 [1] 3,6,3
+        - RightForArm17 [1] 3,6,3
+      - LeftArm16 [1] 3,6,3
+        - LeftForArm16
+          - cube_r27 [1] 3,6,3
+      - head14 [3] 8,6,8
+      - cube_r26 [1] 8,5,4
+    - bloomingFungus4
+      - cube_r30 [1] 0,12,14
+      - cube_r31 [1] 0,12,14
+      - cube_r32 [1] 16,0,16
+      - cube_r33 [1] 16,0,16
+      - cube_r34 [1] 16,0,16
+      - cube_r35 [1] 16,0,16
+
+## thorn (221 parts)
+
+- part0
+  - Legs
+    - LeftLeg [1] 4,6,4
+      - LeftFoot [2] 4,3,4
+        - LeftFootThorns
+          - Thorn53 [1] 1,3,1
+            - Plane4_r16 [1] 0,3,1
+            - Plane3_r17 [1] 0,3,1
+          - Thorn52 [1] 1,3,1
+            - Plane2_r16 [1] 0,3,1
+            - Plane3_r16 [1] 0,3,1
+          - Thorn54 [1] 1,3,1
+            - Plane5_r15 [1] 0,3,1
+            - Plane4_r17 [1] 0,3,1
+          - Thorn51 [1] 1,3,1
+            - Plane2_r15 [1] 0,3,1
+            - Plane1_r7 [1] 0,3,1
+      - LeftLegThornsSeg1
+        - Thorn55 [1] 1,3,1
+          - Plane2_r13 [1] 0,3,1
+          - Plane1_r6 [1] 0,3,1
+        - Thorn57 [1] 1,3,1
+          - Plane3_r15 [1] 0,3,1
+          - Plane4_r14 [1] 0,3,1
+        - Thorn56 [1] 1,3,1
+          - Plane2_r14 [1] 0,3,1
+          - Plane3_r14 [1] 0,3,1
+        - Thorn58 [1] 1,3,1
+          - Plane4_r15 [1] 0,3,1
+          - Plane5_r14 [1] 0,3,1
+    - RightLeg [1] 4,6,4
+      - RightLegThornsSeg1
+        - Thorn44 [1] 1,3,1
+          - Plane3_r18 [1] 0,3,1
+          - Plane2_r18 [1] 0,3,1
+        - Thorn43 [1] 1,3,1
+          - Plane2_r17 [1] 0,3,1
+          - Plane1_r8 [1] 0,3,1
+        - Thorn46 [1] 1,3,1
+          - Plane5_r16 [1] 0,3,1
+          - Plane4_r19 [1] 0,3,1
+        - Thorn45 [1] 1,3,1
+          - Plane3_r19 [1] 0,3,1
+          - Plane4_r18 [1] 0,3,1
+      - RightFoot [1] 4,6,4
+        - RightFootFungus
+          - Fungus_r9 [1] 7,0,7
+          - Fungus_r12 [1] 7,0,7
+          - Fungus_r11 [1] 7,0,7
+          - Fungus_r10 [1] 7,0,7
+        - RightLegThornsSeg2
+          - Thorn50 [1] 1,3,1
+            - Plane5_r17 [1] 0,3,1
+            - Plane4_r21 [1] 0,3,1
+          - Thorn49 [1] 1,3,1
+            - Plane4_r20 [1] 0,3,1
+            - Plane3_r21 [1] 0,3,1
+          - Thorn48 [1] 1,3,1
+            - Plane3_r20 [1] 0,3,1
+            - Plane2_r20 [1] 0,3,1
+          - Thorn47 [1] 1,3,1
+            - Plane2_r19 [1] 0,3,1
+            - Plane1_r9 [1] 0,3,1
+  - LowerTorso [1] 9,7,6
+    - LowerTorsoThorn
+      - Thorn20 [1] 1,3,1
+        - Plane6_r2 [1] 0,3,1
+        - Plane7_r1 [1] 0,3,1
+      - Thorn11 [1] 1,3,1
+        - Plane2_r1 [1] 0,3,1
+        - Plane1_r1 [1] 0,3,1
+      - Thorn17 [1] 1,3,1
+        - Plane3_r2 [1] 0,3,1
+        - Plane4_r1 [1] 0,3,1
+      - Thorn16 [1] 1,3,1
+        - Plane2_r2 [1] 0,3,1
+        - Plane3_r1 [1] 0,3,1
+      - Thorn19 [1] 1,3,1
+        - Plane6_r1 [1] 0,3,1
+        - Plane5_r2 [1] 0,3,1
+      - Thorn18 [1] 1,3,1
+        - Plane4_r2 [1] 0,3,1
+        - Plane5_r1 [1] 0,3,1
+      - Thorn13 [1] 2,5,2
+        - Plane_r3 [1] 0,5,2
+        - Plane_r4 [1] 0,5,2
+      - Thorn12 [1] 2,5,2
+        - Plane_r1 [1] 0,5,2
+        - Plane_r2 [1] 0,5,2
+      - Thorn15 [1] 2,5,2
+        - Plane_r7 [1] 0,5,2
+        - Plane_r8 [1] 0,5,2
+      - Thorn14 [1] 2,5,2
+        - Plane_r5 [1] 0,5,2
+        - Plane_r6 [1] 0,5,2
+    - UpperTorso [1] 9,7,6
+      - Head [2] 8,2,2 <== eyes
+        - Jaw [2] 8,2,6
+          - Teeth_r1 [1] 1,2,6
+          - Teeth_r2 [1] 1,2,6
+        - HeadFlower
+          - ThornBloom
+            - Thorn60 [1] 1,3,1
+              - Plane5_r4 [1] 0,3,1
+              - Plane6_r3 [1] 0,3,1
+            - Thorn61 [1] 1,3,1
+              - Plane7_r2 [1] 0,3,1
+              - Plane6_r4 [1] 0,3,1
+            - Thorn59 [1] 1,3,1
+              - Plane4_r3 [1] 0,3,1
+              - Plane5_r3 [1] 0,3,1
+          - Petal_r4 [1] 7,0,7
+          - Petal_r3 [1] 7,0,7
+          - Petal_r2 [1] 7,0,7
+          - Petal_r1 [1] 7,0,7
+      - UpperTorsoThorn
+        - Thorn10 [1] 1,3,1
+          - Plane7_r4 [1] 0,3,1
+          - Plane6_r10 [1] 0,3,1
+        - Thorn7 [1] 2,5,2
+          - Plane_r10 [1] 0,5,2
+          - Plane_r9 [1] 0,5,2
+        - Thorn8 [1] 2,5,2
+          - Plane_r11 [1] 0,5,2
+          - Plane_r12 [1] 0,5,2
+        - Thorn9 [1] 1,3,1
+          - Plane6_r9 [1] 0,3,1
+          - Plane5_r13 [1] 0,3,1
+        - Thorn3 [1] 1,3,1
+          - Plane4_r12 [1] 0,3,1
+          - Plane3_r12 [1] 0,3,1
+        - Thorn4 [1] 1,3,1
+          - Plane4_r13 [1] 0,3,1
+          - Plane5_r11 [1] 0,3,1
+        - Thorn5 [1] 1,3,1
+          - Plane6_r8 [1] 0,3,1
+          - Plane5_r12 [1] 0,3,1
+        - Thorn6 [1] 1,3,1
+          - Plane2_r12 [1] 0,3,1
+          - Plane3_r13 [1] 0,3,1
+        - Thorn1 [1] 1,3,1
+          - Plane2_r10 [1] 0,3,1
+          - Plane1_r5 [1] 0,3,1
+        - Thorn2 [1] 1,3,1
+          - Plane2_r11 [1] 0,3,1
+          - Plane3_r11 [1] 0,3,1
+      - Arms
+        - RightArmJoint
+          - RightArm [1] 4,6,4
+            - RightArmThornsSeg1
+              - Thorn31 [1] 1,3,1
+                - Plane1_r3 [1] 0,3,1
+                - Plane2_r6 [1] 0,3,1
+              - Thorn33 [1] 1,3,1
+                - Plane3_r8 [1] 0,3,1
+                - Plane4_r8 [1] 0,3,1
+              - Thorn32 [1] 1,3,1
+                - Plane2_r7 [1] 0,3,1
+                - Plane3_r7 [1] 0,3,1
+              - Thorn34 [1] 1,3,1
+                - Plane4_r9 [1] 0,3,1
+                - Plane5_r9 [1] 0,3,1
+            - RightArmSeg2 [1] 4,6,4
+              - RightArmThornsSeg2
+                - Thorn38 [1] 1,3,1
+                  - Plane5_r10 [1] 0,3,1
+                  - Plane4_r11 [1] 0,3,1
+                - Thorn35 [1] 1,3,1
+                  - Plane2_r8 [1] 0,3,1
+                  - Plane1_r4 [1] 0,3,1
+                - Thorn37 [1] 1,3,1
+                  - Plane4_r10 [1] 0,3,1
+                  - Plane3_r10 [1] 0,3,1
+                - Thorn36 [1] 1,3,1
+                  - Plane3_r9 [1] 0,3,1
+                  - Plane2_r9 [1] 0,3,1
+        - LeftArmJoint
+          - LeftArm [1] 4,6,4
+            - LeftArmSeg2 [1] 5,8,5
+              - LeftArmThorns
+                - Thorn30 [1] 1,3,1
+                  - Plane6_r7 [1] 0,3,1
+                  - Plane7_r3 [1] 0,3,1
+                - Thorn22 [1] 1,3,1
+                  - Plane2_r4 [1] 0,3,1
+                  - Plane3_r3 [1] 0,3,1
+                - Thorn21 [1] 1,3,1
+                  - Plane2_r3 [1] 0,3,1
+                  - Plane1_r2 [1] 0,3,1
+                - Thorn28 [1] 1,3,1
+                  - Plane5_r7 [1] 0,3,1
+                  - Plane4_r7 [1] 0,3,1
+                - Thorn27 [1] 1,3,1
+                  - Plane4_r6 [1] 0,3,1
+                  - Plane3_r6 [1] 0,3,1
+                - Thorn29 [1] 1,3,1
+                  - Plane6_r6 [1] 0,3,1
+                  - Plane5_r8 [1] 0,3,1
+                - Thorn24 [1] 1,3,1
+                  - Plane4_r5 [1] 0,3,1
+                  - Plane5_r5 [1] 0,3,1
+                - Thorn23 [1] 1,3,1
+                  - Plane3_r4 [1] 0,3,1
+                  - Plane4_r4 [1] 0,3,1
+                - Thorn26 [1] 1,3,1
+                  - Plane3_r5 [1] 0,3,1
+                  - Plane2_r5 [1] 0,3,1
+                - Thorn25 [1] 1,3,1
+                  - Plane5_r6 [1] 0,3,1
+                  - Plane6_r5 [1] 0,3,1
+            - ArmFungus
+              - Fungus_r7 [1] 7,0,7
+              - Fungus_r8 [1] 7,0,7
+              - Fungus_r5 [1] 7,0,7
+              - Fungus_r6 [1] 7,0,7
+      - cube_r1 [1] 8,2,6
+    - LowerTorsoFungus
+      - Fungus_r3 [1] 7,0,7
+      - Fungus_r4 [1] 7,0,7
+      - Fungus_r1 [1] 7,0,7
+      - Fungus_r2 [1] 7,0,7
+
+## tumoroid_nuke (167 parts)
+
+- part0
+  - RibCover
+    - SS4Details
+      - Spike_r8 [2] 5,6,0
+      - Spike_r7 [1] 5,6,0
+    - SS3Details
+      - Spike_r6 [2] 5,6,0
+      - Spike_r5 [1] 5,6,0
+    - SS5Details
+      - Spike_r9 [1] 5,6,0
+      - Spike_r10 [1] 5,6,0
+    - SpineSeg5_r1 [1] 23,5,5
+    - RibOffshoot5
+      - RO5Seg5_r1 [1] 4,4,17
+      - RO5Seg4_r1 [1] 4,4,15
+      - RO5Seg2_r1 [1] 4,4,15
+      - RO5Seg3_r1 [1] 4,4,15
+      - RO5Seg1_r1 [1] 4,4,17
+    - RibOffshoot3
+      - RO4Seg5_r1 [1] 4,4,11
+      - RO3Seg2_r1 [1] 4,4,13
+      - RO3Seg4_r1 [1] 4,4,11
+      - RO3Seg1_r1 [1] 4,4,15
+      - RO3Seg3_r3 [1] 4,4,15
+    - RibOffshoot4
+      - RO4Split1_r1 [1] 4,4,21
+      - RO4Seg1_r1 [1] 5,5,16
+      - RO4Seg2_r1 [1] 5,5,17
+      - RO4Split2Seg2_r1 [1] 4,4,14
+      - RO4Seg3_r1 [1] 4,4,14
+      - RO4Split2_r1 [1] 4,4,14
+    - ContrortedHead [2] 12,7,12
+      - SmolHead
+        - SmolHead_r1 [1] 8,7,8
+        - SmolJaw_r1 [1] 8,1,8
+      - Jaw
+        - Jaw3_r1 [1] 9,2,4
+        - Jaw2_r1 [1] 9,1,2
+        - Jaw1_r1 [1] 9,3,6
+      - TumoralGrowths
+        - Tumor1_r1 [1] 8,8,8
+        - Tumor3_r1 [2] 4,4,4
+    - SpineSeg2_r1 [1] 23,6,6
+    - RibOffshoot1
+      - RO1Seg1_r1 [1] 4,4,14
+      - RO3Seg3_r1 [1] 4,4,14
+      - RO2Seg2_r1 [1] 4,4,14
+    - SpineSeg1_r1 [1] 6,20,6
+    - RibOffshoot2
+      - RO3Seg3_r2 [1] 4,4,21
+      - RO4Seg4_r1 [1] 4,4,21
+      - RO2Seg2_r2 [1] 4,4,9
+      - RO2Seg1_r1 [1] 4,4,14
+    - SpineSeg3_r1 [1] 23,6,6
+    - SpineSeg4_r1 [1] 23,6,6
+    - SS1Details
+      - Spike_r2 [1] 5,6,0
+      - Spike_r1 [1] 5,6,0
+    - SS2Details
+      - Spike_r4 [2] 5,6,0
+      - Spike_r3 [1] 5,6,0
+  - TumorCoating
+    - Left
+      - LeftTumor_r17 [1] 7,7,7
+      - LeftTumor_r16 [1] 11,11,11
+      - LeftTumor_r19 [1] 20,20,20
+      - LeftTumor_r18 [1] 7,7,7
+      - LeftTumor_r5 [1] 8,8,8
+      - LeftTumor_r6 [1] 9,9,9
+      - LeftTumor_r3 [1] 7,7,7
+      - LeftTumor_r4 [1] 6,6,6
+      - LeftTumor_r9 [1] 8,8,8
+      - LeftTumor_r7 [1] 8,8,8
+      - LeftTumor_r8 [1] 10,10,10
+      - LeftTumor_r13 [1] 12,12,12
+      - LeftTumor_r12 [1] 11,11,11
+      - LeftTumor_r23 [1] 12,12,12
+      - LeftTumor_r15 [1] 7,7,7
+      - LeftTumor_r14 [1] 9,9,9
+      - LeftTumor_r1 [1] 7,7,7
+      - LeftTumor_r20 [1] 8,8,8
+      - LeftTumor_r2 [1] 7,7,7
+      - LeftTumor_r11 [1] 9,9,9
+      - LeftTumor_r22 [1] 12,12,12
+      - LeftTumor_r10 [1] 11,11,11
+      - LeftTumor_r21 [1] 10,10,10
+    - Top
+      - TopTumor_r19 [1] 7,7,7
+      - TopTumor_r18 [1] 7,7,7
+      - TopTumor_r1 [1] 7,7,7
+      - TopTumor_r17 [1] 11,11,11
+      - TopTumor_r2 [1] 7,7,7
+      - TopTumor_r16 [1] 7,7,7
+      - TopTumor_r3 [1] 7,7,7
+      - TopTumor_r15 [1] 9,9,9
+      - TopTumor_r4 [1] 6,6,6
+      - TopTumor_r14 [1] 12,12,12
+      - TopTumor_r5 [1] 8,8,8
+      - TopTumor_r6 [1] 9,9,9
+      - TopTumor_r7 [1] 8,8,8
+      - TopTumor_r8 [1] 10,10,10
+      - TopTumor_r9 [1] 8,8,8
+      - TopTumor_r13 [1] 11,11,11
+      - TopTumor_r24 [1] 12,12,12
+      - TopTumor_r12 [1] 9,9,9
+      - TopTumor_r23 [1] 12,12,12
+      - TopTumor_r11 [1] 11,11,11
+      - TopTumor_r22 [1] 10,10,10
+      - TopTumor_r10 [1] 10,10,10
+      - TopTumor_r21 [1] 8,8,8
+      - TopTumor_r20 [1] 8,8,8
+    - Front
+      - FrontTumor_r4 [1] 12,12,12
+      - FrontTumor_r3 [1] 12,12,12
+      - FrontTumor_r2 [1] 7,7,7
+      - FrontTumor_r1 [1] 11,11,11
+    - Right
+      - RightTumor_r8 [1] 10,10,10
+      - RightTumor_r9 [1] 8,8,8
+      - RightTumor_r6 [1] 9,9,9
+      - RightTumor_r7 [1] 8,8,8
+      - RightTumor_r4 [1] 6,6,6
+      - RightTumor_r20 [1] 12,12,12
+      - RightTumor_r5 [1] 8,8,8
+      - RightTumor_r10 [1] 11,11,11
+      - RightTumor_r2 [1] 7,7,7
+      - RightTumor_r11 [1] 9,9,9
+      - RightTumor_r3 [1] 7,7,7
+      - RightTumor_r12 [1] 11,11,11
+      - RightTumor_r1 [1] 7,7,7
+      - RightTumor_r17 [1] 8,8,8
+      - RightTumor_r18 [1] 10,10,10
+      - RightTumor_r19 [1] 12,12,12
+      - RightTumor_r13 [1] 7,7,7
+      - RightTumor_r14 [1] 19,19,19
+      - RightTumor_r15 [1] 7,7,7
+      - RightTumor_r16 [1] 7,7,7
+    - Back
+      - BackTumor_r2 [1] 12,12,12
+      - BackTumor_r1 [1] 7,7,7
+      - BackTumor_r3 [1] 17,17,17
+    - Bottom
+      - BottomTumor_r9 [1] 8,8,8
+      - BottomTumor_r7 [1] 8,8,8
+      - BottomTumor_r8 [1] 10,10,10
+      - BottomTumor_r14 [1] 12,12,12
+      - BottomTumor_r15 [1] 9,9,9
+      - BottomTumor_r12 [1] 9,9,9
+      - BottomTumor_r23 [1] 12,12,12
+      - BottomTumor_r13 [1] 11,11,11
+      - BottomTumor_r24 [1] 12,12,12
+      - BottomTumor_r18 [1] 7,7,7
+      - BottomTumor_r19 [1] 7,7,7
+      - BottomTumor_r16 [1] 7,7,7
+      - BottomTumor_r17 [1] 11,11,11
+      - BottomTumor_r5 [1] 8,8,8
+      - BottomTumor_r6 [1] 9,9,9
+      - BottomTumor_r3 [1] 7,7,7
+      - BottomTumor_r4 [1] 6,6,6
+      - BottomTumor_r1 [1] 7,7,7
+      - BottomTumor_r10 [1] 10,10,10
+      - BottomTumor_r21 [1] 8,8,8
+      - BottomTumor_r2 [1] 7,7,7
+      - BottomTumor_r11 [1] 11,11,11
+      - BottomTumor_r22 [1] 10,10,10
+      - BottomTumor_r20 [1] 8,8,8
+  - Base [6] 7,21,21
+
+## umarmed (218 parts)
+
+- root <== eyes
+  - Base
+    - tendril
+      - tendrilbase
+        - Human1
+          - Human2
+            - Human3
+              - H3Torso
+                - TorsoDetials
+                  - Tumor_r1 [1] 3,3,3
+                  - Tumor_r3 [1] 4,4,4
+                  - Tumor_r2 [1] 3,3,3
+                - H3Head
+                  - H3HeadSide_r1 [2] 3,5,8
+                  - H3Jaw
+                    - H3Jaw_r1 [1] 8,2,8
+                  - mouthtendrils
+                    - mouthtendril1
+                      - MT2
+                        - MT2Seg2
+                          - MT2Seg2_r1 [1] 2,4,2
+                        - MT2Seg1_r1 [1] 2,3,2
+                      - MT1
+                        - MT1Seg2
+                          - MT1Seg2_r1 [1] 2,4,2
+                        - MT1Seg1_r1 [1] 2,3,2
+                      - MT3
+                        - MT3Seg3
+                          - MT3Seg3_r1 [1] 2,4,2
+                        - MT2Seg2_r2 [1] 2,3,2
+                - H3TorsoBase_r1 [1] 7,5,4
+                - H3TorsoTop_r1 [1] 8,6,5
+              - Human4
+                - Human5NoPivot
+                  - H5Torso
+                    - H5TorsoTop_r1 [1] 8,8,4
+                    - H5TorsoRight
+                      - H5TorsoRight_r1 [1] 2,8,2
+                    - TorsoDetails
+                      - TorsoTendies
+                        - tendril1
+                          - Tendril1Seg2
+                            - Tendril1Seg2_r1 [1] 2,2,5
+                          - Tendril1Seg1_r1 [1] 2,2,3
+                        - tendril3
+                          - Tendril3Seg2
+                            - Tendril3Seg2_r1 [1] 2,2,5
+                          - Tendril3Seg1_r1 [1] 2,2,3
+                        - tendril2
+                          - Tendril2Seg2
+                            - Tendril2Seg2_r1 [1] 2,2,5
+                          - Tendril2Seg1_r1 [1] 2,2,3
+                        - tendril4
+                          - Tendril4Seg3
+                            - Tendril3Seg3_r1 [1] 2,2,5
+                          - Tendril3Seg2_r2 [1] 2,2,3
+                      - H5Tumors
+                        - Tumor_r7 [1] 4,4,4
+                        - Tumor_r8 [1] 3,3,3
+                      - H5Petals
+                        - Petal1_r3 [1] 6,0,6
+                        - Petal2_r3 [1] 6,0,6
+                        - Petal3_r3 [1] 6,0,6
+                    - H5Head
+                      - HeadNoPivotPoint
+                        - crown1
+                          - Petal1_r4 [1] 6,0,6
+                          - Petal3_r4 [1] 6,0,6
+                          - Petal2_r4 [1] 6,0,6
+                          - Petal4_r2 [1] 6,0,6
+                        - HeadTumor2
+                          - HeadTumor2_r1 [1] 3,3,3
+                        - crown2
+                          - Petal3_r5 [1] 6,0,6
+                          - Petal2_r5 [1] 6,0,6
+                          - Petal5_r2 [1] 6,0,6
+                          - Petal4_r3 [1] 6,0,6
+                        - HeadTumor1
+                          - HeadTumor1_r1 [1] 3,3,3
+                        - H5HeadBase_r1 [1] 8,7,8
+                        - H5Jaw
+                          - H5Jaw_r1 [1] 8,2,8
+                        - MouthDetails
+                          - BloodClot_r1 [1] 6,2,2
+                          - MouthGrowth2
+                            - MG2Seg1_r1 [1] 1,4,1
+                            - MG2Seg2
+                              - MG2Seg2_r1 [1] 1,5,1
+                          - MouthGrowth3
+                            - MG3Seg1_r1 [1] 1,4,1
+                            - MG3Seg2
+                              - MG3Seg2_r1 [1] 1,4,1
+                          - MouthGrowth4
+                            - MG4Seg1_r1 [1] 1,4,1
+                            - MG4Seg2
+                              - MG4Seg2_r1 [1] 1,3,1
+                          - MouthGrowth1
+                            - MG1Seg2
+                              - MG1Seg2_r1 [1] 1,5,1
+                            - MG1Seg1_r1 [1] 1,4,1
+                    - H5TorsoBase_r1 [1] 7,5,3
+                    - Rib
+                      - Rib1
+                        - Rib1Seg1
+                          - Rib1Seg2
+                            - Rib1Seg2_r1 [1] 2,2,4
+                            - Rib1Seg3
+                              - Rib1Seg3_r1 [1] 2,2,6
+                          - Rib1Seg1_r1 [1] 2,2,7
+                      - Rib2
+                        - Rib2Seg1
+                          - Rib2Seg1_r1 [1] 2,2,9
+                          - Rib2Details
+                            - Tumor1_r1 [1] 2,2,2
+                            - Tumor2_r1 [1] 2,2,2
+                          - Rib2Seg2
+                            - Rib2Seg3
+                              - Rib2Seg3_r1 [1] 2,2,4
+                            - Rib2Seg2_r1 [1] 2,2,6
+                      - Rib7
+                        - Rib7Seg1
+                          - Rib7Seg1_r1 [1] 2,2,9
+                          - Rib7Seg2
+                            - Rib7Seg2_r1 [1] 2,2,8
+                            - Rib7Seg3
+                              - Rib7Seg3_r1 [1] 2,2,6
+                      - Rib5
+                        - Rib5Seg1
+                          - Rib5Seg1_r1 [1] 2,2,5
+                          - Rib5Seg2
+                            - Rib5Seg3
+                              - Rib5Seg3_r1 [1] 2,2,6
+                              - Rib5Seg4
+                                - Rib5Seg4_r1 [1] 2,2,6
+                            - Rib5Seg2_r1 [1] 2,2,6
+                      - Rib6
+                        - Rib6Seg1
+                          - Rib6Seg2
+                            - Rib6Seg3
+                              - Rib6Seg3_r1 [1] 2,2,6
+                            - Rib6Seg2_r1 [1] 2,2,8
+                          - Rib6Seg1_r1 [1] 2,2,6
+                      - Rib3
+                        - Rib3Seg1
+                          - Rib3Seg1_r1 [1] 2,2,6
+                          - Rib3Seg2
+                            - Rib3Seg2_r1 [1] 2,2,8
+                            - Rib3Seg3
+                              - Rib3Seg3_r1 [1] 2,2,6
+                      - Rib4
+                        - Rib4Seg1
+                          - Rib4Seg1_r1 [1] 2,2,7
+                          - Rib4Seg2
+                            - Rib4Seg2_r1 [1] 2,2,4
+                            - Rib4Seg3
+                              - Rib4Seg3_r1 [1] 2,2,6
+                              - Rib4Details [1] 3,3,1
+                                - FungalFan3_r1 [1] 3,3,1
+                                - FungalFan2_r1 [1] 3,3,1
+                    - H5TorsoLeft
+                      - H5TorsoLeft_r1 [1] 2,8,2
+                - H4Torso
+                  - H4Head
+                    - H4HeadBase_r1 [1] 8,6,8
+                    - H4Jaw
+                      - H4Jaw_r1 [1] 8,2,8
+                    - Tumors
+                      - Tumor2
+                        - Tumor_r5 [1] 3,3,3
+                      - Tumor1
+                        - Tumor_r4 [1] 3,3,3
+                      - Tumor3
+                        - Tumor_r6 [1] 3,2,3
+                  - H4TorsoBase_r1 [1] 6,5,4
+                  - H4TorsoTop_r1 [1] 7,6,5
+                - H4Arms
+                  - H4ArmRight_r1 [1] 3,6,3
+              - H3Arms
+                - H3ArmRight_r1 [1] 3,6,3
+            - H2Arms
+              - H2ArmLeft_r1 [1] 3,6,3
+            - H2Torso
+              - H2TorsoBase_r1 [1] 7,5,4
+              - H2Details
+                - FleshBloodPlane_r1 [1] 7,0,6
+              - H2TorsoTop_r1 [1] 8,6,5
+          - H1Torso [1] 7,5,4
+            - H1Head
+              - HeadDetials
+                - fungalpetal_r1 [1] 6,6,0
+                - fungalpetal_r2 [1] 6,6,0
+                - fungalpetal_r3 [1] 6,6,0
+                - fungalpetal_r4 [1] 6,6,0
+              - H1Jaw
+                - H1Jaw_r1 [1] 8,2,6
+              - H1HeadBase_r1 [1] 8,7,8
+            - H1TorsoTop_r1 [1] 8,6,5
+          - H1Arms
+            - H1ArmLeft_r1 [1] 3,6,3
+    - Biomass
+      - BiomassCrown1
+        - Petal4_r1 [1] 6,0,6
+        - Petal3_r1 [1] 6,0,6
+        - Petal2_r1 [1] 6,0,6
+        - Petal1_r1 [1] 6,0,6
+      - BiomassCrown2
+        - Petal1_r2 [1] 6,0,6
+        - Petal3_r2 [1] 6,0,6
+        - Petal2_r2 [1] 6,0,6
+        - Petal5_r1 [1] 6,0,6
+      - Biomass3
+        - Biomass3_r1 [1] 9,9,9
+      - Biomass2
+        - Biomass2_r1 [1] 8,8,8
+      - Biomass1
+        - Biomass1_r1 [1] 11,11,11
+      - Biomass4
+        - Biomass4_r1 [1] 7,7,7
+
+## usurper (157 parts)
+
+- part0
+  - OrganoidSeg1
+    - OrganoidSeg2 [1] 4,6,7
+      - Seg2Head [1] 8,8,8
+        - SEg2HeadTubeTongue [1] 3,3,3
+          - S2TTS2_r1 [1] 3,3,3
+          - S2HTTJoint2
+            - S5TTS5_r1 [1] 3,3,3
+            - TipOfTube1
+              - ToT4_r1 [4] 1,2,1
+            - S4TTS4_r1 [1] 3,3,3
+            - S3TTS3_r1 [1] 3,3,3
+        - FungusCrown2
+          - Crown_r9 [1] 7,0,7
+          - Crown_r11 [1] 7,0,7
+          - Crown_r12 [1] 7,0,7
+          - Crown_r10 [1] 7,0,7
+        - Jaw_r2 [1] 8,2,8
+        - Nose_r3 [1] 2,4,2
+      - Seg2TorsoTop_r1 [1] 5,6,8
+      - OrganoidSeg3 [1] 4,6,7
+        - Seg3TorsoTop_r1 [1] 5,6,8
+        - Tumor_r7 [1] 4,4,4
+        - Tumor_r6 [1] 3,3,3
+        - Neck [1] 6,8,5
+          - HeadJoint
+            - Head <== eyes
+              - Center [2] 8,9,8
+                - Tumor_r11 [1] 4,4,4
+                - FungusCrown1
+                  - Crown_r15 [1] 7,0,7
+                  - Crown_r16 [1] 7,0,7
+                  - Crown_r13 [1] 7,0,7
+                  - Crown_r14 [1] 7,0,7
+                - CenterJaw [1] 8,8,1
+                  - SaggingFlesh [1] 8,7,0
+              - Left [1] 6,7,6
+                - Tumor_r12 [1] 3,3,3
+                - Sniffer
+                  - Sniffer3
+                    - Sniffer3Seg3_r1 [1] 1,0,2
+                    - Sniffer2Seg2_r2 [1] 1,0,2
+                  - Sniffer2
+                    - Sniffer2Seg2_r1 [1] 1,0,2
+                    - Sniffer2Seg1_r1 [1] 1,0,2
+                  - Sniffer1
+                    - Sniffer1Seg2_r1 [1] 1,0,2
+                    - Sniffer1Seg1_r1 [1] 1,0,2
+                - FungalFan_r1 [1] 7,7,0
+                - LeftJaw
+                  - JawBase_r1 [1] 4,7,2
+                  - LeftMandable [2] 1,2,3
+                    - LMandSeg2 [1] 1,2,4
+                      - LMandSplit1 [2] 1,1,4
+                      - LMandSplit2 [2] 1,1,6
+                      - tooth_r1 [1] 2,0,3
+              - Right [1] 8,8,8
+                - RightJaw
+                  - JawBase_r2 [1] 5,6,1
+                  - RightMandable [1] 1,2,6
+                    - RMandSplit2
+                      - tooth_r4 [1] 1,0,4
+                      - RMandSplit2_r1 [1] 1,1,4
+                    - RMandSplit1
+                      - tooth_r3 [1] 1,0,6
+                      - RMandSplit1_r1 [1] 1,1,6
+                    - tooth_r2 [1] 2,0,6
+                - RightHeadTumors
+                  - Tumor_r15 [1] 4,4,4
+                  - Tumor_r13 [1] 4,4,4
+                  - Tumor_r14 [1] 4,4,4
+                - Nose_r4 [1] 2,3,2
+                - FungalFan_r2 [1] 7,7,0
+              - LeTubes
+                - Tube4 [1] 3,3,3
+                  - T4S2 [1] 3,3,2
+                    - T4S3 [1] 3,3,3
+                      - T4S4 [1] 3,3,2
+                        - T4S5 [1] 3,3,3
+                          - T4Tip [4] 2,1,1
+                - Tube2 [1] 3,3,3
+                  - T2S2 [1] 3,3,2
+                    - T2S3 [1] 3,3,3
+                      - T2S4 [1] 3,3,2
+                        - T2S5 [1] 3,3,3
+                          - T2Tip [4] 2,1,1
+                - Tube3 [1] 3,3,3
+                  - T3S2 [1] 3,3,2
+                    - T3S3 [1] 3,3,3
+                      - T3S4 [1] 3,3,2
+                        - T3S5 [1] 3,3,3
+                          - T3Tip [4] 2,1,1
+                - Tube1 [1] 3,3,3
+                  - T1S2 [1] 3,3,2
+                    - T1S3 [1] 3,3,3
+                      - T1S4 [1] 3,3,2
+                        - T1S5 [1] 3,3,3
+                          - T1Tip [4] 2,1,1
+          - NeckTumors
+            - tumor_r10 [1] 5,5,5
+            - tumor_r9 [1] 5,5,5
+            - tumor_r8 [1] 4,4,4
+        - Tumor_r5 [1] 5,5,5
+    - Infected3 [1] 4,6,7
+      - TorsoTop_r3 [1] 5,6,8
+      - Arm_r2 [1] 4,8,4
+    - Infected2
+      - TorsoTop_r2 [1] 5,6,8
+      - Torso_r1 [1] 4,6,7
+    - Infected1 [1] 4,6,7
+      - TorsoTop_r1 [1] 5,6,8
+      - Arm_r1 [1] 3,6,3
+      - FungusCrown3
+        - Crown_r8 [1] 7,0,7
+        - Crown_r7 [1] 7,0,7
+        - Crown_r6 [1] 7,0,7
+        - Crown_r5 [1] 7,0,7
+      - HeadTop_r1 [2] 6,2,6
+      - Nose_r2 [1] 2,4,2
+  - base
+    - FungusCrown4
+      - Crown_r4 [1] 7,0,7
+      - Crown_r3 [1] 7,0,7
+      - Crown_r2 [1] 7,0,7
+      - Crown_r1 [1] 7,0,7
+    - VillagerHead [1] 8,8,8
+      - Nose_r1 [1] 2,4,2
+      - Jaw_r1 [1] 8,2,8
+    - BaseTumor
+      - Tumor_r1 [1] 11,11,11
+      - Tumor_r3 [1] 10,10,10
+      - Tumor_r2 [1] 9,9,9
+      - Tumor_r4 [1] 12,12,12
+    - Ribs
+      - BackRibs
+        - ribJoint7
+          - Rib7 [1] 2,7,2
+            - Rib6Seg3 [1] 2,7,2
+        - ribJoint6
+          - Rib6 [1] 2,7,2
+            - Rib6Seg2 [1] 2,7,2
+        - ribJoint5
+          - Rib5 [1] 2,7,2
+            - Rib5Seg2 [1] 2,7,2
+        - ribJoint4
+          - Rib4 [1] 2,7,2
+            - Rib4Seg2 [1] 2,7,2
+      - FrontRibs
+        - ribJoint2
+          - Rib2 [1] 2,7,2
+            - Rib2Seg2 [1] 2,7,2
+        - ribJoint
+          - Rib1 [1] 2,7,2
+            - Rib1Seg2 [1] 2,7,2
+        - ribJoint3
+          - Rib3 [1] 2,7,2
+            - Rib3Seg2 [1] 2,7,2
+
+## vanguard (194 parts)
+
+- part0
+  - Legs
+    - LeftLeg
+      - LeftLegTop [2] 4,9,5
+        - LeftLegTopFoliage
+          - LeftLegTopPetal1_r1 [1] 7,0,7
+      - LeftLegBottom [1] 4,10,5
+        - LeftLegBloatage
+          - LeftLegBottomOvergrownTumors
+            - LeftLegOvergrownTumor2_r1 [1] 5,5,5
+            - LeftLegOvergrownTumor1_r1 [1] 5,5,5
+          - LeftLegBottomTumors
+            - LeftLegTumor1_r1 [1] 4,4,4
+            - LeftLegTumor2_r1 [1] 4,4,4
+            - LeftLegTumor4_r1 [1] 4,4,4
+            - LeftLegTumor3_r1 [1] 4,4,4
+        - LeftLegBottomFoliage
+          - LeftLegBottomPetal1_r1 [1] 7,0,7
+    - RightLeg
+      - RightLegBottom [2] 4,10,5
+        - RightLegPetalCrown
+          - RightLegCrownPetal4_r1 [1] 7,0,7
+          - RightLegCrownPetal2_r1 [1] 7,0,7
+          - RightLegCrownPetal3_r1 [1] 7,0,7
+          - RightLegCrownPetal1_r1 [1] 7,0,7
+      - RightLegTop [2] 4,9,5
+  - TorsoPivot
+    - Torso
+      - Chest
+        - Vest_r1 [1] 11,9,7
+        - LeftShoulder_r1 [1] 6,7,6
+        - Chest_r1 [1] 11,8,7
+        - RightShoulderPad_r1 [2] 6,7,6
+        - ChestFoliage
+          - ChestPetalCrown
+            - ChestCrownPetal1_r1 [1] 7,0,7
+            - ChestCrownPetal4_r1 [1] 7,0,7
+            - ChestCrownPetal3_r1 [1] 7,0,7
+            - ChestCrownPetal2_r1 [1] 7,0,7
+          - ChestSparseFoliage
+            - ChestSparseFoliage2_r1 [1] 7,0,7
+            - ChestSparseFoliage1_r1 [1] 7,0,7
+      - Stomach
+        - Stomach_r1 [1] 7,5,6
+        - StomachRightSide_r1 [1] 6,5,6
+        - StomachFoliage
+          - StomachFoliage1_r1 [1] 7,0,7
+        - StomachLeftSide_r1 [1] 6,5,6
+      - TorsoBase
+        - VestEnd_r1 [1] 11,8,5
+        - TorsoBaseTumor
+          - TorsoBaseTumor1_r1 [1] 4,4,4
+        - TorsoBaseFoliage
+          - TorsoBaseFoliage1_r1 [1] 7,0,7
+        - TorsoBase_r1 [1] 11,5,5
+      - BackDetails
+        - BackTendrils
+          - Tendril1 [1] 2,9,2
+            - Seg2Tendril1 [1] 2,10,2
+              - Seg3Tendril1 [1] 1,10,1
+          - Tendril4Eye [1] 2,9,2
+            - Seg2Tendril4 [1] 2,10,2
+              - Seg3Tendril4 [1] 1,10,1
+                - Eye
+                  - EyeTumors
+                    - EyeTumor6_r1 [1] 4,4,4
+                    - EyeTumor5_r1 [1] 4,4,4
+                    - EyeTumor3_r1 [1] 4,4,4
+                    - EyeTumor4_r1 [1] 4,4,4
+                    - EyeTumor2_r1 [1] 4,4,4
+                    - EyeTumor1_r1 [1] 4,4,4
+                  - EyeTumor7_r1 [1] 4,4,4
+                  - VigilEye [1] 8,8,8
+                    - pupil [1] 5,5,3
+          - Tendril2
+            - Seg2Tendril2
+              - Seg3Tendril2 [1] 1,8,1
+              - TendrilSegment_r2 [1] 2,8,2
+            - TendrilSegment_r1 [1] 2,6,2
+          - Tendril3Pouch [1] 2,9,2
+            - Seg2Tendril3 [1] 2,10,2
+              - Seg3Tendril3 [1] 1,10,1
+                - FireworkPouch
+                  - Pouch [2] 4,11,2
+                    - Strap2_r1 [1] 0,11,2
+                    - Strap1_r1 [1] 0,12,2
+                  - Fireworks
+        - BackTumors
+          - BackTumorCluster1
+            - BackTumor4_r1 [1] 4,4,4
+            - BackTumor3_r1 [1] 4,4,4
+            - BackTumor2_r1 [1] 4,4,4
+            - BackTumor1_r1 [1] 4,4,4
+          - BackTumorCluster2
+            - BackTumor8_r1 [1] 4,4,4
+            - BackTumor7_r1 [1] 4,4,4
+            - BackTumor5_r1 [1] 4,4,4
+            - BackTumor6_r1 [1] 4,4,4
+    - Head [1] 8,1,4 <== eyes
+      - UpperHead [3] 8,8,8
+        - Banner [1] 2,35,2
+          - Fabric_r1 [1] 40,20,1
+          - PoleTop_r1 [1] 2,20,2
+        - HeadTumors
+          - HeadTumorCluster1
+            - HeadTumor1_r1 [1] 4,4,4
+            - HeadTumor2_r1 [1] 4,4,4
+          - HeadTumorCluster2
+            - HeadTumor3_r1 [1] 4,4,4
+            - HeadTumor5_r1 [1] 4,4,4
+            - HeadTumor4_r1 [1] 4,4,4
+        - EyeTendrils
+          - LT1 [1] 2,5,2
+            - LT1Seg2 [1] 2,5,2
+          - LT3
+            - LT3Seg1_r1 [1] 2,5,2
+            - LT3Seg2 [1] 2,5,2
+          - LT2 [1] 2,5,2
+            - LT2Seg2 [1] 2,5,2
+        - HeadFoliage
+          - HeadPetalCrowns
+            - HeadCrown1
+              - HeadCrown3Petal4_r1 [1] 7,0,7
+              - HeadCrown3Petal3_r1 [1] 7,0,7
+              - HeadCrown2Petal2_r1 [1] 7,0,7
+              - HeadCrown1Petal1_r1 [1] 7,0,7
+            - HeadCrown2
+              - HeadCrown2Petal1_r1 [1] 7,0,7
+              - HeadCrown2Petal2_r2 [1] 7,0,7
+              - HeadCrown2Petal3_r1 [1] 7,0,7
+              - HeadCrown2Petal4_r1 [1] 7,0,7
+            - HeadCrown3
+              - HeadCrown3Petal4_r2 [1] 7,0,7
+              - HeadCrown3Petal3_r2 [1] 7,0,7
+              - HeadCrown3Petal2_r1 [1] 7,0,7
+              - HeadCrown3Petal1_r1 [1] 7,0,7
+          - HeadSparseFoliage
+            - HeadSparseFoliage2_r1 [1] 7,0,7
+            - HeadSparseFoliage3_r1 [1] 7,0,7
+            - HeadSparseFoliage1_r1 [1] 7,0,7
+      - LowerJaw
+        - LowerJaw_r1 [1] 8,1,6
+        - LowerTeeth1_r1 [1] 7,2,0
+        - LowerTeeth3_r1 [1] 5,2,0
+        - LowerTeeth2_r1 [1] 7,2,0
+        - LowerTeeth4_r1 [1] 7,2,0
+    - Arms
+      - RightArm
+        - RightArmBottom
+          - RightArmBottom_r1 [1] 4,9,4
+          - RightArmBottomFoliage
+            - RightArmBottomFoliage1_r1 [1] 7,0,7
+            - RightArmBottomFoliage2_r1 [1] 7,0,7
+        - RightArmTop [2] 4,9,4
+          - RightArmTopFoliage
+            - RightArmTopFoliage2_r1 [1] 7,0,7
+            - RightArmTopFoliage1_r1 [1] 7,0,7
+      - LeftBladeArm
+        - LeftArmTop
+          - LeftArmEnd_r1 [1] 4,6,4
+          - LeftArmTopBloatage
+            - LeftArmTopBottomTumors
+              - LeftArmTopTumor4_r1 [1] 4,4,4
+              - LeftArmTopTumor3_r1 [1] 4,4,4
+              - LeftArmTopTumor2_r1 [1] 4,4,4
+              - LeftArmTopTumor1_r1 [1] 4,4,4
+            - LeftArmTopBottomOvergrownTumors
+              - LeftArmTopOvergrownTumor2Calcification_r1 [2] 2,3,2
+              - LeftArmTopOvergrownTumor2_r1 [1] 5,5,5
+          - CalcificationClump_r1 [1] 2,3,2
+          - LeftArmTop_r1 [1] 4,6,4
+          - LeftArmTopFoliage
+            - LeftArmTopFoliage1_r1 [1] 7,0,7
+            - LeftArmTopFoliage2_r1 [1] 7,0,7
+        - Blade
+          - BladeInnerRide_r1 [1] 1,7,2
+          - Blade_r1 [1] 9,15,0
+          - BladeOuterRidge_r1 [1] 1,9,2
+          - BladePlateRight_r1 [1] 2,5,2
+          - BladePlateLeft_r1 [1] 2,5,2
+          - BladePlateBack_r1 [1] 2,5,2
+          - BladePlateFront_r1 [1] 2,6,2
+          - BladeRibs
+            - BladeRib1_r1 [1] 4,1,1
+            - BladeRib3_r1 [1] 3,1,1
+            - BladeRib2_r1 [1] 3,1,1
+          - BladeSpikes
+            - Spike4_r1 [1] 3,4,0
+            - Spike3_r1 [1] 3,4,0
+            - Spike1_r1 [1] 3,4,0
+            - Spike2_r1 [1] 3,4,0
+            - Spike5_r1 [1] 3,4,0
+            - Spike7_r1 [1] 3,4,0
+            - Spike6_r1 [1] 3,4,0
+
+## verfall (430 parts)
+
+- part0
+  - MajoTarSack2
+    - Tar_r6 [1] 21,18,14
+    - Tar_r5 [1] 23,14,24
+    - Tar_r4 [1] 22,10,22
+  - Spine
+    - Segment2 [3] 11,11,13
+    - Segment4 [3] 11,11,13
+      - body40 [1] 7,6,4
+        - head37 [3] 8,6,8
+        - cube_r20 [1] 8,5,4
+        - RightArm39 [1] 3,6,3
+        - LeftArm38 [1] 3,6,3
+    - Segment3 [1] 0,10,14
+      - cube_r19 [2] 15,14,3
+    - Segment6 [3] 11,11,14
+    - Segment5 [3] 11,11,13
+    - Segment [2] 12,12,13
+      - cube_r18 [1] 20,10,13
+  - Tumors2
+    - Tumor_r16 [1] 14,14,14
+    - Tumor_r17 [1] 11,11,11
+    - Tumor_r18 [1] 12,12,12
+  - back [1] 20,16,16
+    - cube_r21 [1] 0,26,23
+    - rib8
+      - MiddleRidgeRib1Tip_r11 [1] 3,4,8
+      - MiddleRidgeRib1_r11 [1] 3,4,12
+    - rib7
+      - MiddleRidgeRib1Tip_r10 [1] 3,4,8
+      - MiddleRidgeRib1_r10 [1] 3,4,12
+    - rib12
+      - MiddleRidgeRib1Tip_r7 [1] 3,4,8
+      - MiddleRidgeRib1_r7 [1] 3,4,12
+    - rib9
+      - MiddleRidgeRib1Tip_r12 [1] 3,4,8
+      - MiddleRidgeRib1_r12 [1] 3,4,12
+    - cube_r22 [1] 9,19,21
+    - rib11
+      - MiddleRidgeRib1Tip_r8 [1] 3,4,8
+      - MiddleRidgeRib1_r8 [1] 3,4,12
+    - cube_r23 [1] 8,19,21
+    - rib10
+      - MiddleRidgeRib1Tip_r9 [1] 3,4,8
+      - MiddleRidgeRib1_r9 [1] 3,4,12
+    - cube_r24 [1] 20,12,9
+    - cube_r25 [1] 20,7,8
+  - Tumors3
+    - Tumor_r20 [1] 14,14,14
+    - Tumor_r21 [1] 13,13,13
+    - Tumor_r19 [1] 10,10,10
+  - RightWing
+    - RightWingSeg1 [2] 38,8,12
+      - cube_r73 [1] 60,0,8
+      - cube_r74 [1] 19,15,19
+      - mass3
+        - CalciumCorpseLLimb
+          - TorsoBottom_r1 [2] 7,6,4
+          - Head_r8 [1] 8,8,8
+          - Arm_r7 [1] 3,8,3
+        - LLimbSeg1_r1 [1] 12,22,12
+        - mass4
+          - LLimbSeg2_r1 [1] 9,20,9
+          - LLimbSeg3
+            - patty
+              - LLimbSeg3_r3 [1] 8,3,10
+            - Head1_r1 [1] 8,7,8
+            - LLimbSeg3_r1 [2] 4,6,8
+            - LLimbSeg3_r2 [1] 4,8,8
+            - LLimbJawJoint [1] 8,1,8
+            - Torso1Arm_r1 [1] 3,8,3
+          - Head_r7 [1] 8,7,8
+      - WingThingie [1] 5,4,30
+        - cube_r75 [1] 4,3,38
+      - RightWingSeg2 [1] 56,0,42
+        - RightWingSeg3 [2] 42,4,8
+          - cube_r79 [1] 47,0,10
+          - WingThingie5 [1] 5,4,28
+            - cube_r80 [1] 4,3,21
+        - WingThingie4 [1] 5,4,28
+          - cube_r78 [1] 4,3,21
+        - mass5
+          - bloom3
+            - cube_r95 [1] 16,0,16
+            - cube_r96 [1] 16,0,16
+            - cube_r91 [1] 0,12,14
+            - cube_r92 [1] 0,12,14
+            - cube_r93 [1] 16,0,16
+            - cube_r94 [1] 16,0,16
+          - bloom4
+            - cube_r102 [1] 16,0,16
+            - cube_r101 [1] 16,0,16
+            - cube_r97 [1] 0,12,14
+            - cube_r100 [1] 16,0,16
+            - cube_r98 [1] 0,12,14
+            - cube_r99 [1] 16,0,16
+          - cube_r87 [1] 8,8,7
+          - Infectedarm41 [1] 4,6,4
+            - Infectedarm42 [1] 4,9,4
+              - Infectedarm43 [1] 4,12,0
+              - Infectedarm44 [1] 4,12,0
+          - tumor [1] 30,10,10
+            - cube_r106 [1] 15,11,12
+            - cube_r105 [1] 13,10,12
+            - cube_r104 [1] 18,9,13
+            - cube_r103 [1] 18,14,10
+          - Infectedarm33 [1] 4,6,4
+            - Infectedarm34 [1] 4,9,4
+              - Infectedarm35 [1] 4,12,0
+              - Infectedarm36 [1] 4,12,0
+          - cube_r90 [1] 21,8,9
+          - cube_r88 [1] 20,8,8
+          - Infectedarm37 [1] 4,6,4
+            - Infectedarm38 [1] 4,9,4
+              - Infectedarm40 [1] 4,12,0
+              - Infectedarm39 [1] 4,12,0
+          - Evilhand
+            - cube_r108 [1] 16,10,7
+            - cube_r107 [1] 11,13,11
+          - cube_r89 [1] 23,11,10
+        - WingThingie3 [1] 5,4,28
+          - cube_r77 [1] 4,3,25
+        - RightHand
+          - LowerRightfinger [1] 18,3,2
+            - Infectedarm237 [1] 4,6,4
+              - Infectedarm238 [1] 4,9,4
+                - Infectedarm239 [1] 4,12,0
+                - Infectedarm240 [1] 4,12,0
+          - cube_r81 [1] 8,10,7
+          - cube_r82 [1] 8,10,7
+          - cube_r83 [1] 9,10,7
+          - LowerRightfinger2
+            - cube_r86 [1] 13,7,5
+            - Infectedarm230 [1] 3,9,3
+              - Infectedarm92
+                - Infectedarm_r4 [1] 4,12,0
+              - Infectedarm93
+                - Infectedarm_r2 [1] 4,12,0
+              - Infectedarm232
+                - Infectedarm_r6 [1] 4,12,0
+              - Infectedarm94
+                - Infectedarm_r3 [1] 4,12,0
+              - Infectedarm231
+                - Infectedarm_r5 [1] 4,12,0
+              - Infectedarm_r1 [2] 2,15,2
+          - LowerRightfinger3
+            - cube_r84 [1] 4,7,0
+            - Infectedarm223 [1] 4,6,4
+              - Infectedarm224 [1] 4,9,4
+            - cube_r85 [1] 12,3,2
+            - Infectedarm225 [1] 4,6,4
+              - Infectedarm226 [1] 4,9,4
+      - WingThingie2 [1] 5,4,32
+        - cube_r76 [1] 4,3,29
+  - body
+    - cube_r10 [1] 25,0,19
+    - cube_r4 [1] 10,17,27
+    - cube_r15 [1] 23,6,33
+    - cube_r5 [1] 10,17,27
+    - cube_r16 [1] 23,6,33
+    - cube_r6 [1] 29,7,4
+    - cube_r17 [1] 31,6,33
+    - rib
+      - MiddleRidgeRib1Tip_r6 [1] 3,4,8
+      - MiddleRidgeRib1_r6 [1] 3,4,12
+    - cube_r7 [2] 19,3,4
+    - cube_r11 [1] 27,6,13
+    - cube_r1 [1] 0,10,17
+    - cube_r12 [1] 18,0,16
+    - cube_r2 [1] 5,17,20
+    - cube_r13 [1] 27,6,13
+    - Tumors10
+      - Tumor_r1 [1] 14,14,14
+      - Tumor_r2 [1] 13,13,13
+    - cube_r3 [1] 5,17,20
+    - cube_r14 [1] 31,6,33
+    - Tumors8
+      - Tumor_r7 [1] 13,13,13
+      - Tumor_r6 [1] 14,14,14
+      - Tumor_r8 [1] 11,11,10
+    - Tumors9
+      - Tumor_r3 [1] 14,14,14
+      - Tumor_r5 [1] 11,11,10
+      - Tumor_r4 [1] 13,13,13
+    - cube_r8 [1] 31,8,2
+    - cube_r9 [1] 34,22,2
+    - Tumors7
+      - Tumor_r11 [1] 13,13,13
+      - Tumor_r12 [1] 11,11,10
+      - Tumor_r10 [1] 14,14,14
+    - mass7 [1] 8,9,19
+      - Body6 [2] 4,5,8
+        - Arm_r5 [1] 4,8,4
+        - Jaw_r4 [1] 8,1,8
+        - Leg_r6 [1] 4,8,4
+        - Leg_r5 [1] 4,8,4
+        - Head_r4 [1] 8,7,8
+      - Body7 [2] 4,5,8
+        - Arm_r6 [1] 4,8,4
+        - Jaw_r5 [1] 8,1,8
+        - Leg_r8 [1] 4,8,4
+        - Leg_r7 [1] 4,8,4
+        - Head_r5 [1] 8,7,8
+      - Body5 [2] 4,5,8
+        - Arm_r4 [1] 4,8,4
+        - Jaw_r3 [1] 8,1,8
+        - Leg_r4 [1] 4,8,4
+        - Leg_r3 [1] 4,8,4
+        - Head_r3 [1] 8,7,8
+      - mass8
+        - LSJSSeg2_r1 [1] 6,17,14
+        - mass9
+          - Body4 [2] 4,5,8
+            - Arm_r3 [1] 4,8,4
+            - Head_r2 [1] 8,7,8
+            - Jaw_r2 [1] 8,1,8
+            - Leg_r2 [1] 4,8,4
+            - Leg_r1 [1] 4,8,4
+          - Body1
+            - Head_r1 [1] 7,8,8
+            - Arm_r1 [1] 4,8,4
+            - Arm_r2 [1] 4,8,4
+            - Jaw_r1 [1] 1,8,8
+            - Torso_r1 [1] 4,6,8
+          - Tumor_r9 [1] 4,4,4
+    - rib2
+      - MiddleRidgeRib1Tip_r5 [1] 3,4,8
+      - MiddleRidgeRib1_r5 [1] 3,4,12
+    - rib4
+      - MiddleRidgeRib1Tip_r3 [1] 3,4,8
+      - MiddleRidgeRib1_r3 [1] 3,4,12
+    - rib3
+      - MiddleRidgeRib1Tip_r4 [1] 3,4,8
+      - MiddleRidgeRib1_r4 [1] 3,4,12
+    - rib6
+      - MiddleRidgeRib1Tip_r1 [1] 3,4,8
+      - MiddleRidgeRib1_r1 [1] 3,4,12
+    - rib5
+      - MiddleRidgeRib1Tip_r2 [1] 3,4,8
+      - body3 [2] 4,6,7
+        - TFHead [1] 8,7,8
+          - TFJaw [1] 8,1,8
+      - MiddleRidgeRib1_r2 [1] 3,4,12
+  - LeftBackLeg
+    - LeftBack [1] 9,32,9
+      - flower14 [3] 7,0,6
+        - cube_r26 [1] 6,0,6
+      - Left [1] 9,29,9
+        - Left2 [1] 12,23,12
+          - LeftFoot [1] 13,21,14
+            - Infectedarm95 [1] 4,6,4
+              - Infectedarm96 [1] 4,9,4
+            - Infectedbody43
+              - Infectedbody96 [1] 3,8,3
+                - Infectedbody97 [1] 2,9,2
+              - Infectedbody44 [1] 3,7,4
+                - Infectedbody45 [1] 2,9,2
+              - cube_r37 [1] 8,8,5
+              - cube_r38 [1] 8,8,4
+              - cube_r39 [1] 7,6,4
+              - Infectedbody46 [1] 3,8,3
+                - Infectedbody47 [1] 2,9,2
+              - cube_r35 [1] 3,8,4
+              - cube_r36 [1] 4,5,4
+            - Infectedarm11 [1] 4,8,4
+              - Infectedarm12 [1] 2,7,4
+            - cube_r34 [1] 4,8,4
+            - Infectedarm9 [1] 4,6,4
+              - Infectedarm10 [1] 2,10,4
+        - flower7 [3] 7,0,6
+          - cube_r32 [1] 6,0,6
+        - flower2 [3] 7,0,6
+          - cube_r33 [1] 6,0,6
+      - body17 [1] 7,6,4
+        - RightArm16 [1] 3,6,3
+          - RightForArm16 [1] 3,6,3
+        - head12
+          - cube_r30 [1] 8,2,4
+          - cube_r29 [1] 8,2,4
+          - Head_r6 [1] 8,6,8
+        - LeftArm15 [1] 3,6,3
+          - LeftForArm15
+            - cube_r31 [1] 3,6,3
+        - cube_r27 [1] 7,6,4
+        - cube_r28 [1] 8,5,4
+  - Tumors6
+    - Tumor_r28 [1] 14,14,14
+    - Tumor_r29 [1] 13,13,13
+    - Tumor_r30 [1] 11,11,10
+  - Tumors4
+    - Tumor_r22 [1] 14,14,14
+    - Tumor_r23 [1] 13,13,13
+    - Tumor_r24 [1] 11,11,10
+  - MajoTarSack
+    - Tar_r3 [1] 21,10,14
+    - Tar_r2 [1] 23,14,24
+    - Tar_r1 [1] 20,10,19
+  - RightBackLeg
+    - RightBack [1] 9,37,12
+      - Infectedbody2
+        - cube_r40 [1] 3,12,4
+        - cube_r41 [1] 4,12,4
+        - cube_r42 [1] 8,8,8
+        - cube_r43 [1] 8,7,4
+        - cube_r44 [1] 7,5,4
+      - Infectedbody50
+        - cube_r48 [1] 8,5,4
+        - cube_r49 [1] 7,4,4
+        - cube_r45 [1] 3,8,4
+        - cube_r46 [1] 3,8,4
+        - cube_r47 [1] 4,12,4
+      - Infectedbody54
+        - cube_r51 [1] 4,12,4
+        - cube_r52 [1] 8,8,8
+        - cube_r53 [1] 8,7,4
+        - cube_r54 [1] 7,5,4
+        - cube_r50 [1] 3,12,4
+      - Right [1] 11,33,9
+        - Infectedbody3
+          - cube_r59 [1] 7,5,4
+          - cube_r55 [1] 3,12,4
+          - cube_r56 [1] 4,12,4
+          - cube_r57 [1] 8,8,8
+          - cube_r58 [1] 8,7,4
+        - Infectedbody4
+          - cube_r62 [1] 8,8,8
+          - cube_r63 [1] 8,7,4
+          - cube_r64 [1] 7,5,4
+          - cube_r60 [1] 3,12,4
+          - cube_r61 [1] 4,12,4
+        - Right3 [1] 5,24,9
+          - body2
+            - RightArm2 [1] 3,6,3
+              - RightForArm2 [1] 3,6,3
+            - LeftArm2 [1] 3,6,3
+              - LeftForArm2
+                - cube_r72 [1] 3,6,3
+            - cube_r70 [1] 7,6,4
+            - cube_r71 [1] 8,5,4
+            - head2 [3] 8,6,8
+          - cube_r69 [1] 5,14,9
+        - Right2 [1] 5,24,9
+          - cube_r65 [1] 5,16,9
+          - body30
+            - head27 [3] 8,6,8
+            - RightArm29 [1] 3,6,3
+              - RightForArm29 [1] 3,6,3
+            - LeftArm28 [1] 3,6,3
+              - LeftForArm28
+                - cube_r68 [1] 3,6,3
+            - cube_r66 [1] 7,6,4
+            - cube_r67 [1] 8,5,4
+  - Tumors5
+    - Tumor_r26 [1] 13,13,13
+    - Tumor_r27 [1] 11,11,10
+    - Tumor_r25 [1] 14,14,14
+  - LeftWing
+    - RightWingSeg [1] 78,0,50
+      - WingThingie7 [1] 5,4,32
+        - cube_r121 [1] 4,3,29
+      - cube_r110 [1] 19,15,19
+      - LeftWingSeg2 [1] 56,0,42
+        - WingThingie8 [1] 5,4,28
+          - cube_r123 [1] 4,3,25
+        - cube_r122 [1] 62,0,10
+        - WingThingie9 [1] 5,4,28
+          - cube_r124 [1] 4,3,21
+        - LeftHand
+          - cube_r128 [1] 9,10,7
+          - cube_r127 [1] 8,10,7
+          - LowerLeftfinger4
+            - Infectedarm20 [1] 3,9,3
+              - Infectedarm_r7 [2] 2,15,2
+              - Infectedarm21
+                - Infectedarm_r8 [1] 4,12,0
+              - Infectedarm22
+                - Infectedarm_r9 [1] 4,12,0
+              - Infectedarm23
+                - Infectedarm_r10 [1] 4,12,0
+              - Infectedarm24
+                - Infectedarm_r11 [1] 4,12,0
+              - Infectedarm25
+                - Infectedarm_r12 [1] 4,12,0
+            - cube_r129 [1] 13,7,5
+          - LowerLeftfinger5
+            - Infectedarm26 [1] 3,9,3
+              - Infectedarm_r13 [2] 2,15,2
+              - Infectedarm30
+                - Infectedarm_r17 [1] 4,12,0
+              - Infectedarm31
+                - Infectedarm_r18 [1] 4,12,0
+              - Infectedarm27
+                - Infectedarm_r14 [1] 4,12,0
+              - Infectedarm28
+                - Infectedarm_r15 [1] 4,12,0
+              - Infectedarm29
+                - Infectedarm_r16 [1] 4,12,0
+            - cube_r130 [1] 13,7,5
+        - LeftWingSeg3 [2] 42,4,8
+          - cube_r125 [1] 47,0,10
+          - WingThingie10 [1] 5,4,28
+            - cube_r126 [1] 4,3,21
+        - RLimbSeg2 [1] 8,8,8
+          - RLimbSeg2Seg2
+            - RLimbSeg2Seg2_r1 [1] 11,21,7
+            - RLimbSeg2Seg2_r2 [1] 11,15,7
+            - RLimbSeg3
+              - RLimbSeg3_r1 [1] 7,12,4
+              - Arm_r8 [1] 4,8,4
+              - RLimbHeadJoint [1] 8,7,8
+          - Limb_r1 [1] 4,11,4
+          - RLimbSeg2_r1 [1] 12,22,9
+      - mass
+        - cube_r113 [1] 6,0,6
+        - cube_r112 [1] 6,0,6
+        - cube_r111 [1] 6,0,6
+        - mass2
+          - cube_r117 [1] 10,10,10
+          - cube_r116 [1] 15,10,0
+          - cube_r115 [1] 10,8,10
+          - cube_r119 [1] 27,6,15
+          - cube_r118 [1] 16,0,16
+        - cube_r114 [1] 34,9,13
+      - cube_r109 [1] 60,0,8
+      - WingThingie6 [1] 5,4,30
+        - cube_r120 [1] 4,3,38
+  - Tumors
+    - Tumor_r15 [1] 12,11,11
+    - Tumor_r13 [1] 14,14,14
+    - Tumor_r14 [1] 11,11,11
+
+## verfall_head (115 parts)
+
+- part0 [2] 20,8,20
+  - FS2Body3
+    - TorsoBase_r3 [1] 7,3,6
+    - Arm_r4 [1] 3,3,8
+    - TorsoBottom_r1 [1] 8,4,6
+    - Arm_r5 [1] 3,3,8
+    - Head_r14 [1] 8,8,7
+    - Leg_r4 [1] 3,3,10
+  - FS2Body2
+    - Arm_r3 [1] 3,7,3
+    - TorsoTop_r3 [1] 4,7,8
+    - TorsoBase_r2 [1] 3,6,7
+    - Head_r13 [1] 8,7,8
+    - Leg_r3 [1] 3,6,3
+    - Leg_r2 [1] 3,8,3
+  - RightJaw
+    - cube_r31 [1] 4,17,0
+    - cube_r32 [1] 4,17,0
+    - heads4
+      - Head_r8 [1] 8,1,8
+      - Head_r7 [1] 8,6,8
+    - heads5
+      - Head_r9 [1] 8,6,8
+      - Head_r10 [1] 8,1,8
+    - heads6
+      - Head_r12 [1] 8,1,8
+      - Head_r11 [1] 8,6,8
+    - cube_r33 [1] 4,17,0
+    - cube_r34 [1] 7,12,6
+    - cube_r35 [1] 8,12,7
+  - FS2Body1
+    - TorsoTop_r2 [2] 6,4,8
+    - Arm_r1 [1] 9,3,3
+    - Arm_r2 [1] 6,3,3
+    - TorsoBase_r1 [1] 6,3,7
+    - Jaw_r1 [1] 1,8,8
+    - Leg_r1 [1] 8,3,3
+  - topJaw [1] 15,7,16
+    - FusedBody
+      - RightArm [1] 3,5,3
+        - RightArmSeg2
+          - RightArmSeg2_r1 [1] 2,5,2
+      - TorsoTop_r1 [1] 6,4,7
+      - ToungeHead
+        - HeadBase_r1 [1] 8,2,4
+        - HeadTop_r1 [1] 8,1,8
+        - HeadTop_r2 [1] 8,6,8
+        - HeadTop_r3 [1] 8,6,8
+        - teeth_r1 [1] 8,1,8
+    - cube_r4 [1] 30,9,12
+    - cube_r1 [1] 21,11.25,20
+    - cube_r2 [1] 19,11,16
+    - cube_r3 [1] 14,7,16
+    - tarSacks
+      - cube_r5 [1] 10,8,9
+      - cube_r6 [1] 11,10,10
+    - tarSacks2
+      - cube_r8 [1] 10,8,9
+      - cube_r9 [1] 11,10,10
+      - cube_r7 [1] 10,8,9
+    - tarSacks3
+      - cube_r10 [1] 10,8,9
+      - cube_r11 [1] 10,8,9
+      - cube_r12 [1] 11,10,10
+    - head2 [2] 8,6,8
+    - head3 [2] 8,6,8
+    - head4 [2] 8,6,8
+    - head5 [1] 8,6,8
+    - horns
+      - right_horn
+        - FungalBloom
+          - Plane2_r1 [1] 0,12,14
+          - Plane1_r1 [1] 0,12,14
+          - Spetal_r1 [1] 16,0,16
+          - Npetal_r1 [1] 16,0,16
+          - Wpetal_r1 [1] 16,0,16
+          - Epetal_r1 [1] 16,0,16
+        - cube_r15 [1] 6,15,6
+        - cube_r13 [1] 13,18,0
+        - cube_r14 [1] 5,12,5
+      - left_horn
+        - cube_r20 [1] 0,6,6
+        - cube_r21 [1] 0,6,6
+        - cube_r19 [1] 0,6,6
+        - cube_r16 [1] 7,19,0
+        - cube_r17 [1] 0,6,6
+        - cube_r18 [1] 0,6,6
+        - cube_r22 [1] 0,6,6
+        - cube_r23 [1] 0,6,6
+        - cube_r24 [1] 4,18,4
+        - cube_r25 [1] 5,21,5
+    - head6 [2] 8,6,8
+    - head7 [1] 8,6,8
+  - Pipe
+    - Top_r3 [1] 8,13,8
+    - Top_r2 [1] 7,11,7
+    - Top_r1 [1] 6,10,6
+  - big_teeth_r2 [1] 0,32,7
+  - big_teeth_r3 [1] 0,32,9
+  - big_teeth_r1 [1] 0,18,9
+  - LeftJaw
+    - cube_r30 [1] 8,12,7
+    - heads3
+      - Head_r6 [1] 8,1,8
+      - Head_r5 [1] 8,6,8
+    - cube_r26 [1] 4,17,0
+    - cube_r27 [1] 4,17,0
+    - cube_r28 [1] 4,17,0
+    - cube_r29 [1] 7,12,6
+    - heads
+      - Head_r2 [1] 8,1,8
+      - Head_r1 [1] 8,6,8
+    - heads2
+      - Head_r4 [1] 8,1,8
+      - Head_r3 [1] 8,6,8
+
+## verva (97 parts)
+
+- root <== eyes
+  - TumorBase
+    - Biomass_r1 [1] 11,11,11
+    - Biomass_r2 [1] 10,10,10
+    - Biomass_r5 [1] 12,12,12
+    - Biomass_r3 [1] 8,8,8
+    - Biomass_r4 [1] 9,9,9
+  - Base
+    - Petals
+      - Petal3 [1] 2,12,2
+        - Petal3Middle [1] 2,12,2
+          - Petal3Top [1] 2,12,2
+            - Membrane_r17 [1] 6,11,0
+            - Membrane_r18 [1] 6,11,0
+            - PetalTumor3
+              - Tumors_r3 [1] 5,5,5
+          - Membrane_r15 [1] 6,12,0
+          - Membrane_r16 [1] 6,12,0
+        - Membrane_r13 [1] 6,13,0
+        - Membrane_r14 [1] 6,13,0
+      - Petal2 [1] 2,12,2
+        - Membrane_r8 [1] 6,13,0
+        - Membrane_r7 [1] 6,13,0
+        - Petal2Middle [1] 2,12,2
+          - Membrane_r9 [1] 6,12,0
+          - Membrane_r10 [1] 7,12,0
+          - Petal2Top [1] 2,12,2
+            - Membrane_r11 [1] 6,11,0
+            - Membrane_r12 [1] 6,11,0
+            - PetalTumor2
+              - Tumors_r2 [1] 6,6,6
+            - Petal2TopFungus
+              - Fungus_r3 [1] 7,0,7
+              - Fungus_r4 [1] 7,0,7
+              - Fungus_r1 [1] 7,0,7
+              - Fungus_r2 [1] 7,0,7
+      - Petal5 [1] 2,12,2
+        - Petal5Middle [1] 2,12,2
+          - Petal5Top [1] 2,12,2
+            - PetalTumor5
+              - Tumors_r6 [1] 6,6,6
+            - Membrane_r30 [1] 6,11,0
+            - Membrane_r29 [1] 6,11,0
+          - Membrane_r28 [1] 6,12,0
+          - Petal5MiddleFungus
+            - Fungus_r9 [1] 7,0,7
+            - Fungus_r12 [1] 7,0,7
+            - Fungus_r11 [1] 7,0,7
+            - Fungus_r10 [1] 7,0,7
+          - Membrane_r27 [1] 6,12,0
+        - Membrane_r25 [1] 6,13,0
+        - Membrane_r26 [1] 6,13,0
+      - Petal4 [1] 2,12,2
+        - Membrane_r20 [1] 6,13,0
+        - Petal4BaseFungus
+          - Fungus_r7 [1] 7,0,7
+          - Fungus_r8 [1] 7,0,7
+          - Fungus_r5 [1] 7,0,7
+          - Fungus_r6 [1] 7,0,7
+        - Membrane_r19 [1] 6,13,0
+        - Petal4Middle [1] 2,12,2
+          - Membrane_r21 [1] 6,12,0
+          - Membrane_r22 [1] 6,12,0
+          - Petal4Top [1] 2,12,2
+            - Membrane_r23 [1] 6,11,0
+            - Membrane_r24 [1] 6,11,0
+            - PetalTumor4Sub1
+              - Tumors_r4 [1] 4,4,4
+            - PetalTumor4Sub2
+              - Tumors_r5 [1] 3,3,3
+      - Petal1 [1] 2,12,2
+        - Petal1Middle [1] 2,12,2
+          - Petal1Top [1] 2,12,2
+            - Membrane_r6 [1] 6,11,0
+            - Membrane_r5 [1] 6,11,0
+            - PetalTumor1
+              - Tumors_r1 [1] 4,4,4
+          - Membrane_r4 [1] 7,12,0
+          - Membrane_r3 [1] 6,12,0
+        - Membrane_r1 [1] 6,13,0
+        - Membrane_r2 [1] 6,13,0
+    - Jaw
+      - TopJawJoint
+        - TopJaw
+          - HeadCenter_r1 [1] 8,6,8
+          - HeadLeftTeeth_r1 [2] 8,2,3
+          - HeadRightTeeth_r1 [2] 8,2,3
+      - BottomJawJoint
+        - BottomJaw
+          - HeadLeft_r1 [1] 8,7,8
+          - HeadCenter_r2 [1] 8,7,8
+          - HeadRight_r1 [1] 8,6,8
+          - HeadRightTeeth_r2 [1] 8,2,3
+    - InternalDetails
+      - Plane_r1 [1] 20,18,0
+      - Plane_r2 [1] 20,18,0
+      - Plane_r3 [1] 20,18,0
+
+## vigil (128 parts)
+
+- part0
+  - BiomassChunk2_r1 [1] 6,8,9
+  - Biomassbase_r1 [1] 11,11,11
+  - BiomassChunk1_r1 [1] 5,5,4
+  - BiomassDetails
+    - FungalPlane_r1 [1] 6,0,6
+    - FungalPlane_r3 [1] 6,0,6
+    - FungalStalks
+      - FungalStalk1 [1] 2,3,2
+        - FungalStalk1Seg3_r1 [1] 2,5,2
+        - FungalStalk1Seg2_r1 [1] 2,4,2
+    - FungalPlane_r2 [1] 6,0,6
+- part1
+  - Root2
+    - Root2Details
+      - Root2Detail2
+        - Root2Detail2Seg2_r2 [1] 4,2,2
+        - Root2Detail2Seg1_r1 [1] 4,2,2
+      - Root2SmallDetails
+        - Root2DetailSmall2_r1 [1] 4,2,2
+        - Root2DetailSmall1_r1 [1] 3,1,1
+      - Root2Detail1
+        - Root2Detail1Seg4_r1 [1] 4,2,2
+        - Root2Detail1Seg1_r1 [1] 4,2,2
+        - Root2Detail1Seg3_r1 [1] 4,2,2
+        - Root2Detail1Seg2_r1 [1] 4,2,2
+    - Root2seg1_r1 [1] 5,3,3
+    - Root2seg2_r1 [1] 7,3,3
+    - Root2seg3_r1 [1] 6,3,3
+  - Root1
+    - Root1Details
+      - Root1SmallDetails
+        - Root1DetailSmall1_r1 [1] 3,1,1
+        - Root1DetailSmall2_r1 [1] 4,2,2
+      - Root1Detail1
+        - Root1Detail1Seg3_r1 [1] 4,2,2
+        - Root1Detail1Seg4_r1 [1] 4,2,2
+        - Root1Detail1Seg2_r1 [1] 4,2,2
+        - Root1Detail1Seg1_r1 [1] 4,2,2
+      - Root1Detail2
+        - Root1Detail2Seg1_r1 [1] 4,2,2
+        - Root2Detail2Seg2_r1 [1] 4,2,2
+    - Root1seg2_r1 [1] 7,3,3
+    - Root1seg1_r1 [1] 5,3,3
+    - Root1seg3_r1 [1] 6,3,3
+- part2
+  - Torso [1] 8,6,5
+    - TorsoBottom_r1 [1] 7,7,4
+    - TorsoDetails
+      - TorsoConnectors [1] 1,1,2
+        - TorsoContector2_r1 [1] 1,1,2
+        - TorsoContector3_r1 [1] 1,1,2
+      - FungalPlane_r5 [1] 6,0,6
+      - TorsoStalk1
+        - TorsoStalk1Seg2_r1 [1] 1,3,1
+        - TorsoStalk1Seg1_r1 [1] 1,2,1
+      - FungalPlane_r4 [1] 6,0,6
+      - TorsoStalk2
+        - TorsoStalk2Seg2_r1 [1] 1,3,1
+        - TorsoStalk2Seg1_r1 [1] 1,3,1
+- part3
+  - LegLeft [1] 4,12,4
+    - LegLeftDetails [1] 4,12,4
+      - LLTumor_r1 [1] 6,6,6
+  - ArmRight
+    - ArmRightCloth_r1 [2] 3,8,3
+  - LegRight
+    - LegRightDetails
+      - LegRightClothDetail_r1 [1] 4,12,4
+      - LegRightDetail1
+        - LegRightDetail1Seg1_r1 [1] 2,2,4
+        - LegRightDetail2Seg2_r1 [1] 2,2,4
+    - LegRight_r1 [1] 4,12,4
+  - Arm
+    - ArmLeft
+      - ArmLeftBottom_r1 [1] 3,6,3
+      - ArmLeftTop_r1 [1] 3,6,3
+- part4
+  - Head [1] 8,2,3 <== eyes
+    - HeadDetails
+    - BottomJaw_r1 [1] 8,1,5
+    - HeadTop_r1 [1] 8,6,8
+  - TTSeg1
+    - TTSeg2
+      - TTSeg3
+        - Connectors
+          - EyeConnector4
+            - Connector3Seg2_r2 [1] 1,2,1
+            - Connector3Seg2_r1 [1] 1,3,1
+          - EyeConnector1
+            - Connector1Seg1_r1 [1] 1,3,1
+            - Connector1Seg2_r1 [1] 1,2,1
+          - EyeConnector2
+            - Connector2Seg2_r1 [1] 1,3,1
+            - Connector2Seg1_r1 [1] 1,2,1
+          - EyeConnector3
+            - Connector3Seg1_r2 [1] 1,2,1
+            - Connector3Seg1_r1 [1] 1,3,1
+        - Eye [1] 8,8,8
+          - pupil [1] 5,5,3
+        - TTSeg3_r1 [1] 4,9,2
+        - TTSeg3Details
+          - TTS3Teeth2_r1 [1] 0,5,2
+          - TTS3Teeth1_r1 [1] 0,5,2
+      - TTSeg2_r1 [1] 5,11,3
+      - TTSeg2Details
+        - TTSeg2Teeth3_r1 [1] 0,8,2
+        - TTSeg2Teeth2_r1 [1] 0,11,2
+        - TTSeg2Teeth1_r1 [1] 0,11,2
+    - TTSeg1_r1 [1] 6,11,4
+    - TTSeg1Details
+      - TTSeg1Teeth2_r1 [1] 0,5,2
+      - TTSeg1Teeth1_r1 [1] 0,3,2
+  - flower3
+    - cube_r8 [1] 7,0,6
+    - cube_r5 [1] 6,0,6
+    - cube_r6 [1] 6,0,6
+    - cube_r7 [1] 7,0,6
+  - flower4
+    - cube_r10 [1] 6,0,6
+    - cube_r9 [1] 6,0,6
+    - cube_r11 [1] 7,0,6
+    - cube_r12 [1] 7,0,6
+  - flower2
+    - cube_r4 [1] 7,0,6
+    - cube_r1 [1] 6,0,6
+    - cube_r2 [1] 6,0,6
+    - cube_r3 [1] 7,0,6
+
+## volatile (75 parts)
+
+- part0
+  - Legs
+    - LeftLeg [2] 5,7,5
+      - leftForLeg [1] 5,9,5
+    - RightLeg [1] 5,7,5
+      - rightForLeg [1] 5,9,5
+        - Fungus_r4 [1] 8,0,8
+      - RightLegClothes_r1 [1] 5,9,5
+      - rightlegfungus
+        - Fungus_r3 [1] 8,0,8
+        - Fungus_r1 [1] 8,0,8
+        - Fungus_r2 [1] 8,0,8
+  - hips [1] 10,6,7
+    - LowerTorso [1] 9,6,6
+      - tumor5
+        - cube_r20 [1] 6,6,6
+        - cube_r21 [1] 4,4,4
+        - cube_r19 [1] 6,6,6
+        - cube_r22 [1] 5,5,5
+      - LowerTorsoTumor
+        - fungus_r5 [1] 8,0,8
+        - fungus_r6 [1] 8,0,8
+        - fungus_r7 [1] 8,0,8
+      - UpperTorso [1] 13,8,8
+        - head [3] 8,2,4 <== eyes
+          - nose [2] 2,4,2
+          - jaw [2] 8,1,4
+          - headwear [1] 10,2,10
+            - hat2 [1] 7,4,7
+              - hat3 [1] 4,4,4
+                - hat4 [1] 1,2,1
+          - flower2
+            - cube_r11 [1] 8,0,8
+            - cube_r12 [1] 8,0,8
+            - cube_r13 [1] 8,0,8
+            - cube_r14 [1] 8,0,8
+          - flower
+            - cube_r10 [1] 8,0,8
+            - cube_r8 [1] 8,0,8
+            - cube_r9 [1] 8,0,8
+            - cube_r7 [1] 8,0,8
+        - RightArm [1] 5,12,5
+          - RightForArm [1] 3,9,4
+            - finger [2] 2,3,1
+            - tumor2
+              - cube_r1 [1] 4,4,4
+              - cube_r2 [1] 4,4,4
+            - finger3 [2] 2,3,1
+            - finger2 [2] 2,3,1
+        - LeftArm [1] 5,12,5
+          - tumor4
+            - cube_r5 [2] 5,5,5
+            - cube_r6 [1] 4,4,4
+          - LeftForArm [1] 3,9,4
+            - tumor3
+              - cube_r4 [1] 4,4,4
+              - cube_r3 [1] 4,4,4
+            - finger5 [2] 2,3,1
+            - finger6 [2] 2,3,1
+            - finger4 [2] 2,3,1
+        - LeftShoulder_r1 [1] 6,5,6
+        - Backtumors
+          - cube_r15 [1] 7,7,7
+          - cube_r16 [1] 8,0,8
+          - cube_r17 [1] 8,0,8
+          - cube_r18 [1] 6,6,6
+        - RightShoulder_r1 [1] 6,5,6
+    - skirt
+      - SkirtSeg_r5 [1] 0,10,8
+      - SkirtSeg_r6 [1] 7,8,0
+      - SkirtSeg_r7 [1] 9,9,0
+      - SkirtSeg_r1 [1] 7,9,0
+      - SkirtSeg_r2 [1] 10,7,0
+      - SkirtSeg_r3 [1] 0,8,6
+      - SkirtSeg_r4 [1] 0,6,6
+
+## wendigo (154 parts)
+
+- root
+  - Base
+    - Legs
+      - LeftLeg
+        - LeftLegSeg1 [1] 4,11,5
+          - LeftLegBase [1] 3,10,4
+            - LeftLegBaseTumor
+              - Tumor_r11 [2] 3,3,3
+              - Tumor_r12 [1] 3,3,3
+          - LeftLegFungus
+            - Fungus_r30 [1] 7,0,7
+            - Fungus_r29 [1] 7,0,7
+            - Fungus_r28 [1] 7,0,7
+            - Fungus_r27 [1] 7,0,7
+            - Fungus_r26 [1] 7,0,7
+      - RightLeg
+        - RightLegSeg1 [1] 4,12,5
+          - RightLegBase [1] 3,9,4
+    - TorsoBase [1] 10,8,6
+      - BaseSpine
+        - Spine_r1 [1] 2,7,1
+      - TorsoTumor
+        - Tumor_r1 [1] 3,3,3
+        - Tumor_r2 [1] 4,4,4
+      - TorsoMiddle [1] 11,7,7
+        - MiddleRibs
+          - Rib1 [3] 1,2,8
+          - Rib2 [3] 1,2,8
+          - Spine
+            - Spine_r2 [1] 2,8,1
+          - Fungus_r1 [1] 7,0,7
+          - Rib3 [3] 1,2,8
+        - TorsoTop [1] 12,7,8
+          - crown2
+            - Petal1_r2 [1] 6,0,6
+            - Petal4_r2 [1] 6,0,6
+            - Petal3_r2 [1] 6,0,6
+            - Petal2_r2 [1] 6,0,6
+          - Head [2] 8,8,8 <== eyes
+            - crown1
+              - Petal4_r1 [1] 6,0,6
+              - Petal3_r1 [1] 6,0,6
+              - Petal2_r1 [1] 6,0,6
+              - Petal1_r1 [1] 6,0,6
+            - Jaw [2] 4,2,4
+              - Teeth_r1 [1] 0,1,1
+              - Teeth_r2 [1] 0,1,3
+              - Fang3_r2 [1] 1,2,0
+              - Teeth_r3 [1] 0,2,4
+              - Teeth_r4 [1] 0,1,1
+              - Teeth_r5 [1] 0,2,4
+            - TheEnfunganing
+              - Fungus_r7 [1] 7,0,7
+              - Fungus_r8 [1] 7,0,7
+              - Fungus_r5 [1] 7,0,7
+              - Fungus_r6 [1] 7,0,7
+              - Fungus_r3 [1] 7,0,7
+              - Fungus_r4 [1] 7,0,7
+              - Fungus_r2 [1] 7,0,7
+              - Fungus_r9 [1] 7,0,7
+              - Fungus_r15 [1] 7,0,7
+              - Fungus_r14 [1] 7,0,7
+              - Tumor_r3 [1] 3,3,3
+              - Fungus_r13 [1] 7,0,7
+              - Fungus_r12 [1] 7,0,7
+              - Tumor_r5 [1] 3,3,3
+              - Fungus_r11 [1] 7,0,7
+              - Tumor_r4 [1] 3,3,3
+              - Fungus_r10 [1] 7,0,7
+            - Nose [1] 2,4,2
+            - Face
+              - Fangs
+                - Fang3Seg2_r1 [1] 1,2,0
+                - Fang2_r1 [1] 0,2,1
+                - Fang1_r1 [1] 1,2,0
+                - Fang3_r1 [1] 1,2,0
+                - Fang1Seg2_r1 [1] 1,2,0
+                - Fang2Seg2_r1 [1] 0,1,1
+            - Antlers
+              - RightAntler
+                - AntlerSeg3_r1 [1] 4,2,2
+                - AntlerSeg2_r1 [1] 4,2,2
+                - AntlerSeg4_r1 [1] 4,2,2
+                - AntlerSeg5_r1 [1] 5,2,2
+                - RightAnlterTumorBase
+                  - Tumor2_r2 [1] 3,3,3
+                  - Tumor1_r1 [1] 3,3,3
+                  - Tumor2_r1 [1] 2,2,2
+                - AnterShootoff3_r1 [1] 5,1,1
+                - RightShootoff1
+                  - AntlerShootoff1_r1 [1] 6,2,2
+                  - AntlerShootoff2_r1 [1] 3,1,1
+                  - AntlerShootoff1Shootoff_r1 [1] 3,1,1
+                - RightShootoff2
+                  - AntlerShootoff2_r2 [1] 6,2,2
+                  - AntlerShootoff1Shootoff_r2 [1] 3,1,1
+                  - AntlerShootoff3_r1 [1] 3,1,1
+                - AntlerSeg1_r1 [1] 6,2,2
+              - LeftAntler
+                - LeftAnlterTumorBase
+                  - Tumor2_r3 [1] 3,3,3
+                  - Tumor3_r1 [1] 2,2,2
+                  - Tumor3_r2 [1] 3,3,3
+                - LeftShootoff
+                  - AntlerShootoff4_r1 [1] 3,1,1
+                  - AntlerShootoff1Shootoff_r3 [1] 3,1,1
+                  - AntlerShootoff3_r2 [1] 6,2,2
+                - Seg2
+                  - AntlerSeg3_r2 [1] 4,2,2
+                  - Seg3
+                    - AntlerSeg4_r2 [1] 4,2,2
+                    - AntlerSeg5_r2 [1] 4,2,2
+                    - AnterShootoff4_r1 [1] 5,1,1
+                    - AntlerSeg6_r1 [1] 5,2,2
+                - AntlerSeg2_r2 [1] 6,2,2
+          - Arms
+            - ArmLeft
+              - ArmSeg1_r1 [1] 5,10,5
+              - ArmLeftSeg2 [1] 4,7,4
+                - LeftArmFungus
+                  - Fungus_r19 [1] 7,0,7
+                  - Fungus_r18 [1] 7,0,7
+                  - Fungus_r17 [1] 7,0,7
+                  - Fungus_r16 [1] 7,0,7
+                - ArmLeftSeg3 [1] 3,6,3
+                  - LeftHand [1] 0,11,7
+                    - cube_r1 [1] 0,11,7
+                    - cube_r2 [1] 0,11,7
+            - ArmRight [1] 5,10,5
+              - ArmRightFungus
+                - Fungus_r20 [1] 7,0,7
+                - Tumor_r7 [1] 3,3,3
+                - Tumor_r6 [1] 3,3,3
+                - Tumor_r8 [1] 3,3,3
+                - Fungus_r25 [1] 7,0,7
+                - Fungus_r24 [1] 7,0,7
+                - Fungus_r23 [1] 7,0,7
+                - Fungus_r22 [1] 7,0,7
+                - Fungus_r21 [1] 7,0,7
+              - ArmRightSeg2 [1] 4,7,4
+                - ArmRightSeg3 [1] 3,6,3
+                  - RightHand [1] 0,11,7
+                    - cube_r4 [1] 0,11,7
+                    - cube_r3 [1] 0,11,7
+                  - Tumors
+                    - Tumor_r10 [1] 2,2,2
+                    - Tumor_r9 [1] 2,2,2
+          - TopRibs
+            - SpineTop
+              - Spine_r3 [1] 2,7,1
+            - Rib7 [3] 1,2,9
+            - Rib5 [3] 1,2,9
+            - Rib6 [3] 1,2,9
+            - Rib4 [3] 1,2,9

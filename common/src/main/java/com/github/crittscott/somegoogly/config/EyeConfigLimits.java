@@ -31,7 +31,7 @@ public final class EyeConfigLimits {
     /** Most eyes one variant may declare across all its heads. */
     public static final int MAX_EYES_PER_VARIANT = 128;
     /** Most heads one variant may declare. */
-    public static final int MAX_HEADS_PER_VARIANT = 32;
+    public static final int MAX_HEADS_PER_VARIANT = 64;
     private static final float MAX_SCALE = 16.0F;
     /** Most eyes one eye-definition sync may carry in total. */
     public static final int MAX_TOTAL_EYES_PER_SYNC = 8_192;

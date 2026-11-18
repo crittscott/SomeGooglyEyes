@@ -138,6 +138,7 @@ public final class EyeConfigLimitsGameTestsLogic {
      * The per-container count caps reject before the object graph is walked. In game, a datapack eye
      * definition with more than {@link EyeConfigLimits#MAX_EYES_PER_HEAD} eyes in one head (or too many
      * variants, heads, or eyes per variant) is ignored on {@code /reload}, with a count error in the log.
+     * A variant with the full {@link EyeConfigLimits#MAX_HEADS_PER_VARIANT} heads of two eyes each loads.
      */
     public static void containerCountCapsAreEnforced(GameTestHelper helper) {
         Variant[] tooManyVariants = new Variant[EyeConfigLimits.MAX_VARIANTS_PER_CONFIG + 1];
@@ -146,6 +147,9 @@ public final class EyeConfigLimitsGameTestsLogic {
         }
         assertRejected(helper, config(tooManyVariants), "variant_count");
 
+        helper.assertTrue(EyeConfigLimits.validateRuntimeConfig(
+                        config(variant(EyeConfigLimits.MAX_HEADS_PER_VARIANT, 2))) == null,
+                "a variant with the most heads, two eyes each, is accepted");
         assertRejected(helper, config(variant(EyeConfigLimits.MAX_HEADS_PER_VARIANT + 1, 1)), "head_count");
         assertRejected(helper, config(variant(1, EyeConfigLimits.MAX_EYES_PER_HEAD + 1)), "head_eye_count");
         assertRejected(helper, config(variant(9, 15)), "variant_eye_count");
