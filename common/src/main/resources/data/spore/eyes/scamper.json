@@ -3,13 +3,13 @@
     {
       "version": "(,)",
       "age": "any",
-      "enabled": false,
+      "enabled": true,
       "variants": [
         {
           "weight": 1.0,
           "heads": [
             {
-              "attachPoint": "#0",
+              "attachPoint": "#5",
               "eyes": [
                 {
                   "depth": 1.0,
@@ -17,9 +17,9 @@
                   "azimuth": 270.0,
                   "crossTarget": -1,
                   "position": [
-                    -0.128125,
-                    0.5625,
-                    -0.1325
+                    -0.125,
+                    -0.2,
+                    -0.25125
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,
@@ -41,9 +41,9 @@
                   "azimuth": 270.0,
                   "crossTarget": -1,
                   "position": [
-                    0.128125,
-                    0.5625,
-                    -0.1325
+                    0.125,
+                    -0.2,
+                    -0.25125
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,

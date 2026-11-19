@@ -9,7 +9,7 @@
           "weight": 1.0,
           "heads": [
             {
-              "attachPoint": "Head",
+              "attachPoint": "HeadTop_r1",
               "eyes": [
                 {
                   "depth": 1.0,
@@ -17,9 +17,9 @@
                   "azimuth": 270.0,
                   "crossTarget": -1,
                   "position": [
-                    -0.107225,
-                    0.068875,
-                    0.034713
+                    -0.12315,
+                    -0.033075,
+                    -0.19825
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,
@@ -41,9 +41,9 @@
                   "azimuth": 270.0,
                   "crossTarget": -1,
                   "position": [
-                    0.142775,
-                    0.068875,
-                    0.034713
+                    0.12685,
+                    -0.033075,
+                    -0.19825
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,

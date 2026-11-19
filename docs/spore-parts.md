@@ -4258,7 +4258,7 @@ Every mob in the Spore dump (`othersource/myassets/spore/entity/geometry`), one 
     - Tumor_r5 [1] 12,12,12
     - Tumor_r4 [1] 13,13,13
 
-## hollen (170 parts)
+## hollen (170 parts) - no eyes
 
 - part0
   - body [1] 10,8,6
@@ -4513,7 +4513,7 @@ Every mob in the Spore dump (`othersource/myassets/spore/entity/geometry`), one 
       - Leg_r4 [1] 3,4,3
       - Leg_r3 [1] 3,8,3
 
-## howitzer (851 parts)
+## howitzer (851 parts) - no eyes
 
 - part0
   - MainBodyBodies
@@ -5367,7 +5367,7 @@ Every mob in the Spore dump (`othersource/myassets/spore/entity/geometry`), one 
           - TorsoTop_r50 [1] 8,4,6
           - Arm_r89 [1] 3,3,8
 
-## howler (72 parts)
+## howler (72 parts) - no eyes
 
 - part0
   - RightArm [1] 3,6,4
@@ -5919,7 +5919,7 @@ Every mob in the Spore dump (`othersource/myassets/spore/entity/geometry`), one 
             - claw4 [1] 0,9,5
 - part6 [1] 8,18,6
 
-## inf_hazmat (60 parts)
+## inf_hazmat (60 parts) - no eyes
 
 - part0 [2] 7,5,5
   - TorsoTop [1] 7,5,5
@@ -6220,7 +6220,7 @@ Every mob in the Spore dump (`othersource/myassets/spore/entity/geometry`), one 
       - RightLegSeg2 [1] 5,7,5
         - RightLegSeg2_r1 [1] 4,8,4
 
-## jagd (114 parts)
+## jagd (114 parts) - no eyes
 
 - root
   - Digger
@@ -7981,7 +7981,7 @@ Every mob in the Spore dump (`othersource/myassets/spore/entity/geometry`), one 
         - Biomass_r11 [1] 8,8,8
         - Biomass_r12 [1] 9,9,9
 
-## licker (24 parts)
+## licker (24 parts) - no eyes
 
 - part0
   - LickerSeg2
@@ -8166,7 +8166,7 @@ Every mob in the Spore dump (`othersource/myassets/spore/entity/geometry`), one 
         - RightKneeJoint [2] 4,7,4
           - Petal_r11 [1] 8,0,8
 
-## mound (21 parts)
+## mound (21 parts) - no eyes
 
 - part0 [2] 4,6,4
   - cube_r1 [1] 4,4,4
@@ -11738,7 +11738,7 @@ Every mob in the Spore dump (`othersource/myassets/spore/entity/geometry`), one 
       - BottomTumor_r20 [1] 8,8,8
   - Base [6] 7,21,21
 
-## umarmed (218 parts)
+## umarmed (218 parts) - no eyes
 
 - root <== eyes
   - Base
@@ -12316,7 +12316,7 @@ Every mob in the Spore dump (`othersource/myassets/spore/entity/geometry`), one 
             - Spike7_r1 [1] 3,4,0
             - Spike6_r1 [1] 3,4,0
 
-## verfall (430 parts)
+## verfall (430 parts) - no eyes
 
 - part0
   - MajoTarSack2
@@ -12749,7 +12749,7 @@ Every mob in the Spore dump (`othersource/myassets/spore/entity/geometry`), one 
     - Tumor_r13 [1] 14,14,14
     - Tumor_r14 [1] 11,11,11
 
-## verfall_head (115 parts)
+## verfall_head (115 parts) - no eyes
 
 - part0 [2] 20,8,20
   - FS2Body3
