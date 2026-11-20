@@ -187,9 +187,11 @@ public class ServerConfig {
 
     /** Entity ids the spawn commands skip. */
     public static final ConfigValue.Parsed<Set<String>> SPAWN_EXCLUDED_ENTITIES = add(ConfigValue.parsedStrings(
-            SECTION_PICKER, "spawnExcludedEntities", List.of(), ServerConfig::validateResourceLocation, Set::copyOf, """
+            SECTION_PICKER, "spawnExcludedEntities", List.of("iceandfire:dragon_egg"), ServerConfig::validateResourceLocation, Set::copyOf, """
             Entity ids that /sg spawn and /sg spawnall skip, one quoted entry per line, e.g.
-            "minecraft:armor_stand". Same authoring-only scope as spawnExcludedMods."""));
+            "minecraft:armor_stand". Ice and Fire's dragon egg is excluded by default because a
+            force-spawned egg has no dragon color and crashes the server on its first tick. Same
+            authoring-only scope as spawnExcludedMods."""));
 
     /** One parsed override line. Exact entries match by string equality; wildcard entries by regex. */
     private record SpawnOverride(boolean exact, String literalId, Pattern pattern, int percent) {
