@@ -9,6 +9,23 @@ architectury {
 
 rootProject.configureGameTests(project)
 
+// Scripted-client tests: a Fabric-only source set whose tests stage scenes and take screenshots for review
+// (docs/client-test-plan.md). They need a physical client, which no other loader's GameTest framework drives.
+sourceSets {
+    clientGametest {
+        compileClasspath += main.compileClasspath + main.output
+        runtimeClasspath += main.runtimeClasspath + main.output
+    }
+}
+
+// Client settings that Fabric reads only at game start. Each group gets its own run and run directory, with
+// its config file copied into place before launch; the tests read the group from a system property.
+def clientGameTestLaunchGroups = ['hideAll', 'hideEntities', 'hideMods']
+
+// The client-test framework's network synchronizer can stop the game when it loses track of a packet (seen after a
+// /reload). The tests wait generously and poll server state instead of relying on lockstep packet handling.
+def clientGameTestNoNetworkSync = '-Dfabric.client.gametest.disableNetworkSynchronizer=true'
+
 loom {
     accessWidenerPath = project(':common').loom.accessWidenerPath
 
@@ -25,6 +42,9 @@ loom {
         somegoogly_gametest {
             sourceSet sourceSets.gametest
         }
+        somegoogly_clientgametest {
+            sourceSet sourceSets.clientGametest
+        }
     }
 
     runs {
@@ -35,6 +55,47 @@ loom {
             vmArg "-Dfabric-api.gametest.report-file=${layout.buildDirectory.get().asFile}/gametest-report.xml"
             source sourceSets.gametest
         }
+        clientGameTest {
+            client()
+            name 'Client Game Test'
+            vmArg '-Dfabric.client.gametest'
+            vmArg clientGameTestNoNetworkSync
+            vmArg "-Dsomegoogly.clientgametest.fixtures=${file('src/clientGametest/fixtures')}"
+            source sourceSets.clientGametest
+            runDir 'run/clientgametest'
+        }
+        clientGameTestLaunchGroups.each { group ->
+            register("clientGameTest${group.capitalize()}") {
+                client()
+                name "Client Game Test (${group})"
+                vmArg '-Dfabric.client.gametest'
+                vmArg clientGameTestNoNetworkSync
+                vmArg "-Dsomegoogly.clientgametest.group=${group}"
+                source sourceSets.clientGametest
+                runDir "run/clientgametest-${group}"
+            }
+        }
+    }
+}
+
+// The dedicated server that the multiplayer client tests start runs in the client's own run directory. Accept
+// the EULA there, and clear the server world a previous run left, before every launch.
+tasks.matching { it.name == 'runClientGameTest' }.configureEach {
+    doFirst {
+        def runDirectory = file('run/clientgametest')
+        runDirectory.mkdirs()
+        new File(runDirectory, 'eula.txt').text = 'eula=true\n'
+        delete(new File(runDirectory, 'world'))
+    }
+}
+
+clientGameTestLaunchGroups.each { group ->
+    def prepare = tasks.register("prepareClientGameTest${group.capitalize()}", Copy) {
+        from file("src/clientGametest/launch/${group}")
+        into file("run/clientgametest-${group}/config")
+    }
+    tasks.matching { it.name == "runClientGameTest${group.capitalize()}" }.configureEach {
+        dependsOn prepare
     }
 }
 
@@ -102,6 +163,21 @@ tasks.named('processGametestResources', ProcessResources).configure {
     inputs.properties replaceProperties
 
     filesMatching(['fabric.mod.json', 'pack.mcmeta']) {
+        expand replaceProperties
+    }
+}
+
+// Expands ${...} placeholders in the client-test fabric.mod.json and its built-in datapacks' pack.mcmeta.
+tasks.named('processClientGametestResources', ProcessResources).configure {
+    var replaceProperties = [
+            mod_version          : mod_version,
+            minecraft_version    : minecraft_version,
+            fabric_loader_version: fabric_loader_version,
+            fabric_api_version   : fabric_api_version,
+    ] + rootProject.packFormatProperties
+    inputs.properties replaceProperties
+
+    filesMatching(['fabric.mod.json', '**/pack.mcmeta']) {
         expand replaceProperties
     }
 }

@@ -1,0 +1,6 @@
+{
+  "pack": {
+    "description": "Client tests: cow definition disabled",
+    "pack_format": ${pack_format}
+  }
+}

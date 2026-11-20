@@ -78,6 +78,8 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 - 1.21.8: `EntityTrackingEvents.START_TRACKING` fires at the tail of `ServerEntity.addPairing` (fabric-networking-api-v1 `EntityTrackerEntryMixin`), after the entity's spawn packet is sent, so a packet about the entity sent from it reaches a client that already has the entity. (Fabric API's 1.21.1 branch fires it at the head, before the spawn packet.) [source]
 - `ClientPlayConnectionEvents.JOIN` passes the live `ClientPacketListener`; use it instead of looking one up. [tested]
 - A login query reply can carry a version, which distinguishes a version mismatch from a missing mod. [tested]
+- Client gametests (`fabric-client-gametest-api-v1`): classes implementing `FabricClientGameTest` are listed under the `fabric-client-gametest` entrypoint and run in turn when the client starts with `-Dfabric.client.gametest`. `ClientGameTestContext` offers `worldBuilder()` (singleplayer worlds, and `createServer()` for a dedicated server the client `connect()`s to), `waitTick(s)`, `waitFor`, `waitForScreen`, `setScreen`, `runOnClient`/`computeOnClient`, `getInput()`, and `takeScreenshot(name)` returning the saved file. A singleplayer context's `getWorldSave().open()` reopens the world after `close()`. [recalled]
+- `FabricCreativeInventoryScreen.setSelectedItemGroup` switches the creative screen's tab from code. [recalled]
 
 ## Mixin
 

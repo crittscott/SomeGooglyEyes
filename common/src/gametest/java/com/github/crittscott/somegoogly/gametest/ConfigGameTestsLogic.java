@@ -82,15 +82,19 @@ public final class ConfigGameTestsLogic {
     /**
      * {@code /sg spawnall} terraforms and mass-spawns with no undo, so its server-config gate must ship
      * opt-in. MineColonies and Create entities require spawn context this command does not provide, so
-     * those namespaces must ship excluded. In game: in a new world, the generated
-     * {@code serverconfig/somegoogly-server.toml} has {@code allowSpawnAll = false} and
-     * {@code spawnExcludedMods = ["minecolonies", "create"]}, and {@code /sg spawnall} refuses to run.
+     * those namespaces must ship excluded, and so must Ice and Fire's dragon egg, which crashes the server on
+     * its first tick when spawned without a dragon color. In game: in a new world, the generated
+     * {@code serverconfig/somegoogly-server.toml} has {@code allowSpawnAll = false},
+     * {@code spawnExcludedMods = ["minecolonies", "create"]} and
+     * {@code spawnExcludedEntities = ["iceandfire:dragon_egg"]}, and {@code /sg spawnall} refuses to run.
      */
     public static void spawnAllDefaultsOff(GameTestHelper helper) {
         helper.assertTrue(!ServerConfig.ALLOW_SPAWN_ALL.get(),
                 Component.literal("allowSpawnAll must default to false (spawnall is opt-in)"));
         helper.assertTrue(ServerConfig.SPAWN_EXCLUDED_MODS.get().equals(List.of("minecolonies", "create")),
                 Component.literal("spawnExcludedMods must default to minecolonies and create"));
+        helper.assertTrue(ServerConfig.SPAWN_EXCLUDED_ENTITIES.get().equals(List.of("iceandfire:dragon_egg")),
+                Component.literal("spawnExcludedEntities must default to iceandfire:dragon_egg"));
         helper.succeed();
     }
 

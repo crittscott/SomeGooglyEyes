@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "somegoogly_clientgametest",
+  "version": "${mod_version}",
+  "name": "Some Googly Eyes Client Tests",
+  "environment": "client",
+  "entrypoints": {
+    "main": [
+      "com.github.crittscott.somegoogly.clientgametest.TestPacks"
+    ],
+    "fabric-client-gametest": [
+      "com.github.crittscott.somegoogly.clientgametest.CarrierClientTests",
+      "com.github.crittscott.somegoogly.clientgametest.PhysicsClientTests",
+      "com.github.crittscott.somegoogly.clientgametest.AmbientClientTests",
+      "com.github.crittscott.somegoogly.clientgametest.TriggeredClientTests",
+      "com.github.crittscott.somegoogly.clientgametest.HarvestClientTests",
+      "com.github.crittscott.somegoogly.clientgametest.ApplyClientTests",
+      "com.github.crittscott.somegoogly.clientgametest.CraftingClientTests",
+      "com.github.crittscott.somegoogly.clientgametest.DisplayClientTests",
+      "com.github.crittscott.somegoogly.clientgametest.TargetCheckClientTests",
+      "com.github.crittscott.somegoogly.clientgametest.LifecycleClientTests",
+      "com.github.crittscott.somegoogly.clientgametest.MultiplayerClientTests",
+      "com.github.crittscott.somegoogly.clientgametest.ConfigClientTests",
+      "com.github.crittscott.somegoogly.clientgametest.ReloadClientTests",
+      "com.github.crittscott.somegoogly.clientgametest.PickerClientTests",
+      "com.github.crittscott.somegoogly.clientgametest.LaunchGroupClientTests"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=${fabric_loader_version}",
+    "fabric-api": ">=${fabric_api_version}",
+    "somegoogly": "*"
+  }
+}

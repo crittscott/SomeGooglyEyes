@@ -96,7 +96,7 @@ Forge's required `PayloadChannel` marks payloads handled. NeoForge and Forge iso
 
 ## Automated verification
 
-GameTest scenarios: Fabric 186, Forge 189, NeoForge 189. Item coverage: twelve frame, seven GUI, seven hand, and thirteen boat scenarios per loader. Client checklists: `docs/framed-eyes-testing.md`, `docs/inventory-eyes-testing.md`, `docs/third-person-eyes-testing.md`, and `docs/boat-eyes-testing.md`. Visuals, connections, protection ordering, and real saves need manual checks.
+GameTest scenarios: Fabric 186, Forge 189, NeoForge 189. Fabric client tests (`fabric/src/clientGametest`, scenarios in `docs/client-test-plan.md`) stage each scenario through `Scene` and write screenshots with expectations to `run/clientgametest/review/<time>/`, judged in `../screenshot-review`. Forge and NeoForge visuals use the checklists in `docs/*-testing.md`; protection ordering needs manual checks.
 
 ## Operational boundaries
 

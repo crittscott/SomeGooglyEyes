@@ -1,0 +1,6 @@
+{
+  "pack": {
+    "description": "Client tests: a stick counts as shears",
+    "pack_format": ${pack_format}
+  }
+}

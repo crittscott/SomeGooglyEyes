@@ -1,0 +1,6 @@
+{
+  "pack": {
+    "description": "Client tests: one-eye birch boat",
+    "pack_format": ${pack_format}
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "pack": {
+    "description": "Client tests: raised cow eyes",
+    "pack_format": ${pack_format}
+  }
+}
