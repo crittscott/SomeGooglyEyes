@@ -75,7 +75,7 @@ Each client works these out from state the game already shares, so they cost the
 | --- | --- | --- |
 | `allowSpawnAll` | `false` | Must be set `true` before `/sg spawnall` will run. **Only enable this on a test world** — `/sg spawnall` force-spawns every summonable mob, and mobs from mods like MineColonies can corrupt a world when spawned outside their mod's normal context. See [docs/picker.md](picker.md). |
 | `spawnExcludedMods` | `minecolonies`, `create` | Namespaces that `/sg spawn` and `/sg spawnall` skip, e.g. `"mekanism"`. Authoring commands only. No effect on eye eligibility or natural spawning. Only remove either entry on a world you're prepared to lose. |
-| `spawnExcludedEntities` | empty | Entity ids that `/sg spawn` and `/sg spawnall` skip, e.g. `"minecraft:armor_stand"`. Same authoring-only scope. |
+| `spawnExcludedEntities` | `iceandfire:dragon_egg` | Entity ids that `/sg spawn` and `/sg spawnall` skip, e.g. `"minecraft:armor_stand"`. Same authoring-only scope. |
 
 ## Client config
 

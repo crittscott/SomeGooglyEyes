@@ -145,7 +145,7 @@ entityOverrides = [
 
 Expression IDs (`somegoogly:`): `blink`, `cross_eye`, `side_eye`, `stare`, `grow`, `love`, `swirl`, `color_change`.
 
-`allowSpawnAll` (default `false`) gates `/sg spawnall`; use it only on a throwaway world, since force-spawning some mods' mobs (MineColonies, Create) can corrupt one. `spawnExcludedMods` (default `minecolonies`, `create`) and `spawnExcludedEntities` (default empty) list namespaces and ids that `/sg spawn` and `/sg spawnall` skip.
+`allowSpawnAll` (default `false`) gates `/sg spawnall`; use it only on a throwaway world, since force-spawning some mods' mobs (MineColonies, Create) can corrupt one. `spawnExcludedMods` (default `minecolonies`, `create`) and `spawnExcludedEntities` (default `iceandfire:dragon_egg`) list namespaces and ids that `/sg spawn` and `/sg spawnall` skip.
 
 ### Client display
 
