@@ -9,6 +9,9 @@
     "HealReactionMixin",
     "LivingEntityDeathLootMixin"
   ],
+  "client": [
+    "ClientPacketListenerCommandsMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   }
