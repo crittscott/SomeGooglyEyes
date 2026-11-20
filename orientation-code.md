@@ -84,7 +84,7 @@ Client picker drafts/previews are separate from server freezing/spawning/movemen
 
 `PickerFreezeService` restores prior `NoAI` on release, load, logout, or stop and permits one editor. `PickerGate` owns creative/operator authorization, throttles, and picker feedback. `PickerSpawnService` finalizes through `MobSpawning`, checks individual insertion results, reverses partial additions on failure, and applies terrain only after full acceptance. Its `refusal` also filters suggestions. Exports write a world datapack or game-directory files and log disk failures. Both use `ConfigFile.exportVersion`/`overlay`, replacing authored ages, preserving untouched/disabled definitions, and canonicalizing copied tokens.
 
-`/sg` editing is client-side; admin/spawn/mob-pose are server-side. Fabric forwards `GooglyServerCommands.SERVER_BRANCHES`.
+`/sg` editing is client-side; admin/spawn/mob-pose are server-side. Fabric forwards `GooglyServerCommands.SERVER_BRANCHES` and adds the picker verbs to the received server tree (`ClientPacketListenerCommandsMixin`).
 
 ## Loader integration
 
