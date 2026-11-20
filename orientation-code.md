@@ -82,7 +82,7 @@ Sends go through the platform bridges; clientbound handlers link the client hand
 
 `PickerFreezeService` preserves prior `NoAI`, reconciles locks at load/logout/stop, hands a lock to a converted mob, and allows one editor. `PickerGate` owns authorization (creative plus `Permissions.COMMANDS_GAMEMASTER`) and throttles; spawn-all also needs server enablement. `PickerSpawnService` uses `MobSpawning` for loader spawn finalization, honors cancellation, then sets `NoAI`, persistence, and rotation. Its `refusal` filters commands and suggestions. Individual insertion results decide acceptance; incomplete groups roll back in reverse order, and terrain follows full acceptance. World export validates the merged definition sync budget, writes the generated datapack, and invokes vanilla reload. Export-all writes the game-directory export tree. The world pack declares the running game’s major and minor data-pack format.
 
-`LookTarget` limits entity intersections by the nearest blocking surface; the inspector reads the game's crosshair target. Client editing and server admin, spawn, and pose commands share `/sg`. Fabric forwards the server branches.
+`LookTarget` limits entity intersections by the nearest blocking surface; the inspector reads the game's crosshair target. Client editing and server admin, spawn, and pose commands share `/sg`. Fabric forwards the server branches and adds the picker verbs to the received server tree (`ClientPacketListenerCommandsMixin`).
 
 ## Loader integration
 
