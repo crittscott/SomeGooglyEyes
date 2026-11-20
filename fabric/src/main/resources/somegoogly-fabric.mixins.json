@@ -15,6 +15,7 @@
     "ServerEntityPairingMixin"
   ],
   "client": [
+    "ClientPacketListenerCommandsMixin",
     "MinecraftLevelMixin"
   ],
   "injectors": {

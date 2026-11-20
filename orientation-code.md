@@ -110,7 +110,7 @@ Client owns picker drafts/previews; server owns freezing/spawning/movement/expor
 
 `PickerFreezeService` restores prior `NoAI` on release, load, logout, or stop and permits one editor. `PickerGate` also throttles. `LookTarget` caps extended entity rays at blocking surfaces; inspection reads vanilla's crosshair target. `PickerSpawnService` finalizes through `MobSpawning`, checks each mob/passenger insertion result and rolls back partial additions on refusal, and applies planned terrain only after acceptance. Its `refusal` also filters suggestions. World export writes a datapack; bulk export writes under the game directory and logs disk failures; both use `ConfigFile.exportVersion`.
 
-`/sg` editing is client-side; admin/spawn/mob-pose are server-side. Fabric forwards `SERVER_BRANCHES`.
+`/sg` editing is client-side; admin/spawn/mob-pose are server-side. Fabric forwards `SERVER_BRANCHES` and adds the picker verbs to the received server tree (`ClientPacketListenerCommandsMixin`).
 
 ## Loader integration
 
