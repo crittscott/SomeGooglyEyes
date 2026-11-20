@@ -165,7 +165,8 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">containerCountCapsAreEnforced</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 <div class="block">The per-container count caps reject before the object graph is walked. In game, a datapack eye
  definition with more than <code>EyeConfigLimits.MAX_EYES_PER_HEAD</code> eyes in one head (or too many
- variants, heads, or eyes per variant) is ignored on <code>/reload</code>, with a count error in the log.</div>
+ variants, heads, or eyes per variant) is ignored on <code>/reload</code>, with a count error in the log.
+ A variant with the full <code>EyeConfigLimits.MAX_HEADS_PER_VARIANT</code> heads of two eyes each loads.</div>
 </section>
 </li>
 </ul>
