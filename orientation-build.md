@@ -73,7 +73,7 @@ The Java setting is exact only at the language/toolchain-major level. The reposi
 
 ## Artifact and runtime version declarations
 
-These values do not select build tools, but they are versioned inputs consumed by resource expansion and are relevant when reproducing the produced artifacts.
+Resource expansion consumes these artifact and runtime versions.
 
 Each loader expands its metadata (`fabric.mod.json`, `META-INF/mods.toml`, `META-INF/neoforge.mods.toml`) from the root `sharedModProperties`, which include `mod_homepage` and the source (`<homepage>/tree/<minecraft_version>`) and issue-tracker (`<homepage>/issues`) URLs derived from it.
 
