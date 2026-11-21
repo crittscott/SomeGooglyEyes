@@ -90,6 +90,9 @@ public final class GooglyGeoLayer<T extends Entity & GeoAnimatable, R extends En
         bones.remove(null);
         for (GeoBone bone : bones) {
             consumer.accept(bone, (pass, attachment, collector) -> {
+                // GeckoLib hands per-bone tasks a pose at the bone's pivot; eye offsets are measured from the
+                // bone's frame at the model origin, so step back off the pivot.
+                attachment.translateAwayFromPivotPoint(pass.poseStack());
                 if (frame.preview) {
                     renderPreviewAt(pass.poseStack(), attachment, frame, collector,
                             pass.packedLight(), pass.packedOverlay());
