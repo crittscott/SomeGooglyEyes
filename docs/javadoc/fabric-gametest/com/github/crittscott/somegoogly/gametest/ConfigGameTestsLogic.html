@@ -218,10 +218,12 @@ after the file gains newly introduced keys.</div>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">spawnAllDefaultsOff</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 <div class="block"><code>/sg spawnall</code> terraforms and mass-spawns with no undo, so its server-config gate must ship
 opt-in. MineColonies and Create entities require spawn context this command does not provide, so
-those namespaces must ship excluded. In game: in a new world, the generated server config
-(<code>serverconfig/somegoogly-server.toml</code> in the world on Fabric and Forge,
-<code>config/somegoogly-server.toml</code> on NeoForge) has <code>allowSpawnAll = false</code> and
-<code>spawnExcludedMods = ["minecolonies", "create"]</code>, and <code>/sg spawnall</code> refuses to run.</div>
+those namespaces must ship excluded, and so must Ice and Fire's dragon egg, which crashes the server on
+its first tick when spawned without a dragon color. In game: in a new world, the generated server
+config (<code>serverconfig/somegoogly-server.toml</code> in the world on Fabric and Forge,
+<code>config/somegoogly-server.toml</code> on NeoForge) has <code>allowSpawnAll = false</code>,
+<code>spawnExcludedMods = ["minecolonies", "create"]</code> and
+<code>spawnExcludedEntities = ["iceandfire:dragon_egg"]</code>, and <code>/sg spawnall</code> refuses to run.</div>
 </div>
 </section>
 </li>
