@@ -100,3 +100,4 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 
 - Maven `VersionRange` reads a bare version as a soft recommendation that matches everything, so it is not a drop-in reader for data where a bare version means an exact one. [recalled]
 - Twilight Forest's `AbstractTrophyBlock.use` always consumes the click, so an item's `useOn` never runs on a trophy unless the player sneaks. [recalled]
+- GeckoLib 5.4 runs `PerBoneRender` tasks after `RenderUtil.transformToBone`, which ends at the bone's pivot; GeckoLib 5.2 gave them the bone's frame at the model origin. A pose set in a renderer's `preRenderPass` (such as a model scale) is included. [GeckoLib source; tested on 1.21.11]
