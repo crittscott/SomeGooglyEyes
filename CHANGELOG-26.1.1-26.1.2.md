@@ -7,6 +7,7 @@
 - GeckoLib-based mobs get eyes on Forge again.
 - Eyes on a sheep's rear move in to the bare body when it is sheared and back out when the wool regrows.
 - Ice and Fire Community Edition mobs get eyes again with its Uranus 3.0 renderers on NeoForge and Forge, in the picker as well.
+- Twilight Forest skull candles and trophies get eyes on Fabric.
 
 ### Fixed
 - Use the clicked head for Adventure-mode item permissions. Applying and harvesting eyes count toward item-use statistics.

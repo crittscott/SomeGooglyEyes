@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.mixin.neoforge.twilight;
+package com.github.crittscott.somegoogly.mixin.common.twilight;
 
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;

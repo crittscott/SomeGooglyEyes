@@ -44,7 +44,7 @@ Mutations send one full snapshot; stored rolls read clamped to 0..1. Eye state a
 
 Eye items carry `AppearanceOverride` in the synced `somegoogly:eye_properties` component, never geometry; harvesting copies the first eye's appearance, the modifier recipe changes only that component, and the Slimy Eye transmute copies every component.
 
-Placed heads save and sync their eye snapshot under the Mixin-owned `somegoogly:data` key, normalized to an eye-state snapshot on load. Items use the `somegoogly:head_eyes` component. Optional NeoForge mixins carry eyes through Twilight Forest skull candles and give trophies skulls' storage, item, and render lifecycle. Hydra uses its own trophy layout.
+Placed heads save and sync their eye snapshot under the Mixin-owned `somegoogly:data` key, normalized to an eye-state snapshot on load. Items use the `somegoogly:head_eyes` component. Optional common mixins, loaded on NeoForge and Fabric, carry eyes through Twilight Forest skull candles and give trophies skulls' storage, item, and render lifecycle. Hydra uses its own trophy layout.
 
 Saved data from the 26.1.1 release is already in current form; nothing migrates.
 

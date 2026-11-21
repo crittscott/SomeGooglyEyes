@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.mixin.neoforge.twilight.client;
+package com.github.crittscott.somegoogly.mixin.common.twilight.client;
 
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.github.crittscott.somegoogly.client.render.SkullEyeRenderer;
@@ -13,19 +13,19 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
- * Chooses a placed skull candle's eyes as its render state is extracted and brackets the candle's {@code submit} with
- * a {@link ClientEyeRuntime} draw context carrying them, so the skull model submitted inside gets them as a vanilla
- * head's does under {@code SkullBlockRendererMixin}. Twilight Forest is an optional mod with no API for this, and its
- * skull candle renderer and block entity are its own, so vanilla's head renderer never extracts or submits them.
+ * Chooses a placed trophy's eyes as its render state is extracted and brackets the trophy's {@code submit} with a
+ * {@link ClientEyeRuntime} draw context carrying them, inside which the trophy model Mixins draw the eyes, as
+ * {@code SkullBlockRendererMixin} does for vanilla heads. Twilight Forest is an optional mod with no API for this,
+ * and its trophy renderer submits its boss models itself instead of going through vanilla's head renderer.
  */
 @Pseudo
-@Mixin(targets = "twilightforest.client.renderer.block.SkullCandleRenderer", remap = false)
-abstract class TwilightSkullCandleRendererMixin {
-    private static final String STATE = "Ltwilightforest/client/state/block/SkullCandleRenderState;";
+@Mixin(targets = "twilightforest.client.renderer.block.TrophyRenderer", remap = false)
+abstract class TwilightTrophyRendererMixin {
+    private static final String STATE = "Ltwilightforest/client/state/block/TrophyRenderState;";
     private static final String SUBMIT = "submit(" + STATE + "Lcom/mojang/blaze3d/vertex/PoseStack;"
             + "Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/level/CameraRenderState;)V";
 
-    @Inject(method = "extractRenderState(Ltwilightforest/block/entity/SkullCandleBlockEntity;" + STATE
+    @Inject(method = "extractRenderState(Ltwilightforest/block/entity/TrophyBlockEntity;" + STATE
             + "FLnet/minecraft/world/phys/Vec3;Lnet/minecraft/client/renderer/feature/ModelFeatureRenderer$CrumblingOverlay;)V",
             at = @At("TAIL"))
     private void somegoogly$extractEyes(@Coerce BlockEntity head, @Coerce Object state, float partialTick,

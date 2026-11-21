@@ -1,4 +1,4 @@
-package com.github.crittscott.somegoogly.mixin.neoforge.twilight.client;
+package com.github.crittscott.somegoogly.mixin.common.twilight.client;
 
 import com.github.crittscott.somegoogly.client.PresentationEyes;
 import com.github.crittscott.somegoogly.client.render.SkullEyeRenderer;

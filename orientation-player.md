@@ -68,7 +68,7 @@ To take your own eyes off, sneak and right-click the air with shears. Optometris
 
 ## Mob heads
 
-Skeleton, wither skeleton, zombie, creeper, piglin, and player heads use their mob's eye layout. On NeoForge, configured Heads-mod heads and Twilight Forest skull candles and trophies also work. Adding a candle preserves eyes, and breaking the candle block returns them on the vanilla skull. An eyed mob's own head can inherit its eyes on death. A Slimy Eye applies eyes and Optometrist shears harvest one, with use permission at the clicked head, including the item's Adventure-mode block rule.
+Skeleton, wither skeleton, zombie, creeper, piglin, and player heads use their mob's eye layout. On NeoForge, configured Heads-mod heads also work; on NeoForge and Fabric, Twilight Forest skull candles and trophies do too. Adding a candle preserves eyes, and breaking the candle block returns them on the vanilla skull. An eyed mob's own head can inherit its eyes on death. A Slimy Eye applies eyes and Optometrist shears harvest one, with use permission at the clicked head, including the item's Adventure-mode block rule.
 
 A broken eyed head's item keeps its eyes, listed in its tooltip, and restores them when placed. Head eyes settle under gravity and play synchronized idle expressions. Cross-eye requires a paired layout. GUI/framed/third-person held heads animate; ground/first-person heads rest; worn heads show none.
 

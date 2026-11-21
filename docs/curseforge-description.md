@@ -28,7 +28,7 @@ Includes attachment support for GeckoLib-, Citadel-, and Uranus-based mobs, as w
 
 **Loose eyes are lively too**: a Googly Eye's pupils roll around in your hand, in item frames, and in your inventory, bulge when you're hurt, and swirl when you heal.
 
-**Decorate with heads**: placed mob heads can have googly eyes too. An eyed skeleton's dropped skull keeps its eyes; a slimy eye gives any skeleton, wither skeleton, zombie, creeper, piglin, or player head a pair, and Optometrist shears pluck them back off. Eyed heads keep their eyes when broken and placed again. On NeoForge, most of the Heads mod's mob heads and Twilight Forest's trophies and skull candles work the same way.
+**Decorate with heads**: placed mob heads can have googly eyes too. An eyed skeleton's dropped skull keeps its eyes; a slimy eye gives any skeleton, wither skeleton, zombie, creeper, piglin, or player head a pair, and Optometrist shears pluck them back off. Eyed heads keep their eyes when broken and placed again. Twilight Forest's trophies and skull candles work the same way on NeoForge and Fabric, as do most of the Heads mod's mob heads on NeoForge.
 
 **Decorate your boat**: Vanilla boats and chest boats, including bamboo rafts, can receive a Slimy Eye and play ambient expressions. Optometrist shears remove their eyes. Eyes survive world saves, but breaking and replacing a boat resets them.
 

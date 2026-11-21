@@ -1,7 +1,7 @@
 {
   "required": false,
   "minVersion": "0.8",
-  "package": "com.github.crittscott.somegoogly.mixin.neoforge.twilight",
+  "package": "com.github.crittscott.somegoogly.mixin.common.twilight",
   "compatibilityLevel": "JAVA_${mixin_java_version}",
   "mixins": [
     "TwilightSkullConversionMixin",
