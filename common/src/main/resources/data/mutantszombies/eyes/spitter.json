@@ -9,7 +9,7 @@
           "weight": 1.0,
           "heads": [
             {
-              "attachPoint": "#0",
+              "attachPoint": "head2",
               "eyes": [
                 {
                   "depth": 1.0,
@@ -62,7 +62,7 @@
               ]
             },
             {
-              "attachPoint": "#1",
+              "attachPoint": "head3",
               "eyes": [
                 {
                   "depth": 1.0,
@@ -115,7 +115,7 @@
               ]
             },
             {
-              "attachPoint": "#2",
+              "attachPoint": "head4",
               "eyes": [
                 {
                   "depth": 1.0,
@@ -168,7 +168,7 @@
               ]
             },
             {
-              "attachPoint": "#3",
+              "attachPoint": "head5",
               "eyes": [
                 {
                   "depth": 1.0,
@@ -221,7 +221,7 @@
               ]
             },
             {
-              "attachPoint": "#4",
+              "attachPoint": "head6",
               "eyes": [
                 {
                   "depth": 1.0,
@@ -274,7 +274,7 @@
               ]
             },
             {
-              "attachPoint": "#5",
+              "attachPoint": "head7",
               "eyes": [
                 {
                   "depth": 1.0,
@@ -327,7 +327,7 @@
               ]
             },
             {
-              "attachPoint": "#6",
+              "attachPoint": "head8",
               "eyes": [
                 {
                   "depth": 1.0,
