@@ -13,13 +13,15 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import javax.annotation.Nullable;
 
 /**
  * Gives the head block entity its eye-state compound ({@link SkullEyeState.Holder}), saved under
  * {@link SkullEyeState#DATA_KEY} with its own data while it has eyes and replaced on every load, so the server's save and the
- * clients' update packets carry it; a load without the key clears it. The head's item form carries the same
+ * clients' update packets carry it; a load without the key clears it. The update tag carries the compound even
+ * without eyes, so the client clears them. The head's item form carries the same
  * state as the {@link ModContent#HEAD_EYES} component, taken and given here as an implicit component, the way
  * the head's own profile is.
  */
@@ -78,5 +80,10 @@ abstract class SkullBlockEntityDataMixin implements SkullEyeState.Holder {
     @Inject(method = "saveAdditional", at = @At("TAIL"))
     private void somegoogly$save(CompoundTag tag, HolderLookup.Provider registries, CallbackInfo callback) {
         somegoogly$saveEyes(tag);
+    }
+
+    @Inject(method = "getUpdateTag", at = @At("RETURN"))
+    private void somegoogly$updateTag(HolderLookup.Provider registries, CallbackInfoReturnable<CompoundTag> callback) {
+        somegoogly$syncEyes(callback.getReturnValue());
     }
 }
