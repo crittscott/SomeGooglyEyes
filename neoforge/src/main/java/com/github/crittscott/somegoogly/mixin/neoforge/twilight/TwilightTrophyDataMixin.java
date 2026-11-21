@@ -31,7 +31,9 @@ abstract class TwilightTrophyDataMixin extends BlockEntity implements SkullEyeSt
 
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        return saveWithoutMetadata(registries);
+        CompoundTag tag = saveWithoutMetadata(registries);
+        somegoogly$syncEyes(tag);
+        return tag;
     }
 
     @Override
