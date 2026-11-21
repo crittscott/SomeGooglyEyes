@@ -14,6 +14,7 @@ loom {
 
     forge {
         mixinConfig 'somegoogly-common.mixins.json'
+        mixinConfig 'somegoogly-iceandfire.mixins.json'
     }
 
     mods {

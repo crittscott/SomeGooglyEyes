@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.client;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.client.compat.GeckoCompat;
+import com.github.crittscott.somegoogly.client.compat.IceAndFireCompat;
 import com.github.crittscott.somegoogly.client.picker.PickerInput;
 import com.github.crittscott.somegoogly.client.picker.PickerState;
 import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
@@ -22,6 +23,9 @@ public final class ClientLifecycle {
         List<String> integrations = new ArrayList<>(Resolvers.availableFamilies());
         if (GeckoCompat.isLoaded()) {
             integrations.add("GeckoLib");
+        }
+        if (IceAndFireCompat.isAvailable()) {
+            integrations.add("Ice and Fire CE renderers");
         }
         SomeGooglyCommon.LOGGER.info("{} client setup finished; optional integrations found: {}",
                 SomeGooglyCommon.MOD_NAME, integrations);

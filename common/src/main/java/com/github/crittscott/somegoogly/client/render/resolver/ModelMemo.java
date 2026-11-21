@@ -14,7 +14,7 @@ import java.util.Map;
  *
  * <p>Client main thread only.
  *
- * @param <K> the model type keyed on ({@code EntityModel}, or GeckoLib's {@code BakedGeoModel})
+ * @param <K> the model type keyed on (any resolver model, or GeckoLib's {@code BakedGeoModel})
  * @param <V> the resolved value ({@link Attachment}, or a GeckoLib bone)
  */
 public final class ModelMemo<K, V> {

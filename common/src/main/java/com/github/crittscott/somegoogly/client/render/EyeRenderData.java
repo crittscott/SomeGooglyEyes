@@ -29,6 +29,11 @@ public record EyeRenderData(boolean pickerTarget, @Nullable HeadInfo helper, @Nu
     public static final EyeRenderData NONE = new EyeRenderData(false, null, null, 0.0F);
     private static final EyeRenderData PICKER_TARGET = new EyeRenderData(true, null, null, 0.0F);
 
+    /** Whether anything draws: the picker preview or normal eyes. */
+    public boolean draws() {
+        return pickerTarget || helper != null;
+    }
+
     /** Take this frame's decision for {@code living}; marks its tracker rendered when eyes will draw. */
     public static EyeRenderData extract(LivingEntity living, float partialTick) {
         if (PickerState.isActiveTarget(living)) {

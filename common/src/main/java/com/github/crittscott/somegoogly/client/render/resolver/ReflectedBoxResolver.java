@@ -3,7 +3,6 @@ package com.github.crittscott.somegoogly.client.render.resolver;
 import com.github.crittscott.somegoogly.client.compat.ClientIntegrationFailures;
 import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.model.EntityModel;
 
 import org.jspecify.annotations.Nullable;
 import java.lang.reflect.Field;
@@ -41,9 +40,9 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
     // Indexed per model instance (models are singletons per renderer; render thread only). Both families'
     // boxes hold a reference back to their model, so an entry keeps its own weak key alive and only
     // clearModelCache() actually reclaims it.
-    private final Map<EntityModel<?>, ModelIndex> cache = new WeakHashMap<>();
+    private final Map<Object, ModelIndex> cache = new WeakHashMap<>();
     // Models whose reflection failed draw no eyes until the next reset; the family's other models go on.
-    private final Set<EntityModel<?>> failedModels = Collections.newSetFromMap(new WeakHashMap<>());
+    private final Set<Object> failedModels = Collections.newSetFromMap(new WeakHashMap<>());
 
     @Override
     public void clearModelCache() {
@@ -52,14 +51,14 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
     }
 
     /** Give up on {@code model} until the next reset and log the failure once. */
-    private void fail(String operation, EntityModel<?> model, Object subject, Throwable failure) {
+    private void fail(String operation, Object model, Object subject, Throwable failure) {
         failedModels.add(model);
         ClientIntegrationFailures.warnOnce(familyLabel(), operation,
                 subject.getClass().getName(), failure);
     }
 
     /** Whether reflection on {@code model} has failed since the last reset; other models are unaffected. */
-    protected final boolean failed(EntityModel<?> model) {
+    protected final boolean failed(Object model) {
         return failedModels.contains(model);
     }
 
@@ -83,7 +82,7 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
     protected abstract Class<?> boxClass();
 
     /** The family's iterable of all the model's boxes, in its stable order. */
-    protected abstract Object rawParts(EntityModel<?> model) throws ReflectiveOperationException;
+    protected abstract Object rawParts(Object model) throws ReflectiveOperationException;
 
     /** The box's author-set name, or {@code ""} when the family has none / it is unset. */
     protected abstract String intrinsicName(Object part);
@@ -95,7 +94,7 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
     protected abstract void rawTransform(Object part, PoseStack poseStack) throws ReflectiveOperationException;
 
     /** All of the model's boxes in the family's stable order; empty on any reflection failure. */
-    private List<Object> collectParts(EntityModel<?> model) {
+    private List<Object> collectParts(Object model) {
         if (!available()) {
             return List.of();
         }
@@ -117,7 +116,7 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
     }
 
     /** The parent box of {@code model}'s {@code part}, or {@code null} for a root or on reflection failure. */
-    private Object parentOf(EntityModel<?> model, Object part) {
+    private Object parentOf(Object model, Object part) {
         try {
             Object parent = rawParent(part);
             return boxClass().isInstance(parent) ? parent : null;
@@ -128,7 +127,7 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
     }
 
     /** Apply the local pose transform of {@code model}'s {@code part}; false on reflection failure. */
-    private boolean applyTransform(EntityModel<?> model, Object part, PoseStack poseStack) {
+    private boolean applyTransform(Object model, Object part, PoseStack poseStack) {
         try {
             rawTransform(part, poseStack);
             return true;
@@ -138,7 +137,7 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
         }
     }
 
-    private ModelIndex buildIndex(EntityModel<?> model) {
+    private ModelIndex buildIndex(Object model) {
         List<Object> parts = collectParts(model);
         if (parts.isEmpty()) {
             return ModelIndex.EMPTY;
@@ -160,7 +159,7 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
      * else the box's positional {@code #N}. An unlisted, unnamed, field-less box (a stray ancestor)
      * has no entry and is skipped when it appears mid-path.
      */
-    private Map<Object, String> fallbackNames(EntityModel<?> model, List<Object> parts) {
+    private Map<Object, String> fallbackNames(Object model, List<Object> parts) {
         Map<Object, String> names = new IdentityHashMap<>();
         for (int i = 0; i < parts.size(); i++) {
             names.put(parts.get(i), EyeConfigModel.attachmentIndex(i));
@@ -199,7 +198,7 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
         return -1;
     }
 
-    private ModelIndex indexOf(EntityModel<?> model) {
+    private ModelIndex indexOf(Object model) {
         return cache.computeIfAbsent(model, this::buildIndex);
     }
 
@@ -208,7 +207,7 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
      * fallback (field name / {@code #N}); ancestors with neither are skipped. The part itself is
      * always listed, so its own segment — and hence the path — is never empty.
      */
-    private String pathOf(EntityModel<?> model, Object part, Map<Object, String> fallbackNames) {
+    private String pathOf(Object model, Object part, Map<Object, String> fallbackNames) {
         ArrayDeque<String> segments = new ArrayDeque<>();
         for (Object box = part; box != null; box = parentOf(model, box)) {
             String segment = segmentName(box, fallbackNames);
@@ -228,7 +227,7 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
     }
 
     @Override
-    public String canonicalToken(EntityModel<?> model, String storedToken) {
+    public String canonicalToken(Object model, String storedToken) {
         if (!handles(model)) {
             return storedToken;
         }
@@ -238,7 +237,7 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
     }
 
     @Override
-    public List<String> enumerateParts(EntityModel<?> model) {
+    public List<String> enumerateParts(Object model) {
         if (!handles(model)) {
             return List.of();
         }
@@ -252,9 +251,9 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
      */
     private final class BoxChain implements Attachment {
         private final Object[] chain;
-        private final EntityModel<?> model;
+        private final Object model;
 
-        BoxChain(EntityModel<?> model, Object[] chain) {
+        BoxChain(Object model, Object[] chain) {
             this.model = model;
             this.chain = chain;
         }
@@ -275,7 +274,7 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
 
     @Override
     @Nullable
-    public Attachment resolve(EntityModel<?> model, String partToken) {
+    public Attachment resolve(Object model, String partToken) {
         if (!handles(model)) {
             return null;
         }

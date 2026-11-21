@@ -25,20 +25,24 @@ import java.util.Map;
  * baby's eyes. The descent mirrors {@link ModelPart#visit}, except that it does <b>not</b> skip cube-less
  * pivot/group parts, so eyes can attach to a named empty joint.
  *
- * <p>It handles every model, so {@link Resolvers} tries it last.
+ * <p>It handles every {@link EntityModel}, so {@link Resolvers} tries it last. A model that is not one
+ * (a standalone library model whose own resolver gave up on it) gets no parts and no attachments.
  */
 public class RootModelResolver implements EyeAttachmentResolver {
 
 
     @Override
-    public boolean handles(EntityModel<?> model) {
-        return true;
+    public boolean handles(Object model) {
+        return model instanceof EntityModel<?>;
     }
 
     @Override
-    public List<String> enumerateParts(EntityModel<?> model) {
+    public List<String> enumerateParts(Object model) {
+        if (!(model instanceof EntityModel<?> entityModel)) {
+            return List.of();
+        }
         List<String> out = new ArrayList<>();
-        enumerate("", EyeConfigModel.PART_ROOT, model.root(), out);
+        enumerate("", EyeConfigModel.PART_ROOT, entityModel.root(), out);
         return out;
     }
 
@@ -51,7 +55,7 @@ public class RootModelResolver implements EyeAttachmentResolver {
     }
 
     @Override
-    public String canonicalToken(EntityModel<?> model, String storedToken) {
+    public String canonicalToken(Object model, String storedToken) {
         // First part (pre-order) whose path suffix-matches the stored token — the same order the search
         // below follows, so canonical naming and attachment agree.
         for (String path : enumerateParts(model)) {
@@ -75,9 +79,12 @@ public class RootModelResolver implements EyeAttachmentResolver {
 
     @Override
     @Nullable
-    public Attachment resolve(EntityModel<?> model, String partToken) {
+    public Attachment resolve(Object model, String partToken) {
+        if (!(model instanceof EntityModel<?> entityModel)) {
+            return null;
+        }
         ArrayDeque<ModelPart> chain = new ArrayDeque<>();
-        return search("", EyeConfigModel.PART_ROOT, model.root(), partToken, chain)
+        return search("", EyeConfigModel.PART_ROOT, entityModel.root(), partToken, chain)
                 ? new PartChain(chain.toArray(new ModelPart[0]))
                 : null;
     }

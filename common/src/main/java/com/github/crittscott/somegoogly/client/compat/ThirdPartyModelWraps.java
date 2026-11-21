@@ -1,7 +1,6 @@
 package com.github.crittscott.somegoogly.client.compat;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.model.EntityModel;
 
 import org.jspecify.annotations.Nullable;
 import java.util.Map;
@@ -157,7 +156,7 @@ public final class ThirdPartyModelWraps {
      * {@code young}. No-op for every unlisted model and for a listed model whose active branch renders at
      * identity.
      */
-    public static void preTransform(EntityModel<?> model, boolean young, PoseStack poseStack) {
+    public static void preTransform(Object model, boolean young, PoseStack poseStack) {
         String name = model.getClass().getName();
         apply(EXOTIC_BIRDS.get(name), young, poseStack);
         apply(ALEXS_MOBS.get(name), young, poseStack);

@@ -30,7 +30,8 @@ import net.minecraft.client.renderer.entity.state.SheepRenderState;
  * submitted, so the layer poses the parent model for this render state itself before walking its parts.
  *
  * <p>The GeckoLib counterpart is {@code GooglyGeoLayer}, which makes the same split from GeckoLib's
- * per-bone callback.
+ * per-bone callback. {@code IceAndFireCompat} draws through {@link #submitEyes} from Ice and Fire CE's own
+ * renderer features.
  */
 public class LayerGooglyEyes<S extends LivingEntityRenderState, M extends EntityModel<? super S>>
         extends RenderLayer<S, M> {
@@ -41,29 +42,16 @@ public class LayerGooglyEyes<S extends LivingEntityRenderState, M extends Entity
         super(renderer);
     }
 
-    @Override
-    public void submit(PoseStack poseStack, SubmitNodeCollector collector, int packedLight, S state,
-                       float yRot, float xRot) {
-        EyeRenderData data = EyeRenderData.of(state);
-        if (!data.pickerTarget() && data.helper() == null) {
-            return;
-        }
-
-        // Resolve the part-tree strategy for this model family (string names / stable indices).
-        M model = this.getParentModel();
-        model.setupAnim(state);
-        EyeAttachmentResolver resolver = Resolvers.forModel(model);
-        int overlay = LivingEntityRenderer.getOverlayCoords(state, 0.0F);
-
-        if (data.pickerTarget()) {
-            renderPreview(poseStack, collector, packedLight, overlay, state, model, resolver);
-        } else {
-            renderEyes(poseStack, collector, packedLight, overlay, state, model, resolver, data);
+    /** Move a body-attached eye in by {@code bodyInset}; see {@link #shearedBodyInset}. */
+    private static void insetBody(PoseStack poseStack, float bodyInset, String part) {
+        if (bodyInset != 0.0F && EyeConfigModel.PART_BODY.equals(part)) {
+            poseStack.translate(0.0F, -bodyInset, 0.0F);
         }
     }
 
-    private void renderEyes(PoseStack poseStack, SubmitNodeCollector collector, int packedLight, int overlay,
-                            S state, M model, EyeAttachmentResolver resolver, EyeRenderData data) {
+    private static void renderEyes(PoseStack poseStack, SubmitNodeCollector collector, int packedLight, int overlay,
+                                   Object model, EyeAttachmentResolver resolver, EyeRenderData data, boolean young,
+                                   float bodyInset) {
         HeadInfo helper = data.helper();
         GooglyTracker tracker = data.tracker();
         // Per-mob appearance overrides (dye / redstone / harvested-eye item), layered on top of the
@@ -76,8 +64,8 @@ public class LayerGooglyEyes<S extends LivingEntityRenderState, M extends Entity
         for (int headIndex = 0; headIndex < headCount; headIndex++) {
             poseStack.pushPose();
             // Move into this head's animated space, by the configured string part name.
-            if (resolver.toAttachmentSpace(poseStack, model, helper.getAttachToken(headIndex), state.isBaby)) {
-                insetShearedSheepBody(poseStack, state, helper.getAttachToken(headIndex));
+            if (resolver.toAttachmentSpace(poseStack, model, helper.getAttachToken(headIndex), young)) {
+                insetBody(poseStack, bodyInset, helper.getAttachToken(headIndex));
                 GooglyEyeRenderer.renderHead(poseStack, collector, packedLight, overlay,
                         tracker.eyes[headIndex], helper, overrides, headIndex, partialTicks);
             }
@@ -85,24 +73,13 @@ public class LayerGooglyEyes<S extends LivingEntityRenderState, M extends Entity
         }
     }
 
-    /**
-     * Sheep body eyes are authored on the wool's surface, which the separate wool layer draws around the
-     * body. A sheared adult shows no wool, so its body eyes move in along the body's length by the wool's
-     * thickness to sit on the bare body. Lambs are never sheared.
-     */
-    private static void insetShearedSheepBody(PoseStack poseStack, LivingEntityRenderState state, String part) {
-        if (state instanceof SheepRenderState sheep && sheep.isSheared && !sheep.isBaby
-                && EyeConfigModel.PART_BODY.equals(part)) {
-            poseStack.translate(0.0F, -SHEEP_WOOL_DEPTH, 0.0F);
-        }
-    }
-
-    private void renderPreview(PoseStack poseStack, SubmitNodeCollector collector, int packedLight, int overlay,
-                               S state, M model, EyeAttachmentResolver resolver) {
+    private static void renderPreview(PoseStack poseStack, SubmitNodeCollector collector, int packedLight,
+                                      int overlay, Object model, EyeAttachmentResolver resolver, boolean young,
+                                      float bodyInset) {
         for (PickerState.ListedEye listed : PickerState.previewEyes()) {
             poseStack.pushPose();
-            if (resolver.toAttachmentSpace(poseStack, model, listed.part, state.isBaby)) {
-                insetShearedSheepBody(poseStack, state, listed.part);
+            if (resolver.toAttachmentSpace(poseStack, model, listed.part, young)) {
+                insetBody(poseStack, bodyInset, listed.part);
                 GooglyEyeRenderer.renderPreviewEye(poseStack, collector, packedLight, overlay, listed.eye);
             }
             poseStack.popPose();
@@ -112,11 +89,53 @@ public class LayerGooglyEyes<S extends LivingEntityRenderState, M extends Entity
         String token = PickerState.currentPart();
         if (token != null) {
             poseStack.pushPose();
-            if (resolver.toAttachmentSpace(poseStack, model, token, state.isBaby)) {
-                insetShearedSheepBody(poseStack, state, token);
+            if (resolver.toAttachmentSpace(poseStack, model, token, young)) {
+                insetBody(poseStack, bodyInset, token);
                 GooglyEyeRenderer.renderPreviewPlacement(poseStack, collector, packedLight, overlay);
             }
             poseStack.popPose();
+        }
+    }
+
+    /**
+     * The adult sheep's wool thickness when {@code state} is a sheared adult sheep, else zero. Sheep body
+     * eyes are authored on the wool's surface, which the separate wool layer draws around the body; a
+     * sheared adult shows no wool, so its body eyes move in by the wool's thickness to sit on the bare
+     * body. Lambs are never sheared.
+     */
+    private static float shearedBodyInset(LivingEntityRenderState state) {
+        return state instanceof SheepRenderState sheep && sheep.isSheared && !sheep.isBaby ? SHEEP_WOOL_DEPTH : 0.0F;
+    }
+
+    @Override
+    public void submit(PoseStack poseStack, SubmitNodeCollector collector, int packedLight, S state,
+                       float yRot, float xRot) {
+        EyeRenderData data = EyeRenderData.of(state);
+        if (!data.draws()) {
+            return;
+        }
+        M model = this.getParentModel();
+        model.setupAnim(state);
+        submitEyes(poseStack, collector, packedLight, LivingEntityRenderer.getOverlayCoords(state, 0.0F), data,
+                model, state.isBaby, shearedBodyInset(state));
+    }
+
+    /**
+     * Draw {@code data}'s eyes on {@code model}, or the picker preview when the entity is the picker's
+     * target. {@code poseStack} holds the model's base render pose and the model's parts are already posed
+     * for this entity. Renderers outside the vanilla layer system call this too.
+     *
+     * @param young     the entity's baby flag, which selects the model's age branch
+     * @param bodyInset how far body-attached eyes move in from where they were authored
+     */
+    public static void submitEyes(PoseStack poseStack, SubmitNodeCollector collector, int packedLight, int overlay,
+                                  EyeRenderData data, Object model, boolean young, float bodyInset) {
+        // Resolve the part-tree strategy for this model family (string names / stable indices).
+        EyeAttachmentResolver resolver = Resolvers.forModel(model);
+        if (data.pickerTarget()) {
+            renderPreview(poseStack, collector, packedLight, overlay, model, resolver, young, bodyInset);
+        } else {
+            renderEyes(poseStack, collector, packedLight, overlay, model, resolver, data, young, bodyInset);
         }
     }
 }

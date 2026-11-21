@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.client.picker;
 
 import com.github.crittscott.somegoogly.client.compat.ClientIntegrationFailures;
 import com.github.crittscott.somegoogly.client.compat.GeckoCompat;
+import com.github.crittscott.somegoogly.client.compat.IceAndFireCompat;
 import com.github.crittscott.somegoogly.client.render.resolver.EyeAttachmentResolver;
 import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
 import net.minecraft.client.Minecraft;
@@ -37,13 +38,14 @@ public final class ModelPartVocabulary {
 
     /**
      * The attachable part vocabulary of {@code living}'s current model, from its vanilla-style model parts
-     * or else its GeckoLib bones, or {@code null} when neither yields any.
+     * (or Ice and Fire CE's Uranus boxes) or else its GeckoLib bones, or {@code null} when neither yields any.
      */
     @Nullable
     public static ModelPartVocabulary forEntity(LivingEntity living) {
         EntityRenderer<?, ?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(living);
-        if (renderer instanceof LivingEntityRenderer<?, ?, ?> livingRenderer) {
-            EntityModel<?> model = modelFor(livingRenderer, living);
+        Object model = renderer instanceof LivingEntityRenderer<?, ?, ?> livingRenderer
+                ? modelFor(livingRenderer, living) : IceAndFireCompat.model(renderer, living);
+        if (model != null) {
             EyeAttachmentResolver resolver = Resolvers.forModel(model);
             List<String> tokens = resolver.enumerateParts(model);
             if (!tokens.isEmpty()) {

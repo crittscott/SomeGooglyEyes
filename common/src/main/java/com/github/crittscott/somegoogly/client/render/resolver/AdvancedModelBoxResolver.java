@@ -2,7 +2,6 @@ package com.github.crittscott.somegoogly.client.render.resolver;
 
 import com.github.crittscott.somegoogly.client.compat.ClientIntegrationFailures;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.model.EntityModel;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -17,6 +16,9 @@ import java.lang.reflect.Method;
  * <p>Both libraries are optional dependencies, so this resolver uses reflection only. Each instance
  * owns its handles, its per-model cache, and its failure state: one library failing or being absent
  * never disables the other.
+ *
+ * <p>Uranus models are not vanilla {@code EntityModel}s, and Ice and Fire CE draws them from renderers
+ * that are not {@code LivingEntityRenderer}s; {@code IceAndFireCompat} hands those models here.
  *
  * <p>Token vocabulary and matching live in {@link ReflectedBoxResolver}. The intrinsic segment name
  * here is the box's {@code boxName} — set by tabula-loaded models (Ice and Fire's dragons) and by
@@ -93,12 +95,12 @@ public class AdvancedModelBoxResolver extends ReflectedBoxResolver {
     }
 
     @Override
-    public boolean handles(EntityModel<?> model) {
+    public boolean handles(Object model) {
         return available() && api.modelClass().isInstance(model) && !failed(model);
     }
 
     @Override
-    protected Object rawParts(EntityModel<?> model) throws ReflectiveOperationException {
+    protected Object rawParts(Object model) throws ReflectiveOperationException {
         return api.getAllParts().invoke(model);
     }
 

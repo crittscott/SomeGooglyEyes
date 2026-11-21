@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.client;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.client.compat.GeckoCompat;
+import com.github.crittscott.somegoogly.client.compat.IceAndFireCompat;
 import com.github.crittscott.somegoogly.client.render.LayerGooglyEyes;
 import com.github.crittscott.somegoogly.client.render.SkullEyeRenderer;
 import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
@@ -15,8 +16,9 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.entity.layers.SlimeOuterLayer;
 
 /**
- * Installs the vanilla-model eye layer on living renderers after renderer rebuilds. GeckoLib renderers are
- * not living renderers; they receive their layer from GeckoLib's own compile-render-layers event.
+ * Installs the vanilla-model eye layer on living renderers after renderer rebuilds, and the eye feature on
+ * Ice and Fire CE's legacy mob renderers, which are not living renderers. GeckoLib renderers are not living
+ * renderers either; they receive their layer from GeckoLib's own compile-render-layers event.
  */
 public final class ClientRenderLayers {
 
@@ -30,13 +32,6 @@ public final class ClientRenderLayers {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     private static void addLiving(LivingEntityRenderer renderer) {
-        if (!INSTALLED.add(renderer)) {
-            return;
-        }
-        if (!loggedFirstInstall) {
-            loggedFirstInstall = true;
-            SomeGooglyCommon.LOGGER.info("Installing googly-eye layers on entity renderers");
-        }
         LayerGooglyEyes eyes = new LayerGooglyEyes<>(renderer);
         List<RenderLayer> layers = renderer.layers;
         for (int i = 0; i < layers.size(); i++) {
@@ -57,14 +52,30 @@ public final class ClientRenderLayers {
     }
 
     /**
-     * Install the vanilla-model eye layer on one renderer; any renderer that is not a living renderer is
-     * ignored. Duplicate-safe through the weak {@code INSTALLED} set. Client-hidden entities still get the
-     * layer; the per-frame render gate hides them, so a config change applies without a renderer rebuild.
+     * Install the eye layer on one renderer: the vanilla-model layer on a living renderer, the Ice and Fire
+     * CE feature on its legacy mob renderer; any other renderer is ignored. Duplicate-safe through the weak
+     * {@code INSTALLED} set. Client-hidden entities still get the layer; the per-frame render gate hides
+     * them, so a config change applies without a renderer rebuild.
      */
     @SuppressWarnings("rawtypes")
     public static void install(EntityRenderer<?, ?> renderer) {
+        if (INSTALLED.contains(renderer)) {
+            return;
+        }
+        boolean installed;
         if (renderer instanceof LivingEntityRenderer livingRenderer) {
             addLiving(livingRenderer);
+            installed = true;
+        } else {
+            installed = IceAndFireCompat.install(renderer);
+        }
+        if (!installed) {
+            return;
+        }
+        INSTALLED.add(renderer);
+        if (!loggedFirstInstall) {
+            loggedFirstInstall = true;
+            SomeGooglyCommon.LOGGER.info("Installing googly-eye layers on entity renderers");
         }
     }
 }

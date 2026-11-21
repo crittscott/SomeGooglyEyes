@@ -3,7 +3,6 @@ package com.github.crittscott.somegoogly.client.render.resolver;
 import com.github.crittscott.somegoogly.client.compat.ThirdPartyModelWraps;
 import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.model.EntityModel;
 
 import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
@@ -20,12 +19,16 @@ import java.util.regex.Pattern;
  * the same contract here. Implementations must use <b>obfuscation-safe</b> handles only — string part
  * names walked from a stable entry point / positional root indices, never obfuscated field names.
  *
+ * <p>Models are typed {@code Object} because not every supported family is a vanilla
+ * {@code EntityModel}: Uranus 3.0 models (Ice and Fire CE) stand alone. Each resolver's
+ * {@link #handles} decides by the model's actual class.
+ *
  * <p>The work splits in two. {@link #resolve} searches the model's part tree by string name and is the
  * expensive half; {@link #toAttachmentSpace} replays the {@link Attachment} it produced onto the pose and
  * is the per-frame half. The split is what lets {@link Resolvers#ATTACHMENTS} memoize the search: a model
  * is a singleton and a token names the same part within it forever.
  */
-public interface EyeAttachmentResolver extends ModelMemo.Resolver<EntityModel<?>, Attachment> {
+public interface EyeAttachmentResolver extends ModelMemo.Resolver<Object, Attachment> {
 
     /** Segment normalization strips everything but letters and digits; compiled once, matched often. */
     Pattern NON_ALPHANUMERIC = Pattern.compile("[^a-z0-9]");
@@ -34,7 +37,7 @@ public interface EyeAttachmentResolver extends ModelMemo.Resolver<EntityModel<?>
      * List selectable attachment tokens for this model, in a stable order (used by the part picker).
      * Default: none (the resolver doesn't support enumeration / picker authoring).
      */
-    default List<String> enumerateParts(EntityModel<?> model) {
+    default List<String> enumerateParts(Object model) {
         return List.of();
     }
 
@@ -49,12 +52,12 @@ public interface EyeAttachmentResolver extends ModelMemo.Resolver<EntityModel<?>
      * <p>Default: identity (the resolver's enumeration vocabulary already matches stored tokens, e.g.
      * named bones).
      */
-    default String canonicalToken(EntityModel<?> model, String storedToken) {
+    default String canonicalToken(Object model, String storedToken) {
         return storedToken;
     }
 
     /** Whether this resolver knows how to walk the given model's part tree. */
-    boolean handles(EntityModel<?> model);
+    boolean handles(Object model);
 
     /**
      * Drop any per-model state this resolver caches. Called from {@link Resolvers#clearCaches()} when the
@@ -120,7 +123,7 @@ public interface EyeAttachmentResolver extends ModelMemo.Resolver<EntityModel<?>
      */
     @Override
     @Nullable
-    Attachment resolve(EntityModel<?> model, String partToken);
+    Attachment resolve(Object model, String partToken);
 
     /**
      * Move {@code poseStack} into the named part's current (this-frame, post-animation) space, first
@@ -133,7 +136,7 @@ public interface EyeAttachmentResolver extends ModelMemo.Resolver<EntityModel<?>
      * @return {@code true} if the part was found and the pose moved; {@code false} otherwise (caller
      *         should skip drawing for this head)
      */
-    default boolean toAttachmentSpace(PoseStack poseStack, EntityModel<?> model, String partToken, boolean young) {
+    default boolean toAttachmentSpace(PoseStack poseStack, Object model, String partToken, boolean young) {
         Attachment attachment = Resolvers.ATTACHMENTS.get(model, partToken, this);
         if (attachment == null) {
             return false;

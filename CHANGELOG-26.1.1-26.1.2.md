@@ -6,6 +6,7 @@
 - Minecraft 26.1.2 builds: Fabric (Loader 0.19.5+, Fabric API 0.155.3+), NeoForge 26.1.2.112+, and Forge 64.1.5+. GeckoLib 5.5.2+ remains optional.
 - GeckoLib-based mobs get eyes on Forge again.
 - Eyes on a sheep's rear move in to the bare body when it is sheared and back out when the wool regrows.
+- Ice and Fire Community Edition mobs get eyes again with its Uranus 3.0 renderers on NeoForge and Forge, in the picker as well.
 
 ### Fixed
 - Use the clicked head for Adventure-mode item permissions. Applying and harvesting eyes count toward item-use statistics.

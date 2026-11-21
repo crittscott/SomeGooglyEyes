@@ -1,6 +1,5 @@
 package com.github.crittscott.somegoogly.client.render.resolver;
 
-import net.minecraft.client.model.EntityModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +9,7 @@ import java.util.WeakHashMap;
 /**
  * Picks the first {@link EyeAttachmentResolver} that handles a given model. Order matters: the
  * third-party box-toolkit resolvers come first (their models keep geometry outside the vanilla part tree),
- * and {@link RootModelResolver} is the catch-all last.
+ * and {@link RootModelResolver}, the catch-all for vanilla-style models, comes last.
  */
 public final class Resolvers {
 
@@ -19,12 +18,12 @@ public final class Resolvers {
      * resolver. A datapack reload must <b>not</b> clear this (new configs change which token is asked for,
      * not what a token names inside a model); {@link #clearCaches} clears it when the models are replaced.
      */
-    static final ModelMemo<EntityModel<?>, Attachment> ATTACHMENTS = new ModelMemo<>();
+    static final ModelMemo<Object, Attachment> ATTACHMENTS = new ModelMemo<>();
 
     // Which resolver handles a given model instance never changes for that instance's life, and the
     // resolvers themselves are stateless singletons holding no reference back to any model, so weak keys
     // alone are enough here (unlike ModelMemo's cached values, nothing pins a stale model alive).
-    private static final Map<EntityModel<?>, EyeAttachmentResolver> BY_MODEL = new WeakHashMap<>();
+    private static final Map<Object, EyeAttachmentResolver> BY_MODEL = new WeakHashMap<>();
 
     private static final EyeAttachmentResolver ROOT = new RootModelResolver();
     private static final List<EyeAttachmentResolver> SPECIALIZED = List.of(
@@ -62,7 +61,7 @@ public final class Resolvers {
         }
     }
 
-    private static EyeAttachmentResolver findResolver(EntityModel<?> model) {
+    private static EyeAttachmentResolver findResolver(Object model) {
         for (EyeAttachmentResolver r : SPECIALIZED) {
             if (r.handles(model)) {
                 return r;
@@ -72,7 +71,7 @@ public final class Resolvers {
     }
 
     /** @return the specialized resolver for this model, or the root-model resolver. */
-    public static EyeAttachmentResolver forModel(EntityModel<?> model) {
+    public static EyeAttachmentResolver forModel(Object model) {
         return BY_MODEL.computeIfAbsent(model, Resolvers::findResolver);
     }
 }

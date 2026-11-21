@@ -100,8 +100,12 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 
 ## Libraries and other mods
 
+- 26.1.2: vanilla's `LivingEntityRenderState` has no `partialTick` field (common compile failed on it), though NeoForge-built mods such as Ice and Fire CE read `state.partialTick`, so it comes from NeoForge. [tested for vanilla; NeoForge origin inferred from source]
+
 - Maven `VersionRange` reads a bare version as a soft recommendation that matches everything, so it is not a drop-in reader for data where a bare version means an exact one. [recalled]
 - GeckoLib's 26.1 branch: `GeoEntityRenderer.createRenderState(entity, partialTick)` is `@ApiStatus.Internal` and final, but not marked for removal. [source]
 - Twilight Forest's `EntityEvents.createSkullCandle` skips a sneaking player, so a candle click on a skull needs sneak released, including on a shared fake player. [source, 1.21.x branch]
 - Twilight Forest's `AbstractTrophyBlock.use` always consumes the click, so an item's `useOn` never runs on a trophy unless the player sneaks. [recalled]
 - GeckoLib 5.4 runs `PerBoneRender` tasks after `RenderUtil.transformToBone`, which ends at the bone's pivot; GeckoLib 5.2 gave them the bone's frame at the model origin. A pose set in a renderer's `preRenderPass` (such as a model scale) is included. [GeckoLib source; tested on 1.21.11]
+- Uranus 3.0 (26.1.2): `BasicEntityModel`/`AdvancedEntityModel` are standalone classes, not vanilla `EntityModel`s, drawn with their own `renderToBuffer`; `AdvancedModelBox` still has `boxName`, `getParent()`, and `translateAndRotate(PoseStack)`, and `AdvancedEntityModel.getAllParts()` remains. [Ice and Fire CE 26.1.2 source; Uranus jar signatures]
+- Ice and Fire CE 2.2 (26.1.2): most mob renderers extend its `LegacyMobRenderer`, a plain `EntityRenderer` whose state extends `LivingEntityRenderState` but is filled without `LivingEntityRenderer.extractRenderState`. Its `submit` calls `setupAnim` on the shared model, snapshots the box pose for the deferred draw, then runs `LegacyEntityFeature`s (added with public `addLayer`) inside the model pose `LivingEntityRenderer` gives layers. The ghost overrides `submit` but ends with `super.submit`, so `LegacyMobRenderer` features still run for it. The cockatrice renderer extends `EntityRenderer` directly, draws static `ADULT_MODEL`/`BABY_MODEL`, and in 2.2.1 submits its model once through `LegacyMobRenderer.ModelPose.submit` inside the model pose; 2.2-beta.4 called `submitCustomGeometry` directly there. [source, 2.2-beta.4 and 2.2.1-bugfix]
