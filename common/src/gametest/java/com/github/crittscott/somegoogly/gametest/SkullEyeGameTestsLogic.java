@@ -228,6 +228,10 @@ public final class SkullEyeGameTestsLogic {
         player.setItemInHand(InteractionHand.MAIN_HAND, shears);
         helper.assertTrue(use(helper, player, skull) == InteractionResult.CONSUME, Component.literal("Optometrist shears harvest"));
         helper.assertTrue(!SkullEyeState.hasEyes(skull), Component.literal("the harvest clears the head's eyes"));
+        CompoundTag update = skull.getUpdateTag(helper.getLevel().registryAccess());
+        helper.assertTrue(update.contains(SkullEyeState.DATA_KEY)
+                        && !update.getCompoundOrEmpty(SkullEyeState.DATA_KEY).getBooleanOr(EyeState.HAS_EYES, true),
+                Component.literal("the update tag tells clients the eyes are gone; clients skip an empty one"));
         helper.assertTrue(shears.getDamageValue() == 1, Component.literal("the harvest spends one shears durability"));
         List<ItemEntity> eyes = drops(helper, HEAD, ModContent.GOOGLY_EYE.get());
         helper.assertTrue(eyes.size() == 1, Component.literal("exactly one Googly Eye pops out"));
