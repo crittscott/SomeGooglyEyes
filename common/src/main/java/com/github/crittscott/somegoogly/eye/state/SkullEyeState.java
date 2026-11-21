@@ -62,6 +62,17 @@ public final class SkullEyeState {
 
         /** The live compound, created when absent; written in place. */
         CompoundTag somegoogly$get();
+
+        /**
+         * Put the compound into the update tag {@code tag} whenever the head has one, eyes or not. The client skips
+         * an empty update tag, so a plain head that just lost its eyes would otherwise send nothing and keep them.
+         */
+        default void somegoogly$syncEyes(CompoundTag tag) {
+            CompoundTag data = somegoogly$find();
+            if (data != null) {
+                tag.put(DATA_KEY, data.copy());
+            }
+        }
     }
 
     /**
