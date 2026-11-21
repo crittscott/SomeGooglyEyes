@@ -104,3 +104,4 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 - GeckoLib's 26.1 branch: `GeoEntityRenderer.createRenderState(entity, partialTick)` is `@ApiStatus.Internal` and final, but not marked for removal. [source]
 - Twilight Forest's `EntityEvents.createSkullCandle` skips a sneaking player, so a candle click on a skull needs sneak released, including on a shared fake player. [source, 1.21.x branch]
 - Twilight Forest's `AbstractTrophyBlock.use` always consumes the click, so an item's `useOn` never runs on a trophy unless the player sneaks. [recalled]
+- GeckoLib 5.4 runs `PerBoneRender` tasks after `RenderUtil.transformToBone`, which ends at the bone's pivot; GeckoLib 5.2 gave them the bone's frame at the model origin. A pose set in a renderer's `preRenderPass` (such as a model scale) is included. [GeckoLib source; tested on 1.21.11]
