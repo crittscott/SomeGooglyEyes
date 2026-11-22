@@ -17,7 +17,7 @@ abstract class HotbarItemEyesMixin {
 
     @Inject(method = "renderHotbar", at = @At("HEAD"))
     private void somegoogly$beginHotbar(CallbackInfo callback) {
-        ClientEyeRuntime.beginGuiPresentation(ClientEyeRuntime.HUD, ClientEyeRuntime.GuiKind.HOTBAR, 0);
+        ClientEyeRuntime.beginGuiPresentation(ClientEyeRuntime.HUD, ClientEyeRuntime.GuiKind.HOTBAR, 0, null);
     }
 
     @Inject(method = "renderHotbar", at = @At("RETURN"))

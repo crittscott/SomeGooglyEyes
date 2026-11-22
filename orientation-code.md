@@ -56,11 +56,11 @@ Call these; do not restate them.
 
 `ServerConfig`/`ClientConfig` declare each setting once as a `ConfigValue`; loader schemas derive from `settings()`. `ForgeConfig` builds native CLIENT/SERVER specs, applies reloads on the server thread, and resets defaults on unload. Fabric entry points share `TomlConfig.load`, using bundled NightConfig at startup and `/reload`; missing-key completion preserves values/comments and backs up rewrites. `FabricMigration.quoteReleasedHeader` retains released names and a `.0.8.2.bak`. Effective config is logged.
 
-Eye definitions (`data/<namespace>/eyes/*.json`, `EyeConfigModel`) reload through decoding, version selection, validation, and NBT encoding. `ServerEyeConfigs` swaps only on encoding changes, retaining the installed set on failure; that set owns its prebuilt sync packet. GZIP sync caps compressed/decoded size and total eyes before client install. Reload, picker export, and decoding share geometry limits; color codecs reject invalid channels.
+Eye definitions (`data/<namespace>/eyes/*.json`, `EyeConfigModel`) reload through decoding, version selection, validation, and NBT encoding. `ServerEyeConfigs` swaps only on encoding changes, retaining the installed set on failure; that set owns its prebuilt sync packet. GZIP sync caps compressed/decoded size and total eyes before client install; received packets keep only decoded definitions. Reload, picker export, and decoding share geometry limits; color codecs reject invalid channels.
 
 ## Entity and item state
 
-`EyeState` serves living entities and supported vanilla boats; its `Snapshot` is the whole unit for transitions, sync, and packet application, never partial. `EntityPersistentData` is Forge's persistent compound or a Fabric persistent attachment. On load, `FabricMigration` moves the `somegoogly:persistentData` compound the 0.8.2 Fabric release saved into it; a non-compound value is set aside there and logged.
+`EyeState` serves living entities and supported vanilla boats; its `Snapshot` is the whole unit for transitions and sync, never partial. `EntityPersistentData` is Forge's persistent compound or a Fabric persistent attachment. On load, `FabricMigration` moves the `somegoogly:persistentData` compound the 0.8.2 Fabric release saved into it; a non-compound value is set aside there and logged.
 
 Persistent entity keys:
 
@@ -82,23 +82,23 @@ Application emits `ENTITY_INTERACT` (`BLOCK_CHANGE` on a head), harvest `SHEAR`,
 
 `ServerServices.onLivingEntityLoaded` owns natural eye initialization; later configuration changes never revisit an initialized entity.
 
-`EyeBehavior` catalogs expressions; `OngoingBehavior` ongoing classifications. `ServerBehaviorScheduler` schedules watched eyed mobs and reacts to game events using server tick time; players watch their own eyes. Per-hand reactions need no applied eyes and send scoped triggers. Sleepers start nothing. `PresentationEyes` selects deterministic ambient slots for items, heads, and boats, fitting the longest eligible expression; cross-eye requires a partner. Anger syncs only on change and to new angry viewers. `ClientEyeRuntime` keeps reports past simulation eviction, ages them offscreen, simulates recently drawn entries, and clears on level replacement/disconnect. The master switch suppresses automatic starts; authoring triggers remain available.
+`EyeBehavior` catalogs expressions; `OngoingBehavior` ongoing classifications. `ServerBehaviorScheduler` schedules watched eyed mobs and reacts to game events using server tick time; players watch their own eyes. Per-hand reactions need no applied eyes and send scoped triggers. Sleepers start nothing. `PresentationEyes` selects deterministic ambient slots for items, heads, and boats, fitting the longest eligible expression; cross-eye requires a partner. Anger syncs only on change and to new angry viewers. `ClientEyeRuntime` keeps reports past simulation eviction, ages them offscreen, simulates recently drawn entries, and clears on level replacement/disconnect. The master switch stops automatic starts, not authoring triggers.
 
 ## Rendering and attachment
 
 `ClientRenderLayers` installs eye layers once per renderer rebuild, before slime's outer layer; GeckoLib uses `CompileRenderLayers`. Both draw picker previews through `EyeRenderData`. `LayerGooglyEyes` insets sheared adult sheep `body` eyes by wool depth. `ClientEyeConfigs` caches resolved views. `GooglyEyeRenderer` draws static and simulated eyes; `ClientLifecycle` advances the shared presentation runtime.
 
-Resolvers cache by model identity, clear on renderer/runtime reset, and replay `ThirdPartyModelWraps`, which owns both whole-model and named-root-group transform decisions; `Resolvers` selects the model family, with `ChildMapResolver` as its non-null fallback.
+Resolvers cache by model identity, clear on renderer/runtime reset, and replay `ThirdPartyModelWraps`, which owns whole-model and named-root-group transforms; `Resolvers` binds each model once to its family resolver (`ChildMapResolver` as non-null fallback) and whole-model wrap.
 
 `somegoogly.accesswidener` serves all modules; Forge remaps it to an access transformer.
 
-Optional GeckoLib: `client/compat/gecko` holds GeckoLib-typed code, reached through `GeckoCompat` only when GeckoLib is found.
+GeckoLib-typed code lives in `client/compat/gecko`, reached through `GeckoCompat` only when GeckoLib is found.
 
-`BoatEyeLayout` selects hull/raft geometry; boats use generic snapshots without server expression scheduling. `ClientEyeRuntime` owns boat, hand, GUI, frame, head and mob maps. One nested draw context inherits GUI keys, animation and block/head-item identity. `sweep` shares eviction and simulation on world time or the separate pause-independent GUI clock.
+`BoatEyeLayout` selects hull/raft geometry; boats get no server expression scheduling. `ClientEyeRuntime` owns boat, hand, GUI, frame, head and mob maps. One nested draw context inherits GUI keys, animation and block/head-item identity. `sweep` shares eviction and simulation on world time or the separate pause-independent GUI clock.
 
 ## Networking
 
-Seven `Payload` classes declare eye definitions/settings/state, behavior, anger, freeze and export messages. Both loaders register from `Payload.CLIENTBOUND`/`SERVERBOUND`; stable indices are explicit. `NetworkProtocol` is `21`. Forge uses a required-version `SimpleChannel`; Fabric uses a versioned login query, typed play adapters and game-thread dispatch. Broadcasts encode once.
+Seven `Payload` classes carry definitions, settings, state, behavior, anger, freeze, and export. Both loaders register from `Payload.CLIENTBOUND`/`SERVERBOUND`; stable indices are explicit. `NetworkProtocol` is `21`. Forge uses a required-version `SimpleChannel`; Fabric uses a versioned login query, typed play adapters and game-thread dispatch. Broadcasts encode once.
 
 `EyeSettingsPacket` carries `googlyEyesEnabled` and `BehaviorSettings`. Joins always get it and the definitions, before the player's eye state. After a datapack reload or Forge config apply, `ServerServices.broadcastEyeSyncIfChanged` resends only what changed; only new definitions reset client trackers.
 
@@ -120,8 +120,8 @@ Forge registers from `@Mod`, keeping client bootstrap apart from the dedicated s
 
 ## Automated verification
 
-GameTests: Fabric 191, Forge 195. Native use wiring, Forge refusals, clone events, real scheduler triggers/kills/spawns, and admin dispatch have GameTest coverage. Visuals, multiplayer, Fabric protection ordering, full respawn transitions, and real saves need manual checks; see `docs/picker-hud-testing.md` for picker/network scenarios.
+GameTests: Fabric 191, Forge 195. Native use wiring, Forge refusals, clone events, real scheduler triggers/kills/spawns, and admin dispatch have GameTests. Visuals, multiplayer, Fabric protection ordering, full respawn transitions, and real saves need manual checks; see `docs/picker-hud-testing.md` for picker/network scenarios.
 
 ## Operational boundaries
 
-- `build-env/` mirrors build inputs (see `orientation-build.md`); update it with them.
+- `build-env/` mirrors build inputs; update it with them.

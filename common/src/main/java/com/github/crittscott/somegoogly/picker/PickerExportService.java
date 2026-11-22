@@ -7,11 +7,13 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -26,6 +28,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
 import net.minecraft.world.level.storage.LevelResource;
 import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ADULT;
 
@@ -52,14 +55,7 @@ import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ADULT;
  */
 public final class PickerExportService {
 
-    private static final String PACK_MCMETA = String.format(Locale.ROOT, """
-            {
-              "pack": {
-                "pack_format": %d,
-                "description": {"translate": "somegoogly.pack.picker_description"}
-              }
-            }
-            """, SharedConstants.getCurrentVersion().getPackVersion(PackType.SERVER_DATA));
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final String PACK_NAME = "somegoogly-picker";
 
     private PickerExportService() {
@@ -117,7 +113,7 @@ public final class PickerExportService {
             file.writeJson(target);
             Path meta = packDir.resolve("pack.mcmeta");
             if (!Files.exists(meta)) {
-                Files.writeString(meta, PACK_MCMETA);
+                writePackMetadata(meta);
             }
         } catch (IOException e) {
             SomeGooglyCommon.LOGGER.error("Failed to write picker export for {} to {}", typeId, target, e);
@@ -162,5 +158,15 @@ public final class PickerExportService {
             set.baby = authored;
         }
         return set;
+    }
+
+    /** Write the export pack's {@code pack.mcmeta} through vanilla's pack metadata serializer. */
+    private static void writePackMetadata(Path meta) throws IOException {
+        PackMetadataSection pack = new PackMetadataSection(
+                Component.translatable("somegoogly.pack.picker_description"),
+                SharedConstants.getCurrentVersion().getPackVersion(PackType.SERVER_DATA));
+        JsonObject json = new JsonObject();
+        json.add(PackMetadataSection.TYPE.getMetadataSectionName(), PackMetadataSection.TYPE.toJson(pack));
+        Files.writeString(meta, GSON.toJson(json) + "\n");
     }
 }

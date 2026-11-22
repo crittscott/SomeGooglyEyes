@@ -136,7 +136,10 @@ public interface EyeAttachmentResolver extends ModelMemo.Resolver<EntityModel<?>
         if (attachment == null) {
             return false;
         }
-        ThirdPartyModelWraps.preTransform(model, poseStack);
+        ThirdPartyModelWraps.Entry wrap = Resolvers.wholeModelWrap(model);
+        if (wrap != null) {
+            wrap.apply(model.young, poseStack);
+        }
         return attachment.apply(poseStack);
     }
 }

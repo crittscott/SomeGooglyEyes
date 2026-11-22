@@ -209,7 +209,7 @@ public final class GuiItemEyeGameTestsLogic {
     /** In game: draw eyed heads in inventory slots and frames; each retains its own selection and animation. */
     public static void nestedDrawContextsRestoreOuterSelection(GameTestHelper helper) {
         Object view = new Object();
-        ClientEyeRuntime.beginGuiPresentation(view, ClientEyeRuntime.GuiKind.SLOT, 3);
+        ClientEyeRuntime.beginGuiPresentation(view, ClientEyeRuntime.GuiKind.SLOT, 3, eye());
         try {
             var eyes = PresentationEyes.create(new UUID(1L, 2L), eye());
             ClientEyeRuntime.beginItemDraw(new PresentationEyes.Draw(eyes, 0.5F));

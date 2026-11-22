@@ -204,16 +204,19 @@ public final class SerializationGameTestsLogic {
     }
 
     /**
-     * The eye-definition sync survives the wire, and a full modpack's set fits its budgets. No in-game form;
-     * guards that joining clients draw the same eyes the server's datapacks define.
+     * The eye-definition sync survives the wire: the client decodes exactly the definitions the server encoded, and
+     * a full modpack's set fits its budgets. No in-game form; guards that joining clients draw the same eyes the
+     * server's datapacks define.
      */
     public static void configSyncPacketRoundTrips(GameTestHelper helper) {
         Map<ResourceLocation, RuntimeConfigSet> configs =
                 Map.of(new ResourceLocation("minecraft", "cow"), sampleConfigSet());
         Map<ResourceLocation, CompoundTag> encoded = ServerEyeConfigs.encode(configs);
         EyeConfigSyncPacket packet = new EyeConfigSyncPacket(configs, encoded);
-        EyeConfigSyncPacket decoded = roundTrip(helper, EyeConfigSyncPacket::read, packet, "EyeConfigSyncPacket");
-        helper.assertTrue(decoded.configs().size() == 1, "the definitions should survive the round-trip");
+        EyeConfigSyncPacket decoded = EyeConfigSyncPacket.read(
+                new FriendlyByteBuf(Unpooled.wrappedBuffer(bytes(helper, packet))));
+        helper.assertTrue(ServerEyeConfigs.encode(decoded.configs()).equals(encoded),
+                "the definitions should survive the round-trip");
 
         Map<ResourceLocation, RuntimeConfigSet> large = new HashMap<>();
         for (int i = 0; i < 1_200; i++) {
@@ -367,17 +370,19 @@ public final class SerializationGameTestsLogic {
     }
 
     /**
-     * The client refuses an eye-state packet with a non-finite placement roll. No in-game form with an
-     * unmodified server; guards clients against a malicious server.
+     * The client refuses an eye-state packet with a non-finite or out-of-range placement roll. No in-game form with
+     * an unmodified server; guards clients against a malicious server.
      */
     public static void eyeStatePacketRejectsNonFiniteValues(GameTestHelper helper) {
-        FriendlyByteBuf invalid = buffer(helper);
-        invalid.writeVarInt(42);
-        invalid.writeBoolean(true);
-        invalid.writeFloat(Float.NaN);
-        invalid.writeByte(0);
-        helper.assertTrue(throwsRuntime(() -> EyeStatePacket.read(invalid)),
-                "eye-state sync must reject a non-finite variant roll");
+        for (float roll : new float[] {Float.NaN, -0.5F, 1.5F}) {
+            FriendlyByteBuf invalid = buffer(helper);
+            invalid.writeVarInt(42);
+            invalid.writeBoolean(true);
+            invalid.writeFloat(roll);
+            invalid.writeByte(0);
+            helper.assertTrue(throwsRuntime(() -> EyeStatePacket.read(invalid)),
+                    "eye-state sync must reject the variant roll " + roll);
+        }
         helper.succeed();
     }
 

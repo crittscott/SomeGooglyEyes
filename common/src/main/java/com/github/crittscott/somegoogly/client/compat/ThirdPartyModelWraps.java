@@ -17,10 +17,10 @@ import net.minecraft.client.model.RabbitModel;
  * their part tree — a model-wide {@code pushPose → scale → translate} wrapped entirely inside the model's
  * own {@code renderToBuffer}. A resolver can only replay {@code translateAndRotate} down the part tree, so
  * without this the eyes land in the model's unscaled space: wrong pivots, oversized motion arcs, offset
- * placement. {@link #preTransform} pre-multiplies the same transform onto the pose stack before the
- * resolver walk (the model applies its transform before any part's {@code translateAndRotate}, so
- * pre-multiplying composes identically). {@code EyeAttachmentResolver#toAttachmentSpace} calls it
- * before replaying the attachment; it is a no-op for every unlisted model.
+ * placement. {@link #wholeModel} finds a listed model's transform once per model; it is pre-multiplied onto the
+ * pose stack before the resolver walk (the model applies its transform before any part's
+ * {@code translateAndRotate}, so pre-multiplying composes identically). {@code EyeAttachmentResolver#toAttachmentSpace}
+ * applies it before replaying the attachment; unlisted models have none.
  *
  * <p>Each table is keyed by fully qualified model class name, so there is no compile-time or classloading
  * dependency on either mod. The branch is chosen by {@code model.young} — the same field the models
@@ -145,7 +145,15 @@ public final class ThirdPartyModelWraps {
     }
 
     /** Per-model transforms; {@code adult} is {@code null} where the adult branch renders at identity. */
-    private record Entry(@Nullable Transform adult, Transform baby) {
+    public record Entry(@Nullable Transform adult, Transform baby) {
+
+        /** Apply the branch for the model's current age; holds no reference to any model. */
+        public void apply(boolean young, PoseStack poseStack) {
+            Transform transform = young ? baby : adult;
+            if (transform != null) {
+                transform.apply(poseStack);
+            }
+        }
     }
 
     /** A whole-model branch transform: uniform scale, then translate — the model's exact op order. */
@@ -160,16 +168,6 @@ public final class ThirdPartyModelWraps {
         return Map.entry(ALEXS_MOBS_PKG + modelClass, new Entry(null, young));
     }
 
-    private static void apply(@Nullable Entry entry, boolean young, PoseStack poseStack) {
-        if (entry == null) {
-            return;
-        }
-        Transform transform = young ? entry.baby() : entry.adult();
-        if (transform != null) {
-            transform.apply(poseStack);
-        }
-    }
-
     private static Map<String, Entry> deerGroups() {
         return Map.of(EyeConfigModel.PART_HEAD, new Entry(null, t(0.75F, 0.95F, 0.15F)),
             EyeConfigModel.PART_BODY, new Entry(null, t(0.5F, 1.5F)));
@@ -179,7 +177,11 @@ public final class ThirdPartyModelWraps {
         return Map.entry(EXOTIC_BIRDS_PKG + modelClass, new Entry(adult, baby));
     }
 
-    /** Resolve once with an attachment; recheck age each draw because model instances serve both ages. */
+    /**
+     * Resolve once with an attachment; recheck age each draw because model instances serve both ages. {@code null}
+     * where the group has no wrap.
+     */
+    @Nullable
     public static Consumer<PoseStack> groupTransform(EntityModel<?> model, String group) {
         Entry entry;
         Map<String, Entry> override = GROUPS.get(model.getClass().getName());
@@ -209,19 +211,22 @@ public final class ThirdPartyModelWraps {
         } else {
             return null;
         }
+        if (entry == null) {
+            return null;
+        }
         Entry selected = entry;
-        return pose -> apply(selected, model.young, pose);
+        return pose -> selected.apply(model.young, pose);
     }
 
     /**
-     * Reproduce a listed model's whole-model render transform on {@code poseStack}, choosing the branch by
-     * {@code model.young}. No-op for every unlisted model and for a listed model whose active branch
-     * renders at identity.
+     * The whole-model render transform a listed model applies outside its part tree, or {@code null} for every
+     * unlisted model. Fixed for the model instance's life; apply it each draw with the model's current age.
      */
-    public static void preTransform(EntityModel<?> model, PoseStack poseStack) {
+    @Nullable
+    public static Entry wholeModel(EntityModel<?> model) {
         String name = model.getClass().getName();
-        apply(EXOTIC_BIRDS.get(name), model.young, poseStack);
-        apply(ALEXS_MOBS.get(name), model.young, poseStack);
+        Entry birds = EXOTIC_BIRDS.get(name);
+        return birds != null ? birds : ALEXS_MOBS.get(name);
     }
 
     private static Transform t(float scale, float ty) {
