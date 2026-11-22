@@ -6,7 +6,6 @@ import com.github.crittscott.somegoogly.client.GooglyTracker;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
-import com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.PiglinHeadModel;
@@ -70,10 +69,6 @@ public final class SkullEyeRenderer {
      * {@code model} was just drawn in and the head's {@code packedLight}.
      */
     public static void render(PoseStack pose, MultiBufferSource bufferSource, int packedLight, SkullModelBase model) {
-        ModelPart head = headPart(model);
-        if (head == null) {
-            return;
-        }
         ClientEyeRuntime.DrawContext draw = ClientEyeRuntime.currentDraw();
         SkullBlockEntity skull = draw.block();
         ItemStack stack = draw.item();
@@ -83,7 +78,8 @@ public final class SkullEyeRenderer {
                 return;
             }
             PresentationEyes eyes = ClientEyeRuntime.skullEyes(skull, entity);
-            if (eyes != null) {
+            ModelPart head = eyes == null ? null : headPart(model);
+            if (head != null) {
                 eyes.markRendered(ClientEyeRuntime.clientTicks());
                 renderEyes(pose, bufferSource, packedLight, head, eyes.helper, eyes.parts, eyes.eyes,
                         eyes.snapshot.properties(), draw.partialTick());
@@ -95,19 +91,17 @@ public final class SkullEyeRenderer {
             }
             PresentationEyes.Draw itemDraw = draw.draw();
             PresentationEyes framed = itemDraw.eyes();
+            ClientEyeRuntime.RestingHead resting = framed == null ? ClientEyeRuntime.restingHead(stack, entity) : null;
+            ModelPart head = framed == null && resting == null ? null : headPart(model);
+            if (head == null) {
+                return;
+            }
             if (framed != null) {
                 renderEyes(pose, bufferSource, packedLight, head, framed.helper, framed.parts, framed.eyes,
                         framed.properties, itemDraw.partialTick());
-                return;
-            }
-            Snapshot snapshot = SkullEyeState.itemSnapshot(stack);
-            if (snapshot == null) {
-                return;
-            }
-            HeadInfo helper = ClientEyeConfigs.resolveHead(entity, snapshot.variantRoll());
-            if (helper.hasConfig()) {
-                renderEyes(pose, bufferSource, packedLight, head, helper, SkullEyeState.headParts(helper), null,
-                        snapshot.properties(), itemDraw.partialTick());
+            } else {
+                renderEyes(pose, bufferSource, packedLight, head, resting.helper(), resting.parts(), null,
+                        resting.snapshot().properties(), itemDraw.partialTick());
             }
         }
     }

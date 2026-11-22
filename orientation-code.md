@@ -6,7 +6,7 @@
 
 ## Project shape
 
-Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, version `0.8.3`, Java 21, Minecraft 1.21.4.
+Mod id `somegoogly`, package `com.github.crittscott.somegoogly`, version `0.8.3`, Java 21, Minecraft 1.21.4.
 
 `common` is transformed into all three loader artifacts.
 
@@ -42,9 +42,9 @@ Eye definitions are datapack resources at `data/<namespace>/eyes/*.json`, modele
 
 Persistent entity keys: `somegoogly:hasGooglyEyes`, `somegoogly:eyeVariantRoll`, `somegoogly:eyeOverrides`.
 
-Mutations send one full snapshot; rolls, kept only while eyes are on, read clamped to 0..1. Eye state initializes once. Initialization and tracking skip default state; mid-life mutations always send. Conversions call `ServerServices.onConverted` (eyes, picker freeze); player replacement calls `onPlayerCloned` (eyes on End exit only). Joining players get their own snapshot.
+Mutations send one full snapshot; rolls, kept only with eyes on, read clamped to 0..1. Eye state initializes once. Initialization and tracking skip default state; mid-life mutations always send. Conversions call `ServerServices.onConverted` (eyes, picker freeze); player replacement calls `onPlayerCloned` (eyes on End exit only). Joining players get their own snapshot.
 
-Eye items carry `AppearanceOverride` in the synced `somegoogly:eye_properties` component, never geometry; harvesting copies the first eye's effective appearance, the modifier recipe changes only that component, and the Slimy Eye transmute copies every component.
+Eye items carry `AppearanceOverride` in the synced `somegoogly:eye_properties` component, never geometry; harvesting copies the first eye's effective appearance, the modifier recipe changes only it, and the Slimy Eye transmute copies all components.
 
 `SkullEyeState` stores placed-head snapshots in the Mixin-added `somegoogly:data` compound, replaced on load and carried by update tags. Head items use the implicit `somegoogly:head_eyes` component. Heads borrow adult definitions, selecting variants with eyes on the head part; modded heads have no mapping. Mutations send block updates.
 
@@ -52,17 +52,17 @@ Only Fabric entity data needs migration from the 1.21.1 release.
 
 `EyeItemService` owns authorization, mutation, drops, and durability for Slimy Eye use and both harvests, on mobs and heads. Loader adapters run interactions and self-shearing after protection listeners (Forge/NeoForge `LOWEST`, Fabric a late phase); head use also checks `mayInteract`/`mayUseItemAt`, and Forge/NeoForge honor separate item-use denials. `markHeadDrop` stamps an eyed mob's own head among its death drops (Forge/NeoForge at `LOWEST`); head loot copies the state to the item with `SkullEyeState.headLootCopy` (Forge/NeoForge `HeadEyesLootModifier`; Fabric `LootTableEvents.MODIFY`). It refuses spectators itself. Shears are `#somegoogly:shears` (vanilla plus optional `#c:tools/shear`). Applying a Slimy Eye to another player also requires server PvP and `canHarmPlayer`. Plain-shears self-damage uses the attacker-less `self_shear` type.
 
-Slimy Eye applications emit `GameEvent.ENTITY_INTERACT` (`BLOCK_CHANGE` on a head), harvests `GameEvent.SHEAR`; refusals emit neither.
+Slimy Eye use emits `ENTITY_INTERACT` (`BLOCK_CHANGE` on a head), harvests `SHEAR`; refusals emit neither.
 
 ## Eligibility and behaviors
 
 `ServerServices.onLivingEntityLoaded` owns natural eye initialization; config changes never revisit an initialized entity.
 
-`EyeBehavior` catalogs expressions; `OngoingBehavior` catalogs ongoing states. `ServerBehaviorScheduler` runs watched eyed mobs (players watch themselves) and gameplay triggers on the server tick clock; sleepers start nothing. It also sends held-eye hurt/heal reactions per hand (any damage). `GooglyTracker` applies enabled ongoing states. `PresentationEyes` caches ambient slots for items, hands, placed heads, and boats. Slots fit the longest eligible expression or the synced mean interval, whichever is greater. Anger syncs on change/new viewer. `ClientEyeRuntime` owns mob, boat, head, frame, hand, and GUI simulations, retains mob and hand reports apart from them, ages expressions offscreen, and runs every cache through `sweep`: unshown simulations evict, recently shown ones step. Heads cache by position, frames by entity. Level changes/disconnect clear all. The master switch pauses mob scheduling while retaining watchers and expiring effects; authoring triggers remain available. Behaviors start inactive until sync.
+`EyeBehavior` catalogs expressions; `OngoingBehavior` catalogs ongoing states. `ServerBehaviorScheduler` runs watched eyed mobs (players watch themselves) and gameplay triggers on the server tick clock; sleepers start nothing. It sends held-eye hurt/heal reactions per hand (any damage). `GooglyTracker` applies enabled ongoing states. `PresentationEyes` caches ambient slots for items, hands, placed heads, and boats. Slots fit the longer of the longest eligible expression and the synced mean interval. Anger syncs on change/new viewer. `ClientEyeRuntime` owns mob, boat, head, frame, hand, and GUI simulations, keeps mob and hand reports apart, ages expressions offscreen, and sweeps every cache: unshown simulations evict, recently shown ones step. Heads cache by position, frames by entity, resting head items by component value. Level changes/disconnect clear all. The master switch pauses mob scheduling, keeping watchers and expiring effects; authoring triggers remain. Behaviors start inactive until sync.
 
 ## Rendering and attachment
 
-`ClientRenderLayers` installs `LayerGooglyEyes` once per renderer rebuild, before slime's outer layer; GeckoLib uses `CompileRenderLayers`. Both draw picker previews. `LayerGooglyEyes` insets sheared sheep `body` eyes by wool depth. Common Mixins store `EyeRenderData` on `LivingEntityRenderState`; GeckoLib captures it in `preRender`. A `PresentationEyes.Draw` carries an animation from extraction to draw on `ItemStackRenderState` and `BoatRenderState`. `GooglyEyeRenderer.drawEye` draws every eye, `drawAnimatedEye` simulated ones. `EyePlacement.orientation` serves rendering and pupils.
+`ClientRenderLayers` installs `LayerGooglyEyes` once per renderer rebuild, before slime's outer layer; GeckoLib uses `CompileRenderLayers`. Both draw picker previews. `LayerGooglyEyes` insets sheared sheep `body` eyes by wool depth. Common Mixins store `EyeRenderData` on `LivingEntityRenderState`; GeckoLib captures it in `preRender`. A `PresentationEyes.Draw` carries an animation from extraction to draw on `ItemStackRenderState` and `BoatRenderState`. `GooglyEyeRenderer.drawEye` draws all eyes, `drawAnimatedEye` simulated ones. `HeadInfo.orientationAt` caches each eye's `EyePlacement.orientation` for rendering; cross-eye aims compute once per play.
 
 Attachment resolvers cache by model identity and replay `ThirdPartyModelWraps`. `RootModelResolver` walks `EntityModel.root()` after reflected Citadel/Uranus/LLibrary resolvers. The picker selects separate baby models by age.
 
@@ -98,7 +98,7 @@ Forge's required `PayloadChannel` marks payloads handled. NeoForge and Forge iso
 
 ## Automated verification
 
-GameTest scenarios: Fabric 189, Forge 190, NeoForge 190. Item coverage: twelve frame, seven GUI, seven hand, and thirteen boat scenarios per loader. Client checklists: `docs/framed-eyes-testing.md`, `docs/inventory-eyes-testing.md`, `docs/third-person-eyes-testing.md`, and `docs/boat-eyes-testing.md`. Visuals, connections, protection ordering, command UX, and real saves need manual checks.
+GameTest scenarios: Fabric 189, Forge 190, NeoForge 190. Item coverage: twelve frame, seven GUI, seven hand, and thirteen boat scenarios per loader. Client checklists: `docs/{framed,inventory,third-person,boat}-eyes-testing.md`. Visuals, connections, protection ordering, command UX, and real saves are manual checks.
 
 ## Operational boundaries
 

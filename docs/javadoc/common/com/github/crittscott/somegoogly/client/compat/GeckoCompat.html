@@ -93,8 +93,8 @@ loadScripts(document, 'script');</script>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Soft-dependency gate for the optional GeckoLib renderer integration.
 
- <p><a href="gecko/GeckoIntegration.html" title="class in com.github.crittscott.somegoogly.client.compat.gecko"><code>GeckoIntegration</code></a> — and the GeckoLib types it references — is touched only after the
- <code>LOADED</code> check, so it never loads when GeckoLib is absent. Bone enumeration runs other mods' model
+ <p><a href="gecko/GeckoIntegration.html" title="class in com.github.crittscott.somegoogly.client.compat.gecko"><code>GeckoIntegration</code></a> and <a href="gecko/GeoBones.html" title="class in com.github.crittscott.somegoogly.client.compat.gecko"><code>GeoBones</code></a> — and the GeckoLib types they reference — are touched only
+ after the <code>LOADED</code> check, so they never load when GeckoLib is absent. Bone enumeration runs other mods' model
  code against a GeckoLib that may be newer than the build's, so a failure there is logged once and leaves
  the picker without that mob's bones. Rendering through the GeckoLib layer is not guarded.</div>
 </section>

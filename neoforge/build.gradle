@@ -64,8 +64,11 @@ configurations {
 dependencies {
     neoForge "net.neoforged:neoforge:$rootProject.neoforge_version"
 
-    // Optional at runtime; needed at compile time to subscribe to GeckoLib's render-layer event.
-    modCompileOnly "software.bernie.geckolib:geckolib-neoforge-${rootProject.geckolib_minecraft}:$rootProject.geckolib_version"
+    // Optional at runtime; needed at compile time to subscribe to GeckoLib's render-layer event. Not transitive,
+    // so GeckoLib's declared dependencies cannot raise the API versions this module compiles against.
+    modCompileOnly("software.bernie.geckolib:geckolib-neoforge-${rootProject.geckolib_minecraft}:$rootProject.geckolib_version") {
+        transitive = false
+    }
     // Also loaded in development runs, so the integration's gate and listener run; never bundled. Not
     // transitive: Forge-family runs would load its dependencies as second copies of the game's libraries.
     modLocalRuntime("software.bernie.geckolib:geckolib-neoforge-${rootProject.geckolib_minecraft}:$rootProject.geckolib_version") {
