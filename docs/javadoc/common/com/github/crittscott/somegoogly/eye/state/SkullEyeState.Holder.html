@@ -107,6 +107,11 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Save the compound into <code>tag</code> while the head has eyes; a head without them saves nothing.</div>
 </div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#somegoogly$syncEyes(net.minecraft.nbt.CompoundTag)" class="member-name-link">somegoogly$syncEyes</a><wbr>(net.minecraft.nbt.CompoundTag&nbsp;tag)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Put the compound into the update tag <code>tag</code> whenever the head has one, eyes or not.</div>
+</div>
 </div>
 </div>
 </div>
@@ -141,6 +146,15 @@ loadScripts(document, 'script');</script>
 <h3>somegoogly$saveEyes</h3>
 <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">somegoogly$saveEyes</span><wbr><span class="parameters">(net.minecraft.nbt.CompoundTag&nbsp;tag)</span></div>
 <div class="block">Save the compound into <code>tag</code> while the head has eyes; a head without them saves nothing.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="somegoogly$syncEyes(net.minecraft.nbt.CompoundTag)">
+<h3>somegoogly$syncEyes</h3>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">somegoogly$syncEyes</span><wbr><span class="parameters">(net.minecraft.nbt.CompoundTag&nbsp;tag)</span></div>
+<div class="block">Put the compound into the update tag <code>tag</code> whenever the head has one, eyes or not. An empty update
+ tag reaches the client as no tag at all, so a plain head that just lost its eyes would otherwise send
+ nothing and keep them.</div>
 </section>
 </li>
 </ul>
