@@ -2,15 +2,14 @@ package com.github.crittscott.somegoogly.network;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
+import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.DecoderException;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
-
-import javax.annotation.Nullable;
 
 /**
  * Server → client: "play {@code behavior} on the eyes of entity {@code entityId}, or on the loose Googly Eye in
@@ -25,14 +24,37 @@ import javax.annotation.Nullable;
 public record EyeBehaviorTriggerPacket(int entityId, Target target, EyeBehavior behavior, long seed, int elapsed)
         implements CustomPacketPayload {
 
+    /** A behavior by its {@link EyeBehavior#wireId()}; an unassigned number fails to decode. */
+    private static final StreamCodec<ByteBuf, EyeBehavior> BEHAVIOR_CODEC = ByteBufCodecs.VAR_INT.map(wireId -> {
+        EyeBehavior behavior = EyeBehavior.byWireId(wireId);
+        if (behavior == null) {
+            throw new DecoderException("Unknown eye behavior");
+        }
+        return behavior;
+    }, EyeBehavior::wireId);
+    /** The seed as a fixed eight-byte long; 1.21.1's {@code ByteBufCodecs} has only {@code VAR_LONG}. */
+    private static final StreamCodec<ByteBuf, Long> SEED_CODEC = StreamCodec.of(ByteBuf::writeLong, ByteBuf::readLong);
     public static final ResourceLocation ID = SomeGooglyCommon.id("eye_behavior");
-    public static final CustomPacketPayload.Type<EyeBehaviorTriggerPacket> TYPE = new CustomPacketPayload.Type<>(ID);
     public static final StreamCodec<RegistryFriendlyByteBuf, EyeBehaviorTriggerPacket> STREAM_CODEC =
-            StreamCodec.ofMember(EyeBehaviorTriggerPacket::write, EyeBehaviorTriggerPacket::read);
+            StreamCodec.composite(
+                    ByteBufCodecs.VAR_INT, EyeBehaviorTriggerPacket::entityId,
+                    Target.STREAM_CODEC, EyeBehaviorTriggerPacket::target,
+                    BEHAVIOR_CODEC, EyeBehaviorTriggerPacket::behavior,
+                    SEED_CODEC, EyeBehaviorTriggerPacket::seed,
+                    ByteBufCodecs.VAR_INT, EyeBehaviorTriggerPacket::elapsed,
+                    EyeBehaviorTriggerPacket::checked);
+    public static final CustomPacketPayload.Type<EyeBehaviorTriggerPacket> TYPE = new CustomPacketPayload.Type<>(ID);
 
     /** Which eyes play the expression: those applied to the entity, or a loose Googly Eye in one of its hands. */
     public enum Target {
         ENTITY(0), MAIN_HAND(1), OFF_HAND(2);
+
+        /**
+         * A target by its explicit wire id; an unknown id fails to decode. {@code ByIdMap} would serve, but none
+         * of its out-of-bounds strategies rejects an unknown id.
+         */
+        static final StreamCodec<ByteBuf, Target> STREAM_CODEC =
+                ByteBufCodecs.VAR_INT.map(Target::byWireId, target -> target.wireId);
 
         private final int wireId;
 
@@ -40,14 +62,13 @@ public record EyeBehaviorTriggerPacket(int entityId, Target target, EyeBehavior 
             this.wireId = wireId;
         }
 
-        @Nullable
-        static Target byWireId(int wireId) {
+        private static Target byWireId(int wireId) {
             for (Target target : values()) {
                 if (target.wireId == wireId) {
                     return target;
                 }
             }
-            return null;
+            throw new DecoderException("Unknown eye behavior target");
         }
 
         public static Target forHand(InteractionHand hand) {
@@ -60,21 +81,12 @@ public record EyeBehaviorTriggerPacket(int entityId, Target target, EyeBehavior 
         }
     }
 
-    private static EyeBehaviorTriggerPacket read(FriendlyByteBuf buffer) {
-        int entityId = buffer.readVarInt();
-        Target target = Target.byWireId(buffer.readVarInt());
-        if (target == null) {
-            throw new DecoderException("Unknown eye behavior target");
-        }
-        EyeBehavior behavior = EyeBehavior.byWireId(buffer.readVarInt());
-        if (behavior == null) {
-            throw new DecoderException("Unknown eye behavior");
-        }
+    /** The decoded packet, after the checks that span fields: a held eye's reaction and the elapsed time. */
+    private static EyeBehaviorTriggerPacket checked(int entityId, Target target, EyeBehavior behavior, long seed,
+                                                    int elapsed) {
         if (target != Target.ENTITY && behavior != EyeBehavior.GROW && behavior != EyeBehavior.SWIRL) {
             throw new DecoderException("Invalid held eye reaction");
         }
-        long seed = buffer.readLong();
-        int elapsed = buffer.readVarInt();
         if (elapsed < 0 || elapsed > behavior.defaultDuration()) {
             throw new DecoderException("Invalid eye behavior timing");
         }
@@ -84,13 +96,5 @@ public record EyeBehaviorTriggerPacket(int entityId, Target target, EyeBehavior 
     @Override
     public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
         return TYPE;
-    }
-
-    private void write(FriendlyByteBuf buffer) {
-        buffer.writeVarInt(entityId);
-        buffer.writeVarInt(target.wireId);
-        buffer.writeVarInt(behavior.wireId());
-        buffer.writeLong(seed);
-        buffer.writeVarInt(elapsed);
     }
 }

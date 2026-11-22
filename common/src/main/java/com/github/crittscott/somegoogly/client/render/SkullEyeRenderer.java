@@ -267,9 +267,12 @@ public final class SkullEyeRenderer {
         BlockEntity skull = draw.block();
         ItemStack stack = draw.item();
         if (skull != null) {
+            if (!SkullEyeState.hasEyes(skull)) {
+                return;
+            }
             Block block = skull.getBlockState().getBlock();
             ResourceLocation entity = SkullEyeState.entityFor(block);
-            if (!SkullEyeState.hasEyes(skull) || !mayShow(entity)) {
+            if (!mayShow(entity)) {
                 return;
             }
             PresentationEyes eyes = ClientEyeRuntime.skullEyes(skull, entity);
