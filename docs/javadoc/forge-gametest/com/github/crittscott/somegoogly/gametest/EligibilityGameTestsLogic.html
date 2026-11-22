@@ -151,8 +151,9 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#slimyEyeSelfApplyRequiresSneak(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">slimyEyeSelfApplyRequiresSneak</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.world.entity.player.Player&nbsp;player)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block"><code>SlimyEyeItem.use(net.minecraft.world.level.Level, net.minecraft.world.entity.player.Player, net.minecraft.world.InteractionHand)</code>: only a sneaking use applies the eye to the player; a plain right-click
- passes.</div>
+<div class="block"><code>SlimyEyeItem.use(net.minecraft.world.level.Level, net.minecraft.world.entity.player.Player, net.minecraft.world.InteractionHand)</code>: only a sneaking use aimed at nothing applies the eye to the player; a plain
+ right-click passes, and so does a sneaking one aimed at a mob or a block, which vanilla also routes here when
+ the click on that target passes.</div>
 </div>
 </div>
 </div>
@@ -244,8 +245,10 @@ loadScripts(document, 'script');</script>
 <h3>slimyEyeSelfApplyRequiresSneak</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">slimyEyeSelfApplyRequiresSneak</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.world.entity.player.Player&nbsp;player)</span></div>
-<div class="block"><code>SlimyEyeItem.use(net.minecraft.world.level.Level, net.minecraft.world.entity.player.Player, net.minecraft.world.InteractionHand)</code>: only a sneaking use applies the eye to the player; a plain right-click
- passes. In game: holding a Slimy Eye, right-click the air and nothing happens; sneak and right-click
+<div class="block"><code>SlimyEyeItem.use(net.minecraft.world.level.Level, net.minecraft.world.entity.player.Player, net.minecraft.world.InteractionHand)</code>: only a sneaking use aimed at nothing applies the eye to the player; a plain
+ right-click passes, and so does a sneaking one aimed at a mob or a block, which vanilla also routes here when
+ the click on that target passes. In game: holding a Slimy Eye, right-click the air and nothing happens; sneak
+ and right-click a mob that already has eyes, or a block, and nothing happens either; sneak and right-click
  the air, and you have eyes (visible in third person) and the Slimy Eye is used.</div>
 </section>
 </li>

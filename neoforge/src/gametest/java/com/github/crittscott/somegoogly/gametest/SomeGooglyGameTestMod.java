@@ -98,6 +98,7 @@ public final class SomeGooglyGameTestMod {
         functions.register("eyeitemservicegametests/optometrist_interact_passes_when_not_applicable", () -> EyeItemServiceGameTests::optometristInteractPassesWhenNotApplicable);
         functions.register("eyeitemservicegametests/optometrist_rolls_only_onto_shears_and_books", () -> EyeItemServiceGameTests::optometristRollsOnlyOntoShearsAndBooks);
         functions.register("eyeitemservicegametests/self_remove_with_shears_drops_an_eye_and_costs_durability", () -> EyeItemServiceGameTests::selfRemoveWithShearsDropsAnEyeAndCostsDurability);
+        functions.register("eyeitemservicegametests/using_the_last_slimy_eye_reports_it", () -> EyeItemServiceGameTests::usingTheLastSlimyEyeReportsIt);
         functions.register("eyestateoverridegametests/admin_appearance_commands", () -> EyeStateOverrideGameTests::adminAppearanceCommands);
         functions.register("eyestateoverridegametests/admin_commands_refuse_unauthorized_or_invalid_use", () -> EyeStateOverrideGameTests::adminCommandsRefuseUnauthorizedOrInvalidUse);
         functions.register("eyestateoverridegametests/admin_eyes_and_behavior_commands", () -> EyeStateOverrideGameTests::adminEyesAndBehaviorCommands);

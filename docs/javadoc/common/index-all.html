@@ -120,6 +120,11 @@ loadScripts(document, 'script');</script>
 <div class="block">A skeleton drawing a ranged weapon, or a player drawing a bow, closes the eye away from the arm holding
  it.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/util/LookTarget.html#aimsAtNothing(net.minecraft.world.entity.player.Player)" class="member-name-link">aimsAtNothing(Player)</a> - Static method in class com.github.crittscott.somegoogly.util.<a href="com/github/crittscott/somegoogly/util/LookTarget.html" title="class in com.github.crittscott.somegoogly.util">LookTarget</a></dt>
+<dd>
+<div class="block">Whether <code>player</code> aims at nothing it could click: no block within its block interaction range and no
+ pickable entity within its entity interaction range, the ranges vanilla's own crosshair target uses.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/ClientEyeConfigs.html#all()" class="member-name-link">all()</a> - Static method in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ClientEyeConfigs.html" title="class in com.github.crittscott.somegoogly.config">ClientEyeConfigs</a></dt>
 <dd>
 <div class="block">The immutable synced map, by entity.</div>
@@ -769,6 +774,11 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Carry the whole eye state from an entity Minecraft is replacing to its replacement (a mob conversion,
  or a player leaving the End), so the replacement keeps its eyes instead of rolling fresh.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/eye/state/SkullEyeState.html#copyEyesOntoHeadLoot(java.util.List,net.minecraft.world.level.storage.loot.LootContext)" class="member-name-link">copyEyesOntoHeadLoot(List&lt;ItemStack&gt;, LootContext)</a> - Static method in class com.github.crittscott.somegoogly.eye.state.<a href="com/github/crittscott/somegoogly/eye/state/SkullEyeState.html" title="class in com.github.crittscott.somegoogly.eye.state">SkullEyeState</a></dt>
+<dd>
+<div class="block">Breaking an eyed head copies its eye state onto the head items among <code>drops</code>, the loot rolled in
+ <code>context</code>, where placing one restores it.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/EyeAppearance.html#cornea()" class="member-name-link">cornea()</a> - Method in record class com.github.crittscott.somegoogly.eye.<a href="com/github/crittscott/somegoogly/eye/EyeAppearance.html" title="class in com.github.crittscott.somegoogly.eye">EyeAppearance</a></dt>
 <dd>
@@ -2082,11 +2092,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Resolve only the selected variant's groups on one attachment, preserving within-group eye indexes.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/eye/state/SkullEyeState.html#headLootCopy()" class="member-name-link">headLootCopy()</a> - Static method in class com.github.crittscott.somegoogly.eye.state.<a href="com/github/crittscott/somegoogly/eye/state/SkullEyeState.html" title="class in com.github.crittscott.somegoogly.eye.state">SkullEyeState</a></dt>
-<dd>
-<div class="block">The loot function that copies a placed head's eye state onto its dropped item, as the
- <a href="com/github/crittscott/somegoogly/registry/ModContent.html#HEAD_EYES"><code>ModContent.HEAD_EYES</code></a> component the block entity reports.</div>
-</dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/state/SkullEyeState.html#headParts(net.minecraft.resources.Identifier,com.github.crittscott.somegoogly.eye.HeadInfo)" class="member-name-link">headParts(Identifier, HeadInfo)</a> - Static method in class com.github.crittscott.somegoogly.eye.state.<a href="com/github/crittscott/somegoogly/eye/state/SkullEyeState.html" title="class in com.github.crittscott.somegoogly.eye.state">SkullEyeState</a></dt>
 <dd>
 <div class="block">The indexes of <code>helper</code>'s heads, from <code>entity</code>'s definition, that a head of that mob shows, in
@@ -2317,7 +2322,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/platform/ItemDestruction.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.platform">ItemDestruction</a> - Class in <a href="com/github/crittscott/somegoogly/platform/package-summary.html">com.github.crittscott.somegoogly.platform</a></dt>
 <dd>
-<div class="block">Reports an item a player broke, for uses that end the click outside the vanilla code that reports it.</div>
+<div class="block">Reports a player's item that a use emptied, for uses that end the click outside the vanilla code that reports
+ it.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/ClientEyeRuntime.html#itemDraw(net.minecraft.world.item.ItemStack)" class="member-name-link">itemDraw(ItemStack)</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ClientEyeRuntime.html" title="class in com.github.crittscott.somegoogly.client">ClientEyeRuntime</a></dt>
 <dd>
@@ -2417,8 +2423,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/util/LookTarget.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.util">LookTarget</a> - Class in <a href="com/github/crittscott/somegoogly/util/package-summary.html">com.github.crittscott.somegoogly.util</a></dt>
 <dd>
-<div class="block">Ray-picks the living entity a player is aiming at, out to <code>reach</code> blocks, for the <code>/sg admin</code> and
- picker spawn verbs, which target the looked-at mob past vanilla's interaction reach.</div>
+<div class="block">Ray-picks what a player is aiming at: the living entity the <code>/sg admin</code> and picker spawn verbs target past
+ vanilla's interaction reach, and whether the eye items' sneak self-use is aimed at nothing.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/behavior/EyeBehavior.html#LOVE" class="member-name-link">LOVE</a> - Enum constant in enum class com.github.crittscott.somegoogly.eye.behavior.<a href="com/github/crittscott/somegoogly/eye/behavior/EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a></dt>
 <dd>
@@ -3233,10 +3239,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Read the state keys of <code>data</code>; absent keys read as <a href="com/github/crittscott/somegoogly/eye/state/EyeState.Snapshot.html#NONE"><code>EyeState.Snapshot.NONE</code></a>'s values.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/eye/behavior/BehaviorSettings.html#read(net.minecraft.network.FriendlyByteBuf)" class="member-name-link">read(FriendlyByteBuf)</a> - Static method in record class com.github.crittscott.somegoogly.eye.behavior.<a href="com/github/crittscott/somegoogly/eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a></dt>
-<dd>
-<div class="block">Decode and validate settings written by <a href="com/github/crittscott/somegoogly/eye/behavior/BehaviorSettings.html#write(net.minecraft.network.FriendlyByteBuf)"><code>BehaviorSettings.write(net.minecraft.network.FriendlyByteBuf)</code></a>.</div>
-</dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/state/EyeState.html#readProperties(net.minecraft.world.entity.Entity)" class="member-name-link">readProperties(Entity)</a> - Static method in class com.github.crittscott.somegoogly.eye.state.<a href="com/github/crittscott/somegoogly/eye/state/EyeState.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeState</a></dt>
 <dd>
 <div class="block">Read the mob's appearance override as <a href="com/github/crittscott/somegoogly/eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state"><code>AppearanceOverride</code></a> (<a href="com/github/crittscott/somegoogly/eye/state/AppearanceOverride.html#EMPTY"><code>AppearanceOverride.EMPTY</code></a>
@@ -3336,9 +3338,13 @@ loadScripts(document, 'script');</script>
  set's, so a <code>/reload</code> for an unrelated datapack leaves the installed snapshot, and therefore
  every client's copy, alone.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/platform/ItemDestruction.html#report(net.minecraft.world.entity.player.Player,net.minecraft.world.item.ItemStack,net.minecraft.world.InteractionHand)" class="member-name-link">report(Player, ItemStack, InteractionHand)</a> - Static method in class com.github.crittscott.somegoogly.platform.<a href="com/github/crittscott/somegoogly/platform/ItemDestruction.html" title="class in com.github.crittscott.somegoogly.platform">ItemDestruction</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/platform/ItemDestruction.html#reportBroken(net.minecraft.world.entity.player.Player,net.minecraft.world.item.ItemStack,net.minecraft.world.InteractionHand)" class="member-name-link">reportBroken(Player, ItemStack, InteractionHand)</a> - Static method in class com.github.crittscott.somegoogly.platform.<a href="com/github/crittscott/somegoogly/platform/ItemDestruction.html" title="class in com.github.crittscott.somegoogly.platform">ItemDestruction</a></dt>
 <dd>
-<div class="block"><code>player</code> broke <code>original</code>, a copy of the stack, in <code>hand</code>.</div>
+<div class="block"><code>player</code> broke the tool <code>original</code>, a copy of the stack, in <code>hand</code> by wearing it out.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/platform/ItemDestruction.html#reportConsumed(net.minecraft.world.entity.player.Player,net.minecraft.world.item.ItemStack,net.minecraft.world.InteractionHand)" class="member-name-link">reportConsumed(Player, ItemStack, InteractionHand)</a> - Static method in class com.github.crittscott.somegoogly.platform.<a href="com/github/crittscott/somegoogly/platform/ItemDestruction.html" title="class in com.github.crittscott.somegoogly.platform">ItemDestruction</a></dt>
+<dd>
+<div class="block"><code>player</code> used up the last of <code>original</code>, a copy of the stack, in <code>hand</code>.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/config/ConfigValue.Parsed.html#reset()" class="member-name-link">reset()</a> - Method in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ConfigValue.Parsed.html" title="class in com.github.crittscott.somegoogly.config">ConfigValue.Parsed</a></dt>
 <dd>&nbsp;</dd>
@@ -3891,6 +3897,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Spring stiffness pulling the pupil toward the anchor; 0 = the behavior doesn't touch the pupil.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/eye/behavior/BehaviorSettings.html#STREAM_CODEC" class="member-name-link">STREAM_CODEC</a> - Static variable in record class com.github.crittscott.somegoogly.eye.behavior.<a href="com/github/crittscott/somegoogly/eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a></dt>
+<dd>
+<div class="block">The settings as clients receive them, validated on decode.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/state/AppearanceOverride.html#STREAM_CODEC" class="member-name-link">STREAM_CODEC</a> - Static variable in record class com.github.crittscott.somegoogly.eye.state.<a href="com/github/crittscott/somegoogly/eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></dt>
 <dd>
 <div class="block">Each field is prefixed with a presence boolean; colors ride <a href="com/github/crittscott/somegoogly/eye/state/EyeColor.html#STREAM_CODEC"><code>EyeColor.STREAM_CODEC</code></a>.</div>
@@ -3912,9 +3922,13 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/github/crittscott/somegoogly/network/EyeStatePacket.html#STREAM_CODEC" class="member-name-link">STREAM_CODEC</a> - Static variable in record class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/EyeStatePacket.html" title="class in com.github.crittscott.somegoogly.network">EyeStatePacket</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/network/PickerExportPacket.html#STREAM_CODEC" class="member-name-link">STREAM_CODEC</a> - Static variable in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/PickerExportPacket.html" title="class in com.github.crittscott.somegoogly.network">PickerExportPacket</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Declared after <code>PickerExportPacket.WIRE_CODEC</code>, which it reads.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/network/PickerFreezePacket.html#STREAM_CODEC" class="member-name-link">STREAM_CODEC</a> - Static variable in class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/PickerFreezePacket.html" title="class in com.github.crittscott.somegoogly.network">PickerFreezePacket</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">The mob to freeze, or absent to release; a presence boolean, then the UUID.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/GooglyEyeItemRenderer.html#submit(com.github.crittscott.somegoogly.eye.state.AppearanceOverride,net.minecraft.world.item.ItemDisplayContext,com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,int,boolean,int)" class="member-name-link">submit(AppearanceOverride, ItemDisplayContext, PoseStack, SubmitNodeCollector, int, int, boolean, int)</a> - Method in class com.github.crittscott.somegoogly.client.render.<a href="com/github/crittscott/somegoogly/client/render/GooglyEyeItemRenderer.html" title="class in com.github.crittscott.somegoogly.client.render">GooglyEyeItemRenderer</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/LayerGooglyEyes.html#submit(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,S,float,float)" class="member-name-link">submit(PoseStack, SubmitNodeCollector, int, S, float, float)</a> - Method in class com.github.crittscott.somegoogly.client.render.<a href="com/github/crittscott/somegoogly/client/render/LayerGooglyEyes.html" title="class in com.github.crittscott.somegoogly.client.render">LayerGooglyEyes</a></dt>
@@ -4286,7 +4300,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/item/SlimyEyeItem.html#use(net.minecraft.world.level.Level,net.minecraft.world.entity.player.Player,net.minecraft.world.InteractionHand)" class="member-name-link">use(Level, Player, InteractionHand)</a> - Method in class com.github.crittscott.somegoogly.item.<a href="com/github/crittscott/somegoogly/item/SlimyEyeItem.html" title="class in com.github.crittscott.somegoogly.item">SlimyEyeItem</a></dt>
 <dd>
-<div class="block">Sneak + use: eye yourself.</div>
+<div class="block">Sneak + use on air: eye yourself.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/PresentationEyes.html#useGuiGravity()" class="member-name-link">useGuiGravity()</a> - Method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client">PresentationEyes</a></dt>
 <dd>
@@ -4296,8 +4310,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Right-click-on-block entry point for both eye items aimed at a placed mob head: a Slimy Eye on a head whose
  <a href="com/github/crittscott/somegoogly/item/EyeItemService.html#verdictFor(net.minecraft.world.level.block.entity.SkullBlockEntity)"><code>verdict</code></a> is <a href="com/github/crittscott/somegoogly/item/EyeItemService.Verdict.html#CAN_HAVE"><code>EyeItemService.Verdict.CAN_HAVE</code></a> goes to
- <code>EyeItemService.applySlimyEye(ItemStack, ServerPlayer, SkullBlockEntity, Direction)</code>, Optometrist shears on an eyed
- head, with eyes enabled, to <code>EyeItemService.harvestSkull(net.minecraft.server.level.ServerPlayer, net.minecraft.world.InteractionHand, net.minecraft.world.level.block.entity.SkullBlockEntity, net.minecraft.core.Direction)</code>.</div>
+ <code>EyeItemService.applySlimyEye(ItemStack, ServerPlayer, SkullBlockEntity)</code>, Optometrist shears on an eyed head, with
+ eyes enabled, to <code>EyeItemService.harvestSkull(net.minecraft.server.level.ServerPlayer, net.minecraft.world.InteractionHand, net.minecraft.world.level.block.entity.SkullBlockEntity)</code>.</div>
 </dd>
 </dl>
 <h2 class="title" id="I:V">V</h2>
@@ -4496,10 +4510,6 @@ the order they are declared.</div>
 <dd>
 <div class="block">Write every state key into <code>data</code>, removing the overrides compound when there are none and the
  placement roll when there are no eyes to place.</div>
-</dd>
-<dt><a href="com/github/crittscott/somegoogly/eye/behavior/BehaviorSettings.html#write(net.minecraft.network.FriendlyByteBuf)" class="member-name-link">write(FriendlyByteBuf)</a> - Method in record class com.github.crittscott.somegoogly.eye.behavior.<a href="com/github/crittscott/somegoogly/eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a></dt>
-<dd>
-<div class="block">Encode these settings for the client.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/config/EyeConfigModel.ConfigFile.html#writeJson(java.nio.file.Path)" class="member-name-link">writeJson(Path)</a> - Method in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/EyeConfigModel.ConfigFile.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.ConfigFile</a></dt>
 <dd>

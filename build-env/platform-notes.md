@@ -67,6 +67,7 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 - 1.20.1: a loot modifier is the normal way to change existing loot, because Forge has no way to add a function to an existing pool. [recalled]
 - 1.20.1: `AddLayers.getRenderer` casts generically and throws `ClassCastException` for non-living renderers. Walk `EntityRenderDispatcher.renderers`, widened by an access widener, instead. [tested]
 - There is no Forge `FakePlayer` after 1.20.1.
+- 1.21.11: Forge fires `onPlayerDestroyItem` from `hurtAndBreak`, so a tool worn out by mod code needs no separate report, while a stack emptied by `ItemStack.consume` does; the mod reports that one through `ForgeEventFactory.onPlayerDestroyItem(Player, ItemStack, InteractionHand)`. [recalled; the Forge gametests `harvestBreakingShearsReportsThem` and `usingTheLastSlimyEyeReportsIt` depend on it]
 
 ## Fabric
 
@@ -78,8 +79,10 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 - Fabric API loads mod language files on the server, so `Language.getInstance()` can supply fallback text there. [source]
 - `ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS` is the counterpart of Forge's `OnDatapackSyncEvent` and fires per player on reload; `END_DATA_PACK_RELOAD` is the once-per-reload signal. [tested]
 - `getAttachedOrCreate` on a persistent attachment makes a read write to the save. Use `getAttached` for reads. [tested]
-- For a tracking broadcast, build one packet with `ServerPlayNetworking.createS2CPacket` and send it with `ServerChunkCache.broadcastAndSend`, the mechanism Forge's `TRACKING_ENTITY_AND_SELF` uses. [tested]
+- For a tracking broadcast, build one packet with `ServerPlayNetworking.createS2CPacket` and send it with `ServerChunkCache.broadcastAndSend`, the mechanism Forge's `TRACKING_ENTITY_AND_SELF` uses. [tested on earlier versions]
+- 1.21.11: the tracking-and-self send is `ServerChunkCache.sendToTrackingPlayersAndSelf(Entity, Packet)`; 26.1.2 has no `broadcastAndSend`, and the 1.21.11 name is carried from there. [recalled]
 - 1.21.11: `EntityTrackingEvents.START_TRACKING` fires at the tail of `ServerEntity.addPairing` (fabric-networking-api-v1 `ServerEntityMixin`, `@At("TAIL")`), after the entity's spawn packet is sent, so a packet about the entity sent from it reaches a client that already has the entity. `STOP_TRACKING` fires at the head of `removePairing`. [source]
+- 1.21.11: Fabric API's `LootTableEvents.MODIFY_DROPS` runs after any loot table rolls its drops, with the table, the `LootContext`, and the mutable drop list, so one listener can change chosen stacks of a finished roll instead of adding a function to every pool. [recalled]
 - `ClientPlayConnectionEvents.JOIN` passes the live `ClientPacketListener`; use it instead of looking one up. [tested]
 - A login query reply can carry a version, which distinguishes a version mismatch from a missing mod. [tested]
 

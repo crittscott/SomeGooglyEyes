@@ -44,9 +44,9 @@ Eye items carry `AppearanceOverride` in the synced `somegoogly:eye_properties` c
 
 `SkullEyeState` stores placed-head snapshots in the Mixin-added `somegoogly:data` compound, normalized to an eye-state snapshot on load and carried by update tags. Head items use the implicit `somegoogly:head_eyes` component. Heads borrow adult definitions, selecting variants with eyes on the part the head reproduces. Heads-mod floor/wall blocks map by registry id; bee, chicken, ghast, and equines use specific attachment tokens. Mutations send block updates.
 
-Saved data from the 1.21.8 release is already in current form; nothing migrates.
+1.21.8 saved data is already current; nothing migrates.
 
-`EyeItemService` owns authorization, mutation, drops, and durability for Slimy Eye use and both harvests, on mobs and heads. Loader adapters run entity interaction, block use, and self-shearing after protection listeners (Forge/NeoForge `LOWEST`, Fabric a late phase); head use also checks `mayInteract`/`mayUseItemAt`, and Forge/NeoForge honor separate item-use denials. `markHeadDrop` stamps an eyed mob's own head among its death drops (Forge/NeoForge at `LOWEST`); head loot copies the state with `SkullEyeState.headLootCopy` (Forge/NeoForge `HeadEyesLootModifier`, Heads-mod heads included; Fabric `LootTableEvents.MODIFY`). The shared use entry points refuse spectators. Shears are `#somegoogly:shears` (vanilla plus optional `#c:tools/shear`). Applying or harvesting another player’s eyes requires level PvP and `canHarmPlayer`. Head use checks the clicked block in Adventure mode and records its use criterion and statistic before spending the item. Harvest kills honor the mob-drops rule. NeoForge reports shears breaks explicitly. Plain-shears self-damage uses the attacker-less `self_shear` type.
+`EyeItemService` owns authorization, mutation, drops, and durability for Slimy Eye use and both harvests, on mobs and heads. Loader adapters run entity interaction, block use, and self-shearing after protection listeners (Forge/NeoForge `LOWEST`, Fabric a late phase); head use refuses (`FAIL`) without `mayInteract`/`mayUseItemAt`, and Forge/NeoForge honor separate item-use denials. Sneak self-use needs `LookTarget.aimsAtNothing`. `markHeadDrop` stamps an eyed mob's own head among its death drops (Forge/NeoForge at `LOWEST`); `SkullEyeState.copyEyesOntoHeadLoot` stamps only head items (Forge/NeoForge `HeadEyesLootModifier`; Fabric `LootTableEvents.MODIFY_DROPS`). The shared use entry points refuse spectators. Shears are `#somegoogly:shears` (vanilla plus optional `#c:tools/shear`). Applying or harvesting another player’s eyes requires level PvP and `canHarmPlayer`. Head use records its use criterion and statistic before spending the item. Harvest kills honor the mob-drops rule. `ItemDestruction` reports used-up stacks (Forge/NeoForge) and broken shears (NeoForge). Plain-shears self-damage uses the attacker-less `self_shear` type.
 
 Slimy Eye applications emit `GameEvent.ENTITY_INTERACT` (`BLOCK_CHANGE` on a head), harvests `GameEvent.SHEAR`; refusals emit neither.
 
@@ -82,7 +82,7 @@ Sends go through the platform bridges. Serverbound picker handlers authorize the
 
 `PickerFreezeService` preserves prior `NoAI`, reconciles locks at load/logout/stop, hands a lock to a converted mob, and allows one editor. `PickerGate` owns authorization (creative plus `Permissions.COMMANDS_GAMEMASTER`) and throttles; spawn-all also needs server enablement. `PickerSpawnService` uses `MobSpawning` for loader spawn finalization, honors cancellation, then sets `NoAI`, persistence, and rotation. Its `refusal` filters commands and suggestions. Individual insertion results decide acceptance; incomplete groups roll back in reverse order, and terrain follows full acceptance. World export validates the merged definition sync budget, writes the generated datapack, and invokes vanilla reload. Export-all writes the game-directory export tree. The world pack declares the running game’s major and minor data-pack format.
 
-`LookTarget` limits entity intersections by the nearest blocking surface; the inspector reads the game's crosshair target. Client editing and server admin, spawn, and pose commands share `/sg`. Fabric forwards the server branches and adds the picker verbs to the received server tree (`ClientPacketListenerCommandsMixin`).
+`LookTarget` stops entity picks at the nearest block; the inspector reads the game's crosshair target. Client editing and server admin, spawn, and pose commands share `/sg`. Fabric forwards the server branches and adds the picker verbs to the received server tree (`ClientPacketListenerCommandsMixin`).
 
 ## Loader integration
 
@@ -92,7 +92,7 @@ Forge’s required `PayloadChannel` marks payloads handled. Both native loaders 
 
 ## Automated verification
 
-GameTest scenarios: Fabric 187, Forge 191, NeoForge 193.
+GameTest scenarios: Fabric 187, Forge 192, NeoForge 194.
 
 ## Operational boundaries
 
