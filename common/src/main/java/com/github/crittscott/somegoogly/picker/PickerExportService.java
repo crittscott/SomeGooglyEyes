@@ -7,6 +7,10 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.mojang.serialization.JsonOps;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -16,13 +20,16 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.metadata.MetadataSectionType;
+import net.minecraft.server.packs.metadata.pack.PackFormat;
+import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
+import net.minecraft.util.InclusiveRange;
 import net.minecraft.world.level.storage.LevelResource;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -54,19 +61,7 @@ import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ADULT;
  */
 public final class PickerExportService {
 
-    private static final int PACK_FORMAT_MAJOR =
-            SharedConstants.getCurrentVersion().packVersion(PackType.SERVER_DATA).major();
-    private static final int PACK_FORMAT_MINOR =
-            SharedConstants.getCurrentVersion().packVersion(PackType.SERVER_DATA).minor();
-    private static final String PACK_MCMETA = String.format(Locale.ROOT, """
-            {
-              "pack": {
-                "min_format": [%d, %d],
-                "max_format": [%d, %d],
-                "description": {"translate": "somegoogly.pack.picker_description"}
-              }
-            }
-            """, PACK_FORMAT_MAJOR, PACK_FORMAT_MINOR, PACK_FORMAT_MAJOR, PACK_FORMAT_MINOR);
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final String PACK_NAME = "somegoogly-picker";
 
     private PickerExportService() {
@@ -124,7 +119,7 @@ public final class PickerExportService {
             file.writeJson(target);
             Path meta = packDir.resolve("pack.mcmeta");
             if (!Files.exists(meta)) {
-                Files.writeString(meta, PACK_MCMETA);
+                writePackMetadata(meta);
             }
         } catch (IOException e) {
             SomeGooglyCommon.LOGGER.error("Failed to write picker export for {} to {}", typeId, target, e);
@@ -169,5 +164,19 @@ public final class PickerExportService {
             set.baby = authored;
         }
         return set;
+    }
+
+    /**
+     * Write the export pack's {@code pack.mcmeta} through vanilla's data pack metadata codec, declaring exactly the
+     * running game's data pack format.
+     */
+    private static void writePackMetadata(Path meta) throws IOException {
+        PackFormat format = SharedConstants.getCurrentVersion().packVersion(PackType.SERVER_DATA);
+        PackMetadataSection pack = new PackMetadataSection(
+                Component.translatable("somegoogly.pack.picker_description"), new InclusiveRange<>(format, format));
+        MetadataSectionType<PackMetadataSection> section = PackMetadataSection.forPackType(PackType.SERVER_DATA);
+        JsonObject json = new JsonObject();
+        json.add(section.name(), section.codec().encodeStart(JsonOps.INSTANCE, pack).getOrThrow());
+        Files.writeString(meta, GSON.toJson(json) + "\n");
     }
 }

@@ -345,8 +345,8 @@ listener's exact Minecraft-version selection, and the pure <code>ServerConfig.pe
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/SerializationGameTestsLogic.html#configSyncPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">configSyncPacketRoundTrips(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SerializationGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">SerializationGameTestsLogic</a></dt>
 <dd>
-<div class="block">The eye-definition sync survives the wire, a decoded packet writes the bytes it was sent, and a small definition
-set passes the sync limits.</div>
+<div class="block">The eye-definition sync survives the wire: the client decodes exactly the definitions the server encoded, and a
+small definition set passes the sync limits.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/SerializationGameTests.html#configSyncRejectsOversizedAndUnsafePayloads(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">configSyncRejectsOversizedAndUnsafePayloads(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SerializationGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">SerializationGameTests</a></dt>
 <dd>&nbsp;</dd>
@@ -624,7 +624,8 @@ cow.</div>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/SerializationGameTestsLogic.html#eyeStatePacketRejectsNonFiniteValues(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">eyeStatePacketRejectsNonFiniteValues(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SerializationGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">SerializationGameTestsLogic</a></dt>
 <dd>
-<div class="block">The client refuses an eye-state packet with a non-finite placement roll.</div>
+<div class="block">The client refuses an eye-state packet or a head-item eye component whose placement roll is non-finite or
+outside 0..1.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/SerializationGameTests.html#eyeStatePacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">eyeStatePacketRoundTrips(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/SerializationGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">SerializationGameTests</a></dt>
 <dd>&nbsp;</dd>
