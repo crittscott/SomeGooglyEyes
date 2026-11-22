@@ -46,7 +46,7 @@ Eye items carry `AppearanceOverride` in the synced `somegoogly:eye_properties` c
 
 Saved data from the 26.1 release is already in current form; nothing migrates.
 
-`EyeItemService` owns authorization, mutation, drops, and durability for Slimy Eye use and harvests on mobs and heads. Loader adapters run entity interaction, block use, and self-shearing after protection listeners (Forge/NeoForge `LOWEST`, Fabric a late phase); head use also checks `mayInteract`/`mayUseItemAt`, and Forge/NeoForge honor separate item-use denials. `markHeadDrop` stamps an eyed mob's own head among its death drops (Forge/NeoForge at `LOWEST`); head loot copies the state with `SkullEyeState.headLootCopy` (Forge/NeoForge `HeadEyesLootModifier`, with native data in each loader; Fabric `LootTableEvents.MODIFY`). The shared use entry points refuse spectators. Shears are `#somegoogly:shears` (vanilla plus optional `#c:tools/shear`). Applying or harvesting another player’s eyes requires level PvP and `canHarmPlayer`. Head use checks the clicked block in Adventure mode and records its use criterion and statistic before spending the item. Harvest kills honor the mob-drops rule. NeoForge reports shears breaks explicitly. Plain-shears self-damage uses the attacker-less `self_shear` type.
+`EyeItemService` owns authorization, mutation, drops, and durability for Slimy Eye use and harvests on mobs and heads. Loader adapters run entity interaction, block use, and self-shearing after protection listeners (Forge/NeoForge `LOWEST`, Fabric a late phase); head use also checks `mayInteract`/`mayUseItemAt`, and Forge/NeoForge honor separate item-use denials. `markHeadDrop` stamps an eyed mob's own head among its death drops (Forge/NeoForge at `LOWEST`); `SkullEyeState.copyEyesOntoHeadLoot` copies head state onto head drops only (Forge/NeoForge `HeadEyesLootModifier`; Fabric `LootTableEvents.MODIFY_DROPS`). Use entry points refuse spectators. Shears are `#somegoogly:shears` (vanilla plus optional `#c:tools/shear`). Applying or harvesting another player’s eyes requires level PvP and `canHarmPlayer`. Self-use needs `LookTarget.aimsAtNothing`. Head use refuses (`FAIL`) on both sides before predicting, checks the clicked block in Adventure mode, and records its criterion and statistic before spending the item. Harvest kills honor mob drops. `ItemDestruction` reports used-up stacks and, on NeoForge, broken shears. Plain-shears self-damage uses attacker-less `self_shear`.
 
 Slimy Eye applications emit `ENTITY_INTERACT` (`BLOCK_CHANGE` on a head), harvests `SHEAR`; refusals emit neither.
 
@@ -70,11 +70,11 @@ GeckoLib links only after detection; attach failures never block loading.
 
 ## Networking
 
-Seven play payloads: definitions, settings, entity eye state, expressions, anger, picker freeze, export. Payloads own stable IDs; triggers carry target (entity or hand), behavior, seed, and age. `NetworkProtocol` declares version 19 and the payload table all loaders register. Fabric checks it during configuration; the native loaders require it on their channels.
+Seven play payloads: definitions, settings, eye state, expressions, anger, picker freeze, export. Payloads own stable IDs and composed stream codecs; triggers carry target, behavior, seed, and age. `NetworkProtocol` declares version 19 and the payload table all loaders register. Fabric checks it during configuration; the native loaders require it on their channels.
 
-Definition and settings packets sync separately; joining players get both with datapack sync, and reloads and config applies broadcast only changes. Definitions reset the simulations, while settings update the switches and behavior rules those simulations use.
+Definitions and settings sync separately: joiners get both with datapack sync; reloads and config applies broadcast only changes. Definitions reset the simulations, while settings update the switches and behavior rules those simulations use.
 
-Sends go through the platform bridges; clientbound handlers link the client handler only inside lambdas. Serverbound picker handlers authorize the sender. Decoders and receivers validate input before use.
+Sends use the platform bridges; clientbound handlers link client code only inside lambdas. Serverbound picker handlers authorize the sender; decoders validate input.
 
 ## Picker and commands
 
@@ -92,7 +92,7 @@ Forge’s required `PayloadChannel` marks payloads handled. Both native loaders 
 
 ## Automated verification
 
-GameTest scenarios: Fabric 186, Forge 189, NeoForge 189. Client checklists in `docs/` cover frames, inventory, hands, and boats; visuals and real saves need manual checks.
+GameTest scenarios: Fabric 186, Forge 190, NeoForge 190. Client checklists in `docs/` cover frames, inventory, hands, and boats; visuals and real saves need manual checks.
 
 ## Operational boundaries
 

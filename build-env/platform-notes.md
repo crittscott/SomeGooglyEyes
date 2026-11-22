@@ -81,6 +81,8 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 - `ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS` is the counterpart of Forge's `OnDatapackSyncEvent` and fires per player on reload; `END_DATA_PACK_RELOAD` is the once-per-reload signal. [tested]
 - `getAttachedOrCreate` on a persistent attachment makes a read write to the save. Use `getAttached` for reads. [tested]
 - For a tracking broadcast, build one packet with `ServerPlayNetworking.createS2CPacket` and send it with `ServerChunkCache.broadcastAndSend`, the mechanism Forge's `TRACKING_ENTITY_AND_SELF` uses. [tested]
+- 26.1.1: the tracking-and-self send is `ServerChunkCache.sendToTrackingPlayersAndSelf(Entity, Packet)`; 26.1.2 has no `broadcastAndSend`, and 26.1.1 is assumed to match. [recalled; a compile error for the old name on 26.1.2 only]
+- 26.1.1: Fabric API's `LootTableEvents.MODIFY_DROPS` passes `(table, context, drops)` with a mutable drop list. [recalled]
 - 26.1.1: `EntityTrackingEvents.START_TRACKING` fires at the tail of `ServerEntity.addPairing` (fabric-networking-api-v1 `ServerEntityMixin` at Fabric API 0.145.4+26.1.1, `@At("TAIL")`), after the entity's spawn packet is sent, so a packet about the entity sent from it reaches a client that already has the entity. `STOP_TRACKING` fires at the head of `removePairing`. [source]
 - `ClientPlayConnectionEvents.JOIN` passes the live `ClientPacketListener`; use it instead of looking one up. [tested]
 - A login query reply can carry a version, which distinguishes a version mismatch from a missing mod. [tested]

@@ -10,6 +10,9 @@ public final class ItemDestructionImpl {
     private ItemDestructionImpl() {
     }
 
-    public static void report(Player player, ItemStack original, InteractionHand hand) {
+    public static void reportBroken(Player player, ItemStack original, InteractionHand hand) {
+    }
+
+    public static void reportConsumed(Player player, ItemStack original, InteractionHand hand) {
     }
 }
