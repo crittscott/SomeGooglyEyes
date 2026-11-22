@@ -19,12 +19,12 @@ abstract class ContainerItemEyesMixin {
 
     @Inject(method = "extractFloatingItem", at = @At("HEAD"))
     private void somegoogly$beginCarried(CallbackInfo callback) {
-        ClientEyeRuntime.beginGuiPresentation(this, ClientEyeRuntime.GuiKind.CURSOR, 0);
+        ClientEyeRuntime.beginGuiPresentation(this, ClientEyeRuntime.GuiKind.CURSOR, 0, null);
     }
 
     @Inject(method = "extractSlot(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/world/inventory/Slot;II)V", at = @At("HEAD"))
     private void somegoogly$beginSlot(GuiGraphicsExtractor graphics, Slot slot, int mouseX, int mouseY, CallbackInfo callback) {
-        ClientEyeRuntime.beginGuiPresentation(this, ClientEyeRuntime.GuiKind.SLOT, slot.index);
+        ClientEyeRuntime.beginGuiPresentation(this, ClientEyeRuntime.GuiKind.SLOT, slot.index, slot.getItem());
     }
 
     @Inject(method = "extractFloatingItem", at = @At("RETURN"))

@@ -220,7 +220,7 @@ public final class GuiItemEyeGameTestsLogic {
         Object view = new Object();
         PresentationEyes eyes = PresentationEyes.create(new UUID(1L, 2L), eye());
         PresentationEyes.Draw stored;
-        ClientEyeRuntime.beginGuiPresentation(view, ClientEyeRuntime.GuiKind.SLOT, 3);
+        ClientEyeRuntime.beginGuiPresentation(view, ClientEyeRuntime.GuiKind.SLOT, 3, eye());
         try {
             ClientEyeRuntime.beginItemDraw(new PresentationEyes.Draw(eyes, 0.5F));
             try {
