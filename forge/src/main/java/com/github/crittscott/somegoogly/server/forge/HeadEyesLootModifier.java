@@ -9,8 +9,6 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import java.util.function.Supplier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifier;
@@ -21,14 +19,13 @@ import net.minecraftforge.registries.ForgeRegistries;
 /**
  * Breaking an eyed head copies its eye state onto the dropped head item, where placing it restores it. Applied
  * to every loot table through {@code data/forge/loot_modifiers/global_loot_modifiers.json}; it acts only on loot
- * generated for a head block entity that has eyes. Its data files live in this loader's resources. It copies only a
- * head's eyes onto that head's item.
+ * generated for a head block entity that has eyes. Its data files live in this loader's resources; the rule is
+ * {@link SkullEyeState#copyEyesOntoHeadLoot}.
  */
 public final class HeadEyesLootModifier extends LootModifier {
 
     public static final Supplier<Codec<HeadEyesLootModifier>> CODEC = Suppliers.memoize(() ->
             RecordCodecBuilder.create(instance -> codecStart(instance).apply(instance, HeadEyesLootModifier::new)));
-    private static final LootItemFunction COPY_EYES = SkullEyeState.headLootCopy().build();
     private static final DeferredRegister<Codec<? extends IGlobalLootModifier>> SERIALIZERS =
             DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, SomeGooglyCommon.MOD_ID);
 
@@ -49,14 +46,7 @@ public final class HeadEyesLootModifier extends LootModifier {
 
     @Override
     protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
-        if (SkullEyeState.hasEyes(context.getParamOrNull(LootContextParams.BLOCK_ENTITY))) {
-            for (int index = 0; index < generatedLoot.size(); index++) {
-                ItemStack stack = generatedLoot.get(index);
-                if (SkullEyeState.entityFor(stack) != null) {
-                    generatedLoot.set(index, COPY_EYES.apply(stack, context));
-                }
-            }
-        }
+        SkullEyeState.copyEyesOntoHeadLoot(generatedLoot, context);
         return generatedLoot;
     }
 }

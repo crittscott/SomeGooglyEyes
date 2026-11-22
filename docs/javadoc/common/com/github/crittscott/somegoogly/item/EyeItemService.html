@@ -158,8 +158,8 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Right-click-on-block entry point for both eye items aimed at a placed mob head: a Slimy Eye on a head whose
  <a href="#verdictFor(net.minecraft.world.level.block.entity.BlockEntity)"><code>verdict</code></a> is <a href="EyeItemService.Verdict.html#CAN_HAVE"><code>EyeItemService.Verdict.CAN_HAVE</code></a> goes to
- <code>applySlimyEye(ItemStack, ServerPlayer, BlockEntity, Direction)</code>, Optometrist shears on an eyed
- head, with eyes enabled, to <code>harvestSkull(net.minecraft.server.level.ServerPlayer, net.minecraft.world.InteractionHand, net.minecraft.world.level.block.entity.BlockEntity, net.minecraft.core.Direction)</code>.</div>
+ <code>applySlimyEye(ItemStack, ServerPlayer, BlockEntity)</code>, Optometrist shears on an eyed head, with eyes
+ enabled, to <code>harvestSkull(net.minecraft.server.level.ServerPlayer, net.minecraft.world.InteractionHand, net.minecraft.world.level.block.entity.BlockEntity)</code>.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="EyeItemService.Verdict.html" title="enum class in com.github.crittscott.somegoogly.item">EyeItemService.Verdict</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#verdictFor(net.minecraft.world.entity.Entity)" class="member-name-link">verdictFor</a><wbr>(net.minecraft.world.entity.Entity&nbsp;target)</code></div>
@@ -252,8 +252,8 @@ loadScripts(document, 'script');</script>
  additionally deal a bare-handed hit's worth (base attack damage, whatever the main hand holds) of
  <a href="../registry/ModContent.html#SELF_SHEAR"><code>ModContent.SELF_SHEAR</code></a> damage, which has no
  attacker so PvP and team rules don't cancel it. Returns <code>InteractionResult.PASS</code>
- when it doesn't apply (spectating, not sneaking, not shears, no eyes, <code>googlyEyesEnabled</code> off) so
- the vanilla item use proceeds.</div>
+ when it doesn't apply (spectating, not sneaking, not shears, no eyes, <code>googlyEyesEnabled</code> off, or
+ aimed at a block or entity, which a passed click on it also brings here) so the vanilla item use proceeds.</div>
 </section>
 </li>
 <li>
@@ -265,11 +265,13 @@ loadScripts(document, 'script');</script>
  net.minecraft.world.phys.BlockHitResult&nbsp;hit)</span></div>
 <div class="block">Right-click-on-block entry point for both eye items aimed at a placed mob head: a Slimy Eye on a head whose
  <a href="#verdictFor(net.minecraft.world.level.block.entity.BlockEntity)"><code>verdict</code></a> is <a href="EyeItemService.Verdict.html#CAN_HAVE"><code>EyeItemService.Verdict.CAN_HAVE</code></a> goes to
- <code>applySlimyEye(ItemStack, ServerPlayer, BlockEntity, Direction)</code>, Optometrist shears on an eyed
- head, with eyes enabled, to <code>harvestSkull(net.minecraft.server.level.ServerPlayer, net.minecraft.world.InteractionHand, net.minecraft.world.level.block.entity.BlockEntity, net.minecraft.core.Direction)</code>. Both sides decide those cases from the state they hold,
- and the client answers <code>InteractionResult.SUCCESS</code> in exactly them, so it neither runs nor sends the
- item's own use on top (a sneaking player's self-apply or self-shear). Anything else, including plain
- shears, an eyed head, or a spectator's click, returns <code>InteractionResult.PASS</code>. The
+ <code>applySlimyEye(ItemStack, ServerPlayer, BlockEntity)</code>, Optometrist shears on an eyed head, with eyes
+ enabled, to <code>harvestSkull(net.minecraft.server.level.ServerPlayer, net.minecraft.world.InteractionHand, net.minecraft.world.level.block.entity.BlockEntity)</code>. Either needs the player allowed to use the item on that block, as
+ building there would; otherwise both sides refuse (<code>InteractionResult.FAIL</code>) and nothing is spent.
+ Both sides decide those cases from the state they hold, and the client answers
+ <code>InteractionResult.SUCCESS</code> in exactly the allowed ones, so it neither runs nor sends the item's own
+ use on top. Anything else, including plain shears, an eyed head, or a spectator's click, returns
+ <code>InteractionResult.PASS</code>. The
  Slimy Eye comes here rather than through <code>Item#useOn</code> for the reason a mob's click does: a head block
  can have a use of its own that takes the click first, as Twilight Forest's trophies do.</div>
 </section>

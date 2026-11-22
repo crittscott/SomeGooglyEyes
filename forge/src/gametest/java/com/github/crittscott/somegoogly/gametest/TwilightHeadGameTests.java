@@ -48,7 +48,8 @@ public final class TwilightHeadGameTests {
 
     /**
      * In game, give a skeleton skull eyes, right-click it with a red candle, and break it.
-     * The skull with a candle and the dropped vanilla skull should show the same eyes.
+     * The skull with a candle and the dropped vanilla skull should show the same eyes, and the dropped candle
+     * carries no googly eyes.
      */
     @GameTest(template = "empty", timeoutTicks = 40)
     public static void playerConversionKeepsEyes(GameTestHelper helper) {
@@ -153,6 +154,9 @@ public final class TwilightHeadGameTests {
         helper.assertTrue(drops.size() == 1, "breaking the head drops one head item");
         ItemStack stack = drops.get(0).getItem();
         helper.assertTrue(eyes.equals(SkullEyeState.itemSnapshot(stack)), "the head item keeps the original eyes");
+        helper.assertTrue(helper.getLevel().getEntitiesOfClass(ItemEntity.class, new AABB(pos).inflate(1),
+                        item -> !item.getItem().is(drop)).stream().noneMatch(item -> SkullEyeState.itemSnapshot(item.getItem()) != null),
+                "other drops, such as a skull candle's candles, carry no eyes");
         helper.setBlock(HEAD, replacement);
         BlockItem.updateCustomBlockEntityTag(helper.getLevel(), player, pos, stack);
         helper.assertTrue(eyes.equals(SkullEyeState.snapshot(helper.getBlockEntity(HEAD))), "placement restores the eyes");

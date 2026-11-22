@@ -6,11 +6,13 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
 import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot;
+import com.google.common.base.Suppliers;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 import javax.annotation.Nullable;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -25,8 +27,10 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SkullBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.functions.CopyNbtFunction;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.providers.nbt.ContextNbtProvider;
 
 /**
@@ -51,6 +55,8 @@ public final class SkullEyeState {
     public static final String DATA_KEY = "somegoogly:data";
     /** Twilight Forest's namespace. Ahead of the maps below, which name it. */
     public static final String TWILIGHT_NAMESPACE = "twilightforest";
+    /** The built {@link #headLootCopy()}, made on first use. */
+    private static final Supplier<LootItemFunction> HEAD_LOOT_COPY = Suppliers.memoize(() -> headLootCopy().build());
     /** Each mob whose head departs from {@link HeadShape#DEFAULT}. */
     private static final Map<ResourceLocation, HeadShape> HEAD_SHAPES = Map.ofEntries(
             Map.entry(EntityType.getKey(EntityType.BEE), HeadShape.showing("body")),
@@ -261,6 +267,22 @@ public final class SkullEyeState {
     public static LootItemFunction.Builder headLootCopy() {
         return CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY)
                 .copy(DATA_KEY, BlockItem.BLOCK_ENTITY_TAG + "." + DATA_KEY);
+    }
+
+    /**
+     * Breaking an eyed head copies its eye state onto the head items among {@code drops}, the loot rolled in
+     * {@code context}, where placing one restores it. Other drops, such as a skull candle's candles, are left alone.
+     */
+    public static void copyEyesOntoHeadLoot(List<ItemStack> drops, LootContext context) {
+        if (!hasEyes(context.getParamOrNull(LootContextParams.BLOCK_ENTITY))) {
+            return;
+        }
+        for (int index = 0; index < drops.size(); index++) {
+            ItemStack stack = drops.get(index);
+            if (entityFor(stack) != null) {
+                drops.set(index, HEAD_LOOT_COPY.get().apply(stack, context));
+            }
+        }
     }
 
     /**

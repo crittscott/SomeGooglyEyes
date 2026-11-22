@@ -99,6 +99,10 @@ public final class LoaderInteractionGameTestsLogic {
                 if (block != null) SkullEyeState.set(block, EyeState.Snapshot.NONE);
                 else EyeState.disableAndClearProperties(stateTarget);
                 player.setShiftKeyDown(kind.equals("self"));
+                if (kind.equals("self")) {
+                    // The self-shear acts only when aimed at nothing; this player is discarded afterward.
+                    TestPlayers.aimAtNothing(player);
+                }
                 for (boolean harvest : List.of(false, true)) {
                     if (kind.equals("self") && !harvest) {
                         EyeState.setHasEyes(player, true);

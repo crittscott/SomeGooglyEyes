@@ -70,6 +70,9 @@ public final class FabricServerEvents {
                 EyeItemService.useOnSkull(player, level, hand, hitResult));
         // Breaking an eyed head copies its eye state onto the dropped head item, where placing it restores it.
         // The Forge counterpart is HeadEyesLootModifier. A head without eyes saves no compound, so nothing copies.
+        // Fabric API for 1.20.1 has no finished-drops event to run SkullEyeState.copyEyesOntoHeadLoot from, and a
+        // loot condition cannot see the stack, so the copy applies to every pool of a head's table. Vanilla heads'
+        // tables drop only the head.
         LootTableEvents.MODIFY.register((resourceManager, lootManager, id, tableBuilder, source) -> {
             if (headLootTables().contains(id)) {
                 tableBuilder.modifyPools(pool -> pool.apply(SkullEyeState.headLootCopy()));

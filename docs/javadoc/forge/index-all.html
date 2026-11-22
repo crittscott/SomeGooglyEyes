@@ -158,7 +158,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/platform/forge/ItemDestructionImpl.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.platform.forge">ItemDestructionImpl</a> - Class in <a href="com/github/crittscott/somegoogly/platform/forge/package-summary.html">com.github.crittscott.somegoogly.platform.forge</a></dt>
 <dd>
-<div class="block">Forge implementation of the broken-item report, through the item-destroyed event.</div>
+<div class="block">Forge implementation of the emptied-item reports, through the item-destroyed event.</div>
 </dd>
 </dl>
 <h2 class="title" id="I:M">M</h2>
@@ -213,7 +213,11 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Forge implementation of the shared registration boundary, through deferred registers.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/platform/forge/ItemDestructionImpl.html#report(net.minecraft.world.entity.player.Player,net.minecraft.world.item.ItemStack,net.minecraft.world.InteractionHand)" class="member-name-link">report(Player, ItemStack, InteractionHand)</a> - Static method in class com.github.crittscott.somegoogly.platform.forge.<a href="com/github/crittscott/somegoogly/platform/forge/ItemDestructionImpl.html" title="class in com.github.crittscott.somegoogly.platform.forge">ItemDestructionImpl</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/platform/forge/ItemDestructionImpl.html#reportBroken(net.minecraft.world.entity.player.Player,net.minecraft.world.item.ItemStack,net.minecraft.world.InteractionHand)" class="member-name-link">reportBroken(Player, ItemStack, InteractionHand)</a> - Static method in class com.github.crittscott.somegoogly.platform.forge.<a href="com/github/crittscott/somegoogly/platform/forge/ItemDestructionImpl.html" title="class in com.github.crittscott.somegoogly.platform.forge">ItemDestructionImpl</a></dt>
+<dd>
+<div class="block">Forge calls its item-destroyed event from the interaction code, not from <code>hurtAndBreak</code>, so report here.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/platform/forge/ItemDestructionImpl.html#reportConsumed(net.minecraft.world.entity.player.Player,net.minecraft.world.item.ItemStack,net.minecraft.world.InteractionHand)" class="member-name-link">reportConsumed(Player, ItemStack, InteractionHand)</a> - Static method in class com.github.crittscott.somegoogly.platform.forge.<a href="com/github/crittscott/somegoogly/platform/forge/ItemDestructionImpl.html" title="class in com.github.crittscott.somegoogly.platform.forge">ItemDestructionImpl</a></dt>
 <dd>&nbsp;</dd>
 </dl>
 <h2 class="title" id="I:S">S</h2>

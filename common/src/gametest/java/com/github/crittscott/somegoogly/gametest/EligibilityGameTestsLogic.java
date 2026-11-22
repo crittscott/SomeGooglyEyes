@@ -18,6 +18,7 @@ import com.github.crittscott.somegoogly.server.ServerServices;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -31,6 +32,8 @@ import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * {@link RuntimeConfig#isUsable} is the single eligibility predicate behind the slimy eye's targeting,
@@ -311,17 +314,25 @@ public final class EligibilityGameTestsLogic {
     }
 
     /**
-     * {@link SlimyEyeItem#use}: only a sneaking use applies the eye to the player; a plain right-click
-     * passes. In game: holding a Slimy Eye, right-click the air and nothing happens; sneak and right-click
+     * {@link SlimyEyeItem#use}: only a sneaking use aimed at nothing applies the eye to the player; a plain
+     * right-click passes, and so does a sneaking one aimed at a mob or a block, which vanilla also routes here when
+     * the click on that target passes. In game: holding a Slimy Eye, right-click the air and nothing happens; sneak
+     * and right-click a mob that already has eyes, or a block, and nothing happens either; sneak and right-click
      * the air, and you have eyes (visible in third person) and the Slimy Eye is used.
      */
     public static void slimyEyeSelfApplyRequiresSneak(GameTestHelper helper, Player player) {
         Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
+        BlockPos wall = new BlockPos(2, 3, 5);
+        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 4));
+        Runnable restoreAim = () -> {
+        };
         try {
             RuntimeConfigSet set = new RuntimeConfigSet();
             set.any = usableConfig();
             TestEyeConfigs.install(Map.of(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.PLAYER), set));
             EyeState.setHasEyes(player, false);
+            Vec3 at = helper.absoluteVec(new Vec3(2.5, 2.0, 2.5));
+            player.moveTo(at.x, at.y, at.z);
 
             ItemStack stack = slimyEye(AppearanceOverride.EMPTY, 1);
             player.setItemInHand(InteractionHand.MAIN_HAND, stack);
@@ -334,11 +345,26 @@ public final class EligibilityGameTestsLogic {
             helper.assertTrue(!EyeState.hasEyes(player), "nothing was applied");
 
             player.setShiftKeyDown(true);
+            player.lookAt(EntityAnchorArgument.Anchor.EYES, cow.getBoundingBox().getCenter());
+            helper.assertTrue(item.use(player.level(), player, InteractionHand.MAIN_HAND).getResult() == InteractionResult.PASS,
+                    "a sneaking use aimed at a mob passes");
+            helper.setBlock(wall, Blocks.STONE);
+            cow.discard();
+            player.lookAt(EntityAnchorArgument.Anchor.EYES, Vec3.atCenterOf(helper.absolutePos(wall)));
+            helper.assertTrue(item.use(player.level(), player, InteractionHand.MAIN_HAND).getResult() == InteractionResult.PASS,
+                    "a sneaking use aimed at a block passes");
+            helper.assertTrue(!EyeState.hasEyes(player) && stack.getCount() == 1,
+                    "an aimed sneaking use applies nothing and spends nothing");
+
+            restoreAim = TestPlayers.aimAtNothing(player);
             InteractionResultHolder<ItemStack> consumed = item.use(player.level(), player, InteractionHand.MAIN_HAND);
             helper.assertTrue(consumed.getResult().consumesAction(), "sneak + use applies the eye to the player");
             helper.assertTrue(EyeState.hasEyes(player), "the player now has eyes");
         } finally {
             player.setShiftKeyDown(false);
+            restoreAim.run();
+            cow.discard();
+            helper.setBlock(wall, Blocks.AIR);
             EyeState.disableAndClearProperties(player);
             TestEyeConfigs.install(original);
         }

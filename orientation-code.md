@@ -8,8 +8,6 @@
 
 Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, version `0.8.3`, Java 17, Minecraft 1.20.1.
 
-`common` is transformed into both loader artifacts.
-
 | Source tree | Responsibility |
 | --- | --- |
 | `common/src/main/java` | Shared gameplay, state, codecs, services, networking, rendering, picker, GeckoLib integration, Mixins |
@@ -26,8 +24,6 @@ Server owns gameplay; client owns rendering and picker UI.
 
 ## Where decisions live
 
-Call these; do not restate them.
-
 | Decision | Owner |
 | --- | --- |
 | Entity/head can get eyes now | `EyeItemService.verdictFor` |
@@ -37,16 +33,16 @@ Call these; do not restate them.
 | Shears; harvest tool | `ModContent.SHEARS` tag; `EyeItemService.isHarvestTool` |
 | Percent chance | `ServerConfig.roll` |
 | Picker/admin permission; feedback | `PickerGate.mayUsePicker`; `tellSuccess`/`tellFailure` |
-| Entity under crosshair | `LookTarget.livingInCrosshair` |
+| Entity under crosshair; self-use on air | `LookTarget.livingInCrosshair`; `aimsAtNothing` |
 | Mod resource ids | `SomeGooglyCommon.id` |
 | Attachment path syntax | `EyeConfigModel.attachmentPath`/`attachmentIndex` |
 | Entity eyes; NBT read/write | `EyeState`; `EntityPersistentData.find`/`get` |
-| Head eyes and loot | `SkullEyeState` (`headLootCopy`) |
+| Head eyes and loot | `SkullEyeState` (`copyEyesOntoHeadLoot`) |
 | Conversion/respawn copy | `EyeState.copy` |
 | Start an expression; its clock | `ServerBehaviorScheduler.trigger`, `on*`; `clock` |
 | Anger | `OngoingBehavior.serverAngry` |
 | Sending packets | `Networking.sendToPlayer`/`sendTrackingAndSelf`/`sendToAll` |
-| Broken tool; spawn finalize | `ItemDestruction.report`; `MobSpawning.finalizeSpawn` |
+| Emptied item; spawn finalize | `ItemDestruction.reportConsumed`/`reportBroken`; `MobSpawning.finalizeSpawn` |
 | Picker-spawnable mobs | `PickerSpawnService.refusal` |
 | Mod versions; integration failures | `ModVersionLookup.modVersion`; `ClientIntegrationFailures.warnOnce` |
 | Eye/pupil rotation | `EyePlacement.orientation` |
@@ -74,7 +70,7 @@ Placed heads save a `Snapshot` under `somegoogly:data` only while eyed; load kee
 
 Eye items carry `AppearanceOverride` as the `EyeProperties` compound (`EyeItemProperties`), never geometry; harvesting copies the first eye's effective appearance, and the modifier recipe changes only that compound.
 
-`EyeItemService` owns authorization, mutation, drops, and durability for mob/head application and harvest. Use hooks run after protection listeners (Forge `LOWEST`, Fabric a late phase); head use honors native denial and `mayAlter`. Spectators are refused. `markHeadDrop` stamps eyed mobs' own heads; placed-head loot goes through Forge `HeadEyesLootModifier` or Fabric `LootTableEvents.MODIFY`. `#somegoogly:shears` holds vanilla plus optional `#c:shears`/`#forge:shears`. `verdictFor` also serves prediction and inspect hints. Use awards `ITEM_USED`, heads also `ITEM_USED_ON_BLOCK`. Attacker-less `self_shear` bypasses PvP damage cancellation.
+`EyeItemService` owns authorization, mutation, drops, and durability for mob/head application and harvest. Use hooks run after protection listeners (Forge `LOWEST`, Fabric a late phase); head use honors native denial, and `useOnSkull` checks `mayAlter` on both sides (`FAIL`). Spectators are refused. `markHeadDrop` stamps eyed mobs' own heads; placed-head loot goes through Forge `HeadEyesLootModifier` or Fabric `LootTableEvents.MODIFY` (every pool). `#somegoogly:shears` holds vanilla plus optional `#c:shears`/`#forge:shears`. `verdictFor` also serves prediction and inspect hints. Use awards `ITEM_USED`, heads also `ITEM_USED_ON_BLOCK`. Attacker-less `self_shear` bypasses PvP damage cancellation.
 
 Application emits `ENTITY_INTERACT` (`BLOCK_CHANGE` on a head), harvest `SHEAR`, refusal nothing.
 
@@ -116,11 +112,11 @@ Client owns picker drafts/previews; server owns freezing/spawning/movement/expor
 
 Shared Mixins (`somegoogly-common.mixins.json`) cover milking, sheep shearing, mooshroom shearing (`shear`, and Forge's `shearInternal`), server-broadcast entity events, item-eye contexts, boats, and holding and drawing head eyes. Fabric's own cover data migration, hurt (on `LivingEntity` and `Player`) and heal, lightning conversion, trades, shears-kill and head drops, tracking start (`START_TRACKING` precedes the spawn packet), and level changes.
 
-Forge registers from `@Mod`, keeping client bootstrap apart from the dedicated server's, with client listeners on the right bus. Forge GameTests use the unprefixed `empty` template.
+Forge registers from `@Mod`, keeping client bootstrap apart from the dedicated server's, with client listeners on the right bus.
 
 ## Automated verification
 
-GameTests: Fabric 191, Forge 195. Native use wiring, Forge refusals, clone events, real scheduler triggers/kills/spawns, and admin dispatch have GameTests. Visuals, multiplayer, Fabric protection ordering, full respawn transitions, and real saves need manual checks; see `docs/picker-hud-testing.md` for picker/network scenarios.
+GameTests: Fabric 191, Forge 196. Native use wiring, Forge refusals, clone events, real scheduler triggers/kills/spawns, and admin dispatch have GameTests. Visuals, multiplayer, Fabric protection ordering, full respawn transitions, and real saves need manual checks; see `docs/picker-hud-testing.md` for picker/network scenarios.
 
 ## Operational boundaries
 

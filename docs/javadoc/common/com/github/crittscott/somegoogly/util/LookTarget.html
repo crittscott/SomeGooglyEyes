@@ -77,8 +77,8 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">LookTarget</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Ray-picks the living entity a player is aiming at, out to <code>reach</code> blocks, for the <code>/sg admin</code> and
- picker spawn verbs, which target the looked-at mob past vanilla's interaction reach.</div>
+<div class="block">Ray-picks what a player is aiming at: the living entity the <code>/sg admin</code> and picker spawn verbs target past
+ vanilla's interaction reach, and whether the eye items' sneak self-use is aimed at nothing.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -110,10 +110,16 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.world.entity.LivingEntity</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#livingInCrosshair(net.minecraft.world.entity.player.Player,double)" class="member-name-link">livingInCrosshair</a><wbr>(net.minecraft.world.entity.player.Player&nbsp;player,
- double&nbsp;reach)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#aimsAtNothing(net.minecraft.world.entity.player.Player)" class="member-name-link">aimsAtNothing</a><wbr>(net.minecraft.world.entity.player.Player&nbsp;player)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Whether <code>player</code> aims at nothing it could click: no block within its block reach and no pickable entity
+ within its entity reach, the reaches vanilla's own crosshair target uses.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.world.entity.LivingEntity</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#livingInCrosshair(net.minecraft.world.entity.player.Player,double)" class="member-name-link">livingInCrosshair</a><wbr>(net.minecraft.world.entity.player.Player&nbsp;player,
+ double&nbsp;reach)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The pickable, non-spectator living entity under <code>player</code>'s crosshair within <code>reach</code> blocks, or
  <code>null</code>.</div>
 </div>
@@ -157,6 +163,16 @@ loadScripts(document, 'script');</script>
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="aimsAtNothing(net.minecraft.world.entity.player.Player)">
+<h3>aimsAtNothing</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">aimsAtNothing</span><wbr><span class="parameters">(net.minecraft.world.entity.player.Player&nbsp;player)</span></div>
+<div class="block">Whether <code>player</code> aims at nothing it could click: no block within its block reach and no pickable entity
+ within its entity reach, the reaches vanilla's own crosshair target uses. This version has no reach
+ attributes in common code, so the reaches are vanilla's fixed ones by game mode. Both sides answer the same
+ way, so a use the client predicts on air is the use the server performs.</div>
+</section>
+</li>
 <li>
 <section class="detail" id="livingInCrosshair(net.minecraft.world.entity.player.Player,double)">
 <h3>livingInCrosshair</h3>
