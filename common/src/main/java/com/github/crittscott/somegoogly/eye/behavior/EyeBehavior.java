@@ -182,32 +182,45 @@ public enum EyeBehavior {
     CROSS_EYE("cross_eye", 7, 70) {
         @Override
         public void influence(BehaviorInstance i, int head, int eye, EyeInfluence out) {
-            // A lone eye has no partner to look at.
+            // A lone eye has no partner to look at, and an eye without a configured partner stays neutral.
+            float[] aim = i.crossAim == null ? null : i.crossAim[head][eye];
+            if (aim == null) {
+                return;
+            }
+            float t = (float) i.age / i.duration;
+            float mag = CROSS_EYE_AMOUNT * slide(t, GLANCE_CENTER_FRAC, GLANCE_HOLD_FRAC);
+            out.anchorX = aim[0] * mag;
+            out.anchorY = aim[1] * mag;
+            out.stiffness = PUPIL_STIFFNESS * trapezoid(t, GLANCE_CENTER_FRAC, GLANCE_HOLD_FRAC);
+        }
+
+        @Override
+        public void onStart(BehaviorInstance i) {
             if (i.helper == null) {
                 return;
             }
-            EyePlacement self = i.helper.placementAt(head, eye);
-            int targetIdx = self.crossTarget();
-            // An eye without a configured partner stays neutral.
-            if (targetIdx == EyePlacement.NO_CROSS_TARGET) {
-                return;
+            int heads = i.helper.getHeadCount();
+            i.crossAim = new float[heads][][];
+            for (int h = 0; h < heads; h++) {
+                int eyes = i.helper.getEyeCount(h);
+                i.crossAim[h] = new float[eyes][];
+                for (int e = 0; e < eyes; e++) {
+                    EyePlacement self = i.helper.placementAt(h, e);
+                    int targetIdx = self.crossTarget();
+                    if (targetIdx == EyePlacement.NO_CROSS_TARGET) {
+                        continue;
+                    }
+                    // Direction from this eye to its target, in the head frame, projected into this eye's pupil
+                    // plane.
+                    Vec3 d = i.helper.placementAt(h, targetIdx).position().subtract(self.position());
+                    float[] dir = self.projectToPupilPlane(d.x, d.y, d.z);
+                    float len = (float) Math.sqrt(dir[0] * dir[0] + dir[1] * dir[1]);
+                    // Negate: ModelGooglyEye#moveIris renders the pupil at -(normX, normY) (render space is -Y
+                    // up / -X right), so the pupil coordinate that visually points toward the target is the
+                    // negated projection. Without this the pupil rolls away from its partner instead of toward it.
+                    i.crossAim[h][e] = len > 1e-4f ? new float[]{-dir[0] / len, -dir[1] / len} : new float[2];
+                }
             }
-
-            // Direction from this eye to its target, in the head frame, projected into this eye's pupil plane.
-            Vec3 d = i.helper.placementAt(head, targetIdx).position().subtract(self.position());
-            float[] dir = self.projectToPupilPlane(d.x, d.y, d.z);
-            float len = (float) Math.sqrt(dir[0] * dir[0] + dir[1] * dir[1]);
-
-            float t = (float) i.age / i.duration;
-            float mag = CROSS_EYE_AMOUNT * slide(t, GLANCE_CENTER_FRAC, GLANCE_HOLD_FRAC);
-            // Negate: ModelGooglyEye#moveIris renders the pupil at -(normX, normY) (render space is -Y up /
-            // -X right), so the pupil coordinate that visually points toward the target is the negated
-            // projection. Without this the pupil rolls away from its partner instead of toward it.
-            if (len > 1e-4f) {
-                out.anchorX = -dir[0] / len * mag;
-                out.anchorY = -dir[1] / len * mag;
-            }
-            out.stiffness = PUPIL_STIFFNESS * trapezoid(t, GLANCE_CENTER_FRAC, GLANCE_HOLD_FRAC);
         }
     };
 

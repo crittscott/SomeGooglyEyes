@@ -195,7 +195,7 @@ public final class GooglyEyeRenderer {
         // Eye offset in head-local coordinates, then the eye's own aim (not the head's) about its center.
         Vec3 position = placement.position();
         pose.translate(position.x, position.y, position.z);
-        pose.mulPose(placement.orientation());
+        pose.mulPose(helper.orientationAt(headIndex, eyeIndex));
 
         // The pose now sits in this eye's pupil plane (post offset + aim, pre-scale): capture which way
         // world-down points here, for the next tick's gravity. This is the one spot that knows the eye's

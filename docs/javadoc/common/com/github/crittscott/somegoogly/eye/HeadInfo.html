@@ -93,7 +93,7 @@ loadScripts(document, 'script');</script>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Resolved view of one entity eye configuration after age and weighted placement-variant selection.
  Storage, selection, serialization, caching, and rendering transforms are owned by their respective
- domains; this class only exposes the selected heads and eyes to consumers.</div>
+ domains; this class only exposes the selected heads and eyes to consumers, keeping each eye's aim once built.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -159,10 +159,17 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The selected variant's head list; its identity invalidates per-mob trackers.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="EyePlacement.html" title="class in com.github.crittscott.somegoogly.eye">EyePlacement</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#placementAt(int,int)" class="member-name-link">placementAt</a><wbr>(int&nbsp;headIndex,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>org.joml.Quaternionf</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#orientationAt(int,int)" class="member-name-link">orientationAt</a><wbr>(int&nbsp;headIndex,
  int&nbsp;eyeIndex)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">The selected eye's <a href="EyePlacement.html#orientation()"><code>EyePlacement.orientation()</code></a>, built once and shared by every draw of this view;
+ callers must not modify it.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="EyePlacement.html" title="class in com.github.crittscott.somegoogly.eye">EyePlacement</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#placementAt(int,int)" class="member-name-link">placementAt</a><wbr>(int&nbsp;headIndex,
+ int&nbsp;eyeIndex)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">The selected eye's placement.</div>
 </div>
 </div>
@@ -255,6 +262,15 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="EyePlacement.html" title="class in com.github.crittscott.somegoogly.eye">EyePlacement</a></span>&nbsp;<span class="element-name">placementAt</span><wbr><span class="parameters">(int&nbsp;headIndex,
  int&nbsp;eyeIndex)</span></div>
 <div class="block">The selected eye's placement.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="orientationAt(int,int)">
+<h3>orientationAt</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">org.joml.Quaternionf</span>&nbsp;<span class="element-name">orientationAt</span><wbr><span class="parameters">(int&nbsp;headIndex,
+ int&nbsp;eyeIndex)</span></div>
+<div class="block">The selected eye's <a href="EyePlacement.html#orientation()"><code>EyePlacement.orientation()</code></a>, built once and shared by every draw of this view;
+ callers must not modify it.</div>
 </section>
 </li>
 </ul>

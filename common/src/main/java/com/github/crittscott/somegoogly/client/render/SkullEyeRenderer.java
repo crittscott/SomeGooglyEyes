@@ -104,9 +104,9 @@ public final class SkullEyeRenderer {
             if (snapshot == null) {
                 return;
             }
-            HeadInfo helper = ClientEyeConfigs.resolveHead(entity, snapshot.variantRoll());
-            if (helper.hasConfig()) {
-                renderEyes(pose, bufferSource, packedLight, head, helper, SkullEyeState.headParts(helper), null,
+            ClientEyeRuntime.RestingHead resting = ClientEyeRuntime.restingHead(snapshot, entity);
+            if (resting != null) {
+                renderEyes(pose, bufferSource, packedLight, head, resting.helper(), resting.parts(), null,
                         snapshot.properties(), itemDraw.partialTick());
             }
         }

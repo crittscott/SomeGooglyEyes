@@ -22,9 +22,7 @@ Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, versi
 | `neoforge/src/main` | NeoForge bootstrap, events, native config, adapters, client integration, metadata |
 | `neoforge/src/gametest` | NeoForge wrappers, persistence proof, dev-mod entry point, discovery metadata |
 
-Common uses adapters and `@ExpectPlatform`; no loader imports.
-
-The server owns gameplay and authorization; the client owns rendering and picker UI.
+Common uses adapters and `@ExpectPlatform`; no loader imports. The server owns gameplay and authorization; the client owns rendering and picker UI.
 
 `ModContent` registers content through the `@ExpectPlatform` `Registration`. Slimy Eye uses vanilla `crafting_transmute`; Optometrist and `self_shear` are data-driven.
 
@@ -40,7 +38,7 @@ Eye definitions are datapack resources at `data/<namespace>/eyes/*.json`, modele
 
 Persistent entity keys: `somegoogly:hasGooglyEyes`, `somegoogly:eyeVariantRoll`, `somegoogly:eyeOverrides`.
 
-Mutations send one full snapshot; stored rolls read clamped to 0..1. Eye state and roll initialize together once. Initialization and tracking skip default state; mid-life mutations always send. `EyeState.copy` handles conversion and non-death respawn; joining players get their own snapshot.
+Mutations send one full snapshot; stored rolls clamp to 0..1. Eye state and roll initialize together once. Initialization and tracking skip default state; mid-life mutations always send. `EyeState.copy` handles conversion and non-death respawn; joining players get their own snapshot.
 
 Eye items carry `AppearanceOverride` in the synced `somegoogly:eye_properties` component, never geometry; harvesting copies the first eye's effective appearance, the modifier recipe changes only that component, and the Slimy Eye transmute copies every component.
 
@@ -50,17 +48,17 @@ Saved data from the 1.21.4 release is already in current form; nothing migrates.
 
 `EyeItemService` owns eye application, harvest, and the eligibility verdict shared with the inspector. Loader hooks honor protection listeners and item-use denials. The service excludes spectators, respects PvP and teams for other-player changes, and checks the clicked head for adventure restrictions. Successful use records item statistics and the head-use advancement trigger. Death harvest honors `doMobLoot`. Forge and NeoForge stamp head drops at `LOWEST`; Fabric at `spawnAtLocation`. Placed-head loot copies the state with `SkullEyeState.headLootCopy` (Forge/NeoForge loot modifiers, Fabric loot-table event). Plain-shears self-damage uses the attacker-less `self_shear` type.
 
-Successful Slimy Eye applications emit `GameEvent.ENTITY_INTERACT` (`BLOCK_CHANGE` on a head), successful harvests `GameEvent.SHEAR`; refusals emit neither.
+Successful Slimy Eye applications emit `GameEvent.ENTITY_INTERACT` (`BLOCK_CHANGE` on a head), harvests `GameEvent.SHEAR`; refusals emit neither.
 
 ## Eligibility and behaviors
 
 `ServerServices.onLivingEntityLoaded` owns natural eye initialization; later configuration changes never revisit an initialized entity.
 
-`EyeBehavior` catalogs expressions; `OngoingBehavior` catalogs ongoing states. `BehaviorInstance` carries id/duration/seed/elapsed. `ServerBehaviorScheduler` runs watched eyed mobs and damage/heal/trade/milking/shearing/entity-event triggers on the server tick clock; sleepers start nothing. It also sends held-eye hurt (any damage) and heal reactions per hand. `GooglyTracker` applies enabled ongoing states. `PresentationEyes` caches ambient slots for items, hands, placed heads, and boats. Heads seed by position. Only paired layouts cross-eye. Slots fit the longest eligible expression or the synced mean interval, whichever is greater. Anger syncs on change/new viewer. `ClientEyeRuntime` owns mob, boat, head, frame, hand, and GUI simulations, retains mob and hand reports independently of them, and ages expressions offscreen. Only recently rendered trackers simulate; idle trackers expire. Heads cache by position and recheck replaced eye data at draw. Frames cache by entity and recheck item contents at extraction. Level changes/disconnect clear all. The master switch pauses mob scheduling while retaining watchers and expiring effects; authoring triggers remain available. Client behaviors start inactive until sync.
+`EyeBehavior` catalogs expressions; `OngoingBehavior` catalogs ongoing states. `BehaviorInstance` carries id/duration/seed/elapsed. `ServerBehaviorScheduler` runs watched eyed mobs and damage/heal/trade/milking/shearing/entity-event triggers on the server tick clock; sleepers start nothing. It also sends held-eye hurt (any damage) and heal reactions per hand. `GooglyTracker` applies enabled ongoing states. `PresentationEyes` caches ambient slots for items, hands, placed heads, and boats. Heads seed by position. Only paired layouts cross-eye. Slots fit the longest eligible expression or the synced mean interval, whichever is greater. Anger syncs on change/new viewer. `ClientEyeRuntime` owns mob, boat, head, frame, hand, and GUI simulations, retains mob and hand reports independently of them, and ages expressions offscreen. Only recently rendered trackers simulate; idle trackers expire. Heads cache by position and recheck replaced eye data at draw; resting head items cache layouts by component. Frames cache by entity and recheck item contents at extraction. Level changes/disconnect clear all. The master switch pauses mob scheduling while retaining watchers and expiring effects; authoring triggers remain available. Client behaviors start inactive until sync.
 
 ## Rendering and attachment
 
-`ClientRenderLayers` installs `LayerGooglyEyes` once per renderer rebuild, before slime's outer layer; GeckoLib uses `CompileRenderLayers`. Both draw picker previews. `LayerGooglyEyes` insets sheared adult sheep `body` eyes by wool depth. Common Mixins store `EyeRenderData` on `LivingEntityRenderState`; GeckoLib captures it during render-state extraction and registers per-bone drawing tasks with state-owned eye data and copied picker drafts. `GooglyEyeRenderer.drawEye` draws every eye, `drawAnimatedEye` simulated ones. `ClientEyeRuntime` owns the shared simulation eviction rule and one nested draw context for item and head draws. Rendering and pupil projection share `EyePlacement.orientation`.
+`ClientRenderLayers` installs `LayerGooglyEyes` once per renderer rebuild, before slime's outer layer; GeckoLib uses `CompileRenderLayers`. Both draw picker previews. `LayerGooglyEyes` insets sheared adult sheep `body` eyes by wool depth. Common Mixins store `EyeRenderData` on `LivingEntityRenderState`; GeckoLib captures it during render-state extraction and registers per-bone drawing tasks with state-owned eye data and copied picker drafts. `GooglyEyeRenderer.drawEye` draws every eye, `drawAnimatedEye` simulated ones. `ClientEyeRuntime` owns the shared simulation eviction rule and one nested draw context for item and head draws. Rendering (cached in `HeadInfo`) and pupil projection share `EyePlacement.orientation`.
 
 Attachment resolvers cache by model identity and replay `ThirdPartyModelWraps`. `RootModelResolver` walks `EntityModel.root()` after reflected Citadel/Uranus/LLibrary resolvers. The picker selects separate baby models by age.
 
@@ -101,4 +99,4 @@ GameTest scenarios: Fabric 186, Forge 189, NeoForge 189. Fabric client tests (`f
 ## Operational boundaries
 
 - Optional renderer integrations log failures once.
-- `build-env/` mirrors build inputs as described in `orientation-build.md`; keep covered files synchronized.
+- `build-env/` mirrors build inputs as described in `orientation-build.md`.
