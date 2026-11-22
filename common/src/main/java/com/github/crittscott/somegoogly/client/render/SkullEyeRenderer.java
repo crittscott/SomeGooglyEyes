@@ -68,8 +68,11 @@ public final class SkullEyeRenderer {
      */
     @Nullable
     public static PresentationEyes extract(SkullBlockEntity skull) {
+        if (!SkullEyeState.hasEyes(skull)) {
+            return null;
+        }
         Identifier entity = SkullEyeState.entityFor(skull.getBlockState().getBlock());
-        if (!SkullEyeState.hasEyes(skull) || !mayShow(entity)) {
+        if (!mayShow(entity)) {
             return null;
         }
         PresentationEyes eyes = ClientEyeRuntime.skullEyes(skull, entity);

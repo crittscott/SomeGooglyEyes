@@ -8,6 +8,7 @@ import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.registry.ModContent;
 import com.github.crittscott.somegoogly.item.EyeItemService;
+import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.core.Holder;
@@ -33,6 +34,7 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Scoreboard;
@@ -266,12 +268,13 @@ public final class EyeItemServiceGameTestsLogic {
 
     /**
      * Sneak + shears on air removes your own eyes for one durability, whether or not the shears carry
-     * Optometrist; only a non-sneaking use is left to the vanilla item. The plain-shears self-damage
+     * Optometrist; a non-sneaking use, or a sneaking one aimed at a mob or a block (which a click on that target
+     * that passed also brings here), is left to the vanilla item. The plain-shears self-damage
      * (a melee hit's worth of health) is not asserted here — fake players are inert to {@code hurt} —
      * and stays source-verified. In game: apply a Slimy Eye to yourself, then sneak and right-click the
      * air with Optometrist shears; your eyes come off, one Googly Eye drops, the shears lose one durability,
-     * and you take no damage. Repeat with plain shears and you also lose some health. Without sneaking, or
-     * with {@code googlyEyesEnabled = false}, nothing happens.
+     * and you take no damage. Repeat with plain shears and you also lose some health. Without sneaking, sneaking
+     * while aiming at a mob or a block, or with {@code googlyEyesEnabled = false}, your eyes stay on.
      * A protection listener's refusal is checked through the loader's hook by
      * {@link LoaderInteractionGameTestsLogic#useHooksHonorResults}. Callback ordering needs a connected client;
      * this service test bypasses the loader callback.
@@ -289,6 +292,24 @@ public final class EyeItemServiceGameTestsLogic {
         EyeState.setIrisTint(player, iris);
 
         ItemStack opto = optometristShears(helper);
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.SHEARS));
+        Cow cow = helper.spawnWithNoFreeWill(EntityTypes.COW, new BlockPos(2, 2, 4));
+        player.lookAt(EntityAnchorArgument.Anchor.EYES, cow.getBoundingBox().getCenter());
+        helper.assertTrue(
+                EyeItemService.selfRemoveWithShears(player, InteractionHand.MAIN_HAND) == InteractionResult.PASS,
+                Component.literal("sneaking shears aimed at a mob leave your own eyes alone"));
+        cow.discard();
+        BlockPos wall = new BlockPos(2, 3, 5);
+        helper.setBlock(wall, Blocks.STONE);
+        player.lookAt(EntityAnchorArgument.Anchor.EYES, Vec3.atCenterOf(helper.absolutePos(wall)));
+        helper.assertTrue(
+                EyeItemService.selfRemoveWithShears(player, InteractionHand.MAIN_HAND) == InteractionResult.PASS,
+                Component.literal("sneaking shears aimed at a block leave your own eyes alone"));
+        helper.setBlock(wall, Blocks.AIR);
+        helper.assertTrue(EyeState.hasEyes(player) && player.getHealth() == player.getMaxHealth(),
+                Component.literal("an aimed self-shear removes nothing and does no damage"));
+
+        Runnable restoreAim = TestPlayers.aimAtNothing(player);
         player.setItemInHand(InteractionHand.MAIN_HAND, opto);
         InteractionResult clean = EyeItemService.selfRemoveWithShears(player, InteractionHand.MAIN_HAND);
         helper.assertTrue(clean == InteractionResult.CONSUME, Component.literal("Optometrist self-removal succeeds"));
@@ -329,8 +350,9 @@ public final class EyeItemServiceGameTestsLogic {
             helper.assertTrue(EyeState.hasEyes(player), Component.literal("a blocked self-removal leaves the eyes on"));
         } finally {
             ServerConfig.GOOGLY_EYES_ENABLED.set(originalEnabled);
-            // The loader's fake player is shared, and a later test's click would still be sneaking.
+            // The loader's fake player is shared, and a later test's click would still be sneaking and aimed up.
             player.setShiftKeyDown(false);
+            restoreAim.run();
         }
 
         droppedEyes(helper, player).forEach(ItemEntity::discard);

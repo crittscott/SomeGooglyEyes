@@ -56,7 +56,8 @@ loadScripts(document, 'script');</script>
 <li><a href="#method-summary" tabindex="0">Method Summary</a></li>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
-<li><a href="#report(net.minecraft.world.entity.player.Player,net.minecraft.world.item.ItemStack,net.minecraft.world.InteractionHand)" tabindex="0">report(Player, ItemStack, InteractionHand)</a></li>
+<li><a href="#reportBroken(net.minecraft.world.entity.player.Player,net.minecraft.world.item.ItemStack,net.minecraft.world.InteractionHand)" tabindex="0">reportBroken(Player, ItemStack, InteractionHand)</a></li>
+<li><a href="#reportConsumed(net.minecraft.world.entity.player.Player,net.minecraft.world.item.ItemStack,net.minecraft.world.InteractionHand)" tabindex="0">reportConsumed(Player, ItemStack, InteractionHand)</a></li>
 </ol>
 </li>
 </ol>
@@ -74,7 +75,7 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">ItemDestructionImpl</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Forge fires its item-destroyed event from <code>hurtAndBreak</code>, so reporting here would send it twice.</div>
+<div class="block">Forge implementation of the emptied-item reports, through the item-destroyed event.</div>
 </div>
 </section>
 <section class="summary">
@@ -91,10 +92,17 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#report(net.minecraft.world.entity.player.Player,net.minecraft.world.item.ItemStack,net.minecraft.world.InteractionHand)" class="member-name-link">report</a><wbr>(net.minecraft.world.entity.player.Player&nbsp;player,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reportBroken(net.minecraft.world.entity.player.Player,net.minecraft.world.item.ItemStack,net.minecraft.world.InteractionHand)" class="member-name-link">reportBroken</a><wbr>(net.minecraft.world.entity.player.Player&nbsp;player,
  net.minecraft.world.item.ItemStack&nbsp;original,
  net.minecraft.world.InteractionHand&nbsp;hand)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Forge fires its item-destroyed event from <code>hurtAndBreak</code>, so reporting here would send it twice.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reportConsumed(net.minecraft.world.entity.player.Player,net.minecraft.world.item.ItemStack,net.minecraft.world.InteractionHand)" class="member-name-link">reportConsumed</a><wbr>(net.minecraft.world.entity.player.Player&nbsp;player,
+ net.minecraft.world.item.ItemStack&nbsp;original,
+ net.minecraft.world.InteractionHand&nbsp;hand)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -113,10 +121,21 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="report(net.minecraft.world.entity.player.Player,net.minecraft.world.item.ItemStack,net.minecraft.world.InteractionHand)">
-<h3>report</h3>
+<section class="detail" id="reportBroken(net.minecraft.world.entity.player.Player,net.minecraft.world.item.ItemStack,net.minecraft.world.InteractionHand)">
+<h3>reportBroken</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">report</span><wbr><span class="parameters">(net.minecraft.world.entity.player.Player&nbsp;player,
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">reportBroken</span><wbr><span class="parameters">(net.minecraft.world.entity.player.Player&nbsp;player,
+ net.minecraft.world.item.ItemStack&nbsp;original,
+ net.minecraft.world.InteractionHand&nbsp;hand)</span></div>
+<div class="block">Forge fires its item-destroyed event from <code>hurtAndBreak</code>, so reporting here would send it twice.</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="reportConsumed(net.minecraft.world.entity.player.Player,net.minecraft.world.item.ItemStack,net.minecraft.world.InteractionHand)">
+<h3>reportConsumed</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">reportConsumed</span><wbr><span class="parameters">(net.minecraft.world.entity.player.Player&nbsp;player,
  net.minecraft.world.item.ItemStack&nbsp;original,
  net.minecraft.world.InteractionHand&nbsp;hand)</span></div>
 </div>

@@ -42,15 +42,15 @@ Persistent entity keys: `somegoogly:hasGooglyEyes`, `somegoogly:eyeVariantRoll`,
 
 Mutations send one full snapshot; stored rolls clamp to 0..1; received ones outside it fail decoding. Eye state and roll initialize together once. Initialization and tracking skip default state; mid-life mutations always send. `EyeState.copy` handles conversion and non-death respawn; joining players get their own snapshot.
 
-Eye items carry `AppearanceOverride` in the synced `somegoogly:eye_properties` component, never geometry; harvesting copies the first eye's effective appearance, the modifier recipe changes only that component, and the Slimy Eye transmute copies every component.
+Eye items carry `AppearanceOverride` in the synced `somegoogly:eye_properties` component, never geometry; harvesting copies the first eye's appearance, the modifier recipe changes only that component, and the Slimy Eye transmute copies every component.
 
 `SkullEyeState` stores placed-head snapshots in the Mixin-added `somegoogly:data` compound, normalized to an eye-state snapshot on load and carried by update tags. Head items use the implicit `somegoogly:head_eyes` component. Heads borrow adult definitions, selecting variants with eyes on the head part; modded heads have no mapping. Mutations send block updates.
 
-Saved data from the 26.1.2 release is already in current form; nothing migrates.
+26.1.2 saves are already in current form; nothing migrates.
 
-`EyeItemService` owns authorization, mutation, drops, and durability for Slimy Eye use and both harvests, on mobs and heads. Loader adapters run entity interaction, block use, and self-shearing after protection listeners (Forge/NeoForge `LOWEST`, Fabric a late phase); head use also checks `mayInteract`/`mayUseItemAt`, and Forge/NeoForge honor separate item-use denials. `markHeadDrop` stamps an eyed mob's own head among its death drops (Forge/NeoForge at `LOWEST`); head loot copies the state with `SkullEyeState.headLootCopy` (Forge/NeoForge `HeadEyesLootModifier`, with native data in each loader; Fabric `LootTableEvents.MODIFY`). The shared use entry points refuse spectators. Shears are `#somegoogly:shears` (vanilla plus optional `#c:tools/shear`). Applying or harvesting another player’s eyes requires level PvP and `canHarmPlayer`. Head use checks the clicked block in Adventure mode and records its use criterion and statistic before spending the item. Harvest kills honor the mob-drops rule. NeoForge reports shears breaks explicitly. Plain-shears self-damage uses the attacker-less `self_shear` type.
+`EyeItemService` owns authorization, mutation, drops, and durability for Slimy Eye use and harvests on mobs and heads. Loader adapters run entity interaction, block use, and self-shearing after protection listeners (Forge/NeoForge `LOWEST`, Fabric a late phase); head use also checks `mayInteract`/`mayUseItemAt`, and Forge/NeoForge honor separate item-use denials. `markHeadDrop` stamps an eyed mob's own head among its death drops (Forge/NeoForge at `LOWEST`); `SkullEyeState.copyEyesOntoHeadLoot` copies head state onto head drops only (Forge/NeoForge `HeadEyesLootModifier`; Fabric `LootTableEvents.MODIFY_DROPS`). Use entry points refuse spectators. Shears are `#somegoogly:shears` (vanilla plus optional `#c:tools/shear`). Applying or harvesting another player’s eyes requires level PvP and `canHarmPlayer`. Self-use needs `LookTarget.aimsAtNothing`. Head use refuses (`FAIL`) on both sides before predicting, checks the clicked block in Adventure mode, and records its criterion and statistic before spending the item. Harvest kills honor mob drops. `ItemDestruction` reports used-up stacks (Forge, NeoForge) and broken shears (NeoForge). Plain-shears self-damage uses attacker-less `self_shear`.
 
-Slimy Eye applications emit `GameEvent.ENTITY_INTERACT` (`BLOCK_CHANGE` on a head), harvests `GameEvent.SHEAR`; refusals emit neither.
+Slimy Eye applications emit `ENTITY_INTERACT` (`BLOCK_CHANGE` on a head), harvests `SHEAR`; refusals emit neither.
 
 ## Eligibility and behaviors
 
@@ -72,11 +72,11 @@ GeckoLib links only after detection; attach failures cannot block loading.
 
 ## Networking
 
-Seven play payloads carry definitions, settings, eye state, expressions, anger, picker freeze, and export. Payload types own stable IDs; triggers carry target (entity or hand), behavior, seed, and age. `NetworkProtocol` declares version 19 and the payload table all loaders register. Fabric negotiates a version during configuration, and the native loaders require it on their channels.
+Seven play payloads carry definitions, settings, eye state, expressions, anger, picker freeze, and export. Payload types own stable IDs and composed stream codecs; triggers carry target (entity or hand), behavior, seed, and age. `NetworkProtocol` declares version 19 and the payload table all loaders register. Fabric negotiates a version during configuration, and the native loaders require it on their channels.
 
-The definition and settings packets sync separately. Joining players receive both with datapack sync. Reloads and config applies broadcast only changed data. Definitions reset the simulations; settings update the switches and rules they use.
+Definitions and settings sync separately: joiners get both with datapack sync; reloads and config applies broadcast only changes. Definitions reset simulations; settings update their switches and rules.
 
-Sends use the platform bridges; clientbound handlers link the client handler only inside lambdas. Serverbound picker handlers authorize the sender. Decoders and receivers validate input before installation or use.
+Sends use the platform bridges; clientbound handlers link client code only inside lambdas. Serverbound picker handlers authorize the sender; decoders and receivers validate input before use.
 
 ## Picker and commands
 
@@ -94,7 +94,7 @@ Forge’s required `PayloadChannel` marks payloads handled. Both native loaders 
 
 ## Automated verification
 
-GameTest scenarios: Fabric 186, Forge 189, NeoForge 189. Client checklists in `docs/` cover frames, inventory, hands, and boats.
+GameTest scenarios: Fabric 186, Forge 190, NeoForge 190. Client checklists in `docs/` cover frames, inventory, hands, and boats.
 
 ## Operational boundaries
 
