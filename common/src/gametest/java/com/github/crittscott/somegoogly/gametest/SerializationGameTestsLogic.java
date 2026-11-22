@@ -232,8 +232,8 @@ public final class SerializationGameTestsLogic {
     }
 
     /**
-     * The eye-definition sync survives the wire, a decoded packet writes the bytes it was sent, and a small definition
-     * set passes the sync limits. No in-game form; guards that joining clients draw the same eyes the server's datapacks
+     * The eye-definition sync survives the wire, its decoded definitions re-encode to the NBT the server sent, and a
+     * small definition set passes the sync limits. No in-game form; guards that joining clients draw the same eyes the server's datapacks
      * define.
      */
     public static void configSyncPacketRoundTrips(GameTestHelper helper) {
@@ -241,11 +241,11 @@ public final class SerializationGameTestsLogic {
                 Map.of(Identifier.fromNamespaceAndPath("minecraft", "cow"), sampleConfigSet());
         Map<Identifier, CompoundTag> encoded = ServerEyeConfigs.encode(configs);
         EyeConfigSyncPacket packet = new EyeConfigSyncPacket(configs, encoded);
-        EyeConfigSyncPacket decoded = roundTrip(helper, EyeConfigSyncPacket.STREAM_CODEC, packet, "EyeConfigSyncPacket");
-        helper.assertTrue(decoded.configs().size() == 1, Component.literal("the definitions should survive the round-trip"));
-        helper.assertTrue(Arrays.equals(bytes(helper, EyeConfigSyncPacket.STREAM_CODEC, decoded),
-                        bytes(helper, EyeConfigSyncPacket.STREAM_CODEC, packet)),
-                Component.literal("a decoded packet must write the bytes it was sent"));
+        EyeConfigSyncPacket decoded = EyeConfigSyncPacket.STREAM_CODEC.decode(new RegistryFriendlyByteBuf(
+                Unpooled.wrappedBuffer(bytes(helper, EyeConfigSyncPacket.STREAM_CODEC, packet)),
+                helper.getLevel().registryAccess()));
+        helper.assertTrue(ServerEyeConfigs.encode(decoded.configs()).equals(encoded),
+                Component.literal("the definitions should survive the round-trip"));
         helper.assertTrue(packet.refusal() == null, Component.literal("a small definition set must pass the sync limits"));
         helper.succeed();
     }
@@ -479,17 +479,26 @@ public final class SerializationGameTestsLogic {
     }
 
     /**
-     * The client refuses an eye-state packet with a non-finite placement roll. No in-game form with an
-     * unmodified server; guards clients against a malicious server.
+     * The client refuses an eye-state packet or a head-item eye component whose placement roll is non-finite or
+     * outside 0..1. No in-game form with an unmodified server; guards clients against a malicious server.
      */
     public static void eyeStatePacketRejectsNonFiniteValues(GameTestHelper helper) {
-        RegistryFriendlyByteBuf invalid = buffer(helper);
-        invalid.writeVarInt(42);
-        invalid.writeBoolean(true);
-        invalid.writeFloat(Float.NaN);
-        invalid.writeByte(0);
-        helper.assertTrue(throwsRuntime(() -> EyeStatePacket.STREAM_CODEC.decode(invalid)),
-                Component.literal("eye-state sync must reject a non-finite variant roll"));
+        for (float roll : new float[]{Float.NaN, -0.5F, 1.5F}) {
+            RegistryFriendlyByteBuf packet = buffer(helper);
+            packet.writeVarInt(42);
+            packet.writeBoolean(true);
+            packet.writeFloat(roll);
+            packet.writeByte(0);
+            helper.assertTrue(throwsRuntime(() -> EyeStatePacket.STREAM_CODEC.decode(packet)),
+                    Component.literal("eye-state sync must reject variant roll " + roll));
+
+            RegistryFriendlyByteBuf component = buffer(helper);
+            component.writeBoolean(true);
+            component.writeFloat(roll);
+            component.writeByte(0);
+            helper.assertTrue(throwsRuntime(() -> EyeState.Snapshot.STREAM_CODEC.decode(component)),
+                    Component.literal("head-item eye component must reject variant roll " + roll));
+        }
         helper.succeed();
     }
 

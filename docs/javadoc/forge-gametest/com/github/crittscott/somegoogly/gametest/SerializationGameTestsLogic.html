@@ -125,8 +125,8 @@ hand, at the start, middle, and end of its lifetime.</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#configSyncPacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">configSyncPacketRoundTrips</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The eye-definition sync survives the wire, a decoded packet writes the bytes it was sent, and a small definition
-set passes the sync limits.</div>
+<div class="block">The eye-definition sync survives the wire, its decoded definitions re-encode to the NBT the server sent, and a
+small definition set passes the sync limits.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#configSyncRejectsOversizedAndUnsafePayloads(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">configSyncRejectsOversizedAndUnsafePayloads</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
@@ -160,7 +160,8 @@ not as the <code>0.2199999988079071</code> a double-widened float prints as.</di
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#eyeStatePacketRejectsNonFiniteValues(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">eyeStatePacketRejectsNonFiniteValues</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The client refuses an eye-state packet with a non-finite placement roll.</div>
+<div class="block">The client refuses an eye-state packet or a head-item eye component whose placement roll is non-finite or
+outside 0..1.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#eyeStatePacketRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">eyeStatePacketRoundTrips</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
@@ -258,8 +259,8 @@ server shares.</div>
 <h3>configSyncPacketRoundTrips</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">configSyncPacketRoundTrips</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">The eye-definition sync survives the wire, a decoded packet writes the bytes it was sent, and a small definition
-set passes the sync limits. No in-game form; guards that joining clients draw the same eyes the server's datapacks
+<div class="block">The eye-definition sync survives the wire, its decoded definitions re-encode to the NBT the server sent, and a
+small definition set passes the sync limits. No in-game form; guards that joining clients draw the same eyes the server's datapacks
 define.</div>
 </div>
 </section>
@@ -376,8 +377,8 @@ every watching client sees a mob's eyes, placement, and colors as the server has
 <h3>eyeStatePacketRejectsNonFiniteValues</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">eyeStatePacketRejectsNonFiniteValues</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">The client refuses an eye-state packet with a non-finite placement roll. No in-game form with an
-unmodified server; guards clients against a malicious server.</div>
+<div class="block">The client refuses an eye-state packet or a head-item eye component whose placement roll is non-finite or
+outside 0..1. No in-game form with an unmodified server; guards clients against a malicious server.</div>
 </div>
 </section>
 </li>

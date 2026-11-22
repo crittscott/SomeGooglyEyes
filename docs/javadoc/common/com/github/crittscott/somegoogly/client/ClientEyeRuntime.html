@@ -64,7 +64,7 @@ loadScripts(document, 'script');</script>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
 <li><a href="#beginGuiDraw(net.minecraft.world.item.ItemStack,int,int,int)" tabindex="0">beginGuiDraw(ItemStack, int, int, int)</a></li>
-<li><a href="#beginGuiPresentation(java.lang.Object,com.github.crittscott.somegoogly.client.ClientEyeRuntime.GuiKind,int)" tabindex="0">beginGuiPresentation(Object, ClientEyeRuntime.GuiKind, int)</a></li>
+<li><a href="#beginGuiPresentation(java.lang.Object,com.github.crittscott.somegoogly.client.ClientEyeRuntime.GuiKind,int,net.minecraft.world.item.ItemStack)" tabindex="0">beginGuiPresentation(Object, ClientEyeRuntime.GuiKind, int, ItemStack)</a></li>
 <li><a href="#beginHead(com.github.crittscott.somegoogly.client.PresentationEyes,float)" tabindex="0">beginHead(PresentationEyes, float)</a></li>
 <li><a href="#beginItemDraw(com.github.crittscott.somegoogly.client.PresentationEyes.Draw)" tabindex="0">beginItemDraw(PresentationEyes.Draw)</a></li>
 <li><a href="#beginItemState(net.minecraft.world.item.ItemStack,com.github.crittscott.somegoogly.client.PresentationEyes.Draw)" tabindex="0">beginItemState(ItemStack, PresentationEyes.Draw)</a></li>
@@ -187,11 +187,13 @@ submitted, the item animation selected for it, and the GUI identity of the slot 
 <div class="block">Called by the GUI's core item method, covering slots, the hotbar, and generic previews.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#beginGuiPresentation(java.lang.Object,com.github.crittscott.somegoogly.client.ClientEyeRuntime.GuiKind,int)" class="member-name-link">beginGuiPresentation</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;view,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#beginGuiPresentation(java.lang.Object,com.github.crittscott.somegoogly.client.ClientEyeRuntime.GuiKind,int,net.minecraft.world.item.ItemStack)" class="member-name-link">beginGuiPresentation</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;view,
  <a href="ClientEyeRuntime.GuiKind.html" title="enum class in com.github.crittscott.somegoogly.client">ClientEyeRuntime.GuiKind</a>&nbsp;kind,
- int&nbsp;index)</code></div>
+ int&nbsp;index,
+ @Nullable net.minecraft.world.item.ItemStack&nbsp;stack)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Slots and carried stacks keep one simulation while their on-screen coordinates change; ended by <a href="#endItemDraw()"><code>endItemDraw()</code></a>.</div>
+<div class="block">Slots and carried stacks keep one simulation while their on-screen coordinates change; ended by
+<a href="#endItemDraw()"><code>endItemDraw()</code></a>.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#beginHead(com.github.crittscott.somegoogly.client.PresentationEyes,float)" class="member-name-link">beginHead</a><wbr>(@Nullable <a href="PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client">PresentationEyes</a>&nbsp;eyes,
@@ -407,13 +409,16 @@ tick or last.</div>
 </section>
 </li>
 <li>
-<section class="detail" id="beginGuiPresentation(java.lang.Object,com.github.crittscott.somegoogly.client.ClientEyeRuntime.GuiKind,int)">
+<section class="detail" id="beginGuiPresentation(java.lang.Object,com.github.crittscott.somegoogly.client.ClientEyeRuntime.GuiKind,int,net.minecraft.world.item.ItemStack)">
 <h3>beginGuiPresentation</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">beginGuiPresentation</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;view,
  <a href="ClientEyeRuntime.GuiKind.html" title="enum class in com.github.crittscott.somegoogly.client">ClientEyeRuntime.GuiKind</a>&nbsp;kind,
- int&nbsp;index)</span></div>
-<div class="block">Slots and carried stacks keep one simulation while their on-screen coordinates change; ended by <a href="#endItemDraw()"><code>endItemDraw()</code></a>.</div>
+ int&nbsp;index,
+ @Nullable net.minecraft.world.item.ItemStack&nbsp;stack)</span></div>
+<div class="block">Slots and carried stacks keep one simulation while their on-screen coordinates change; ended by
+<a href="#endItemDraw()"><code>endItemDraw()</code></a>. <code>stack</code> is the one item the scope draws, or <code>null</code> when it may draw several or
+is not known; a known item that cannot have eyes leaves the enclosing scope in place.</div>
 </div>
 </section>
 </li>
