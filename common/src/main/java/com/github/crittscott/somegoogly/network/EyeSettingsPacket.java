@@ -2,8 +2,8 @@ package com.github.crittscott.somegoogly.network;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
@@ -16,18 +16,11 @@ import net.minecraft.resources.Identifier;
 public record EyeSettingsPacket(boolean googlyEyesEnabled, BehaviorSettings behaviors) implements CustomPacketPayload {
 
     public static final Identifier ID = SomeGooglyCommon.id("eye_settings");
+    public static final StreamCodec<RegistryFriendlyByteBuf, EyeSettingsPacket> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.BOOL, EyeSettingsPacket::googlyEyesEnabled,
+            BehaviorSettings.STREAM_CODEC, EyeSettingsPacket::behaviors,
+            EyeSettingsPacket::new);
     public static final CustomPacketPayload.Type<EyeSettingsPacket> TYPE = new CustomPacketPayload.Type<>(ID);
-    public static final StreamCodec<RegistryFriendlyByteBuf, EyeSettingsPacket> STREAM_CODEC =
-            StreamCodec.ofMember(EyeSettingsPacket::write, EyeSettingsPacket::read);
-
-    private static EyeSettingsPacket read(FriendlyByteBuf buffer) {
-        return new EyeSettingsPacket(buffer.readBoolean(), BehaviorSettings.read(buffer));
-    }
-
-    private void write(FriendlyByteBuf buffer) {
-        buffer.writeBoolean(googlyEyesEnabled);
-        behaviors.write(buffer);
-    }
 
     @Override
     public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {

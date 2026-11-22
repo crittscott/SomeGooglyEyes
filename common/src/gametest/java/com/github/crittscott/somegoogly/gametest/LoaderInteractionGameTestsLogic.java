@@ -121,6 +121,10 @@ public final class LoaderInteractionGameTestsLogic {
                     EyeState.disableAndClearProperties(stateTarget);
                 }
                 player.setShiftKeyDown(kind.equals("self"));
+                if (kind.equals("self")) {
+                    // The self-shear acts only when aimed at nothing; this player is discarded afterward.
+                    TestPlayers.aimAtNothing(player);
+                }
                 for (boolean harvest : List.of(false, true)) {
                     if (kind.equals("self") && !harvest) {
                         // A player can't apply a Slimy Eye to themself; give them eyes to harvest.

@@ -6,18 +6,24 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * Reports an item a player broke, for uses that end the click outside the vanilla code that reports it. NeoForge
- * tells other mods through its item-destroyed event; Forge fires that event from {@code hurtAndBreak} itself, and
- * Fabric has no such event.
+ * Reports a player's item that a use emptied, for uses that end the click outside the vanilla code that reports
+ * it. A used-up stack and a broken tool are reported separately because the loaders differ on the second: Forge
+ * fires its item-destroyed event from {@code hurtAndBreak} itself, NeoForge does not, and Fabric has no such event.
  */
 public final class ItemDestruction {
 
     private ItemDestruction() {
     }
 
-    /** {@code player} broke {@code original}, a copy of the stack, in {@code hand}. */
+    /** {@code player} broke the tool {@code original}, a copy of the stack, in {@code hand} by wearing it out. */
     @ExpectPlatform
-    public static void report(Player player, ItemStack original, InteractionHand hand) {
+    public static void reportBroken(Player player, ItemStack original, InteractionHand hand) {
+        throw new AssertionError();
+    }
+
+    /** {@code player} used up the last of {@code original}, a copy of the stack, in {@code hand}. */
+    @ExpectPlatform
+    public static void reportConsumed(Player player, ItemStack original, InteractionHand hand) {
         throw new AssertionError();
     }
 }

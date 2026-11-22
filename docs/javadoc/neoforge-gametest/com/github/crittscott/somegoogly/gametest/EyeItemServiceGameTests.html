@@ -63,6 +63,7 @@ loadScripts(document, 'script');</script>
 <li><a href="#anotherPlayersEyesFollowThePvpRules(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">anotherPlayersEyesFollowThePvpRules(GameTestHelper)</a></li>
 <li><a href="#harvestBreakingShearsReportsThem(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">harvestBreakingShearsReportsThem(GameTestHelper)</a></li>
 <li><a href="#optometristActsOnArmorStandBeforeItTakesTheShears(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">optometristActsOnArmorStandBeforeItTakesTheShears(GameTestHelper)</a></li>
+<li><a href="#usingTheLastSlimyEyeReportsIt(net.minecraft.gametest.framework.GameTestHelper)" tabindex="0">usingTheLastSlimyEyeReportsIt(GameTestHelper)</a></li>
 </ol>
 </li>
 </ol>
@@ -122,6 +123,11 @@ assertions.</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#selfRemoveWithShearsDropsAnEyeAndCostsDurability(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">selfRemoveWithShearsDropsAnEyeAndCostsDurability</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#usingTheLastSlimyEyeReportsIt(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">usingTheLastSlimyEyeReportsIt</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Using up the last Slimy Eye posts one native destruction event, as a hotbar-refill mod expects.</div>
+</div>
 </div>
 </div>
 </div>
@@ -196,6 +202,17 @@ Optometrist shears on their final durability. The item breaks as the eye drops.<
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">optometristActsOnArmorStandBeforeItTakesTheShears</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 <div class="block">A click on an armor stand reaches Optometrist before the stand can take the shears. In game, right-click
 an eyed armor stand with Optometrist shears. Its eyes come off and the stand does not equip the shears.</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="usingTheLastSlimyEyeReportsIt(net.minecraft.gametest.framework.GameTestHelper)">
+<h3>usingTheLastSlimyEyeReportsIt</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">usingTheLastSlimyEyeReportsIt</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
+<div class="block">Using up the last Slimy Eye posts one native destruction event, as a hotbar-refill mod expects. In game, with
+a mod that refills an emptied hotbar slot, apply your last Slimy Eye to a cow in survival. The slot is
+refilled.</div>
 </div>
 </section>
 </li>

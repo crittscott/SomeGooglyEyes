@@ -1,0 +1,131 @@
+plugins {
+    id 'com.gradleup.shadow'
+}
+
+architectury {
+    platformSetupLoomIde()
+    forge()
+}
+
+rootProject.configureGameTests(project)
+
+loom {
+    accessWidenerPath = project(':common').loom.accessWidenerPath
+
+    forge {
+        mixinConfig 'somegoogly-common.mixins.json'
+    }
+
+    mods {
+        main {
+            sourceSet sourceSets.main
+        }
+        somegoogly_gametest {
+            sourceSet sourceSets.gametest
+        }
+    }
+
+    runs {
+        gameTestServer {
+            server()
+            environment 'gametestserver'
+            forgeTemplate 'gameTestServer'
+            name 'Game Test Server'
+            property 'forge.enabledGameTestNamespaces', mod_id
+            source sourceSets.gametest
+        }
+    }
+}
+
+configurations {
+    common {
+        canBeResolved = true
+        canBeConsumed = false
+    }
+    // Runs receive common only through developmentForge, which Architectury's runtime transformer rewrites
+    // (@ExpectPlatform); listing it in loom.mods as well would load it untransformed and put its
+    // packages in two modules.
+    compileClasspath.extendsFrom common
+    developmentForge.extendsFrom common
+
+    // Files in this configuration will be bundled into your mod using the Shadow plugin.
+    // Don't use the `shadow` configuration from the plugin itself as it's meant for excluding files.
+    shadowBundle {
+        canBeResolved = true
+        canBeConsumed = false
+    }
+}
+
+dependencies {
+    forge "net.minecraftforge:forge:$rootProject.minecraft_version-$rootProject.forge_version"
+
+    // Optional at runtime; needed at compile time to subscribe to GeckoLib's render-layer event. Not transitive,
+    // so GeckoLib's declared dependencies cannot raise the API versions this module compiles against.
+    compileOnly("com.geckolib:geckolib-forge-${rootProject.geckolib_minecraft}:$rootProject.geckolib_version") {
+        transitive = false
+    }
+    // Also loaded in development runs, so the integration's gate and listener run; never bundled. Not
+    // transitive: Forge-family runs would load its dependencies as second copies of the game's libraries.
+    runtimeOnly("com.geckolib:geckolib-forge-${rootProject.geckolib_minecraft}:$rootProject.geckolib_version") {
+        transitive = false
+    }
+
+    common(project(path: ':common')) { transitive = false }
+    shadowBundle project(path: ':common', configuration: 'transformProductionForge')
+}
+
+// Expands ${...} placeholders in mods.toml, common's pack.mcmeta, and this module's Mixin configs.
+tasks.named('processResources', ProcessResources).configure {
+    // This loader's resource root must be a data pack in development as well as in the bundled jar.
+    from project(':common').file('src/main/resources/pack.mcmeta')
+    var replaceProperties = rootProject.sharedModProperties + [
+            minecraft_version_range: minecraft_version_range,
+            forge_version_range: forge_version_range,
+            forge_loader_version_range: forge_loader_version_range,
+    ]
+    inputs.properties replaceProperties
+
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta', '*.mixins.json']) {
+        expand replaceProperties
+    }
+}
+
+// Expands ${...} placeholders in the gametest mods.toml and the shared fixtures' pack.mcmeta.
+tasks.named('processGametestResources', ProcessResources).configure {
+    var replaceProperties = [
+            mod_license               : mod_license,
+            mod_version               : mod_version,
+            forge_version_range       : forge_version_range,
+            forge_loader_version_range: forge_loader_version_range,
+            minecraft_version_range   : minecraft_version_range,
+    ] + rootProject.packFormatProperties
+    inputs.properties replaceProperties
+
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties
+    }
+}
+
+shadowJar {
+    configurations = [project.configurations.shadowBundle]
+    archiveClassifier = null
+    filesMatching('pack.mcmeta') {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
+}
+
+// The bundled common output is the production artifact.
+jar {
+    archiveClassifier = 'dev'
+}
+
+tasks.named('assemble') {
+    dependsOn shadowJar
+}
+
+loom.getForge().convertAccessWideners(tasks.named('shadowJar'), 'somegoogly.accesswidener')
+
+// Architectury launches common from its development JAR, including its processed resources.
+tasks.matching { it.name in ['runClient', 'runServer', 'runGameTestServer'] }.configureEach {
+    dependsOn project(':common').tasks.named('jar')
+}
