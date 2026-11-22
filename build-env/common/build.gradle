@@ -12,8 +12,11 @@ dependencies {
     // Supplies the Mixin annotations for the common Mixins. Do NOT use Fabric Loader API from common.
     compileOnly "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
 
-    // Optional at runtime; needed at compile time by the GeckoLib render integration.
-    compileOnly "com.geckolib:geckolib-common-${rootProject.geckolib_minecraft}:$rootProject.geckolib_version"
+    // Optional at runtime; needed at compile time by the GeckoLib render integration. Not transitive, so
+    // GeckoLib's declared dependencies cannot raise the API versions this module compiles against.
+    compileOnly("com.geckolib:geckolib-common-${rootProject.geckolib_minecraft}:$rootProject.geckolib_version") {
+        transitive = false
+    }
 }
 
 // Expands ${...} placeholders in pack.mcmeta and the common Mixin configs.

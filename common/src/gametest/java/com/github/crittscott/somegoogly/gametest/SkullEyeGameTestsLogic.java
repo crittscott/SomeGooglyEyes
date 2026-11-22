@@ -39,6 +39,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -211,11 +212,15 @@ public final class SkullEyeGameTestsLogic {
      * Optometrist shears take a head's eyes off as one Googly Eye; plain shears leave them. In game: give a skeleton
      * skull purple eyes with a Slimy Eye, right-click it with plain shears (nothing happens), then with Optometrist
      * shears; the eyes vanish, a purple Googly Eye pops out, the shearing sound plays, and the shears lose one
-     * durability.
+     * durability. Right-clicking again with the same shears does nothing.
      */
     public static void optometristHarvestsAPlacedHead(GameTestHelper helper, Player player) {
         SkullBlockEntity skull = placeHead(helper, Blocks.SKELETON_SKULL);
         SkullEyeState.set(skull, purpleEyes());
+        // A watching client's copy of the head, kept current only by the block-update packets the server sends.
+        SkullBlockEntity watched = new SkullBlockEntity(skull.getBlockPos(), skull.getBlockState());
+        loadUpdate(helper, watched, ClientboundBlockEntityDataPacket.create(skull).getTag());
+        helper.assertTrue(SkullEyeState.hasEyes(watched), Component.literal("the watching client's head shows the eyes"));
 
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.SHEARS));
         helper.assertTrue(use(helper, player, skull) == InteractionResult.PASS, Component.literal("plain shears pass"));
@@ -225,10 +230,14 @@ public final class SkullEyeGameTestsLogic {
         player.setItemInHand(InteractionHand.MAIN_HAND, shears);
         helper.assertTrue(use(helper, player, skull) == InteractionResult.CONSUME, Component.literal("Optometrist shears harvest"));
         helper.assertTrue(!SkullEyeState.hasEyes(skull), Component.literal("the harvest clears the head's eyes"));
-        CompoundTag update = skull.getUpdateTag(helper.getLevel().registryAccess());
+        CompoundTag update = ClientboundBlockEntityDataPacket.create(skull).getTag();
+        helper.assertTrue(update != null && !update.isEmpty(),
+                Component.literal("the block update still carries a tag after the eyes come off; clients skip an empty one"));
         helper.assertTrue(update.contains(SkullEyeState.DATA_KEY)
                         && !update.getCompoundOrEmpty(SkullEyeState.DATA_KEY).getBooleanOr(EyeState.HAS_EYES, true),
-                Component.literal("the update tag tells clients the eyes are gone; clients skip an empty one"));
+                Component.literal("the update tag tells clients the eyes are gone"));
+        loadUpdate(helper, watched, update);
+        helper.assertTrue(!SkullEyeState.hasEyes(watched), Component.literal("the watching client's head loses its eyes too"));
         helper.assertTrue(shears.getDamageValue() == 1, Component.literal("the harvest spends one shears durability"));
         List<ItemEntity> eyes = drops(helper, HEAD, ModContent.GOOGLY_EYE.get());
         helper.assertTrue(eyes.size() == 1, Component.literal("exactly one Googly Eye pops out"));
@@ -439,6 +448,11 @@ public final class SkullEyeGameTestsLogic {
     private static List<ItemEntity> drops(GameTestHelper helper, BlockPos source, Item item) {
         return helper.getLevel().getEntitiesOfClass(ItemEntity.class,
                 new AABB(helper.absolutePos(source)).inflate(DROP_SEARCH_RADIUS), drop -> drop.getItem().is(item));
+    }
+
+    /** Apply a block-update packet's {@code tag} to {@code head} the way a receiving client loads it. */
+    private static void loadUpdate(GameTestHelper helper, SkullBlockEntity head, CompoundTag tag) {
+        head.loadWithComponents(TagValueInput.create(ProblemReporter.DISCARDING, helper.getLevel().registryAccess(), tag));
     }
 
     private static ItemStack optometristShears(GameTestHelper helper) {

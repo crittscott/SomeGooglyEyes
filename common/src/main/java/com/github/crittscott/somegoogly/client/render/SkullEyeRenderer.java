@@ -130,12 +130,11 @@ public final class SkullEyeRenderer {
                 return;
             }
             Snapshot snapshot = SkullEyeState.itemSnapshot(stack);
-            if (snapshot != null) {
-                HeadInfo helper = ClientEyeConfigs.resolveHead(entity, snapshot.variantRoll());
-                if (helper.hasConfig()) {
-                    renderEyes(pose, collector, packedLight, head, helper, SkullEyeState.headParts(helper), null,
-                            snapshot.properties(), 0F);
-                }
+            ClientEyeRuntime.RestingHead resting =
+                    snapshot == null ? null : ClientEyeRuntime.restingHead(snapshot, entity);
+            if (resting != null) {
+                renderEyes(pose, collector, packedLight, head, resting.helper(), resting.parts(), null,
+                        snapshot.properties(), 0F);
             }
         }
     }

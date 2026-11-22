@@ -253,7 +253,7 @@ public final class PresentationEyes {
                 if (resetMotion && !stationaryHead) {
                     pupil.resetMotion();
                 }
-                pupil.step(influence, active, part, index, rand, yaw, pitch, mx, my, mz);
+                pupil.step(influence, active, part, index, 1F, 1F, 0F, 0F, rand, yaw, pitch, mx, my, mz, 0F);
             }
         }
     }

@@ -9,6 +9,7 @@ import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import com.github.crittscott.somegoogly.registry.ModContent;
+import com.google.common.collect.MapMaker;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -67,6 +68,11 @@ public final class ClientEyeRuntime {
     // Received hand reactions survive disposable hand simulations, like mob expressions survive trackers.
     private static final Map<HandKey, HandBehavior> HAND_BEHAVIORS = new HashMap<>();
     private static final Map<HandKey, HandEntry> HANDS = new HashMap<>();
+    /**
+     * Resting head items' layouts, keyed by the item's eye-state component value, which every change replaces.
+     * Keys are weak and compared by identity, so an entry lasts as long as some stack still carries that value.
+     */
+    private static final Map<EyeState.Snapshot, RestingHead> RESTING_HEADS = new MapMaker().weakKeys().makeMap();
     /** Placed heads' eyes by position, under the same render-driven eviction and simulation as mob trackers. */
     private static final Map<BlockPos, PresentationEyes> SKULLS = new HashMap<>();
     private static final Map<LivingEntity, GooglyTracker> TRACKERS = new HashMap<>();
@@ -107,6 +113,10 @@ public final class ClientEyeRuntime {
 
     /** Entity-lifetime expression timing, independent of any disposable render tracker. */
     record ReceivedBehavior(EyeBehavior behavior, long seed, long startedAt) {
+    }
+
+    /** A resting head item's layout: the kind of head it was resolved for, and the layout's heads shown on it. */
+    public record RestingHead(Identifier entity, HeadInfo helper, int[] parts) {
     }
 
     private static final class BoatEntry {
@@ -207,6 +217,7 @@ public final class ClientEyeRuntime {
     public static void clear() {
         GUI.clear();
         HANDS.clear();
+        RESTING_HEADS.clear();
         guiTicks = 0;
         BOATS.clear();
         FRAMES.clear();
@@ -408,6 +419,21 @@ public final class ClientEyeRuntime {
     /** Drop both hands' simulations for {@code holder}. */
     public static void removeHands(UUID holder) {
         HANDS.keySet().removeIf(key -> key.holder().equals(holder));
+    }
+
+    /**
+     * The layout of a head item of {@code entity}'s kind carrying {@code snapshot}, drawn without an animation,
+     * resolved once per eye-state value; {@code null} when its definitions show no eyes on the head.
+     */
+    @Nullable
+    public static RestingHead restingHead(EyeState.Snapshot snapshot, Identifier entity) {
+        RestingHead resting = RESTING_HEADS.get(snapshot);
+        if (resting == null || !resting.entity().equals(entity)) {
+            HeadInfo helper = ClientEyeConfigs.resolveHead(entity, snapshot.variantRoll());
+            resting = new RestingHead(entity, helper, SkullEyeState.headParts(helper));
+            RESTING_HEADS.put(snapshot, resting);
+        }
+        return resting.parts().length == 0 ? null : resting;
     }
 
     /** Record the server-reported anger of {@code living} and pass it to its live tracker, if any. */

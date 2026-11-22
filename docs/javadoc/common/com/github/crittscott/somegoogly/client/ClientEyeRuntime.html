@@ -84,6 +84,7 @@ loadScripts(document, 'script');</script>
 <li><a href="#onLevelChanged()" tabindex="0">onLevelChanged()</a></li>
 <li><a href="#peek(net.minecraft.world.entity.LivingEntity)" tabindex="0">peek(LivingEntity)</a></li>
 <li><a href="#removeHands(java.util.UUID)" tabindex="0">removeHands(UUID)</a></li>
+<li><a href="#restingHead(com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot,net.minecraft.resources.Identifier)" tabindex="0">restingHead(EyeState.Snapshot, Identifier)</a></li>
 <li><a href="#setAngry(net.minecraft.world.entity.LivingEntity,boolean)" tabindex="0">setAngry(LivingEntity, boolean)</a></li>
 <li><a href="#setBehavior(net.minecraft.world.entity.LivingEntity,com.github.crittscott.somegoogly.eye.behavior.EyeBehavior,long,int)" tabindex="0">setBehavior(LivingEntity, EyeBehavior, long, int)</a></li>
 <li><a href="#setHandBehavior(net.minecraft.world.entity.LivingEntity,net.minecraft.world.InteractionHand,com.github.crittscott.somegoogly.eye.behavior.EyeBehavior,long,int)" tabindex="0">setHandBehavior(LivingEntity, InteractionHand, EyeBehavior, long, int)</a></li>
@@ -140,6 +141,11 @@ submitted, the item animation selected for it, and the GUI identity of the slot 
 <div class="col-second even-row-color"><code><a href="ClientEyeRuntime.GuiKind.html" class="type-name-link" title="enum class in com.github.crittscott.somegoogly.client">ClientEyeRuntime.GuiKind</a></code></div>
 <div class="col-last even-row-color">
 <div class="block">What a <a href="ClientEyeRuntime.GuiKey.html" title="class in com.github.crittscott.somegoogly.client"><code>ClientEyeRuntime.GuiKey</code></a> identifies an item by.</div>
+</div>
+<div class="col-first odd-row-color"><code>static final record&nbsp;</code></div>
+<div class="col-second odd-row-color"><code><a href="ClientEyeRuntime.RestingHead.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.client">ClientEyeRuntime.RestingHead</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">A resting head item's layout: the kind of head it was resolved for, and the layout's heads shown on it.</div>
 </div>
 </div>
 </section>
@@ -295,56 +301,63 @@ variant or age change cannot reuse the old tracker).</div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Drop both hands' simulations for <code>holder</code>.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setAngry(net.minecraft.world.entity.LivingEntity,boolean)" class="member-name-link">setAngry</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;living,
- boolean&nbsp;angry)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable <a href="ClientEyeRuntime.RestingHead.html" title="class in com.github.crittscott.somegoogly.client">ClientEyeRuntime.RestingHead</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#restingHead(com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot,net.minecraft.resources.Identifier)" class="member-name-link">restingHead</a><wbr>(<a href="../eye/state/EyeState.Snapshot.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeState.Snapshot</a>&nbsp;snapshot,
+ net.minecraft.resources.Identifier&nbsp;entity)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Record the server-reported anger of <code>living</code> and pass it to its live tracker, if any.</div>
+<div class="block">The layout of a head item of <code>entity</code>'s kind carrying <code>snapshot</code>, drawn without an animation,
+resolved once per eye-state value; <code>null</code> when its definitions show no eyes on the head.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setBehavior(net.minecraft.world.entity.LivingEntity,com.github.crittscott.somegoogly.eye.behavior.EyeBehavior,long,int)" class="member-name-link">setBehavior</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;living,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setAngry(net.minecraft.world.entity.LivingEntity,boolean)" class="member-name-link">setAngry</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;living,
+ boolean&nbsp;angry)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Record the server-reported anger of <code>living</code> and pass it to its live tracker, if any.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setBehavior(net.minecraft.world.entity.LivingEntity,com.github.crittscott.somegoogly.eye.behavior.EyeBehavior,long,int)" class="member-name-link">setBehavior</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;living,
  <a href="../eye/behavior/EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a>&nbsp;behavior,
  long&nbsp;seed,
  int&nbsp;elapsed)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Retain the latest server expression even before this known entity has rendered.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setHandBehavior(net.minecraft.world.entity.LivingEntity,net.minecraft.world.InteractionHand,com.github.crittscott.somegoogly.eye.behavior.EyeBehavior,long,int)" class="member-name-link">setHandBehavior</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;holder,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setHandBehavior(net.minecraft.world.entity.LivingEntity,net.minecraft.world.InteractionHand,com.github.crittscott.somegoogly.eye.behavior.EyeBehavior,long,int)" class="member-name-link">setHandBehavior</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;holder,
  net.minecraft.world.InteractionHand&nbsp;hand,
  <a href="../eye/behavior/EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a>&nbsp;behavior,
  long&nbsp;seed,
  int&nbsp;elapsed)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Retain the latest server reaction for the loose Googly Eye in <code>holder</code>'s <code>hand</code>.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable <a href="PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client">PresentationEyes</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#skullEyes(net.minecraft.world.level.block.entity.SkullBlockEntity,net.minecraft.resources.Identifier)" class="member-name-link">skullEyes</a><wbr>(net.minecraft.world.level.block.entity.SkullBlockEntity&nbsp;skull,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable <a href="PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client">PresentationEyes</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#skullEyes(net.minecraft.world.level.block.entity.SkullBlockEntity,net.minecraft.resources.Identifier)" class="member-name-link">skullEyes</a><wbr>(net.minecraft.world.level.block.entity.SkullBlockEntity&nbsp;skull,
  net.minecraft.resources.Identifier&nbsp;entity)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The eyes of the eyed head <code>skull</code>, a head of <code>entity</code>'s kind, creating them on first use and
 replacing any built for another kind of head at the same position or from another state; <code>null</code>
 when the client's definitions give it nothing to draw.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tick(net.minecraft.world.level.Level,boolean,java.lang.Object)" class="member-name-link">tick</a><wbr>(@Nullable net.minecraft.world.level.Level&nbsp;level,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tick(net.minecraft.world.level.Level,boolean,java.lang.Object)" class="member-name-link">tick</a><wbr>(@Nullable net.minecraft.world.level.Level&nbsp;level,
  boolean&nbsp;simulate,
  @Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;activeView)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">One client tick: advance the GUI clock and simulate GUI items shown in <code>activeView</code> (or the HUD), and,
 when <code>simulate</code> is true, advance the world clock and simulate the world presentations rendered this
 tick or last.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tickGui(java.lang.Object,com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)" class="member-name-link">tickGui</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;view,
- <a href="../eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a>&nbsp;settings)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Advance the GUI clock, even while the world is paused; hidden and departed views do no simulation.</div>
-</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tickWorld(long,com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)" class="member-name-link">tickWorld</a><wbr>(long&nbsp;gameTime,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tickGui(java.lang.Object,com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)" class="member-name-link">tickGui</a><wbr>(@Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;view,
  <a href="../eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a>&nbsp;settings)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Advance the GUI clock, even while the world is paused; hidden and departed views do no simulation.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tickWorld(long,com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)" class="member-name-link">tickWorld</a><wbr>(long&nbsp;gameTime,
+ <a href="../eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a>&nbsp;settings)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">One unpaused world tick for every world-owned presentation; world time selects ambient expressions.</div>
 </div>
 </div>
@@ -587,6 +600,17 @@ Googly Eye animates, so a first-person head item stays at rest.</div>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">removeHands</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;holder)</span></div>
 <div class="block">Drop both hands' simulations for <code>holder</code>.</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="restingHead(com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot,net.minecraft.resources.Identifier)">
+<h3>restingHead</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">@Nullable <a href="ClientEyeRuntime.RestingHead.html" title="class in com.github.crittscott.somegoogly.client">ClientEyeRuntime.RestingHead</a></span>&nbsp;<span class="element-name">restingHead</span><wbr><span class="parameters">(<a href="../eye/state/EyeState.Snapshot.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeState.Snapshot</a>&nbsp;snapshot,
+ net.minecraft.resources.Identifier&nbsp;entity)</span></div>
+<div class="block">The layout of a head item of <code>entity</code>'s kind carrying <code>snapshot</code>, drawn without an animation,
+resolved once per eye-state value; <code>null</code> when its definitions show no eyes on the head.</div>
 </div>
 </section>
 </li>
