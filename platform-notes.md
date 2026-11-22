@@ -19,6 +19,7 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 - 1.20.1 and 1.21.1 draw items immediately and have no use for item render state code; 1.21.4 and later use it. [tested on 1.20.1]
 - 1.20.1: the render pose holds the view rotation `V = Rx(pitch) Ry(yaw + 180)`, and `cameraOrientation` is `Ry(-yaw) Rx(pitch)`. The true inverse of `V` is `cameraOrientation * Ry(180)`; without the 180 degree turn, pitch doubles instead of canceling. [tested in game; the matrices themselves are recalled]
 - The view convention differs by version, so derive what each version's pose holds instead of copying a fix. 1.21.1, 1.21.4, and 1.21.8 pass `cameraOrientation`; 1.21.11 and later have been treated as world-space poses. [recalled]
+- `PoseStack.mulPose(Quaternionf)` multiplies the top pose by the quaternion without modifying it, so a cached rotation can be passed every frame. [recalled]
 - `ItemColor` is asked once per tinted quad, and `item/generated` makes a quad for each edge pixel run, so a tint callback can run dozens of times per item per frame. [recalled]
 
 ### Interaction and items
@@ -36,7 +37,8 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 
 ### Data and block entities
 
-- 1.21.x and later: the client ignores a block-entity data packet whose tag is empty (vanilla's handler and NeoForge's `onDataPacket` both check `isEmpty`), so state that clears to "save nothing" must still put something in the update tag or clients keep the old state. 1.20.1 loads any non-null tag. [recalled; head-shearing fix tested in game on 1.21.1/1.21.4]
+- 1.21.x and later: the client ignores a block-entity data packet whose tag is empty (vanilla's handler and NeoForge's `onDataPacket` both check `isEmpty`), so state that clears to "save nothing" must still put something in the update tag or clients keep the old state. 1.20.1 behaves the same: an empty update tag reaches its client as no tag, which the client skips. [recalled; head-shearing fix tested in game on 1.21.1/1.21.4]
+- 26.1.2: `ClientboundBlockEntityDataPacket.create(blockEntity)` carries `getUpdateTag`, and the client applies it with `loadWithComponents` on a `TagValueInput`, so a test can replay an update on a detached copy of the block entity that way. [recalled]
 - 1.20.1: `BlockItem` merges a stack's `BlockEntityTag` into the block entity and calls `load`, and heads are not an op-only block entity. A creative player needs no operator rights to supply that NBT, so a `load` that keeps a whole compound stores and rebroadcasts whatever was sent. [recalled]
 - A non-special recipe needs an unlock advancement, or `doLimitedCrafting` blocks it and the recipe book never offers it. The path is `data/<ns>/advancements/recipes/...` on 1.20.1 and uses the `advancement` directory on later versions. [tested on 1.20.1]
 
@@ -90,6 +92,8 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 - `@Pseudo` tolerates a missing target class only, not a missing method in a class that exists. [recalled]
 - A Mixin config's package may hold only Mixins. [tested]
 - `require`, not `@Pseudo`, decides what a miss does. A config with `required: false` and `defaultRequire: 0` lets an optional integration degrade to nothing. [tested]
+- Fabric's `sponge-mixin` 0.17.4 and later declare `@Redirect`'s `at` as `At[]`, so javac stores it as an array; 0.17.3 and earlier declare a single `At`. MixinExtras 0.5.4 casts that value to one annotation and throws `ClassCastException` while preparing the target class, so code compiled against the newer annotations fails on a runtime with MixinExtras 0.5.4. [observed in a NeoForge GameTest crash; `at()` type read from the cached Mixin jars]
+- Loom requests `net.fabricmc:sponge-mixin` directly on a module's compile classpath, so a `strictly` version for it fails resolution; only a dependency substitution changes the version compiled against. [build failure observed]
 
 ## Architectury and Loom
 
@@ -102,6 +106,7 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 
 - 26.1.2: vanilla's `LivingEntityRenderState` has no `partialTick` field (common compile failed on it), though NeoForge-built mods such as Ice and Fire CE read `state.partialTick`, so it comes from NeoForge. [tested for vanilla; NeoForge origin inferred from source]
 
+- Guava `MapMaker().weakKeys()` compares keys by identity and holds values strongly, so a value that references its own key keeps the entry alive. [recalled]
 - Maven `VersionRange` reads a bare version as a soft recommendation that matches everything, so it is not a drop-in reader for data where a bare version means an exact one. [recalled]
 - GeckoLib's 26.1 branch: `GeoEntityRenderer.createRenderState(entity, partialTick)` is `@ApiStatus.Internal` and final, but not marked for removal. [source]
 - Twilight Forest's `EntityEvents.createSkullCandle` skips a sneaking player, so a candle click on a skull needs sneak released, including on a shared fake player. [source, 1.21.x branch]

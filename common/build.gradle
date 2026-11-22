@@ -12,8 +12,21 @@ dependencies {
     // Supplies the Mixin annotations for the common Mixins. Do NOT use Fabric Loader API from common.
     compileOnly "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
 
-    // Optional at runtime; needed at compile time by the GeckoLib render integration.
-    compileOnly "com.geckolib:geckolib-common-${rootProject.geckolib_minecraft}:$rootProject.geckolib_version"
+    // Optional at runtime; needed at compile time by the GeckoLib render integration. Not transitive, so
+    // GeckoLib's declared dependencies cannot raise the API versions this module compiles against.
+    compileOnly("com.geckolib:geckolib-common-${rootProject.geckolib_minecraft}:$rootProject.geckolib_version") {
+        transitive = false
+    }
+}
+
+// Compiles the common Mixins against the Mixin release NeoForge runs. Loom and Fabric Loader request a later one,
+// whose annotations store @Redirect's `at` as an array; NeoForge's MixinExtras casts it to a single @At and fails
+// when the Twilight Forest Mixin applies. A strict version cannot win over Loom's own request; a substitution
+// replaces every request for the module before resolution.
+configurations.named('compileClasspath') {
+    resolutionStrategy.dependencySubstitution {
+        substitute module('net.fabricmc:sponge-mixin') using module("net.fabricmc:sponge-mixin:$rootProject.mixin_compile_version")
+    }
 }
 
 // Expands ${...} placeholders in pack.mcmeta and the common Mixin configs.

@@ -30,7 +30,7 @@ Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, versi
 
 `ServerConfig`/`ClientConfig` expose validated `ConfigValue<T>`s. Forge and NeoForge use native CLIENT/SERVER specs, resetting SERVER values on unload. Fabric parses TOML with bundled NightConfig at startup and `/reload`, resetting on stop. Completion adds only missing keys, keeping the original in `.bak`; parse failures keep the file and runtime values. The server logs the master switch, spawn percentages, and Behaviors switches off at startup and on change.
 
-One typed schema defines keys, table order, defaults, and bounds for native specs and Fabric TOML. Apply logs summarize spawn and visibility settings.
+One typed schema defines keys, table order, defaults, and bounds for native specs and Fabric TOML. Apply logs summarize spawn and visibility.
 
 Eye definitions are datapack resources at `data/<namespace>/eyes/*.json`, modeled by `EyeConfigModel`. Reload resolves one version per entity type, validates, encodes to NBT, and swaps `ServerEyeConfigs` only if the encoding differs, keeping the old set on failure. That encoding is the sync payload, so `ClientEyeConfigs` never selects versions. Size and geometry limits match across reload, export, and decode. `EyeColor` codecs reject bad channels. `EyeConfigLimits.Issue` gives translated feedback.
 
@@ -60,11 +60,11 @@ Slimy Eye applications emit `GameEvent.ENTITY_INTERACT` (`BLOCK_CHANGE` on a hea
 
 ## Rendering and attachment
 
-Each eye part is submitted as custom geometry at its finished pose, values copied into its callback; `ModelGooglyEye` is stateless. `ClientRenderLayers` installs `LayerGooglyEyes` once per renderer rebuild, before slime's outer layer; GeckoLib uses `CompileRenderLayers` on every loader. Both draw picker previews. `LayerGooglyEyes` poses its parent model before resolving and insets sheared sheep `body` eyes by wool depth. Common Mixins store `EyeRenderData` on `LivingEntityRenderState`; GeckoLib captures it at extraction and registers per-bone `RenderPassInfo` tasks with state-owned eye data and copied picker drafts; bone tasks deduplicate by identity. `GooglyEyeRenderer` shares the head and preview submission loops. `SpecialModelWrapperMixin` captures the display context in the item renderer's `Frame` argument, because `submit` receives none. Rendering and pupils share `EyePlacement.orientation`.
+Each eye part is submitted as custom geometry at its finished pose, values copied into its callback; `ModelGooglyEye` is stateless. `ClientRenderLayers` installs `LayerGooglyEyes` once per renderer rebuild, before slime's outer layer; GeckoLib uses `CompileRenderLayers` on every loader. Both draw picker previews. `LayerGooglyEyes` poses its parent model before resolving and insets sheared sheep `body` eyes by wool depth. Common Mixins store `EyeRenderData` on `LivingEntityRenderState`; GeckoLib captures it at extraction and registers per-bone `RenderPassInfo` tasks with state-owned eye data and copied picker drafts; bone tasks deduplicate by identity. `GooglyEyeRenderer` shares the head and preview submission loops. `SpecialModelWrapperMixin` captures the display context in the item renderer's `Frame` argument, because `submit` receives none. Rendering and pupils share `EyePlacement.orientation`; `HeadInfo` keeps each eye's on first draw.
 
 Resolvers take any model object, cache by identity, and replay `ThirdPartyModelWraps`. `RootModelResolver` walks `EntityModel.root()` after reflected Citadel/Uranus/LLibrary resolvers. `IceAndFireCompat` gives Ice and Fire CE's `LegacyMobRenderer`s a reflective `LegacyEntityFeature` that extracts from the live entity and calls `LayerGooglyEyes.submitEyes`; an optional Mixin covers the cockatrice.
 
-The picker gizmo uses a no-depth, per-vertex-width pipeline. The HUD follows subtitles on Fabric and is added last on Forge and NeoForge. Placed-head eyes are chosen at extraction onto `SkullBlockRenderState`; Mixins bracket placed-head and head-item submission and key animated GUI items on their simulation, head items on their snapshot. The skull hook shares the submitted model state and pose. `SkullEyeRenderer` poses vanilla and Heads models using the submitted state. Heads placements use cached cube fits; item eyes submit once across face/wool passes. Fits clear on renderer rebuild. Worn heads get no eyes.
+The picker gizmo uses a no-depth, per-vertex-width pipeline. The HUD follows subtitles on Fabric and is added last on Forge and NeoForge. Placed-head eyes are chosen at extraction onto `SkullBlockRenderState`; Mixins bracket placed-head and head-item submission and key animated GUI items on their simulation, head items on their snapshot. `SkullEyeRenderer` poses vanilla and Heads models with the submitted state and pose, reading the head part only when eyes will draw; resting head items cache views by component. Heads placements use cached cube fits; item eyes submit once across face/wool passes. Fits clear on renderer rebuild. Worn heads get no eyes.
 
 GeckoLib links only after detection; attach failures cannot block loading.
 
@@ -99,4 +99,3 @@ GameTest scenarios: Fabric 188, Forge 191, NeoForge 197. Client checklists under
 ## Operational boundaries
 
 - Optional renderer integrations log failures once.
-- `build-env/` mirrors build inputs as described in `orientation-build.md`; keep covered files synchronized.

@@ -63,6 +63,7 @@ loadScripts(document, 'script');</script>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
 <li><a href="#submit(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,S,float,float)" tabindex="0">submit(PoseStack, SubmitNodeCollector, int, S, float, float)</a></li>
+<li><a href="#submitEyes(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,int,com.github.crittscott.somegoogly.client.render.EyeRenderData,java.lang.Object,boolean,float)" tabindex="0">submitEyes(PoseStack, SubmitNodeCollector, int, int, EyeRenderData, Object, boolean, float)</a></li>
 </ol>
 </li>
 </ol>
@@ -95,7 +96,8 @@ is what matters there.
 submitted, so the layer poses the parent model for this render state itself before walking its parts.
 
 <p>The GeckoLib counterpart is <code>GooglyGeoLayer</code>, which makes the same split from GeckoLib's
-per-bone callback.</div>
+per-bone callback. <code>IceAndFireCompat</code> draws through <a href="#submitEyes(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,int,com.github.crittscott.somegoogly.client.render.EyeRenderData,java.lang.Object,boolean,float)"><code>submitEyes(PoseStack, SubmitNodeCollector, int, int, EyeRenderData, Object, boolean, float)</code></a> from Ice and Fire CE's own
+renderer features.</div>
 </div>
 </section>
 <section class="summary">
@@ -118,7 +120,7 @@ per-bone callback.</div>
 <section class="method-summary" id="method-summary">
 <h2>Method Summary</h2>
 <div id="method-summary-table">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab1" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab1', 3)" class="table-tab">Static Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button></div>
 <div id="method-summary-table.tabpanel" role="tabpanel" aria-labelledby="method-summary-table-tab0">
 <div class="summary-table three-column-summary">
 <div class="table-header col-first">Modifier and Type</div>
@@ -132,6 +134,19 @@ per-bone callback.</div>
  float&nbsp;yRot,
  float&nbsp;xRot)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#submitEyes(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,int,com.github.crittscott.somegoogly.client.render.EyeRenderData,java.lang.Object,boolean,float)" class="member-name-link">submitEyes</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;poseStack,
+ net.minecraft.client.renderer.SubmitNodeCollector&nbsp;collector,
+ int&nbsp;packedLight,
+ int&nbsp;overlay,
+ <a href="EyeRenderData.html" title="class in com.github.crittscott.somegoogly.client.render">EyeRenderData</a>&nbsp;data,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;model,
+ boolean&nbsp;young,
+ float&nbsp;bodyInset)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Draw <code>data</code>'s eyes on <code>model</code>, or the picker preview when the entity is the picker's
+target.</div>
+</div>
 </div>
 </div>
 </div>
@@ -181,6 +196,29 @@ per-bone callback.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code>submit</code>&nbsp;in class&nbsp;<code>net.minecraft.client.renderer.entity.layers.RenderLayer&lt;<a href="#type-param-S" title="type parameter in LayerGooglyEyes">S</a> extends net.minecraft.client.renderer.entity.state.LivingEntityRenderState, <a href="#type-param-M" title="type parameter in LayerGooglyEyes">M</a> extends net.minecraft.client.model.EntityModel&lt;? super <a href="#type-param-S" title="type parameter in LayerGooglyEyes">S</a>&gt;&gt;</code></dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="submitEyes(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,int,com.github.crittscott.somegoogly.client.render.EyeRenderData,java.lang.Object,boolean,float)">
+<h3>submitEyes</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">submitEyes</span><wbr><span class="parameters">(com.mojang.blaze3d.vertex.PoseStack&nbsp;poseStack,
+ net.minecraft.client.renderer.SubmitNodeCollector&nbsp;collector,
+ int&nbsp;packedLight,
+ int&nbsp;overlay,
+ <a href="EyeRenderData.html" title="class in com.github.crittscott.somegoogly.client.render">EyeRenderData</a>&nbsp;data,
+ <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;model,
+ boolean&nbsp;young,
+ float&nbsp;bodyInset)</span></div>
+<div class="block">Draw <code>data</code>'s eyes on <code>model</code>, or the picker preview when the entity is the picker's
+target. <code>poseStack</code> holds the model's base render pose and the model's parts are already posed
+for this entity. Renderers outside the vanilla layer system call this too.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>young</code> - the entity's baby flag, which selects the model's age branch</dd>
+<dd><code>bodyInset</code> - how far body-attached eyes move in from where they were authored</dd>
 </dl>
 </div>
 </section>

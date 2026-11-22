@@ -100,7 +100,6 @@ loadScripts(document, 'script');</script>
 <li><a href="#applyOverlays(com.github.crittscott.somegoogly.eye.behavior.EyeInfluence,float,float,float,float)" tabindex="0">applyOverlays(EyeInfluence, float, float, float, float)</a></li>
 <li><a href="#capturePose(org.joml.Matrix3fc)" tabindex="0">capturePose(Matrix3fc)</a></li>
 <li><a href="#resetMotion()" tabindex="0">resetMotion()</a></li>
-<li><a href="#step(com.github.crittscott.somegoogly.eye.behavior.EyeInfluence,com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance,int,int,net.minecraft.util.RandomSource,float,float,double,double,double)" tabindex="0">step(EyeInfluence, BehaviorInstance, int, int, RandomSource, float, float, double, double, double)</a></li>
 <li><a href="#step(com.github.crittscott.somegoogly.eye.behavior.EyeInfluence,com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance,int,int,float,float,float,float,net.minecraft.util.RandomSource,float,float,double,double,double,float)" tabindex="0">step(EyeInfluence, BehaviorInstance, int, int, float, float, float, float, RandomSource, float, float, double, double, double, float)</a></li>
 </ol>
 </li>
@@ -356,20 +355,6 @@ the model-view matrix, so nothing needs removing.</div>
 <div class="block">One tick of this pupil, eye <code>eye</code> of head <code>head</code>: ask the active behavior, if any, for its
 influence (spring and overlays), layer the owner's overlays on it, and step the physics with the spring
 folded in as a force.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#step(com.github.crittscott.somegoogly.eye.behavior.EyeInfluence,com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance,int,int,net.minecraft.util.RandomSource,float,float,double,double,double)" class="member-name-link">step</a><wbr>(<a href="../eye/behavior/EyeInfluence.html" title="class in com.github.crittscott.somegoogly.eye.behavior">EyeInfluence</a>&nbsp;influence,
- @Nullable <a href="../eye/behavior/BehaviorInstance.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorInstance</a>&nbsp;active,
- int&nbsp;head,
- int&nbsp;eye,
- net.minecraft.util.RandomSource&nbsp;rand,
- float&nbsp;headYaw,
- float&nbsp;headPitch,
- double&nbsp;motionX,
- double&nbsp;motionY,
- double&nbsp;motionZ)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">A <code>step</code> with no overlays of the owner's own.</div>
 </div>
 </div>
 </div>
@@ -724,24 +709,6 @@ on the rim toward gravity, so eyes rebuilt after time offscreen come into view a
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">resetMotion</span>()</div>
 <div class="block">Re-prime input differentiation after an owner change or a gap in simulation.</div>
-</div>
-</section>
-</li>
-<li>
-<section class="detail" id="step(com.github.crittscott.somegoogly.eye.behavior.EyeInfluence,com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance,int,int,net.minecraft.util.RandomSource,float,float,double,double,double)">
-<h3>step</h3>
-<div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">step</span><wbr><span class="parameters">(<a href="../eye/behavior/EyeInfluence.html" title="class in com.github.crittscott.somegoogly.eye.behavior">EyeInfluence</a>&nbsp;influence,
- @Nullable <a href="../eye/behavior/BehaviorInstance.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorInstance</a>&nbsp;active,
- int&nbsp;head,
- int&nbsp;eye,
- net.minecraft.util.RandomSource&nbsp;rand,
- float&nbsp;headYaw,
- float&nbsp;headPitch,
- double&nbsp;motionX,
- double&nbsp;motionY,
- double&nbsp;motionZ)</span></div>
-<div class="block">A <code>step</code> with no overlays of the owner's own.</div>
 </div>
 </section>
 </li>

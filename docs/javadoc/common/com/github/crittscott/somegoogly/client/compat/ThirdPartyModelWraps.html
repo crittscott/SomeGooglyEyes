@@ -56,7 +56,7 @@ loadScripts(document, 'script');</script>
 <li><a href="#method-summary" tabindex="0">Method Summary</a></li>
 <li><a href="#method-detail" tabindex="0">Method Details</a>
 <ol class="toc-list">
-<li><a href="#preTransform(net.minecraft.client.model.EntityModel,boolean,com.mojang.blaze3d.vertex.PoseStack)" tabindex="0">preTransform(EntityModel, boolean, PoseStack)</a></li>
+<li><a href="#preTransform(java.lang.Object,boolean,com.mojang.blaze3d.vertex.PoseStack)" tabindex="0">preTransform(Object, boolean, PoseStack)</a></li>
 </ol>
 </li>
 </ol>
@@ -78,7 +78,7 @@ loadScripts(document, 'script');</script>
 their part tree — a model-wide <code>pushPose → scale → translate</code> wrapped entirely inside the model's
 own <code>renderToBuffer</code>. A resolver can only replay <code>translateAndRotate</code> down the part tree, so
 without this the eyes land in the model's unscaled space: wrong pivots, oversized motion arcs, offset
-placement. <a href="#preTransform(net.minecraft.client.model.EntityModel,boolean,com.mojang.blaze3d.vertex.PoseStack)"><code>preTransform(EntityModel, boolean, PoseStack)</code></a> pre-multiplies the same transform onto the pose stack before the
+placement. <a href="#preTransform(java.lang.Object,boolean,com.mojang.blaze3d.vertex.PoseStack)"><code>preTransform(Object, boolean, PoseStack)</code></a> pre-multiplies the same transform onto the pose stack before the
 resolver walk (the model applies its transform before any part's <code>translateAndRotate</code>, so
 pre-multiplying composes identically). <code>EyeAttachmentResolver#toAttachmentSpace</code> calls it
 before replaying the attachment; it is a no-op for every unlisted model.
@@ -113,7 +113,7 @@ whole-model table.</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#preTransform(net.minecraft.client.model.EntityModel,boolean,com.mojang.blaze3d.vertex.PoseStack)" class="member-name-link">preTransform</a><wbr>(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#preTransform(java.lang.Object,boolean,com.mojang.blaze3d.vertex.PoseStack)" class="member-name-link">preTransform</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;model,
  boolean&nbsp;young,
  com.mojang.blaze3d.vertex.PoseStack&nbsp;poseStack)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
@@ -138,10 +138,10 @@ whole-model table.</div>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="preTransform(net.minecraft.client.model.EntityModel,boolean,com.mojang.blaze3d.vertex.PoseStack)">
+<section class="detail" id="preTransform(java.lang.Object,boolean,com.mojang.blaze3d.vertex.PoseStack)">
 <h3>preTransform</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">preTransform</span><wbr><span class="parameters">(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model,
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">preTransform</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;model,
  boolean&nbsp;young,
  com.mojang.blaze3d.vertex.PoseStack&nbsp;poseStack)</span></div>
 <div class="block">Reproduce a listed model's whole-model render transform on <code>poseStack</code>, choosing the branch by

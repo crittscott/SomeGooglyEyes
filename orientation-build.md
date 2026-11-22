@@ -28,7 +28,7 @@ Each copy sits at `build-env/` followed by its active path.
 
 This checkout targets Minecraft 26.1.2. The Groovy-DSL Gradle build has `common`, `fabric`, `forge`, and `neoforge` subprojects; `settings.gradle` includes the loaders named by `enabled_platforms`. The root applies Architectury Loom’s `dev.architectury.loom-no-remap` plugin and the Architectury plugin to each subproject. Minecraft is unobfuscated, so there are no mapping dependencies or remapping tasks. Each loader bundles Architectury-transformed common output into its production Shadow JAR; the loader-only JAR has the `dev` classifier. `assemble` includes the production JAR, and loader sources JARs include common’s source files. Architectury is build-time only, supplying `@ExpectPlatform` transformation without a runtime Architectury API dependency. No Maven publication is declared.
 
-`common` uses Fabric Loader and MixinExtras as compile-only annotation/injection dependencies. GeckoLib is compile-only in common and every loader, using `com.geckolib:geckolib-<module>-26.1.2:5.5.2` from its Cloudsmith Maven. It is optional at runtime, loaded in development runs, and not bundled.
+`common` compiles against Mixin (NeoForge's runtime release), Fabric Loader, and MixinExtras. GeckoLib is compile-only in common and every loader, using `com.geckolib:geckolib-<module>-26.1.2:5.5.2` from its Cloudsmith Maven, non-transitively. It is optional at runtime, loaded in development runs, and not bundled.
 
 NeoForge development runs and GameTests load Heads 4.0.0 through `runtimeOnly`, pinned by the Modrinth version id in `heads_version` and resolved through an exclusive Modrinth Maven repository. Heads is optional and is never compiled against or bundled. Twilight Forest 4.9.3850 loads the same way, pinned by the CurseForge file id in `twilight_version` and resolved through an exclusive CurseMaven repository.
 
@@ -60,16 +60,17 @@ The root `collectJars` task copies each enabled loader's already-built productio
 | Minecraft | `26.1.2` | Compile and runtime target |
 | Forge | `net.minecraftforge:forge:26.1.2-64.1.5` | Exact Forge compile and development-run baseline |
 | NeoForge | `net.neoforged:neoforge:26.1.2.112` | Exact NeoForge compile and development-run baseline |
-| Fabric Loader | `net.fabricmc:fabric-loader:0.19.5` | Fabric loader dependency; also supplies the common annotation dependency |
+| Fabric Loader | `net.fabricmc:fabric-loader:0.19.5` | Fabric loader dependency |
 | Fabric API | `net.fabricmc.fabric-api:fabric-api:0.155.3+26.1.2` | Fabric runtime and development API |
 | GeckoLib | `com.geckolib:geckolib-{common,fabric,forge,neoforge}-26.1.2:5.5.2` | Compile-only optional render integration in common and every loader; development runs also load the loader artifacts (`runtimeOnly`), never published |
 | Heads | `maven.modrinth:heads:BuDAyMnG` (Heads 4.0.0) | NeoForge development runs and GameTests only (`runtimeOnly`); never bundled |
 | Twilight Forest | `curse.maven:the-twilight-forest-227639:9417882` (Twilight Forest 4.9.3850) | NeoForge development runs and GameTests only (`runtimeOnly`); never bundled |
 | NightConfig | `com.electronwill.night-config:{core,toml}:3.8.3` | Bundled Fabric TOML parser |
+| Mixin | `net.fabricmc:sponge-mixin:0.17.3+mixin.0.8.7` | Common's compile-only Mixin annotations, substituted to match NeoForge's runtime |
 | MixinExtras | `io.github.llamalad7:mixinextras-common:0.5.3` | Compile-only context and operation injection API; loaders provide runtime support |
 | JSpecify annotations | `org.jspecify:jspecify:1.0.0` | Compile-only nullability annotations, declared once for every module |
 
-The Java setting is exact only at the language/toolchain-major level. The repository does not pin a JDK vendor, distribution, or patch release, and it does not pin the host JVM that runs Gradle. Gradle core plugins such as `base` and `java` use Gradle `9.5.1` and therefore have no separate declared version.
+The Java setting is exact only at the language/toolchain-major level. The repository pins no JDK vendor, distribution, patch release, or host JVM for Gradle. Gradle core plugins use Gradle `9.5.1` and have no separate declared version.
 
 ## Artifact and runtime version declarations
 

@@ -75,8 +75,9 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">ClientRenderLayers</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Installs the vanilla-model eye layer on living renderers after renderer rebuilds. GeckoLib renderers are
-not living renderers; they receive their layer from GeckoLib's own compile-render-layers event.</div>
+<div class="block">Installs the vanilla-model eye layer on living renderers after renderer rebuilds, and the eye feature on
+Ice and Fire CE's legacy mob renderers, which are not living renderers. GeckoLib renderers are not living
+renderers either; they receive their layer from GeckoLib's own compile-render-layers event.</div>
 </div>
 </section>
 <section class="summary">
@@ -100,8 +101,8 @@ not living renderers; they receive their layer from GeckoLib's own compile-rende
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#install(net.minecraft.client.renderer.entity.EntityRenderer)" class="member-name-link">install</a><wbr>(net.minecraft.client.renderer.entity.EntityRenderer&lt;?,<wbr>?&gt;&nbsp;renderer)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Install the vanilla-model eye layer on one renderer; any renderer that is not a living renderer is
-ignored.</div>
+<div class="block">Install the eye layer on one renderer: the vanilla-model layer on a living renderer, the Ice and Fire
+CE feature on its legacy mob renderer; any other renderer is ignored.</div>
 </div>
 </div>
 </div>
@@ -134,9 +135,10 @@ ignored.</div>
 <h3>install</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">install</span><wbr><span class="parameters">(net.minecraft.client.renderer.entity.EntityRenderer&lt;?,<wbr>?&gt;&nbsp;renderer)</span></div>
-<div class="block">Install the vanilla-model eye layer on one renderer; any renderer that is not a living renderer is
-ignored. Duplicate-safe through the weak <code>INSTALLED</code> set. Client-hidden entities still get the
-layer; the per-frame render gate hides them, so a config change applies without a renderer rebuild.</div>
+<div class="block">Install the eye layer on one renderer: the vanilla-model layer on a living renderer, the Ice and Fire
+CE feature on its legacy mob renderer; any other renderer is ignored. Duplicate-safe through the weak
+<code>INSTALLED</code> set. Client-hidden entities still get the layer; the per-frame render gate hides
+them, so a config change applies without a renderer rebuild.</div>
 </div>
 </section>
 </li>

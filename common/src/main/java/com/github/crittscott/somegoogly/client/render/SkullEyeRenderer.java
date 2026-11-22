@@ -6,7 +6,6 @@ import com.github.crittscott.somegoogly.client.PresentationEyes;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
-import com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import com.github.crittscott.somegoogly.client.compat.ClientIntegrationFailures;
 import com.github.crittscott.somegoogly.client.picker.ModelPartVocabulary;
@@ -288,57 +287,74 @@ public final class SkullEyeRenderer {
      */
     public static void render(PoseStack pose, SubmitNodeCollector collector, int packedLight, SkullModelBase model,
                               SkullModelBase.State modelState) {
-        if (!hasEyesToDraw(ClientEyeRuntime.currentDraw())) {
-            return;
-        }
-        ModelPart head = headPart(model);
-        if (head != null) {
-            model.setupAnim(modelState);
-            renderHead(pose, collector, packedLight, head, false);
-        }
+        renderHead(pose, collector, packedLight, null, model, modelState);
     }
 
     public static void renderTrophy(PoseStack pose, SubmitNodeCollector collector, int packedLight, ModelPart head) {
-        renderHead(pose, collector, packedLight, head, true);
+        renderHead(pose, collector, packedLight, head, null, null);
     }
 
+    /**
+     * Submit the current draw's eyes on {@code trophyHead}, or, for a head model, on {@code model}'s head part
+     * posed with {@code modelState}; that part is looked up only once there are eyes to draw.
+     */
     private static void renderHead(PoseStack pose, SubmitNodeCollector collector, int packedLight,
-                                   ModelPart head, boolean trophy) {
+                                   @Nullable ModelPart trophyHead, @Nullable SkullModelBase model,
+                                   SkullModelBase.@Nullable State modelState) {
         ClientEyeRuntime.DrawContext draw = ClientEyeRuntime.currentDraw();
         if (!hasEyesToDraw(draw)) {
             return;
         }
+        boolean trophy = trophyHead != null;
         PresentationEyes eyes = draw.head();
         ItemStack stack = draw.item();
         if (eyes != null) {
-            renderEyes(pose, collector, packedLight, head, eyes.headsMod || trophy && !SkullEyeState.HYDRA_TROPHY_LAYOUT.equals(eyes.entity),
-                    eyes.entity, eyes.helper, eyes.parts, eyes.eyes,
-                    eyes.snapshot.properties(), draw.partialTick());
+            ModelPart head = trophy ? trophyHead : posedHead(model, modelState);
+            if (head != null) {
+                renderEyes(pose, collector, packedLight, head,
+                        eyes.headsMod || trophy && !SkullEyeState.HYDRA_TROPHY_LAYOUT.equals(eyes.entity),
+                        eyes.entity, eyes.helper, eyes.parts, eyes.eyes,
+                        eyes.snapshot.properties(), draw.partialTick());
+            }
         } else {
             Identifier entity = SkullEyeState.entityFor(stack);
             if (!mayShow(entity)) {
                 return;
             }
-            boolean headsMod = trophy ? !SkullEyeState.HYDRA_TROPHY_LAYOUT.equals(entity)
-                    : stack.getItem() instanceof BlockItem item && SkullEyeState.isHeadsMod(item.getBlock());
             PresentationEyes.Draw itemDraw = draw.draw();
             PresentationEyes animated = itemDraw.eyes();
-            if (animated != null) {
-                itemEyesSubmitted = draw;
-                renderEyes(pose, collector, packedLight, head, headsMod, entity, animated.helper, animated.parts,
-                        animated.eyes, animated.properties, itemDraw.partialTick());
+            ClientEyeRuntime.RestingHead resting = animated != null ? null : ClientEyeRuntime.restingHead(stack, entity);
+            if (animated == null && resting == null) {
                 return;
             }
-            Snapshot snapshot = SkullEyeState.itemSnapshot(stack);
-            if (snapshot != null) {
-                HeadInfo helper = ClientEyeConfigs.resolveHead(entity, snapshot.variantRoll());
-                if (helper.hasConfig()) {
-                    itemEyesSubmitted = draw;
-                    renderEyes(pose, collector, packedLight, head, headsMod, entity, helper,
-                            SkullEyeState.headParts(entity, helper), null, snapshot.properties(), 0F);
-                }
+            ModelPart head = trophy ? trophyHead : posedHead(model, modelState);
+            if (head == null) {
+                return;
+            }
+            boolean headsMod = trophy ? !SkullEyeState.HYDRA_TROPHY_LAYOUT.equals(entity)
+                    : stack.getItem() instanceof BlockItem item && SkullEyeState.isHeadsMod(item.getBlock());
+            itemEyesSubmitted = draw;
+            if (animated != null) {
+                renderEyes(pose, collector, packedLight, head, headsMod, entity, animated.helper, animated.parts,
+                        animated.eyes, animated.properties, itemDraw.partialTick());
+            } else {
+                renderEyes(pose, collector, packedLight, head, headsMod, entity, resting.helper(), resting.parts(),
+                        null, resting.properties(), 0F);
             }
         }
+    }
+
+    /**
+     * {@code model}'s head part, posed with {@code modelState} the way the submitted model will be posed when it is
+     * drawn, or {@code null} for a model eyes cannot attach to.
+     */
+    @Nullable
+    private static ModelPart posedHead(SkullModelBase model, SkullModelBase.State modelState) {
+        ModelPart head = headPart(model);
+        if (head != null) {
+            model.setupAnim(modelState);
+        }
+        return head;
     }
 
     /** Whether {@code draw} is a placed head with eyes, or an item whose eyes have not been submitted yet. */
