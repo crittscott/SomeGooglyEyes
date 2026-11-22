@@ -117,11 +117,6 @@ public record BehaviorSettings(boolean ambient, int minTicks, int maxTicks, List
         return maxTicks <= minTicks ? minTicks : (minTicks + maxTicks) / 2;
     }
 
-    /** A wait between ambient expressions under these bounds. */
-    public int nextAmbientTicks(RandomSource rand) {
-        return drawAmbientTicks(minTicks, maxTicks, rand);
-    }
-
     /** When a heal reaction that starts at {@code now} may next start. */
     public long nextHealReadyAt(long now) {
         return now + swirlHealCooldownTicks;

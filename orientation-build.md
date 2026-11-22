@@ -28,7 +28,7 @@ Each copy sits at `build-env/` followed by its active path.
 
 This checkout targets Minecraft 26.2. The Groovy-DSL Gradle build has `common`, `fabric`, `forge`, and `neoforge` subprojects; `settings.gradle` includes the loaders named by `enabled_platforms`. The root applies Architectury Loom’s `dev.architectury.loom-no-remap` plugin and the Architectury plugin to each subproject. Minecraft is unobfuscated, so there are no mapping dependencies or remapping tasks. Each loader bundles Architectury-transformed common output into its production Shadow JAR; the loader-only JAR has the `dev` classifier. `assemble` includes the production JAR, and loader sources JARs include common’s source files. Architectury is build-time only, supplying `@ExpectPlatform` transformation without a runtime Architectury API dependency. No Maven publication is declared.
 
-`common` uses Fabric Loader and MixinExtras as compile-only annotation/injection dependencies. GeckoLib is compile-only in common and every loader, using `com.geckolib:geckolib-<module>-26.2:5.5.5` from its Cloudsmith Maven. It is optional at runtime, loaded in development runs, and not bundled.
+`common` uses Fabric Loader and MixinExtras as compile-only annotation/injection dependencies. GeckoLib is compile-only and non-transitive in common and every loader, using `com.geckolib:geckolib-<module>-26.2:5.5.5` from its Cloudsmith Maven. It is optional at runtime, loaded in development runs, and not bundled.
 
 Fabric bundles NightConfig core and TOML as nested dependencies through Loom's `include` configuration; the parser is an implementation dependency during development. Every module declares Maven Central, which supplies these modules and the shared annotation dependency.
 

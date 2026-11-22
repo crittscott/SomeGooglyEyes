@@ -103,21 +103,13 @@ public final class SkullEyeRenderer {
      */
     public static void render(PoseStack pose, SubmitNodeCollector collector, int packedLight, SkullModelBase model,
                               SkullModelBase.State modelState) {
-        ModelPart head = headPart(model);
-        if (head == null) {
-            return;
-        }
         ClientEyeRuntime.DrawContext draw = ClientEyeRuntime.currentDraw();
         PresentationEyes eyes = draw.head();
         ItemStack stack = draw.item();
-        if (eyes == null && stack == null) {
-            return;
-        }
-        model.setupAnim(modelState);
         if (eyes != null) {
-            renderEyes(pose, collector, packedLight, head, eyes.helper, eyes.parts, eyes.eyes,
+            renderEyes(pose, collector, packedLight, model, modelState, eyes.helper, eyes.parts, eyes.eyes,
                     eyes.snapshot.properties(), draw.partialTick());
-        } else {
+        } else if (stack != null) {
             Identifier entity = SkullEyeState.entityFor(stack);
             if (!mayShow(entity)) {
                 return;
@@ -125,28 +117,34 @@ public final class SkullEyeRenderer {
             PresentationEyes.Draw itemDraw = draw.draw();
             PresentationEyes animated = itemDraw.eyes();
             if (animated != null) {
-                renderEyes(pose, collector, packedLight, head, animated.helper, animated.parts, animated.eyes,
-                        animated.properties, itemDraw.partialTick());
+                renderEyes(pose, collector, packedLight, model, modelState, animated.helper, animated.parts,
+                        animated.eyes, animated.properties, itemDraw.partialTick());
                 return;
             }
             Snapshot snapshot = SkullEyeState.itemSnapshot(stack);
-            if (snapshot != null) {
-                HeadInfo helper = ClientEyeConfigs.resolveHead(entity, snapshot.variantRoll());
-                if (helper.hasConfig()) {
-                    renderEyes(pose, collector, packedLight, head, helper, SkullEyeState.headParts(helper), null,
-                            snapshot.properties(), 0F);
-                }
+            ClientEyeRuntime.RestingHead resting = snapshot == null ? null
+                    : ClientEyeRuntime.restingHead(snapshot, entity);
+            if (resting != null) {
+                renderEyes(pose, collector, packedLight, model, modelState, resting.helper(), resting.parts(), null,
+                        snapshot.properties(), 0F);
             }
         }
     }
 
     /**
-     * Submit the eyes of {@code helper}'s heads {@code parts} on the model's {@code head} part, each simulated by its
-     * entry in {@code eyes}, or at rest when {@code eyes} is {@code null}.
+     * Submit the eyes of {@code helper}'s heads {@code parts} on the head part of {@code model}, posed from
+     * {@code modelState}, each simulated by its entry in {@code eyes}, or at rest when {@code eyes} is {@code null}.
+     * Nothing is submitted for a model without a head part eyes can attach to.
      */
-    private static void renderEyes(PoseStack pose, SubmitNodeCollector collector, int packedLight, ModelPart head,
-                                   HeadInfo helper, int[] parts, GooglyTracker.EyeInfo @Nullable [][] eyes,
-                                   AppearanceOverride overrides, float partialTick) {
+    private static void renderEyes(PoseStack pose, SubmitNodeCollector collector, int packedLight,
+                                   SkullModelBase model, SkullModelBase.State modelState, HeadInfo helper, int[] parts,
+                                   GooglyTracker.EyeInfo @Nullable [][] eyes, AppearanceOverride overrides,
+                                   float partialTick) {
+        ModelPart head = headPart(model);
+        if (head == null) {
+            return;
+        }
+        model.setupAnim(modelState);
         pose.pushPose();
         head.translateAndRotate(pose);
         for (int part : parts) {

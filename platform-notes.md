@@ -36,7 +36,7 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 
 ### Data and block entities
 
-- 1.21.x and later: the client ignores a block-entity data packet whose tag is empty (vanilla's handler and NeoForge's `onDataPacket` both check `isEmpty`), so state that clears to "save nothing" must still put something in the update tag or clients keep the old state. 1.20.1 loads any non-null tag. [recalled; head-shearing fix tested in game on 1.21.1/1.21.4]
+- 1.21.x and later: the client ignores a block-entity data packet whose tag is empty (vanilla's handler and NeoForge's `onDataPacket` both check `isEmpty`), so state that clears to "save nothing" must still put something in the update tag or clients keep the old state. 1.20.1 behaves the same: an empty update tag reaches its client as no tag, which the client skips. [recalled; head-shearing fix tested in game on 1.21.1/1.21.4]
 - 1.20.1: `BlockItem` merges a stack's `BlockEntityTag` into the block entity and calls `load`, and heads are not an op-only block entity. A creative player needs no operator rights to supply that NBT, so a `load` that keeps a whole compound stores and rebroadcasts whatever was sent. [recalled]
 - A non-special recipe needs an unlock advancement, or `doLimitedCrafting` blocks it and the recipe book never offers it. The path is `data/<ns>/advancements/recipes/...` on 1.20.1 and uses the `advancement` directory on later versions. [tested on 1.20.1]
 - 26.2: `CriteriaTriggers` moved from `net.minecraft.advancements` to `net.minecraft.advancements.triggers`, and `BlockPredicate` from `net.minecraft.advancements.criterion` to `net.minecraft.advancements.predicates`. [source, NeoForged 26.2 primer]

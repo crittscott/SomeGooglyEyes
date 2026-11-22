@@ -41,6 +41,12 @@ public final class BehaviorInstance {
     public int dirSign;
     /** Seeded blink participation indexed by {@code [head][eye]}, or {@code null} for other behaviors. */
     public boolean @Nullable [][] mask;
+    /**
+     * Seeded cross-eye aim indexed by {@code [head][eye]}: the unit pupil-plane anchor toward the eye's partner,
+     * {@code {0, 0}} when the partner sits on the pupil axis, or {@code null} for an eye with no partner. The
+     * whole array is {@code null} for other behaviors and for a lone eye.
+     */
+    public float @Nullable [][][] crossAim;
 
     private BehaviorInstance(EyeBehavior behavior, @Nullable HeadInfo helper, int duration, long seed) {
         this.behavior = behavior;
