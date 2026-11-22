@@ -58,10 +58,7 @@ public final class ForgeClientBootstrap {
         ClientLifecycle.logStartup();
     }
 
-    private static void onClientTick(TickEvent.ClientTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) {
-            return;
-        }
+    private static void onClientTick(TickEvent.ClientTickEvent.Post event) {
         ClientLifecycle.tick();
     }
 

@@ -38,7 +38,7 @@ Datapack definitions at `data/<namespace>/eyes/*.json` use `EyeConfigModel`. Rel
 
 Persistent entity keys: `somegoogly:hasGooglyEyes`, `somegoogly:eyeVariantRoll`, `somegoogly:eyeOverrides`.
 
-Mutations flush one full snapshot. Rolls read clamped and are stored only while eyes are on; eye state initializes only when absent. `EyeState.initialize` and `sendTo` skip absent snapshots; mid-life mutations send. Conversions call `ServerServices.onConverted` (eyes and picker freeze); player replacement calls `onPlayerCloned`, copying eyes only on End exit. Joining players receive their own snapshot.
+Mutations flush one full snapshot. Stored rolls read clamped and are stored only while eyes are on; a wire roll outside 0..1 fails decode; eye state initializes only when absent. `EyeState.initialize` and `sendTo` skip absent snapshots; mid-life mutations send. Conversions call `ServerServices.onConverted` (eyes and picker freeze); player replacement calls `onPlayerCloned`, copying eyes only on End exit. Joining players receive their own snapshot.
 
 Eye items carry only `AppearanceOverride` in the synced `somegoogly:eye_properties` component. Harvesting copies the first eye's effective appearance; modifier recipes change that component. The Slimy Eye recipe copies every component.
 
@@ -60,7 +60,7 @@ Applications emit `ENTITY_INTERACT` (`BLOCK_CHANGE` on heads); harvests emit `SH
 
 `ClientRenderLayers` installs eye layers per renderer rebuild, before slime's outer layer; GeckoLib uses `CompileRenderLayers`. Both use `EyeRenderData` for previews. `LayerGooglyEyes` insets sheared sheep `body` eyes by wool depth.  `GooglyEyeRenderer` draws every path through `renderHead` with the one `ModelGooglyEye`. `EyePlacement.orientation` orients rendering and pupils; `HeadInfo.orientationAt` caches it per eye.
 
-Resolvers cache by model identity, clear on renderer/runtime reset, and replay `ThirdPartyModelWraps` transforms; `Resolvers` selects the model family, with `ChildMapResolver` as its non-null fallback.
+Resolvers cache by model identity, clear on renderer/runtime reset, and replay `ThirdPartyModelWraps` transforms; `Resolvers` binds each model once to its family resolver, with `ChildMapResolver` as the non-null fallback, and its whole-model wrap.
 
 Common client Mixins bracket a placed head's draw (`SkullBlockRendererMixin`) and a head item's (`HeadItemRendererMixin`); `SkullEyeRenderer` draws after `renderSkull`'s model draw on the widened `SkullModel`/`PiglinHeadModel` head part or a Heads model's reflected `head`, mapping its mob part's largest cube onto the Heads cube (`Placement`). Worn heads get no eyes.
 

@@ -8,6 +8,7 @@ import com.github.crittscott.somegoogly.platform.Networking;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
+import io.netty.handler.codec.DecoderException;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -66,10 +67,10 @@ public final class EyeState {
         /** No eyes, the first variant, no appearance overrides; what an absent compound reads as. */
         public static final Snapshot NONE = new Snapshot(false, 0.0F, AppearanceOverride.EMPTY);
 
-        /** The roll is clamped on decode, as a stored roll is. */
+        /** A roll outside 0..1 fails the decode, as it does in {@link #CODEC}. */
         public static final StreamCodec<ByteBuf, Snapshot> STREAM_CODEC = StreamCodec.composite(
                 ByteBufCodecs.BOOL, Snapshot::hasEyes,
-                ByteBufCodecs.FLOAT.map(EyeState::clampRoll, roll -> roll), Snapshot::variantRoll,
+                ByteBufCodecs.FLOAT.map(EyeState::decodedRoll, roll -> roll), Snapshot::variantRoll,
                 AppearanceOverride.STREAM_CODEC, Snapshot::properties,
                 Snapshot::new);
 
@@ -125,6 +126,14 @@ public final class EyeState {
         }
         snapshot(source).write(EntityPersistentData.get(target));
         sync(target);
+    }
+
+    /** {@code roll} as received from the wire; a non-finite value or one outside 0..1 fails the decode. */
+    private static float decodedRoll(float roll) {
+        if (!(roll >= 0.0F && roll <= 1.0F)) {
+            throw new DecoderException("Invalid eye placement variant roll " + roll);
+        }
+        return roll;
     }
 
     /** Disable eyes and clear their entity-wide appearance with one synchronization. */
