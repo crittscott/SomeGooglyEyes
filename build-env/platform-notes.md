@@ -47,6 +47,8 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 - 1.20.1: the loot-function interface extends `BiFunction<ItemStack, LootContext, ItemStack>`; apply its return value to the generated loot. [source: Fabric's published [Yarn API documentation](https://maven.fabricmc.net/docs/yarn-1.20.1+build.10/net/minecraft/loot/function/LootFunction.html), signatures only]
 
 - 1.20.1: `BlockItem` merges a stack's `BlockEntityTag` into the block entity and calls `load`, and heads are not an op-only block entity. A creative player needs no operator rights to supply that NBT, so a `load` that keeps a whole compound stores and rebroadcasts whatever was sent. [recalled]
+- 1.20.1: an empty block-entity update tag reaches the client as no tag, and the client then skips the load, so state that clears to "save nothing" must still put something in the update tag or clients keep the old state. [tested in game on Fabric: a sheared plain head kept its eyes; the packet's empty-to-null step is recalled]
+- 1.20.1: `ResourceLocation.isValidNamespace` is private; test a namespace with `ResourceLocation.tryBuild(namespace, "x") != null`. [tested: compile error]
 - A non-special recipe needs an unlock advancement, or `doLimitedCrafting` blocks it and the recipe book never offers it. The path is `data/<ns>/advancements/recipes/...` on 1.20.1 and uses the `advancement` directory on later versions. [tested on 1.20.1]
 
 ### Commands

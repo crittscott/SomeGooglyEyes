@@ -376,14 +376,6 @@ public class GooglyTracker {
             primed = false;
         }
 
-        /** A {@code step} with no overlays of the owner's own. */
-        public void step(EyeInfluence influence, @Nullable BehaviorInstance active, int head, int eye,
-                         RandomSource rand, float headYaw, float headPitch,
-                         double motionX, double motionY, double motionZ) {
-            step(influence, active, head, eye, 1F, 1F, 0F, 0F, rand, headYaw, headPitch,
-                    motionX, motionY, motionZ, 0F);
-        }
-
         /**
          * One tick of this pupil, eye {@code eye} of head {@code head}: ask the active behavior, if any, for its
          * influence (spring and overlays), layer the owner's overlays on it, and step the physics with the spring

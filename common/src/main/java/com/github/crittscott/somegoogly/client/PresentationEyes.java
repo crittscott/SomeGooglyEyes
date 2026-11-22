@@ -21,16 +21,12 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.levelgen.RandomSupport;
 
 /**
  * One presentation's loose eye or configured eye layout and ambient expressions. Its identity and
  * supplied clock determine expression age; physics is local and disposable. The renderer supplies gravity.
  */
 public final class PresentationEyes {
-
-    /** Spreads consecutive ambient slots' seeds apart. */
-    private static final long SLOT_SEED_STEP = RandomSupport.GOLDEN_RATIO_64;
 
     @Nullable
     public BehaviorInstance active;
@@ -241,7 +237,7 @@ public final class PresentationEyes {
                 if (resetMotion && !stationaryHead) {
                     pupil.resetMotion();
                 }
-                pupil.step(influence, active, part, index, rand, yaw, pitch, mx, my, mz);
+                pupil.step(influence, active, part, index, 1F, 1F, 0F, 0F, rand, yaw, pitch, mx, my, mz, 0F);
             }
         }
     }

@@ -196,9 +196,12 @@ public final class ServerBehaviorScheduler {
     public static void onHealed(LivingEntity mob) {
         if (mob.level().isClientSide() || mob.getHealth() >= mob.getMaxHealth()) return;
         reactHands(mob, EyeBehavior.SWIRL);
-        BehaviorSettings settings = BehaviorSettings.fromConfig();
         MobState state = eventTarget(mob);
-        if (state == null || !settings.canSwirlOnHeal(clock(mob), state.healSwirlReadyAt)) {
+        if (state == null) {
+            return;
+        }
+        BehaviorSettings settings = BehaviorSettings.fromConfig();
+        if (!settings.canSwirlOnHeal(clock(mob), state.healSwirlReadyAt)) {
             return;
         }
         // Arm the cooldown only on an actual start: if the mob is busy the swirl is dropped

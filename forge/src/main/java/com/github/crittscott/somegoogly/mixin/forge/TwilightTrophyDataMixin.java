@@ -56,7 +56,7 @@ abstract class TwilightTrophyDataMixin extends BlockEntity implements SkullEyeSt
     @Override
     public CompoundTag getUpdateTag() {
         CompoundTag tag = super.getUpdateTag();
-        somegoogly$saveEyes(tag);
+        somegoogly$syncEyes(tag);
         return tag;
     }
 

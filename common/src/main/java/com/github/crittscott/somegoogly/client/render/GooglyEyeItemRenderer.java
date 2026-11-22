@@ -6,7 +6,6 @@ import com.github.crittscott.somegoogly.client.PresentationEyes;
 import com.github.crittscott.somegoogly.eye.EyeAppearance;
 import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
-import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
@@ -60,7 +59,7 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
         PresentationEyes.Draw draw = ClientEyeRuntime.itemDraw(stack);
         PresentationEyes presented = draw.eyes();
         EyeAppearance look = EyeAppearance.DEFAULT.overlay(
-                presented != null ? presented.properties : EyeItemProperties.get(stack));
+                presented != null ? presented.properties : ClientEyeRuntime.restingLook(stack));
 
         pose.pushPose();
         pose.translate(0.5, 0.5, 0.5);

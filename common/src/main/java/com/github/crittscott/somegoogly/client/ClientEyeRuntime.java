@@ -6,9 +6,13 @@ import com.github.crittscott.somegoogly.eye.BoatEyeLayout;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
+import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
+import com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
+import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.registry.ModContent;
+import com.google.common.collect.MapMaker;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
@@ -60,6 +64,14 @@ public final class ClientEyeRuntime {
     private static final Map<HandKey, HandEntry> HANDS = new HashMap<>();
     public static final Object HUD = new Object();
     private static final long NANOS_PER_TICK = 1_000_000_000L / SharedConstants.TICKS_PER_SECOND;
+    /**
+     * Decoded eye state of head items drawn without an animation, by the item's eye-state compound. Keys are weak
+     * and compared by identity: every change to an item's eyes writes a new compound, and a stack that is gone
+     * frees its entry.
+     */
+    private static final Map<CompoundTag, RestingHead> RESTING_HEADS = new MapMaker().weakKeys().makeMap();
+    /** Decoded appearance of loose eyes drawn without an animation, keyed like {@link #RESTING_HEADS}. */
+    private static final Map<CompoundTag, AppearanceOverride> RESTING_LOOKS = new MapMaker().weakKeys().makeMap();
     /** Simulate only what was shown this tick or last (freezes off-screen eyes). */
     private static final int SIMULATE_IDLE_TICKS = 1;
     /** Placed heads' eyes by position, under the same render-driven eviction and simulation as mob trackers. */
@@ -92,6 +104,10 @@ public final class ClientEyeRuntime {
 
     /** Entity-lifetime expression timing, independent of any disposable render tracker. */
     record ReceivedBehavior(EyeBehavior behavior, long seed, long startedAt) {
+    }
+
+    /** A resting head item's decoded eyes: its state, its layout, and the layout's heads shown on the item. */
+    public record RestingHead(Snapshot snapshot, @Nullable HeadInfo helper, int[] parts) {
     }
 
     private static final class BoatEntry {
@@ -188,6 +204,8 @@ public final class ClientEyeRuntime {
         guiTicks = 0;
         BOATS.clear();
         FRAMES.clear();
+        RESTING_HEADS.clear();
+        RESTING_LOOKS.clear();
         SKULLS.clear();
         TRACKERS.clear();
     }
@@ -387,6 +405,33 @@ public final class ClientEyeRuntime {
         if (tracker != null) {
             tracker.angry = angry;
         }
+    }
+
+    /**
+     * The eyes to draw on {@code stack}, a head item of {@code entity}'s kind drawn without an animation, decoded
+     * once per eye state; {@code null} when it has none to show.
+     */
+    @Nullable
+    public static RestingHead restingHead(ItemStack stack, ResourceLocation entity) {
+        CompoundTag data = SkullEyeState.itemData(stack);
+        if (data == null) {
+            return null;
+        }
+        RestingHead resting = RESTING_HEADS.computeIfAbsent(data, key -> {
+            Snapshot snapshot = Snapshot.read(key);
+            if (!snapshot.hasEyes()) {
+                return new RestingHead(snapshot, null, new int[0]);
+            }
+            HeadInfo helper = ClientEyeConfigs.resolveHead(entity, snapshot.variantRoll());
+            return new RestingHead(snapshot, helper, SkullEyeState.headParts(entity, helper));
+        });
+        return resting.parts().length == 0 ? null : resting;
+    }
+
+    /** The appearance of {@code stack}, a loose eye drawn without an animation, decoded once per appearance. */
+    public static AppearanceOverride restingLook(ItemStack stack) {
+        CompoundTag tag = stack.getTagElement(EyeItemProperties.TAG_EYE_PROPERTIES);
+        return tag == null ? AppearanceOverride.EMPTY : RESTING_LOOKS.computeIfAbsent(tag, AppearanceOverride::fromNbt);
     }
 
     /** Retain the latest server expression even before this known entity has rendered. */

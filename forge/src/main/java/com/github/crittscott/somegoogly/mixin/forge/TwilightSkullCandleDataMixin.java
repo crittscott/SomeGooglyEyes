@@ -23,7 +23,7 @@ abstract class TwilightSkullCandleDataMixin {
     private void somegoogly$syncEyes(CallbackInfoReturnable<CompoundTag> callback) {
         SkullBlockEntity skull = (SkullBlockEntity) (Object) this;
         CompoundTag tag = callback.getReturnValue();
-        ((SkullEyeState.Holder) skull).somegoogly$saveEyes(tag);
+        ((SkullEyeState.Holder) skull).somegoogly$syncEyes(tag);
         var owner = skull.getOwnerProfile();
         if (owner != null) {
             tag.put("SkullOwner", NbtUtils.writeGameProfile(new CompoundTag(), owner));

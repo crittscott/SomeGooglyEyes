@@ -145,6 +145,18 @@ public final class SkullEyeState {
                 tag.put(DATA_KEY, data.copy());
             }
         }
+
+        /**
+         * Put the compound into the update tag {@code tag} whenever the head has one, eyes or not. An empty update
+         * tag reaches the client as no tag at all, so a plain head that just lost its eyes would otherwise send
+         * nothing and keep them.
+         */
+        default void somegoogly$syncEyes(CompoundTag tag) {
+            CompoundTag data = somegoogly$find();
+            if (data != null) {
+                tag.put(DATA_KEY, data.copy());
+            }
+        }
     }
 
     /**
@@ -340,6 +352,13 @@ public final class SkullEyeState {
                 : token.equals(partToken);
     }
 
+    /** The eye-state compound a head item carries, or {@code null} when it carries none; safe on any item. */
+    @Nullable
+    public static CompoundTag itemData(ItemStack stack) {
+        CompoundTag tag = stack.getTagElement(BlockItem.BLOCK_ENTITY_TAG);
+        return tag == null || !tag.contains(DATA_KEY, Tag.TAG_COMPOUND) ? null : tag.getCompound(DATA_KEY);
+    }
+
     /** Whether a head item's eye state has eyes, without decoding the rest of it; safe on any item. */
     public static boolean itemHasEyes(ItemStack stack) {
         CompoundTag tag = stack.getTagElement(BlockItem.BLOCK_ENTITY_TAG);
@@ -349,11 +368,11 @@ public final class SkullEyeState {
     /** The eye state a head item carries, or {@code null} when it carries none or no eyes. */
     @Nullable
     public static Snapshot itemSnapshot(ItemStack stack) {
-        CompoundTag tag = stack.getTagElement(BlockItem.BLOCK_ENTITY_TAG);
-        if (tag == null || !tag.contains(DATA_KEY, Tag.TAG_COMPOUND)) {
+        CompoundTag data = itemData(stack);
+        if (data == null) {
             return null;
         }
-        Snapshot snapshot = Snapshot.read(tag.getCompound(DATA_KEY));
+        Snapshot snapshot = Snapshot.read(data);
         return snapshot.hasEyes() ? snapshot : null;
     }
 
