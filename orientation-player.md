@@ -62,9 +62,9 @@ Modifiers stack. Googly Eyes come from harvesting or creative.
 
 Picking up a Googly Eye unlocks the Slimy Eye recipe. Craft an eye with a slimeball to make a Slimy Eye retaining its appearance and name. Apply it to an eligible eyeless mob: its configured eyes receive the item's appearance, a squelch plays, and one item is consumed outside creative.
 
-Harvest before restyling. Sneak-use on air applies to yourself. Applying or taking another player’s eyes requires level PvP and team permission.
+Harvest before restyling. Sneak-use on air, with no block or mob within reach, applies to yourself. Applying or taking another player’s eyes requires level PvP and team permission.
 
-To take your own eyes off, sneak and right-click the air with shears. Optometrist shears do it cleanly; plain shears also cost a bare-handed hit of health, even with PvP off. Either way one Googly Eye drops, the shears lose one durability, and the shearing sound plays.
+To take your own eyes off, sneak and right-click the air with shears, aiming at no block or mob within reach. Optometrist shears do it cleanly; plain shears also cost a bare-handed hit of health, even with PvP off. Either way one Googly Eye drops, the shears lose one durability, and the shearing sound plays.
 
 ## Mob heads
 

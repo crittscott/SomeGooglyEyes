@@ -3,11 +3,12 @@ package com.github.crittscott.somegoogly.network;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.picker.PickerExportService;
 import com.github.crittscott.somegoogly.picker.PickerGate;
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.DecoderException;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -31,20 +32,29 @@ import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_BABY;
  */
 public class PickerExportPacket implements CustomPacketPayload {
 
+    public static final Identifier ID = SomeGooglyCommon.id("picker_export");
+
     /** Wire bound on the age string; comfortably above the longest age name. */
     private static final int MAX_AGE_LENGTH = 16;
 
     /** Vanilla's cap on a serverbound custom payload's encoded data. */
     public static final int MAX_SERVERBOUND_BYTES = 32767;
 
-    public static final Identifier ID = SomeGooglyCommon.id("picker_export");
     public static final CustomPacketPayload.Type<PickerExportPacket> TYPE = new CustomPacketPayload.Type<>(ID);
-    public static final StreamCodec<RegistryFriendlyByteBuf, PickerExportPacket> STREAM_CODEC =
-            StreamCodec.ofMember(PickerExportPacket::write, PickerExportPacket::new);
 
+    /** The payload over a plain buffer, which {@link #fitsServerbound()} can measure without registries. */
+    private static final StreamCodec<ByteBuf, PickerExportPacket> WIRE_CODEC = StreamCodec.composite(
+            Identifier.STREAM_CODEC, packet -> packet.typeId,
+            ByteBufCodecs.stringUtf8(MAX_AGE_LENGTH).map(PickerExportPacket::checkedAge, age -> age), packet -> packet.age,
+            ByteBufCodecs.COMPOUND_TAG, packet -> packet.configNbt,
+            PickerExportPacket::new);
+
+    /** Declared after {@link #WIRE_CODEC}, which it reads. */
+    public static final StreamCodec<RegistryFriendlyByteBuf, PickerExportPacket> STREAM_CODEC = WIRE_CODEC.cast();
+
+    private final String age;
     private final CompoundTag configNbt;
     private final Identifier typeId;
-    private final String age;
 
     public PickerExportPacket(Identifier typeId, String age, CompoundTag configNbt) {
         this.typeId = typeId;
@@ -52,34 +62,23 @@ public class PickerExportPacket implements CustomPacketPayload {
         this.configNbt = configNbt;
     }
 
-    private PickerExportPacket(FriendlyByteBuf buffer) {
-        this.typeId = buffer.readIdentifier();
-        this.age = buffer.readUtf(MAX_AGE_LENGTH);
+    /** {@code age}, if it is an adult or baby age. */
+    private static String checkedAge(String age) {
         if (!AGE_ADULT.equals(age) && !AGE_BABY.equals(age)) {
             throw new DecoderException("Invalid picker export age");
         }
-        CompoundTag configNbt = buffer.readNbt();
-        if (configNbt == null) {
-            throw new DecoderException("Picker export packet has no config");
-        }
-        this.configNbt = configNbt;
+        return age;
     }
 
     /** Whether this packet's encoded data fits under {@link #MAX_SERVERBOUND_BYTES}. */
     public boolean fitsServerbound() {
-        FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
+        ByteBuf buffer = Unpooled.buffer();
         try {
-            write(buffer);
+            WIRE_CODEC.encode(buffer, this);
             return buffer.readableBytes() <= MAX_SERVERBOUND_BYTES;
         } finally {
             buffer.release();
         }
-    }
-
-    private void write(FriendlyByteBuf buffer) {
-        buffer.writeIdentifier(typeId);
-        buffer.writeUtf(age, MAX_AGE_LENGTH);
-        buffer.writeNbt(configNbt);
     }
 
     /** Export the packet's definition for an authorized sender and report the result to them. */

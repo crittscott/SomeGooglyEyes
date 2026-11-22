@@ -48,7 +48,7 @@ Eye items carry `AppearanceOverride` in the synced `somegoogly:eye_properties` c
 
 Saved data from the 1.21.11 release is already in current form; nothing migrates.
 
-`EyeItemService` owns authorization, mutation, drops, and durability for Slimy Eye use and harvests on mobs and heads. Loader adapters run entity interaction, block use, and self-shearing after protection listeners (Forge/NeoForge `LOWEST`, Fabric a late phase); head use also checks `mayInteract`/`mayUseItemAt`, and Forge/NeoForge honor separate item-use denials. `markHeadDrop` stamps an eyed mob's own head among its death drops (Forge/NeoForge at `LOWEST`); head loot copies the state with `SkullEyeState.headLootCopy` (Forge/NeoForge `HeadEyesLootModifier`, with native data in each loader; Fabric `LootTableEvents.MODIFY`). The shared use entry points refuse spectators. Shears are `#somegoogly:shears` (vanilla plus optional `#c:tools/shear`). Changing another player’s eyes requires level PvP and `canHarmPlayer`. Head use checks the clicked block in Adventure mode and records its criterion and statistic before spending the item. Harvest kills honor the mob-drops rule. NeoForge reports shears breaks explicitly. Plain-shears self-damage uses the attacker-less `self_shear` type.
+`EyeItemService` owns authorization, mutation, drops, and durability for Slimy Eye use and harvests on mobs and heads. Loader adapters run entity interaction, block use, and self-shearing after protection listeners (Forge/NeoForge `LOWEST`, Fabric a late phase); head use also checks `mayInteract`/`mayUseItemAt` on both sides, refusing with `FAIL`, and Forge/NeoForge honor separate item-use denials. `markHeadDrop` stamps an eyed mob's own head among its death drops (Forge/NeoForge at `LOWEST`); head loot copies onto head items only, through `SkullEyeState.copyEyesOntoHeadLoot` (Forge/NeoForge `HeadEyesLootModifier`, with native data in each loader; Fabric `LootTableEvents.MODIFY_DROPS`). The shared use entry points refuse spectators; sneak self-use needs `LookTarget.aimsAtNothing`. Shears are `#somegoogly:shears` (vanilla plus optional `#c:tools/shear`). Changing another player’s eyes requires level PvP and `canHarmPlayer`. Head use checks the clicked block in Adventure mode and records its criterion and statistic before spending the item. Harvest kills honor the mob-drops rule. `ItemDestruction` reports a used-up Slimy Eye (Forge, NeoForge) and broken shears (NeoForge). Plain-shears self-damage uses the attacker-less `self_shear` type.
 
 Slimy Eye applications emit `GameEvent.ENTITY_INTERACT` (`BLOCK_CHANGE` on a head), harvests `GameEvent.SHEAR`; refusals emit neither.
 
@@ -82,19 +82,19 @@ Sends go through the platform bridges; clientbound handlers link the client hand
 
 `PickerState.DraftSession` retains separate drafts keyed by species and age. Both export paths use `ConfigFile.overlay` to replace authored ages while retaining untouched age buckets, including disabled ones. `ModelPartVocabulary` shares attachment naming between editing and export.
 
-`PickerFreezeService` preserves prior `NoAI`, reconciles locks at load/logout/stop, hands a lock to a converted mob, and allows one editor. `PickerGate` owns authorization (creative plus `Permissions.COMMANDS_GAMEMASTER`) and throttles; spawn-all also needs server enablement. `PickerSpawnService` uses `MobSpawning` for loader spawn finalization, honors cancellation, then sets `NoAI`, persistence, and rotation. Its `refusal` filters commands and suggestions. Individual insertion results decide acceptance; incomplete groups roll back in reverse order, and terrain follows full acceptance. World export validates the merged definition sync budget, writes the generated datapack, and invokes vanilla reload. Export-all writes the game-directory export tree. The world pack’s metadata goes through vanilla’s `PackMetadataSection` codec.
+`PickerFreezeService` preserves prior `NoAI`, reconciles locks at load/logout/stop, hands a lock to a converted mob, and allows one editor. `PickerGate` owns authorization (creative plus `Permissions.COMMANDS_GAMEMASTER`) and throttles; spawn-all also needs server enablement. `PickerSpawnService` uses `MobSpawning` for loader spawn finalization, honors cancellation, then sets `NoAI`, persistence, and rotation. Its `refusal` filters commands and suggestions. Individual insertion results decide acceptance; incomplete groups roll back in reverse order, and terrain follows full acceptance. World export validates the merged definition sync budget, writes the generated datapack, and invokes vanilla reload. Export-all writes the game-directory export tree.
 
 `LookTarget` limits entity intersections by the nearest blocking surface; the inspector reads the game's crosshair target. Client editing and server admin, spawn, and pose commands share `/sg`. Fabric forwards the server branches and adds the picker verbs to the received server tree (`ClientPacketListenerCommandsMixin`).
 
 ## Loader integration
 
-Fabric Mixins cover heal reactions, trades, and shears-kill and head drops (no Fabric API events). Common Mixins in `somegoogly-common.mixins.json` report milking, sheep shearing, and entity events and hold head eyes. Client entries share that config under `mixin.common.client`. Mixins target the pinned, unobfuscated Minecraft version without refmaps.
+Fabric Mixins cover heal reactions, trades, and shears-kill and head drops (no Fabric API events). Common Mixins in `somegoogly-common.mixins.json` report milking, sheep shearing, and entity events and hold head eyes. Client entries share that config under `mixin.common.client`.
 
 Forge’s required `PayloadChannel` marks payloads handled. Both native loaders isolate physical-client bootstrap.
 
 ## Automated verification
 
-GameTest scenarios: Fabric 186, Forge 189, NeoForge 189. Client checklists under `docs/` cover frames, inventory, hands, and boats. Visuals and real saves need manual checks.
+GameTest scenarios: Fabric 186, Forge 190, NeoForge 190. Client checklists under `docs/` cover frames, inventory, hands, and boats.
 
 ## Operational boundaries
 
