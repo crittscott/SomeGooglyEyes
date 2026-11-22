@@ -75,6 +75,10 @@ vanilla's item extents.</div>
 <dd>
 <div class="block">Adult-specific config, or <code>null</code> when this set does not define one.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/client/compat/ThirdPartyModelWraps.Entry.html#adult()" class="member-name-link">adult()</a> - Method in record class com.github.crittscott.somegoogly.client.compat.<a href="com/github/crittscott/somegoogly/client/compat/ThirdPartyModelWraps.Entry.html" title="class in com.github.crittscott.somegoogly.client.compat">ThirdPartyModelWraps.Entry</a></dt>
+<dd>
+<div class="block">Returns the value of the <code>adult</code> record component.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/behavior/BehaviorInstance.html#advance()" class="member-name-link">advance()</a> - Method in class com.github.crittscott.somegoogly.eye.behavior.<a href="com/github/crittscott/somegoogly/eye/behavior/BehaviorInstance.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorInstance</a></dt>
 <dd>
 <div class="block">Count one played tick; returns whether the behavior has now run its full duration.</div>
@@ -242,6 +246,10 @@ eyes' appearance.</div>
 <dd>
 <div class="block">The tooltip lines describing <code>stack</code>'s appearance, appended in place.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/client/compat/ThirdPartyModelWraps.Entry.html#apply(boolean,com.mojang.blaze3d.vertex.PoseStack)" class="member-name-link">apply(boolean, PoseStack)</a> - Method in record class com.github.crittscott.somegoogly.client.compat.<a href="com/github/crittscott/somegoogly/client/compat/ThirdPartyModelWraps.Entry.html" title="class in com.github.crittscott.somegoogly.client.compat">ThirdPartyModelWraps.Entry</a></dt>
+<dd>
+<div class="block">Apply the branch for the render state's age; holds no reference to any model.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/resolver/Attachment.html#apply(com.mojang.blaze3d.vertex.PoseStack)" class="member-name-link">apply(PoseStack)</a> - Method in interface com.github.crittscott.somegoogly.client.render.resolver.<a href="com/github/crittscott/somegoogly/client/render/resolver/Attachment.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">Attachment</a></dt>
 <dd>
 <div class="block">Move <code>poseStack</code> into the part's current (this-frame, post-animation) space.</div>
@@ -340,6 +348,10 @@ into a named part's animated space.</div>
 <dd>
 <div class="block">Baby-specific config, or <code>null</code> when this set does not define one.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/client/compat/ThirdPartyModelWraps.Entry.html#baby()" class="member-name-link">baby()</a> - Method in record class com.github.crittscott.somegoogly.client.compat.<a href="com/github/crittscott/somegoogly/client/compat/ThirdPartyModelWraps.Entry.html" title="class in com.github.crittscott.somegoogly.client.compat">ThirdPartyModelWraps.Entry</a></dt>
+<dd>
+<div class="block">Returns the value of the <code>baby</code> record component.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/picker/PickerState.DraftKey.html#baby()" class="member-name-link">baby()</a> - Method in record class com.github.crittscott.somegoogly.client.picker.<a href="com/github/crittscott/somegoogly/client/picker/PickerState.DraftKey.html" title="class in com.github.crittscott.somegoogly.client.picker">PickerState.DraftKey</a></dt>
 <dd>
 <div class="block">Returns the value of the <code>baby</code> record component.</div>
@@ -354,9 +366,10 @@ into a named part's animated space.</div>
 <dd>
 <div class="block">Called by the GUI's core item method, covering slots, the hotbar, and generic previews.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/client/ClientEyeRuntime.html#beginGuiPresentation(java.lang.Object,com.github.crittscott.somegoogly.client.ClientEyeRuntime.GuiKind,int)" class="member-name-link">beginGuiPresentation(Object, ClientEyeRuntime.GuiKind, int)</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ClientEyeRuntime.html" title="class in com.github.crittscott.somegoogly.client">ClientEyeRuntime</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/client/ClientEyeRuntime.html#beginGuiPresentation(java.lang.Object,com.github.crittscott.somegoogly.client.ClientEyeRuntime.GuiKind,int,net.minecraft.world.item.ItemStack)" class="member-name-link">beginGuiPresentation(Object, ClientEyeRuntime.GuiKind, int, ItemStack)</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ClientEyeRuntime.html" title="class in com.github.crittscott.somegoogly.client">ClientEyeRuntime</a></dt>
 <dd>
-<div class="block">Slots and carried stacks keep one simulation while their on-screen coordinates change; ended by <a href="com/github/crittscott/somegoogly/client/ClientEyeRuntime.html#endItemDraw()"><code>ClientEyeRuntime.endItemDraw()</code></a>.</div>
+<div class="block">Slots and carried stacks keep one simulation while their on-screen coordinates change; ended by
+<a href="com/github/crittscott/somegoogly/client/ClientEyeRuntime.html#endItemDraw()"><code>ClientEyeRuntime.endItemDraw()</code></a>.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/ClientEyeRuntime.html#beginHead(com.github.crittscott.somegoogly.client.PresentationEyes,float)" class="member-name-link">beginHead(PresentationEyes, float)</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ClientEyeRuntime.html" title="class in com.github.crittscott.somegoogly.client">ClientEyeRuntime</a></dt>
 <dd>
@@ -1127,6 +1140,10 @@ for any other block id.</div>
 <dd>
 <div class="block">Required ordered entries; version selection keeps the first match for each age bucket.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/client/compat/ThirdPartyModelWraps.Entry.html#%3Cinit%3E(com.github.crittscott.somegoogly.client.compat.ThirdPartyModelWraps.Transform,com.github.crittscott.somegoogly.client.compat.ThirdPartyModelWraps.Transform)" class="member-name-link">Entry(ThirdPartyModelWraps.Transform, ThirdPartyModelWraps.Transform)</a> - Constructor for record class com.github.crittscott.somegoogly.client.compat.<a href="com/github/crittscott/somegoogly/client/compat/ThirdPartyModelWraps.Entry.html" title="class in com.github.crittscott.somegoogly.client.compat">ThirdPartyModelWraps.Entry</a></dt>
+<dd>
+<div class="block">Creates an instance of a <code>Entry</code> record class.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/compat/gecko/GeoBones.html#enumerate(com.geckolib.cache.model.BakedGeoModel)" class="member-name-link">enumerate(BakedGeoModel)</a> - Static method in class com.github.crittscott.somegoogly.client.compat.gecko.<a href="com/github/crittscott/somegoogly/client/compat/gecko/GeoBones.html" title="class in com.github.crittscott.somegoogly.client.compat.gecko">GeoBones</a></dt>
 <dd>
 <div class="block">Every bone name in <code>model</code>, depth first.</div>
@@ -1159,6 +1176,10 @@ model.</div>
 <div class="block">Indicates whether some other object is "equal to" this one.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/ClientEyeRuntime.RestingHead.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in record class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ClientEyeRuntime.RestingHead.html" title="class in com.github.crittscott.somegoogly.client">ClientEyeRuntime.RestingHead</a></dt>
+<dd>
+<div class="block">Indicates whether some other object is "equal to" this one.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/compat/ThirdPartyModelWraps.Entry.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in record class com.github.crittscott.somegoogly.client.compat.<a href="com/github/crittscott/somegoogly/client/compat/ThirdPartyModelWraps.Entry.html" title="class in com.github.crittscott.somegoogly.client.compat">ThirdPartyModelWraps.Entry</a></dt>
 <dd>
 <div class="block">Indicates whether some other object is "equal to" this one.</div>
 </dd>
@@ -1979,6 +2000,10 @@ convention.</div>
 <div class="block">Returns a hash code value for this object.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/ClientEyeRuntime.RestingHead.html#hashCode()" class="member-name-link">hashCode()</a> - Method in record class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ClientEyeRuntime.RestingHead.html" title="class in com.github.crittscott.somegoogly.client">ClientEyeRuntime.RestingHead</a></dt>
+<dd>
+<div class="block">Returns a hash code value for this object.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/compat/ThirdPartyModelWraps.Entry.html#hashCode()" class="member-name-link">hashCode()</a> - Method in record class com.github.crittscott.somegoogly.client.compat.<a href="com/github/crittscott/somegoogly/client/compat/ThirdPartyModelWraps.Entry.html" title="class in com.github.crittscott.somegoogly.client.compat">ThirdPartyModelWraps.Entry</a></dt>
 <dd>
 <div class="block">Returns a hash code value for this object.</div>
 </dd>
@@ -3146,11 +3171,6 @@ server's reactions.</div>
 <dd>
 <div class="block">A presentation's stable seed for <code>identity</code>.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/client/compat/ThirdPartyModelWraps.html#preTransform(java.lang.Object,boolean,com.mojang.blaze3d.vertex.PoseStack)" class="member-name-link">preTransform(Object, boolean, PoseStack)</a> - Static method in class com.github.crittscott.somegoogly.client.compat.<a href="com/github/crittscott/somegoogly/client/compat/ThirdPartyModelWraps.html" title="class in com.github.crittscott.somegoogly.client.compat">ThirdPartyModelWraps</a></dt>
-<dd>
-<div class="block">Reproduce a listed model's whole-model render transform on <code>poseStack</code>, choosing the branch by
-<code>young</code>.</div>
-</dd>
 <dt><a href="com/github/crittscott/somegoogly/picker/PickerFreezeService.html#PREV_NO_AI_TAG" class="member-name-link">PREV_NO_AI_TAG</a> - Static variable in class com.github.crittscott.somegoogly.picker.<a href="com/github/crittscott/somegoogly/picker/PickerFreezeService.html" title="class in com.github.crittscott.somegoogly.picker">PickerFreezeService</a></dt>
 <dd>
 <div class="block">Persistent marker holding a frozen mob's pre-picker NoAi value (crash/unload recovery).</div>
@@ -3942,7 +3962,7 @@ folded in as a force.</div>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/state/EyeState.Snapshot.html#STREAM_CODEC" class="member-name-link">STREAM_CODEC</a> - Static variable in record class com.github.crittscott.somegoogly.eye.state.<a href="com/github/crittscott/somegoogly/eye/state/EyeState.Snapshot.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeState.Snapshot</a></dt>
 <dd>
-<div class="block">The roll is clamped on decode, as a stored roll is.</div>
+<div class="block">A roll outside 0..1 fails the decode, as it does in <a href="com/github/crittscott/somegoogly/eye/state/EyeState.Snapshot.html#CODEC"><code>EyeState.Snapshot.CODEC</code></a>.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/network/EyeAngerPacket.html#STREAM_CODEC" class="member-name-link">STREAM_CODEC</a> - Static variable in record class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/EyeAngerPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeAngerPacket</a></dt>
 <dd>&nbsp;</dd>
@@ -4045,6 +4065,10 @@ operators and the console, as vanilla does for commands that change the world.</
 <div class="block">Compensates for whole-model render transforms that supported third-party mob models apply <i>outside</i>
 their part tree — a model-wide <code>pushPose → scale → translate</code> wrapped entirely inside the model's
 own <code>renderToBuffer</code>.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/compat/ThirdPartyModelWraps.Entry.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.client.compat">ThirdPartyModelWraps.Entry</a> - Record Class in <a href="com/github/crittscott/somegoogly/client/compat/package-summary.html">com.github.crittscott.somegoogly.client.compat</a></dt>
+<dd>
+<div class="block">Per-model transforms; <code>adult</code> is <code>null</code> where the adult branch renders at identity.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/ClientLifecycle.html#tick()" class="member-name-link">tick()</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ClientLifecycle.html" title="class in com.github.crittscott.somegoogly.client">ClientLifecycle</a></dt>
 <dd>
@@ -4152,6 +4176,10 @@ the on-disk <i>within-head</i> index the caller computed from this draft's flat 
 <div class="block">Returns a string representation of this record class.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/ClientEyeRuntime.RestingHead.html#toString()" class="member-name-link">toString()</a> - Method in record class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ClientEyeRuntime.RestingHead.html" title="class in com.github.crittscott.somegoogly.client">ClientEyeRuntime.RestingHead</a></dt>
+<dd>
+<div class="block">Returns a string representation of this record class.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/compat/ThirdPartyModelWraps.Entry.html#toString()" class="member-name-link">toString()</a> - Method in record class com.github.crittscott.somegoogly.client.compat.<a href="com/github/crittscott/somegoogly/client/compat/ThirdPartyModelWraps.Entry.html" title="class in com.github.crittscott.somegoogly.client.compat">ThirdPartyModelWraps.Entry</a></dt>
 <dd>
 <div class="block">Returns a string representation of this record class.</div>
 </dd>
@@ -4518,6 +4546,13 @@ the range synthesis (<a href="com/github/crittscott/somegoogly/config/VersionRan
 <div class="block">Authored relative selection weight; validated installed values are finite and nonnegative.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/state/EyeColor.html#WHITE" class="member-name-link">WHITE</a> - Static variable in record class com.github.crittscott.somegoogly.eye.state.<a href="com/github/crittscott/somegoogly/eye/state/EyeColor.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeColor</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/compat/ThirdPartyModelWraps.html#wholeModel(java.lang.Object)" class="member-name-link">wholeModel(Object)</a> - Static method in class com.github.crittscott.somegoogly.client.compat.<a href="com/github/crittscott/somegoogly/client/compat/ThirdPartyModelWraps.html" title="class in com.github.crittscott.somegoogly.client.compat">ThirdPartyModelWraps</a></dt>
+<dd>
+<div class="block">The whole-model render transform a listed model applies outside its part tree, or <code>null</code> for every
+unlisted model.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/render/resolver/Resolvers.html#wholeModelWrap(java.lang.Object)" class="member-name-link">wholeModelWrap(Object)</a> - Static method in class com.github.crittscott.somegoogly.client.render.resolver.<a href="com/github/crittscott/somegoogly/client/render/resolver/Resolvers.html" title="class in com.github.crittscott.somegoogly.client.render.resolver">Resolvers</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#WINK_ON_AIM" class="member-name-link">WINK_ON_AIM</a> - Static variable in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ServerConfig.html" title="class in com.github.crittscott.somegoogly.config">ServerConfig</a></dt>
 <dd>

@@ -40,6 +40,7 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 - 1.21.x and later: the client ignores a block-entity data packet whose tag is empty (vanilla's handler and NeoForge's `onDataPacket` both check `isEmpty`), so state that clears to "save nothing" must still put something in the update tag or clients keep the old state. 1.20.1 behaves the same: an empty update tag reaches its client as no tag, which the client skips. [recalled; head-shearing fix tested in game on 1.21.1/1.21.4]
 - 26.1.2: `ClientboundBlockEntityDataPacket.create(blockEntity)` carries `getUpdateTag`, and the client applies it with `loadWithComponents` on a `TagValueInput`, so a test can replay an update on a detached copy of the block entity that way. [recalled]
 - 1.20.1: `BlockItem` merges a stack's `BlockEntityTag` into the block entity and calls `load`, and heads are not an op-only block entity. A creative player needs no operator rights to supply that NBT, so a `load` that keeps a whole compound stores and rebroadcasts whatever was sent. [recalled]
+- 26.1.2: `PackMetadataSection` takes a description and an `InclusiveRange<PackFormat>` of supported formats, and `PackMetadataSection.SERVER_TYPE` is the data-pack `MetadataSectionType` whose `name()` is `pack` and whose `codec()` writes the section; `WorldVersion.packVersion(PackType)` returns a `PackFormat`. [recalled; the format accessor is compiled in this checkout]
 - A non-special recipe needs an unlock advancement, or `doLimitedCrafting` blocks it and the recipe book never offers it. The path is `data/<ns>/advancements/recipes/...` on 1.20.1 and uses the `advancement` directory on later versions. [tested on 1.20.1]
 
 ### Commands
@@ -97,7 +98,7 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 
 ## Architectury and Loom
 
-- Common Mixins compile in `common/src/main/java` with no `refmap` key in the config; Loom produces and remaps the refmap. A wrong refmap surfaces only at runtime, so check a production-jar launch after changing this. [tested on 1.20.1]
+- 26.1.2: every loader builds with `loom-no-remap` and runs on unobfuscated Mojang names, so no Mixin config names a `refmap`, no build script names or excludes one, and no Mixin annotation processor runs. Common Mixins compile in `common/src/main/java` and target the pinned names directly. Remapped versions differ (a common refmap may be needed for Fabric there), so do not copy their refmap setup here. [source: active build scripts and Mixin configs]
 - `@ExpectPlatform` needs a per-loader class, so its one-line forwarding is forced. [tested]
 - 26.1.2: the no-remap build uses one common access widener. Fabric injects it into `shadowJar` with `loom.injectAccessWidener`; Forge and NeoForge convert it on their Shadow tasks through `loom.getForge().convertAccessWideners` and `loom.getNeoForge().convertAccessWideners`. There is no `remapJar` task. [source: active loader build scripts; owner reports successful builds, production rules not independently inspected]
 - GeckoLib publishes no common artifact for 1.20.1. Common compiles against the Fabric artifact with `modCompileOnly`. Only `GeoRenderEvent` differs by loader. [tested]

@@ -2,10 +2,8 @@ package com.github.crittscott.somegoogly.network;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
-import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
-import io.netty.handler.codec.DecoderException;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
@@ -21,36 +19,13 @@ public record EyeStatePacket(int entityId, EyeState.Snapshot snapshot) implement
 
     public static final Identifier ID = SomeGooglyCommon.id("eye_state");
     public static final CustomPacketPayload.Type<EyeStatePacket> TYPE = new CustomPacketPayload.Type<>(ID);
-    public static final StreamCodec<RegistryFriendlyByteBuf, EyeStatePacket> STREAM_CODEC =
-            StreamCodec.ofMember(EyeStatePacket::write, EyeStatePacket::new);
-
-    private EyeStatePacket(FriendlyByteBuf buffer) {
-        this(buffer.readVarInt(), readSnapshot(buffer));
-    }
-
-    private static EyeState.Snapshot readSnapshot(FriendlyByteBuf buffer) {
-        boolean hasGooglyEyes = buffer.readBoolean();
-        float variantRoll = buffer.readFloat();
-        if (!validRoll(variantRoll)) {
-            throw new DecoderException("Invalid eye placement variant roll");
-        }
-        AppearanceOverride overrides = AppearanceOverride.STREAM_CODEC.decode(buffer);
-        return new EyeState.Snapshot(hasGooglyEyes, variantRoll, overrides);
-    }
-
-    private void write(FriendlyByteBuf buffer) {
-        buffer.writeVarInt(entityId);
-        buffer.writeBoolean(snapshot.hasEyes());
-        buffer.writeFloat(snapshot.variantRoll());
-        AppearanceOverride.STREAM_CODEC.encode(buffer, snapshot.properties());
-    }
+    public static final StreamCodec<RegistryFriendlyByteBuf, EyeStatePacket> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.VAR_INT, EyeStatePacket::entityId,
+            EyeState.Snapshot.STREAM_CODEC, EyeStatePacket::snapshot,
+            EyeStatePacket::new);
 
     @Override
     public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
         return TYPE;
-    }
-
-    private static boolean validRoll(float variantRoll) {
-        return Float.isFinite(variantRoll) && variantRoll >= 0.0F && variantRoll <= 1.0F;
     }
 }

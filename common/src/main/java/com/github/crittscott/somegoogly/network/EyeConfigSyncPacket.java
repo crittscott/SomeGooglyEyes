@@ -22,7 +22,9 @@ import org.jspecify.annotations.Nullable;
  * Server-to-client synchronization of the complete resolved eye-definition set, with the set's NBT encoding. The
  * server builds one per candidate set ({@link com.github.crittscott.somegoogly.config.ServerEyeConfigs#packetFor}),
  * checks it with {@link #refusal}, and installs it, so construction serializes once and every joining or
- * reloading connection copies those bytes. The client decodes and re-validates everything it receives.
+ * reloading connection copies those bytes. The client decodes and re-validates everything it receives and keeps
+ * only the decoded definitions: it never re-sends the packet, so {@link #encoded}, {@link #refusal}, and the
+ * encoder serve server-built packets only.
  */
 public class EyeConfigSyncPacket implements CustomPacketPayload {
 
@@ -32,21 +34,23 @@ public class EyeConfigSyncPacket implements CustomPacketPayload {
     public static final StreamCodec<RegistryFriendlyByteBuf, EyeConfigSyncPacket> STREAM_CODEC =
             StreamCodec.ofMember(EyeConfigSyncPacket::write, EyeConfigSyncPacket::read);
 
-    private final byte[] body;
+    private final byte @Nullable [] body;
     private final Map<Identifier, RuntimeConfigSet> configs;
-    private final Map<Identifier, CompoundTag> encoded;
+    private final @Nullable Map<Identifier, CompoundTag> encoded;
+
+    /** A received packet: the decoded definitions alone. */
+    private EyeConfigSyncPacket(Map<Identifier, RuntimeConfigSet> configs) {
+        this.configs = Map.copyOf(configs);
+        this.encoded = null;
+        this.body = null;
+    }
 
     /** {@code encoded} must hold exactly {@code configs}, each encoded through {@link RuntimeConfigSet#CODEC}. */
     public EyeConfigSyncPacket(Map<Identifier, RuntimeConfigSet> configs,
                                Map<Identifier, CompoundTag> encoded) {
-        this(configs, encoded, body(encoded));
-    }
-
-    private EyeConfigSyncPacket(Map<Identifier, RuntimeConfigSet> configs,
-                                Map<Identifier, CompoundTag> encoded, byte[] body) {
         this.configs = Map.copyOf(configs);
         this.encoded = Map.copyOf(encoded);
-        this.body = body;
+        this.body = body(encoded);
     }
 
     private static byte[] body(Map<Identifier, CompoundTag> encoded) {
@@ -70,7 +74,7 @@ public class EyeConfigSyncPacket implements CustomPacketPayload {
         return configs;
     }
 
-    /** {@link #configs} encoded through {@link RuntimeConfigSet#CODEC}; read-only. */
+    /** {@link #configs} encoded through {@link RuntimeConfigSet#CODEC}; read-only. Server-built packets only. */
     public Map<Identifier, CompoundTag> encoded() {
         return encoded;
     }
@@ -80,14 +84,11 @@ public class EyeConfigSyncPacket implements CustomPacketPayload {
         if (buffer.readableBytes() > MAX_PAYLOAD_BYTES) {
             throw new DecoderException("Eye config sync payload exceeds network limit");
         }
-        byte[] body = new byte[buffer.readableBytes()];
-        buffer.getBytes(buffer.readerIndex(), body);
         int size = buffer.readVarInt();
         if (size < 0 || size > EyeConfigLimits.MAX_CONFIGS_PER_SYNC) {
             throw new DecoderException("Eye config count exceeds network limit: " + size);
         }
         Map<Identifier, RuntimeConfigSet> configs = new HashMap<>();
-        Map<Identifier, CompoundTag> encoded = new HashMap<>();
         for (int i = 0; i < size; i++) {
             Identifier id = buffer.readIdentifier();
             if (configs.containsKey(id)) {
@@ -100,19 +101,18 @@ public class EyeConfigSyncPacket implements CustomPacketPayload {
             RuntimeConfigSet decoded = RuntimeConfigSet.CODEC.parse(NbtOps.INSTANCE, tag).result()
                     .orElseThrow(() -> new DecoderException("Malformed synced eye config for " + id));
             configs.put(id, decoded);
-            encoded.put(id, tag);
         }
         EyeConfigLimits.Issue error = EyeConfigLimits.validateSync(configs);
         if (error != null) {
             throw new DecoderException("Unsafe synced eye config: " + error.diagnostic());
         }
-        return new EyeConfigSyncPacket(configs, encoded, body);
+        return new EyeConfigSyncPacket(configs);
     }
 
     /**
      * Why clients would refuse this packet, or {@code null} if they accept it: the work its definitions ask of a
      * client, then its size. Shared by reload and picker export, so an export is checked exactly as the reload it
-     * triggers will be.
+     * triggers will be. Server-built packets only.
      */
     public EyeConfigLimits.@Nullable Issue refusal() {
         EyeConfigLimits.Issue limits = EyeConfigLimits.validateSync(configs);
