@@ -1,7 +1,9 @@
 package com.github.crittscott.somegoogly.client.render.resolver;
 
+import com.github.crittscott.somegoogly.client.compat.ThirdPartyModelWraps;
 import net.minecraft.client.model.EntityModel;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -21,10 +23,10 @@ public final class Resolvers {
      */
     static final ModelMemo<EntityModel<?>, Attachment> ATTACHMENTS = new ModelMemo<>();
 
-    // Which resolver handles a given model instance never changes for that instance's life, and the
-    // resolvers themselves are stateless singletons holding no reference back to any model, so weak keys
-    // alone are enough here (nothing in the values pins a stale model alive).
-    private static final Map<EntityModel<?>, EyeAttachmentResolver> BY_MODEL = new WeakHashMap<>();
+    // Which resolver handles a given model instance, and which whole-model wrap it has, never change for that
+    // instance's life. The resolvers are stateless singletons and the wraps are plain transforms, neither holding a
+    // reference back to any model, so weak keys alone are enough here (nothing in the values pins a stale model alive).
+    private static final Map<EntityModel<?>, Binding> BY_MODEL = new WeakHashMap<>();
 
     private static final EyeAttachmentResolver ROOT = new RootModelResolver();
     private static final List<EyeAttachmentResolver> SPECIALIZED = List.of(
@@ -34,6 +36,10 @@ public final class Resolvers {
     );
 
     private Resolvers() {
+    }
+
+    /** What is fixed about one model instance: its resolver and its whole-model wrap, if it has one. */
+    private record Binding(EyeAttachmentResolver resolver, @Nullable ThirdPartyModelWraps.Entry wholeModel) {
     }
 
     /** The log names of the reflected model families whose library this client found and could bind to. */
@@ -62,17 +68,25 @@ public final class Resolvers {
         }
     }
 
-    private static EyeAttachmentResolver findResolver(EntityModel<?> model) {
+    private static Binding bind(EntityModel<?> model) {
+        EyeAttachmentResolver resolver = ROOT;
         for (EyeAttachmentResolver r : SPECIALIZED) {
             if (r.handles(model)) {
-                return r;
+                resolver = r;
+                break;
             }
         }
-        return ROOT;
+        return new Binding(resolver, ThirdPartyModelWraps.wholeModel(model));
     }
 
     /** @return the specialized resolver for this model, or the root-model resolver. */
     public static EyeAttachmentResolver forModel(EntityModel<?> model) {
-        return BY_MODEL.computeIfAbsent(model, Resolvers::findResolver);
+        return BY_MODEL.computeIfAbsent(model, Resolvers::bind).resolver();
+    }
+
+    /** @return the whole-model transform this model applies outside its part tree, or {@code null}. */
+    @Nullable
+    public static ThirdPartyModelWraps.Entry wholeModelWrap(EntityModel<?> model) {
+        return BY_MODEL.computeIfAbsent(model, Resolvers::bind).wholeModel();
     }
 }

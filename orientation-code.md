@@ -22,19 +22,19 @@ Mod id `somegoogly`, package `com.github.crittscott.somegoogly`, version `0.8.3`
 | `neoforge/src/main` | NeoForge bootstrap, events, native config, adapters, client integration, metadata |
 | `neoforge/src/gametest` | NeoForge wrappers, persistence proof, dev-mod entry point, discovery metadata |
 
-Common imports no loader types (adapters or `@ExpectPlatform`); loader packages avoid split packages.
+Common imports no loader types; loader packages avoid split packages.
 
-The server owns gameplay, definitions, and authorization; the client owns rendering, inspection, and picker UI.
+The server owns gameplay, definitions, and authorization; the client, rendering and picker UI.
 
 `ModContent` registers content through the `@ExpectPlatform` `Registration`. Slimy Eye uses vanilla `crafting_transmute`; Optometrist and `self_shear` are data-driven.
 
 ## Configuration and eye definitions
 
-`ServerConfig`/`ClientConfig` expose validated `ConfigValue<T>`s. Forge and NeoForge use native CLIENT/SERVER specs, resetting SERVER values on unload. Fabric uses bundled NightConfig for table-aware TOML parsing at startup and `/reload`, resetting on stop. `FabricMigration.quoteReleasedHeader` quotes the released unquoted header. Completion adds only missing keys and retains original text in `.bak`; parse failures preserve the file and runtime values. The server logs the effective master switch at startup and changes.
+`ServerConfig`/`ClientConfig` expose `ConfigValue<T>`s. Forge and NeoForge use native CLIENT/SERVER specs, resetting SERVER values on unload. Fabric uses bundled NightConfig for table-aware TOML parsing at startup and `/reload`, resetting on stop. `FabricMigration.quoteReleasedHeader` quotes the released unquoted header. Completion adds only missing keys, keeping the original in `.bak`; parse failures keep file and values. The server logs the effective master switch at startup and changes.
 
 Server config keys share one order across loaders.
 
-Eye definitions are datapack resources at `data/<namespace>/eyes/*.json`, modeled by `EyeConfigModel`. Reload resolves one version per entity type, validates, encodes to NBT, and swaps `ServerEyeConfigs` only if the encoding differs, keeping the old set on failure. That encoding is the sync payload, so `ClientEyeConfigs` never selects versions. Size, payload, and geometry limits match across reload, picker export, and network decode. `EyeColor` codecs reject out-of-range channels on decode. `EyeConfigLimits.Issue` gives translated feedback and log diagnostics.
+Eye definitions are datapack resources at `data/<namespace>/eyes/*.json`, modeled by `EyeConfigModel`. Reload resolves one version per entity type, validates, encodes to NBT, and swaps `ServerEyeConfigs` only if the encoding differs, keeping the old set on failure. That encoding is the sync payload, so `ClientEyeConfigs` never selects versions. Size, payload, and geometry limits match across reload, export, and decode. `EyeColor` codecs reject out-of-range channels on decode. `EyeConfigLimits.Issue` gives translated feedback and log diagnostics.
 
 ## Entity and item state
 
@@ -42,7 +42,7 @@ Eye definitions are datapack resources at `data/<namespace>/eyes/*.json`, modele
 
 Persistent entity keys: `somegoogly:hasGooglyEyes`, `somegoogly:eyeVariantRoll`, `somegoogly:eyeOverrides`.
 
-Mutations send one full snapshot; rolls, kept only with eyes on, read clamped to 0..1. Eye state initializes once. Initialization and tracking skip default state; mid-life mutations always send. Conversions call `ServerServices.onConverted` (eyes, picker freeze); player replacement calls `onPlayerCloned` (eyes on End exit only). Joining players get their own snapshot.
+Mutations send one full snapshot; rolls, kept only with eyes on, read clamped to 0..1; its shared stream codec rejects out-of-range rolls. Eye state initializes once. Initialization and tracking skip default state; mid-life mutations always send. Conversions call `ServerServices.onConverted` (eyes, picker freeze); player replacement calls `onPlayerCloned` (eyes on End exit only). Joining players get their own snapshot.
 
 Eye items carry `AppearanceOverride` in the synced `somegoogly:eye_properties` component, never geometry; harvesting copies the first eye's effective appearance, the modifier recipe changes only it, and the Slimy Eye transmute copies all components.
 
@@ -52,7 +52,7 @@ Only Fabric entity data needs migration from the 1.21.1 release.
 
 `EyeItemService` owns authorization, mutation, drops, and durability for Slimy Eye use and both harvests, on mobs and heads. Loader adapters run interactions and self-shearing after protection listeners (Forge/NeoForge `LOWEST`, Fabric a late phase); head use also checks `mayInteract`/`mayUseItemAt`, and Forge/NeoForge honor separate item-use denials. `markHeadDrop` stamps an eyed mob's own head among its death drops (Forge/NeoForge at `LOWEST`); head loot copies the state to the item with `SkullEyeState.headLootCopy` (Forge/NeoForge `HeadEyesLootModifier`; Fabric `LootTableEvents.MODIFY`). It refuses spectators itself. Shears are `#somegoogly:shears` (vanilla plus optional `#c:tools/shear`). Applying a Slimy Eye to another player also requires server PvP and `canHarmPlayer`. Plain-shears self-damage uses the attacker-less `self_shear` type.
 
-Slimy Eye use emits `ENTITY_INTERACT` (`BLOCK_CHANGE` on a head), harvests `SHEAR`; refusals emit neither.
+Slimy Eye use emits `ENTITY_INTERACT` (`BLOCK_CHANGE` on heads), harvests `SHEAR`; refusals neither.
 
 ## Eligibility and behaviors
 
@@ -68,9 +68,9 @@ Attachment resolvers cache by model identity and replay `ThirdPartyModelWraps`. 
 
 Common Mixins bracket placed-head and head-item rendering. `SkullEyeRenderer` draws on the widened `SkullModel`/`PiglinHeadModel` head part after the model. Worn heads get no eyes.
 
-GeckoLib code links only after detection; attach failures cannot block loading.
+GeckoLib code links only after detection.
 
-`BoatEyeLayout` selects geometry by vanilla boat/raft entity type. `BoatRendererMixin` extracts eyes onto the state and `GooglyEyeRenderer.renderBoat` draws them before the hull pose is popped. `PresentationEyes` supplies layouts, ambient expressions, and owner motion. `EyeInfo.capturePose` projects gravity/acceleration from world-aligned poses, once a tick. Hands key by holder/hand, shared by first and third person; GUI entries by view key on a UI clock that runs while paused. `ItemModelResolverMixin` picks an item's draw, frame extraction sets one on `state.item`, and `ItemStackRenderStateMixin` pushes it with the stack as `ClientEyeRuntime`'s one nested `DrawContext` (GUI key, item animation, placed head or item), which GUI and placed-head Mixins also push. GUI icons keep GUI scale; loose framed eyes use 3x diameter. No packets/saved fields.
+`BoatEyeLayout` selects geometry by vanilla boat/raft entity type. `BoatRendererMixin` extracts eyes onto the state and `GooglyEyeRenderer.renderBoat` draws them before the hull pose is popped. `PresentationEyes` supplies layouts, ambient expressions, and owner motion. `EyeInfo.capturePose` projects gravity/acceleration from world-aligned poses, once a tick. Hands key by holder/hand, shared by first and third person; GUI entries by view key on a UI clock that runs while paused. `ItemModelResolverMixin` picks an item's draw, frame extraction sets one on `state.item`, and `ItemStackRenderStateMixin` pushes it with the stack as `ClientEyeRuntime`'s one nested `DrawContext` (GUI key, item animation, placed head or item), which GUI and placed-head Mixins also push; eyeless items reuse the enclosing one. GUI icons keep GUI scale; loose framed eyes use 3x diameter. No packets/saved fields.
 
 ## Networking
 
@@ -86,7 +86,7 @@ The client owns picker drafts and previews; the server owns freezing, spawning, 
 
 `PickerFreezeService` preserves prior `NoAI`, reconciles locks at load/logout/stop, and allows one editor. `PickerGate` owns authorization (creative plus permission level 2) and throttles; spawn-all also needs server enablement. `PickerSpawnService` uses `MobSpawning` for loader spawn finalization, honors cancellation, then sets `NoAI`, persistence, and rotation. Its `refusal` filters commands and suggestions. Individual insertion results decide acceptance; incomplete groups roll back in reverse order, and terrain follows full acceptance. World export writes the generated datapack, export-all the game-directory export tree. Both use `ConfigFile.exportVersion`; bulk-export disk failures log the entity, target, completed count, and exception.
 
-`LookTarget` limits entity intersections by the nearest blocking surface; the inspector compares actual hit distances. Client and server own disjoint `/sg` branches: editing is client-side; admin, spawn, spawn-all, and mob-pose are server-side. Fabric forwards `SERVER_BRANCHES` explicitly, since its client root would capture them, and adds the picker verbs to the received server tree (`ClientPacketListenerCommandsMixin`).
+`LookTarget` limits entity hits by the nearest blocking surface. Client and server own disjoint `/sg` branches: editing is client-side; admin, spawn, spawn-all, and mob-pose are server-side. Fabric forwards `SERVER_BRANCHES` explicitly, since its client root would capture them, and adds the picker verbs to the received server tree (`ClientPacketListenerCommandsMixin`).
 
 ## Loader integration
 
@@ -98,7 +98,7 @@ Forge's required `PayloadChannel` marks payloads handled. NeoForge and Forge iso
 
 ## Automated verification
 
-GameTest scenarios: Fabric 189, Forge 190, NeoForge 190. Item coverage: twelve frame, seven GUI, seven hand, and thirteen boat scenarios per loader. Client checklists: `docs/{framed,inventory,third-person,boat}-eyes-testing.md`. Visuals, connections, protection ordering, command UX, and real saves are manual checks.
+GameTest scenarios: Fabric 189, Forge 190, NeoForge 190. Item coverage: twelve frame, seven GUI, seven hand, and thirteen boat scenarios per loader. Client checklists: `docs/{framed,inventory,third-person,boat}-eyes-testing.md`. Visuals, connections, protection ordering, and real saves are manual.
 
 ## Operational boundaries
 
