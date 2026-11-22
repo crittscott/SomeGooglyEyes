@@ -52,14 +52,14 @@ public record EyeRenderData(boolean pickerTarget, @Nullable HeadInfo helper, @Nu
      */
     @Nullable
     private static HeadInfo helperToRender(LivingEntity living) {
-        Identifier entityType = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType());
-        if (ClientConfig.DISABLE_GOOGLY_EYES.get() || ClientConfig.isEntityDisabled(entityType)) {
-            return null;
-        }
         if (!PickerState.isActive() && (!ClientEyeConfigs.googlyEyesEnabled() || !EyeState.hasEyes(living))) {
             return null;
         }
         if (living.isInvisible()) {
+            return null;
+        }
+        Identifier entityType = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType());
+        if (ClientConfig.DISABLE_GOOGLY_EYES.get() || ClientConfig.isEntityDisabled(entityType)) {
             return null;
         }
         HeadInfo helper = ClientEyeConfigs.resolve(entityType, living.isBaby(), EyeState.getVariantRoll(living));

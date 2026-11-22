@@ -39,6 +39,7 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 
 - 1.21.x and later: the client ignores a block-entity data packet whose tag is empty (vanilla's handler and NeoForge's `onDataPacket` both check `isEmpty`), so state that clears to "save nothing" must still put something in the update tag or clients keep the old state. 1.20.1 behaves the same: an empty update tag reaches its client as no tag, which the client skips. [recalled; head-shearing fix tested in game on 1.21.1/1.21.4]
 - 1.20.1: `BlockItem` merges a stack's `BlockEntityTag` into the block entity and calls `load`, and heads are not an op-only block entity. A creative player needs no operator rights to supply that NBT, so a `load` that keeps a whole compound stores and rebroadcasts whatever was sent. [recalled]
+- 1.21.11: `PackMetadataSection` is `(Component description, InclusiveRange<PackFormat> supportedFormats)`, `SharedConstants.getCurrentVersion().packVersion(PackType)` returns a `PackFormat` with `major()`/`minor()`, and `PackMetadataSection.SERVER_TYPE` is a `MetadataSectionType` record carrying the section name (`pack`) and the data-pack codec, which writes `min_format`/`max_format`. [recalled; `packVersion(...).major()/minor()` compiled on 1.21.11]
 - A non-special recipe needs an unlock advancement, or `doLimitedCrafting` blocks it and the recipe book never offers it. The path is `data/<ns>/advancements/recipes/...` on 1.20.1 and uses the `advancement` directory on later versions. [tested on 1.20.1]
 
 ### Commands
@@ -92,7 +93,7 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 
 ## Architectury and Loom
 
-- Common Mixins compile in `common/src/main/java` with no `refmap` key in the config; Loom produces and remaps the refmap. A wrong refmap surfaces only at runtime, so check a production-jar launch after changing this. [tested on 1.20.1]
+- Common Mixins compile in `common/src/main/java` and need their own refmap, named by `loom.mixin.defaultRefmapName` in common and by the `refmap` key in the common Mixin config: Fabric resolves them against intermediary names, and the Fabric module's refmap covers only Mixins compiled there. Forge and NeoForge run on Mojang names, so their jars exclude that refmap and their dev runs set `mixin.env.disableRefMap`. A wrong refmap surfaces only at runtime, so check a production-jar launch after changing this. [recalled; the 1.21.11 build files implement it, production-jar launch not checked here]
 - `@ExpectPlatform` needs a per-loader class, so its one-line forwarding is forced. [tested]
 - Forge and NeoForge receive the Fabric access widener converted to an access transformer at remap time; one file serves every loader. [tested] Loom's `forge { convertAccessWideners = true; extraAccessWideners.add <widener name> }` does the conversion by filling `remapJar`'s `atAccessWideners`; NeoForge sets `atAccessWideners` directly because whether its extension has the same switches is unknown. [recalled]
 - GeckoLib publishes no common artifact for 1.20.1. Common compiles against the Fabric artifact with `modCompileOnly`. Only `GeoRenderEvent` differs by loader. [tested]

@@ -4,6 +4,7 @@ import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -18,13 +19,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 abstract class ContainerItemEyesMixin {
 
     @Inject(method = "renderFloatingItem", at = @At("HEAD"))
-    private void somegoogly$beginCarried(CallbackInfo callback) {
-        ClientEyeRuntime.beginGuiPresentation(this, ClientEyeRuntime.GuiKind.CURSOR, 0);
+    private void somegoogly$beginCarried(GuiGraphics graphics, ItemStack stack, int x, int y, String text,
+                                         CallbackInfo callback) {
+        ClientEyeRuntime.beginGuiPresentation(this, ClientEyeRuntime.GuiKind.CURSOR, 0, stack);
     }
 
     @Inject(method = "renderSlot(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/world/inventory/Slot;II)V", at = @At("HEAD"))
     private void somegoogly$beginSlot(GuiGraphics graphics, Slot slot, int mouseX, int mouseY, CallbackInfo callback) {
-        ClientEyeRuntime.beginGuiPresentation(this, ClientEyeRuntime.GuiKind.SLOT, slot.index);
+        ClientEyeRuntime.beginGuiPresentation(this, ClientEyeRuntime.GuiKind.SLOT, slot.index, slot.getItem());
     }
 
     @Inject(method = "renderFloatingItem", at = @At("RETURN"))
