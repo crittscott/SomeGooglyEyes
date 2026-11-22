@@ -40,7 +40,7 @@ Eye definitions are datapack files `data/<namespace>/eyes/*.json`, modeled by `E
 
 Persistent entity keys: `somegoogly:hasGooglyEyes`, `somegoogly:eyeVariantRoll`, `somegoogly:eyeOverrides`.
 
-Mutations send one full snapshot; stored rolls read clamped to 0..1. Eye state and roll initialize together once. Initialization and tracking skip default state; mid-life mutations always send. `EyeState.copy` handles conversion and non-death respawn; joining players get their own snapshot.
+Mutations send one full snapshot; stored rolls clamp to 0..1; received ones outside it fail decoding. Eye state and roll initialize together once. Initialization and tracking skip default state; mid-life mutations always send. `EyeState.copy` handles conversion and non-death respawn; joining players get their own snapshot.
 
 Eye items carry `AppearanceOverride` in the synced `somegoogly:eye_properties` component, never geometry; harvesting copies the first eye's effective appearance, the modifier recipe changes only that component, and the Slimy Eye transmute copies every component.
 
@@ -62,7 +62,7 @@ Slimy Eye applications emit `GameEvent.ENTITY_INTERACT` (`BLOCK_CHANGE` on a hea
 
 Each eye part is submitted as custom geometry at its finished pose, values copied into its callback; `ModelGooglyEye` is stateless. `ClientRenderLayers` installs `LayerGooglyEyes` once per renderer rebuild, before slime's outer layer; GeckoLib uses `CompileRenderLayers`. Both draw picker previews. `LayerGooglyEyes` poses its parent model before resolving and insets sheared adult sheep `body` eyes by wool depth. Common Mixins store `EyeRenderData` on `LivingEntityRenderState`; GeckoLib captures it at extraction and registers per-bone `RenderPassInfo` tasks with state-owned eye data and copied picker drafts; bone tasks deduplicate by identity. `GooglyEyeRenderer` shares the head and preview submission loops. `ClientEyeRuntime` keeps one nested item/head draw context. `SpecialModelWrapperMixin` captures the display context in the item renderer's `Frame` argument, because `submit` receives none. Rendering and pupils share `EyePlacement.orientation`; `HeadInfo` caches it per eye, and cross-eye aims once at start.
 
-Attachment resolvers cache by model identity and replay `ThirdPartyModelWraps`. `RootModelResolver` walks `EntityModel.root()` after reflected Citadel/Uranus/LLibrary resolvers.
+Resolvers and whole-model `ThirdPartyModelWraps` cache by model identity. `RootModelResolver` walks `EntityModel.root()` after reflected Citadel/Uranus/LLibrary resolvers.
 
 The picker gizmo uses a no-depth pipeline with per-vertex width. The HUD follows subtitles on Fabric and is added last on Forge and NeoForge. Placed-head eyes are chosen at extraction onto `SkullBlockRenderState`; Mixins bracket placed-head and head-item submission and key animated GUI items on their simulation, head items on their snapshot. The skull hook shares the submitted model state and pose. `SkullEyeRenderer` poses the `SkullModel`/`PiglinHeadModel` and submits on its head part; resting head items resolve once per component. Worn heads get no eyes.
 
@@ -82,7 +82,7 @@ Sends use the platform bridges; clientbound handlers link the client handler onl
 
 `PickerState.DraftSession` retains separate drafts keyed by species and age. Both export paths use `ConfigFile.overlay` to replace authored ages while retaining untouched age buckets, including disabled ones. `ModelPartVocabulary` shares attachment naming between editing and export.
 
-`PickerFreezeService` keeps prior `NoAI`, reconciles locks at load/logout/stop, hands a lock to a converted mob, and allows one editor. `PickerGate` owns authorization (creative plus `Permissions.COMMANDS_GAMEMASTER`) and throttles; spawn-all also needs server enablement. `PickerSpawnService` uses `MobSpawning` for loader spawn finalization, honors cancellation, then sets `NoAI`, persistence, and rotation. Its `refusal` filters commands and suggestions. Individual insertion results decide acceptance; incomplete groups roll back in reverse order, and terrain follows full acceptance. World export validates the merged definition sync budget, writes the generated datapack, and invokes vanilla reload. Export-all writes the game-directory export tree. The world pack declares the running game’s major and minor data-pack format.
+`PickerFreezeService` keeps prior `NoAI`, reconciles locks at load/logout/stop, hands a lock to a converted mob, and allows one editor. `PickerGate` owns authorization (creative plus `Permissions.COMMANDS_GAMEMASTER`) and throttles; spawn-all also needs server enablement. `PickerSpawnService` uses `MobSpawning` for loader spawn finalization, honors cancellation, then sets `NoAI`, persistence, and rotation. Its `refusal` filters commands and suggestions. Individual insertion results decide acceptance; incomplete groups roll back in reverse order, and terrain follows full acceptance. World export validates the merged definition sync budget, writes the generated datapack, and invokes vanilla reload. Export-all writes the game-directory export tree. The world pack's `pack.mcmeta` uses vanilla's codec and the running data-pack format.
 
 `LookTarget` limits entity intersections by the nearest blocking surface; the inspector reads the game's crosshair target. Client editing and server admin, spawn, and pose commands share `/sg`. Fabric forwards the server branches and adds the picker verbs to the received server tree (`ClientPacketListenerCommandsMixin`).
 
@@ -94,7 +94,7 @@ Forge’s required `PayloadChannel` marks payloads handled. Both native loaders 
 
 ## Automated verification
 
-GameTest scenarios: Fabric 186, Forge 189, NeoForge 189. Client checklists in `docs/` cover frames, inventory, hands, and boats; visuals and real saves need manual checks.
+GameTest scenarios: Fabric 186, Forge 189, NeoForge 189. Client checklists in `docs/` cover frames, inventory, hands, and boats.
 
 ## Operational boundaries
 

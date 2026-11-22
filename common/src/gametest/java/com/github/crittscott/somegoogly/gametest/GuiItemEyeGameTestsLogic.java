@@ -220,7 +220,7 @@ public final class GuiItemEyeGameTestsLogic {
         Object view = new Object();
         PresentationEyes eyes = PresentationEyes.create(new UUID(1L, 2L), eye());
         PresentationEyes.Draw stored;
-        ClientEyeRuntime.beginGuiPresentation(view, ClientEyeRuntime.GuiKind.SLOT, 3);
+        ClientEyeRuntime.beginGuiPresentation(view, ClientEyeRuntime.GuiKind.SLOT, 3, eye());
         try {
             ClientEyeRuntime.beginItemDraw(new PresentationEyes.Draw(eyes, 0.5F));
             try {
@@ -245,8 +245,8 @@ public final class GuiItemEyeGameTestsLogic {
             ClientEyeRuntime.beginItemState(head, PresentationEyes.Draw.NONE);
             try {
                 ClientEyeRuntime.DrawContext context = ClientEyeRuntime.currentDraw();
-                helper.assertTrue(context.item() == head && context.draw().eyes() == null,
-                        Component.literal("a nested item state carries its own stack and extracted animation"));
+                helper.assertTrue(context.item() != stack && context.draw().eyes() == null,
+                        Component.literal("a nested item state inherits neither the outer stack nor its animation"));
             } finally {
                 ClientEyeRuntime.endItemDraw();
             }

@@ -164,8 +164,16 @@ public final class ClientEyeRuntime {
         beginItemDraw(PresentationEyes.supports(stack) ? guiDraw(stack, x, y, seed) : PresentationEyes.Draw.NONE);
     }
 
-    /** Slots and carried stacks keep one simulation while their on-screen coordinates change; ended by {@link #endItemDraw}. */
-    public static void beginGuiPresentation(Object view, GuiKind kind, int index) {
+    /**
+     * Slots and carried stacks keep one simulation while their on-screen coordinates change; ended by
+     * {@link #endItemDraw}. {@code stack} is the item the scope draws, or {@code null} for a scope over several
+     * items; a scope over one item that cannot have eyes changes nothing.
+     */
+    public static void beginGuiPresentation(Object view, GuiKind kind, int index, @Nullable ItemStack stack) {
+        if (stack != null && !PresentationEyes.supports(stack)) {
+            push(current);
+            return;
+        }
         push(new DrawContext(current.head(), current.item(), current.partialTick(), current.draw(),
                 new GuiKey(view, kind, index, 0, 0)));
     }
@@ -180,14 +188,23 @@ public final class ClientEyeRuntime {
 
     /** An item draw starts, animated by {@code draw}; ended by {@link #endItemDraw}. */
     public static void beginItemDraw(PresentationEyes.Draw draw) {
+        if (draw.equals(current.draw())) {
+            push(current);
+            return;
+        }
         push(new DrawContext(current.head(), current.item(), current.partialTick(), draw, current.guiKey()));
     }
 
     /**
      * An item render state's submission starts with the stack it was filled from and the animation chosen for it at
-     * extraction; ended by {@link #endItemDraw}.
+     * extraction; ended by {@link #endItemDraw}. A stack that cannot have eyes draws none, so outside any GUI scope
+     * its submission shares the empty context.
      */
     public static void beginItemState(@Nullable ItemStack stack, PresentationEyes.Draw draw) {
+        if (draw.eyes() == null && current.guiKey() == null && (stack == null || !PresentationEyes.supports(stack))) {
+            push(DrawContext.NONE);
+            return;
+        }
         push(new DrawContext(null, stack, 0F, draw, current.guiKey()));
     }
 
@@ -195,11 +212,11 @@ public final class ClientEyeRuntime {
     @Nullable
     public static PresentationEyes boatEyes(AbstractBoat boat) {
         var type = EntityType.getKey(boat.getType());
-        RuntimeConfig config = ClientEyeConfigs.get(type, false);
-        if (!mayShow(boat)) {
+        if (!mayShow(boat, type)) {
             BOATS.remove(boat);
             return null;
         }
+        RuntimeConfig config = ClientEyeConfigs.get(type, false);
         BoatEntry entry = BOATS.get(boat);
         if (entry == null || !entry.matches(boat, config)) {
             if (!BoatEyeLayout.isEligible(boat, config)) {
@@ -247,7 +264,9 @@ public final class ClientEyeRuntime {
     @Nullable
     public static PresentationEyes frameEye(ItemFrame frame) {
         if (!ClientEyeConfigs.eyesVisible() || frame.isRemoved() || !PresentationEyes.supports(frame.getItem())) {
-            FRAMES.remove(frame);
+            if (!FRAMES.isEmpty()) {
+                FRAMES.remove(frame);
+            }
             return null;
         }
         PresentationEyes eye = FRAMES.get(frame);
@@ -373,9 +392,9 @@ public final class ClientEyeRuntime {
                 ? current.draw() : PresentationEyes.Draw.NONE;
     }
 
-    private static boolean mayShow(AbstractBoat boat) {
-        return ClientEyeConfigs.eyesVisible(EntityType.getKey(boat.getType()))
-                && !boat.isInvisible() && !boat.isRemoved() && EyeState.hasEyes(boat);
+    private static boolean mayShow(AbstractBoat boat, Identifier type) {
+        return EyeState.hasEyes(boat) && !boat.isInvisible() && !boat.isRemoved()
+                && ClientEyeConfigs.eyesVisible(type);
     }
 
     /** A boat's eye state arrived from the server; a differing state replaces its simulation. */
@@ -611,8 +630,10 @@ public final class ClientEyeRuntime {
                     entry.eyes.tick(gameTime, settings, entry.holder);
                 });
         sweep(BOATS, clientTicks, entry -> entry.lastShown,
-                (boat, entry) -> !mayShow(boat)
-                        || !entry.matches(boat, ClientEyeConfigs.get(EntityType.getKey(boat.getType()), false)),
+                (boat, entry) -> {
+                    Identifier type = EntityType.getKey(boat.getType());
+                    return !mayShow(boat, type) || !entry.matches(boat, ClientEyeConfigs.get(type, false));
+                },
                 (boat, entry) -> entry.eyes.tick(gameTime, settings, boat));
         sweep(FRAMES, clientTicks, eye -> eye.lastRenderTick,
                 (frame, eye) -> frame.isRemoved(), (frame, eye) -> eye.tick(gameTime, settings));
