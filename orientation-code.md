@@ -26,11 +26,11 @@ Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, versi
 
 ## Configuration and eye definitions
 
-`ServerConfig`/`ClientConfig` expose validated `ConfigValue<T>`s. Forge and NeoForge use native CLIENT/SERVER specs, resetting SERVER values on unload. Fabric uses bundled NightConfig for table-aware TOML parsing at startup and `/reload`, resetting on stop. Completion adds only missing keys and retains original text in `.bak`; parse failures preserve the file and runtime values. The server logs the effective master switch, spawn percentages, and Behaviors switches that are off at startup and on change.
+`ServerConfig`/`ClientConfig` expose validated `ConfigValue<T>`s. Forge and NeoForge use native CLIENT/SERVER specs, resetting SERVER values on unload. Fabric uses bundled NightConfig for table-aware TOML parsing at startup and `/reload`, resetting on stop. Completion adds only missing keys, keeping a `.bak`; parse failures preserve the file and values. The server logs the effective master switch, spawn percentages, and Behaviors switches that are off at startup and on change.
 
-One typed schema defines the released keys, table order, defaults, and bounds for native specs and Fabric TOML. Apply logs summarize spawn and visibility settings.
+One typed schema defines keys, table order, defaults, and bounds for native specs and Fabric TOML.
 
-Eye definitions are datapack resources at `data/<namespace>/eyes/*.json`, modeled by `EyeConfigModel`. Reload resolves one version per entity type, validates, encodes to NBT, and swaps `ServerEyeConfigs` only if the encoding differs, keeping the old set on failure. That encoding is the sync payload, so `ClientEyeConfigs` never selects versions. Size and geometry limits stay aligned across reload, picker export, and network decode. `EyeColor` codecs reject out-of-range channels on decode. `EyeConfigLimits.Issue` gives translated feedback and log diagnostics.
+Eye definitions are datapack resources at `data/<namespace>/eyes/*.json`, modeled by `EyeConfigModel`. Reload resolves one version per entity type, validates, encodes to NBT, and swaps `ServerEyeConfigs` only if the encoding differs, keeping the old set on failure. That encoding is the sync payload, so `ClientEyeConfigs` never selects versions. Size and geometry limits match across reload, export, and decode. `EyeColor` codecs reject out-of-range channels on decode. `EyeConfigLimits.Issue` gives translated feedback and log diagnostics.
 
 ## Entity and item state
 
@@ -58,11 +58,11 @@ Slimy Eye applications emit `GameEvent.ENTITY_INTERACT` (`BLOCK_CHANGE` on a hea
 
 ## Rendering and attachment
 
-Each eye part is submitted as custom geometry at its finished pose, values copied into its callback; `ModelGooglyEye` is stateless. `ClientRenderLayers` installs `LayerGooglyEyes` once per renderer rebuild, before slime's outer layer; GeckoLib uses its `CompileRenderLayers` event. Both draw picker previews. `LayerGooglyEyes` poses its parent model before resolving and insets sheared adult sheep `body` eyes by wool depth. Common Mixins store `EyeRenderData` on `LivingEntityRenderState`; GeckoLib captures it during render-state extraction and registers per-bone `RenderPassInfo` tasks with state-owned eye data and copied picker drafts; bone tasks are deduplicated by identity. `GooglyEyeRenderer` shares the head and preview submission loops. `ClientEyeRuntime` keeps one nested draw context for item and head submission. Rendering and pupil projection share `EyePlacement.orientation`.
+Each eye part is submitted as custom geometry at its finished pose, values copied into its callback; `ModelGooglyEye` is stateless. `ClientRenderLayers` installs `LayerGooglyEyes` once per renderer rebuild, before slime's outer layer; GeckoLib uses its `CompileRenderLayers` event. Both draw picker previews. `LayerGooglyEyes` poses its parent model before resolving and insets sheared adult sheep `body` eyes by wool depth. Common Mixins store `EyeRenderData` on `LivingEntityRenderState`; GeckoLib captures it during render-state extraction and registers per-bone `RenderPassInfo` tasks with state-owned eye data and copied picker drafts; bone tasks are deduplicated by identity. `GooglyEyeRenderer` shares the head and preview submission loops. `ClientEyeRuntime` keeps one nested draw context for item and head submission. Rendering and pupil projection share `EyePlacement.orientation`; `HeadInfo` caches orientations, and cross-eye aims are computed at start.
 
 Attachment resolvers cache by model identity and replay `ThirdPartyModelWraps`. `RootModelResolver` walks `EntityModel.root()` after reflected Citadel/Uranus/LLibrary resolvers. The picker selects separate baby models by age.
 
-The picker gizmo uses a no-depth pipeline with per-vertex width. The HUD follows subtitles on Fabric and is added last on Forge and NeoForge. Placed-head eyes are chosen at extraction onto `SkullBlockRenderState`; Mixins bracket placed-head and head-item submission and key animated GUI items on their simulation and head items on their snapshot. `SkullEyeRenderer` poses vanilla and Heads-mod skull models and submits on their head parts. Heads placements fit the mob's main cube to the head model, cached until renderer rebuild; adult models are selected explicitly. Worn heads get no eyes.
+The picker gizmo draws without depth testing. The HUD follows subtitles on Fabric and is added last on Forge and NeoForge. Placed-head eyes are chosen at extraction onto `SkullBlockRenderState`; Mixins bracket placed-head and head-item submission and key animated GUI items on their simulation and head items on their snapshot. `SkullEyeRenderer` poses vanilla and Heads-mod skull models and submits on their head parts; resting head items resolve once per component value. Heads placements fit the mob's main cube to the head model, cached until renderer rebuild; adult models are selected explicitly. Worn heads get no eyes.
 
 GeckoLib links only after detection; attach failures cannot block loading.
 
@@ -74,7 +74,7 @@ Seven play payloads carry definitions, settings, entity eye state, expressions, 
 
 The definition and settings packets sync separately. Joining players receive both with datapack sync. Reloads and config applies broadcast only changed data. Definitions reset the simulations; settings update their switches and behavior rules.
 
-Sends go through the platform bridges; clientbound handlers link the client handler only inside lambdas. Serverbound picker handlers authorize the sender. Decoders and receivers validate input before installation or use.
+Sends go through the platform bridges. Serverbound picker handlers authorize the sender. Decoders and receivers validate input before installation or use.
 
 ## Picker and commands
 
@@ -96,5 +96,5 @@ GameTest scenarios: Fabric 187, Forge 191, NeoForge 193.
 
 ## Operational boundaries
 
-- Optional renderer integrations log failures once.
+- Optional renderer failures log once.
 - `build-env/` mirrors build inputs as described in `orientation-build.md`; keep covered files synchronized.

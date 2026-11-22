@@ -285,63 +285,67 @@ public final class SkullEyeRenderer {
      * Submit the current placed head's or head item's eyes, if it has any to show, with {@code pose} in the space
      * {@code model} was just submitted in, the head's {@code packedLight}, and the head's {@code yRot} and
      * {@code mouthAnimation}. The model is posed only when it is drawn, after submission, so it is posed here
-     * the same way first.
+     * the same way first. The model's head part, a reflective read for other mods' heads, is looked up only once
+     * there are eyes to draw.
      */
     public static void render(PoseStack pose, SubmitNodeCollector collector, int packedLight, SkullModelBase model,
                               float yRot, float mouthAnimation) {
-        ModelPart head = headPart(model);
-        if (head == null) {
-            return;
-        }
         ClientEyeRuntime.DrawContext draw = ClientEyeRuntime.currentDraw();
         PresentationEyes eyes = draw.head();
-        ItemStack stack = draw.item();
-        if (eyes == null && (stack == null || itemEyesSubmitted == draw)) {
+        if (eyes != null) {
+            renderEyes(pose, collector, packedLight, model, yRot, mouthAnimation, eyes.headsMod,
+                    eyes.entity, eyes.helper, eyes.parts, eyes.eyes,
+                    eyes.snapshot.properties(), draw.partialTick());
             return;
+        }
+        ItemStack stack = draw.item();
+        if (stack == null || itemEyesSubmitted == draw) {
+            return;
+        }
+        Identifier entity = SkullEyeState.entityFor(stack);
+        if (!mayShow(entity)) {
+            return;
+        }
+        PresentationEyes.Draw itemDraw = draw.draw();
+        PresentationEyes animated = itemDraw.eyes();
+        boolean headsMod = stack.getItem() instanceof BlockItem item && SkullEyeState.isHeadsMod(item.getBlock());
+        if (animated != null) {
+            if (renderEyes(pose, collector, packedLight, model, yRot, mouthAnimation, headsMod,
+                    entity, animated.helper, animated.parts, animated.eyes,
+                    animated.properties, itemDraw.partialTick())) {
+                itemEyesSubmitted = draw;
+            }
+            return;
+        }
+        Snapshot snapshot = SkullEyeState.itemSnapshot(stack);
+        if (snapshot == null) {
+            return;
+        }
+        ClientEyeRuntime.RestingHead resting = ClientEyeRuntime.restingHead(snapshot, entity);
+        if (resting != null && renderEyes(pose, collector, packedLight, model, yRot, mouthAnimation, headsMod,
+                entity, resting.helper(), resting.parts(), null, snapshot.properties(), 0F)) {
+            itemEyesSubmitted = draw;
+        }
+    }
+
+    /**
+     * Pose {@code model} and submit the eyes of {@code helper}'s heads {@code parts} on its head part, each simulated
+     * by its entry in {@code eyes}, or at rest when {@code eyes} is {@code null}. Returns {@code false}, submitting
+     * nothing, when the model has no head part eyes can attach to.
+     */
+    private static boolean renderEyes(PoseStack pose, SubmitNodeCollector collector, int packedLight,
+                                      SkullModelBase model, float yRot, float mouthAnimation, boolean headsMod,
+                                      Identifier entity, HeadInfo helper, int[] parts,
+                                      GooglyTracker.EyeInfo @Nullable [][] eyes, AppearanceOverride overrides,
+                                      float partialTick) {
+        ModelPart head = headPart(model);
+        if (head == null) {
+            return false;
         }
         SkullModelBase.State modelState = new SkullModelBase.State();
         modelState.yRot = yRot;
         modelState.animationPos = mouthAnimation;
         model.setupAnim(modelState);
-        if (eyes != null) {
-            renderEyes(pose, collector, packedLight, model, head, eyes.headsMod,
-                    eyes.entity, eyes.helper, eyes.parts, eyes.eyes,
-                    eyes.snapshot.properties(), draw.partialTick());
-        } else {
-            Identifier entity = SkullEyeState.entityFor(stack);
-            if (!mayShow(entity)) {
-                return;
-            }
-            PresentationEyes.Draw itemDraw = draw.draw();
-            PresentationEyes animated = itemDraw.eyes();
-            boolean headsMod = stack.getItem() instanceof BlockItem item && SkullEyeState.isHeadsMod(item.getBlock());
-            if (animated != null) {
-                itemEyesSubmitted = draw;
-                renderEyes(pose, collector, packedLight, model, head, headsMod,
-                        entity, animated.helper, animated.parts, animated.eyes,
-                        animated.properties, itemDraw.partialTick());
-                return;
-            }
-            Snapshot snapshot = SkullEyeState.itemSnapshot(stack);
-            if (snapshot != null) {
-                HeadInfo helper = ClientEyeConfigs.resolveHead(entity, snapshot.variantRoll());
-                if (helper.hasConfig()) {
-                    itemEyesSubmitted = draw;
-                    renderEyes(pose, collector, packedLight, model, head, headsMod,
-                            entity, helper, SkullEyeState.headParts(entity, helper), null,
-                            snapshot.properties(), 0F);
-                }
-            }
-        }
-    }
-
-    /**
-     * Submit the eyes of {@code helper}'s heads {@code parts} on the model's {@code head} part, each simulated by its
-     * entry in {@code eyes}, or at rest when {@code eyes} is {@code null}.
-     */
-    private static void renderEyes(PoseStack pose, SubmitNodeCollector collector, int packedLight,
-                                   SkullModelBase model, ModelPart head, boolean headsMod, Identifier entity, HeadInfo helper, int[] parts, GooglyTracker.EyeInfo @Nullable [][] eyes,
-                                   AppearanceOverride overrides, float partialTick) {
         pose.pushPose();
         head.translateAndRotate(pose);
         // The Enderman Skull's face uses the mob layout's head-local coordinates.
@@ -369,5 +373,6 @@ public final class SkullEyeRenderer {
             pose.popPose();
         }
         pose.popPose();
+        return true;
     }
 }

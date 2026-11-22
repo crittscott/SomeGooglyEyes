@@ -191,9 +191,12 @@ public final class ServerBehaviorScheduler {
             return;
         }
         reactHands(mob, EyeBehavior.SWIRL);
-        BehaviorSettings settings = BehaviorSettings.fromConfig();
         MobState state = eventTarget(mob);
-        if (state == null || !settings.canSwirlOnHeal(clock(mob), state.healSwirlReadyAt)) {
+        if (state == null) {
+            return;
+        }
+        BehaviorSettings settings = BehaviorSettings.fromConfig();
+        if (!settings.canSwirlOnHeal(clock(mob), state.healSwirlReadyAt)) {
             return;
         }
         // Arm the cooldown only on an actual start: if the mob is busy the swirl is dropped
