@@ -7,8 +7,10 @@ import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
+import com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import com.github.crittscott.somegoogly.registry.ModContent;
+import com.google.common.collect.MapMaker;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -69,6 +71,11 @@ public final class ClientEyeRuntime {
     private static final Map<HandKey, HandEntry> HANDS = new HashMap<>();
     /** Placed heads' eyes by position, under the same render-driven eviction and simulation as mob trackers. */
     private static final Map<BlockPos, PresentationEyes> SKULLS = new HashMap<>();
+    /**
+     * Resolved layouts of head items drawn without an animation, keyed weakly by the identity of the item's
+     * {@code head_eyes} component value, which every change replaces.
+     */
+    private static final Map<Snapshot, RestingHead> RESTING_HEADS = new MapMaker().weakKeys().makeMap();
     private static final Map<LivingEntity, GooglyTracker> TRACKERS = new HashMap<>();
     private static int clientTicks;
     private static DrawContext current = DrawContext.NONE;
@@ -107,6 +114,10 @@ public final class ClientEyeRuntime {
 
     /** Entity-lifetime expression timing, independent of any disposable render tracker. */
     record ReceivedBehavior(EyeBehavior behavior, long seed, long startedAt) {
+    }
+
+    /** A resting head item's resolved eyes: its mob, its layout, and the layout's heads shown on the item. */
+    public record RestingHead(Identifier entity, HeadInfo helper, int[] parts) {
     }
 
     private static final class BoatEntry {
@@ -212,6 +223,22 @@ public final class ClientEyeRuntime {
         FRAMES.clear();
         SKULLS.clear();
         TRACKERS.clear();
+        RESTING_HEADS.clear();
+    }
+
+    /**
+     * The layout of an {@code entity} head item carrying {@code snapshot} and drawn without an animation, resolved
+     * once per component value; {@code null} when no head the item shows carries eyes.
+     */
+    @Nullable
+    public static RestingHead restingHead(Snapshot snapshot, Identifier entity) {
+        RestingHead resting = RESTING_HEADS.get(snapshot);
+        if (resting == null || !resting.entity().equals(entity)) {
+            HeadInfo helper = ClientEyeConfigs.resolveHead(entity, snapshot.variantRoll());
+            resting = new RestingHead(entity, helper, SkullEyeState.headParts(helper));
+            RESTING_HEADS.put(snapshot, resting);
+        }
+        return resting.parts().length == 0 ? null : resting;
     }
 
     /** The world-presentation counter advanced on each unpaused simulation tick. */
