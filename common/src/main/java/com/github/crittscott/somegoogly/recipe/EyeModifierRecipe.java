@@ -9,7 +9,6 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CraftingInput;
@@ -55,17 +54,15 @@ public class EyeModifierRecipe extends CustomRecipe {
 
     /**
      * {@code current} with the modifier ingredient's change layered on, or {@code null} when
-     * {@code stack} is not a modifier: a vanilla dye sets that dye's color on the iris (set, not
+     * {@code stack} is not a modifier: a dye (any item carrying the dye component) sets that dye's color on the iris (set, not
      * blended), glowstone dust forces glow on, redstone dust forces it off, and a cobweb strips every
      * override, leaving a bare eye that falls back to config appearance. Geometry stays in config.
      */
     @Nullable
     private static AppearanceOverride modify(AppearanceOverride current, ItemStack stack) {
-        if (stack.getItem() instanceof DyeItem) {
-            DyeColor dye = stack.get(DataComponents.DYE);
-            if (dye != null) {
-                return current.withIrisColor(EyeColor.fromRgb24(dye.getTextureDiffuseColor()));
-            }
+        DyeColor dye = stack.get(DataComponents.DYE);
+        if (dye != null) {
+            return current.withIrisColor(EyeColor.fromRgb24(dye.getTextureDiffuseColor()));
         }
         if (stack.is(Items.GLOWSTONE_DUST)) {
             return current.withGlow(true);

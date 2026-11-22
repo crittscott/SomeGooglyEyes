@@ -7,6 +7,7 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot;
 import com.github.crittscott.somegoogly.registry.ModContent;
+import com.google.common.base.Suppliers;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
@@ -19,6 +20,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SkullBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.functions.CopyComponentsFunction;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -27,6 +29,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -52,6 +55,14 @@ public final class SkullEyeState {
     public static final String DATA_KEY = "somegoogly:data";
     /** Twilight Forest's namespace; declared first because the entries below read it. */
     public static final String TWILIGHT_NAMESPACE = "twilightforest";
+    /**
+     * The loot function that copies a placed head's eye state onto a dropped item, as the
+     * {@link ModContent#HEAD_EYES} component the block entity reports; built on first use, because the component
+     * is not registered at class load.
+     */
+    private static final Supplier<LootItemFunction> HEAD_LOOT_COPY = Suppliers.memoize(() ->
+            CopyComponentsFunction.copyComponentsFromBlockEntity(LootContextParams.BLOCK_ENTITY)
+                    .include(ModContent.HEAD_EYES.get()).build());
     /**
      * The attachment token of the part a head reproduces, for mobs whose eyes sit on a part other than the head;
      * every other mob's head shows the eyes on parts named {@value EyeConfigModel#PART_HEAD}.
@@ -129,12 +140,21 @@ public final class SkullEyeState {
     }
 
     /**
-     * The loot function that copies a placed head's eye state onto its dropped item, as the
-     * {@link ModContent#HEAD_EYES} component the block entity reports. Every loader's head loot uses it.
+     * Breaking an eyed head copies its eye state onto the head items among {@code drops}, the loot rolled in
+     * {@code context}, where placing one restores it. Other drops, such as a skull candle's candles, are left alone.
+     * Every loader runs each finished loot roll through here.
      */
-    public static LootItemFunction.Builder headLootCopy() {
-        return CopyComponentsFunction.copyComponentsFromBlockEntity(LootContextParams.BLOCK_ENTITY)
-                .include(ModContent.HEAD_EYES.get());
+    public static void copyEyesOntoHeadLoot(List<ItemStack> drops, LootContext context) {
+        BlockEntity head = context.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
+        if (!(head instanceof Holder) || !hasEyes(head)) {
+            return;
+        }
+        for (int index = 0; index < drops.size(); index++) {
+            ItemStack stack = drops.get(index);
+            if (entityFor(stack) != null) {
+                drops.set(index, HEAD_LOOT_COPY.get().apply(stack, context));
+            }
+        }
     }
 
     /** The placed head's eye-state compound, or {@code null} if it has none; read it, don't write it. */

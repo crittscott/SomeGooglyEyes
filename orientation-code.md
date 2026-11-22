@@ -40,7 +40,7 @@ Eye definitions are datapack files at `data/<namespace>/eyes/*.json` (`EyeConfig
 
 Entity keys: `somegoogly:hasGooglyEyes`, `somegoogly:eyeVariantRoll`, `somegoogly:eyeOverrides`.
 
-Mutations send one full snapshot; stored rolls read clamped to 0..1. `Snapshot.STREAM_CODEC`, shared by packet and head item, rejects rolls outside 0..1. Eye state and roll initialize together once. Initialization and tracking skip default state; later mutations always send. `EyeState.copy` handles conversion and non-death respawn; joining players get their own snapshot.
+Mutations send one full snapshot; stored rolls read clamped. `Snapshot.STREAM_CODEC`, shared by packet and head item, rejects rolls outside 0..1. State and roll initialize together once. Initialization and tracking skip default state; later mutations always send. `EyeState.copy` handles conversion and non-death respawn; joining players get their own snapshot.
 
 Eye items carry `AppearanceOverride` in the synced `somegoogly:eye_properties` component, never geometry; harvesting copies the first eye's appearance, the modifier recipe changes only that component, and the Slimy Eye transmute copies every component.
 
@@ -48,7 +48,7 @@ Placed heads save and sync their eye snapshot under the Mixin-owned `somegoogly:
 
 26.1.1 saves are already in current form; nothing migrates.
 
-`EyeItemService` owns authorization, mutation, drops, and durability for Slimy Eye use and harvests on mobs and heads. Loader adapters run entity interaction, block use, and self-shearing after protection listeners (Forge/NeoForge `LOWEST`, Fabric a late phase); head use also checks `mayInteract`/`mayUseItemAt`, and Forge/NeoForge honor separate item-use denials. `markHeadDrop` stamps an eyed mob's own head among its death drops (Forge/NeoForge at `LOWEST`); head loot copies the state with `SkullEyeState.headLootCopy` (Forge/NeoForge `HeadEyesLootModifier`, with native data in each loader; Fabric `LootTableEvents.MODIFY`). Shared use entry points refuse spectators. Shears are `#somegoogly:shears` (vanilla plus optional `#c:tools/shear`). Applying or harvesting another player’s eyes requires level PvP and `canHarmPlayer`. Head use checks the clicked block in Adventure mode and records its criterion and statistic before spending the item. Harvest kills honor mob drops. NeoForge reports shears breaks explicitly. Plain-shears self-damage uses attacker-less `self_shear`.
+`EyeItemService` owns authorization, mutation, drops, and durability for Slimy Eye use and harvests on mobs and heads. Loader adapters run entity interaction, block use, and self-shearing after protection listeners (Forge/NeoForge `LOWEST`, Fabric a late phase); head use also checks `mayInteract`/`mayUseItemAt`, and Forge/NeoForge honor separate item-use denials. `markHeadDrop` stamps an eyed mob's own head among its death drops (Forge/NeoForge at `LOWEST`); `SkullEyeState.copyEyesOntoHeadLoot` copies head state onto head drops only (Forge/NeoForge `HeadEyesLootModifier`; Fabric `LootTableEvents.MODIFY_DROPS`). Use entry points refuse spectators. Shears are `#somegoogly:shears` (vanilla plus optional `#c:tools/shear`). Applying or harvesting another player’s eyes requires level PvP and `canHarmPlayer`. Self-use needs `LookTarget.aimsAtNothing`. Head use refuses (`FAIL`) on both sides before predicting, checks the clicked block in Adventure mode, and records its criterion and statistic before spending the item. Harvest kills honor mob drops. `ItemDestruction` reports used-up stacks and, on NeoForge, broken shears. Plain-shears self-damage uses attacker-less `self_shear`.
 
 Slimy Eye applications emit `ENTITY_INTERACT` (`BLOCK_CHANGE` on a head), harvests `SHEAR`; refusals emit neither.
 
@@ -72,11 +72,11 @@ GeckoLib links only after detection; attach failures cannot block loading.
 
 ## Networking
 
-Seven play payloads carry definitions, settings, entity eye state, expressions, anger, picker freeze, and export. Payloads own stable IDs; triggers carry target (entity or hand), behavior, seed, and age. `NetworkProtocol` declares version 19 and the payload table all loaders register. Fabric checks it during configuration; the native loaders require it on their channels.
+Seven play payloads: definitions, settings, eye state, expressions, anger, picker freeze, export. Payloads own stable IDs and composed stream codecs; triggers carry target, behavior, seed, and age. `NetworkProtocol` declares version 19 and the payload table all loaders register. Fabric checks it during configuration; the native loaders require it on their channels.
 
-The definition and settings packets sync separately. Joining players receive both with datapack sync. Reloads and config applies broadcast only changed data. Clients keep only the decoded definitions. Definitions reset the simulations, while settings update the switches and behavior rules those simulations use.
+Definitions and settings sync separately: joiners get both with datapack sync; reloads and config applies broadcast only changes. Clients keep only decoded definitions. Definitions reset simulations; settings update their switches and behavior rules.
 
-Sends use the platform bridges; clientbound handlers link the client handler only inside lambdas. Serverbound picker handlers authorize the sender. Decoders and receivers validate input before use.
+Sends use the platform bridges; clientbound handlers link client code only inside lambdas. Serverbound picker handlers authorize the sender; decoders validate input.
 
 ## Picker and commands
 
@@ -94,7 +94,7 @@ Forge’s required `PayloadChannel` marks payloads handled. Both native loaders 
 
 ## Automated verification
 
-GameTest scenarios: Fabric 188, Forge 191, NeoForge 197. Client checklists in `docs/` cover frames, inventory, hands, boats.
+GameTest scenarios: Fabric 188, Forge 192, NeoForge 198. Client checklists in `docs/` cover frames, inventory, hands, boats.
 
 ## Operational boundaries
 

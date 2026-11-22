@@ -67,7 +67,7 @@ public final class ConfigGameTestsLogic {
     /**
      * Shared schema constants name the sections used by the immediately preceding release. This checks
      * names only; the loader-specific scenarios exercise native file correction. In game: open a world
-     * saved by the 0.8.2 release for Minecraft 1.21.4 whose server config sets {@code globalPercent = 17}; that value remains
+     * saved by the 26.1.1 release whose server config sets {@code globalPercent = 17}; that value remains
      * after the file gains newly introduced keys.
      */
     public static void configSectionsMatchReleasedFiles(GameTestHelper helper) {

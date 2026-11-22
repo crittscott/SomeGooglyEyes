@@ -48,7 +48,8 @@ public final class TwilightHeadGameTests {
 
     /**
      * In game, give a skeleton skull eyes, right-click it with a red candle, and break it.
-     * The skull with a candle and the dropped vanilla skull should show the same eyes.
+     * The skull with a candle and the dropped vanilla skull should show the same eyes, and the dropped candle's
+     * tooltip lists no googly eyes.
      */
     public static void playerConversionKeepsEyes(GameTestHelper helper) {
         requireTwilightForest(helper);
@@ -180,6 +181,9 @@ public final class TwilightHeadGameTests {
         helper.assertTrue(drops.size() == 1, Component.literal("breaking the head drops one head item"));
         ItemStack stack = drops.get(0).getItem();
         helper.assertTrue(eyes.equals(SkullEyeState.itemSnapshot(stack)), Component.literal("the head item keeps the original eyes"));
+        helper.assertTrue(helper.getLevel().getEntitiesOfClass(ItemEntity.class, new AABB(pos).inflate(1),
+                        item -> !item.getItem().is(drop)).stream().noneMatch(item -> item.getItem().has(ModContent.HEAD_EYES.get())),
+                Component.literal("other drops, such as a skull candle's candles, carry no eyes"));
         helper.setBlock(HEAD, replacement);
         helper.getBlockEntity(HEAD, BlockEntity.class).applyComponentsFromItemStack(stack);
         helper.assertTrue(eyes.equals(SkullEyeState.snapshot(helper.getBlockEntity(HEAD, BlockEntity.class))), Component.literal("placement restores the eyes"));

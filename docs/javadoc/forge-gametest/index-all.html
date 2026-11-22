@@ -90,6 +90,11 @@ swirl that a second behavior command can't interrupt.</div>
 <div class="block">The vanilla affection events play love, through the server's entity-event broadcast, and only while
 <code>loveOnAffection</code> is on; other entity events play nothing.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/TestPlayers.html#aimAtNothing(net.minecraft.world.entity.player.Player)" class="member-name-link">aimAtNothing(Player)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/TestPlayers.html" title="class in com.github.crittscott.somegoogly.gametest">TestPlayers</a></dt>
+<dd>
+<div class="block">Aim <code>player</code> straight up with a reach of <code>TestPlayers.NOTHING_REACH</code>, so a use is aimed at nothing; the
+returned action restores its aim and reaches.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/BehaviorSchedulerGameTests.html#aimingArcherWinks(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">aimingArcherWinks(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BehaviorSchedulerGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">BehaviorSchedulerGameTests</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/BehaviorSchedulerGameTestsLogic.html#aimingArcherWinks(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">aimingArcherWinks(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/BehaviorSchedulerGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">BehaviorSchedulerGameTestsLogic</a></dt>
@@ -1413,7 +1418,8 @@ installed set.</div>
 <dt><a href="com/github/crittscott/somegoogly/gametest/EyeItemServiceGameTestsLogic.html#selfRemoveWithShearsDropsAnEyeAndCostsDurability(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">selfRemoveWithShearsDropsAnEyeAndCostsDurability(GameTestHelper, Player)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/EyeItemServiceGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">EyeItemServiceGameTestsLogic</a></dt>
 <dd>
 <div class="block">Sneak + shears on air removes your own eyes for one durability, whether or not the shears carry
-Optometrist; only a non-sneaking use is left to the vanilla item.</div>
+Optometrist; a non-sneaking use, or a sneaking one aimed at a mob or a block (which a click on that target
+that passed also brings here), is left to the vanilla item.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/SerializationGameTests.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.gametest">SerializationGameTests</a> - Class in <a href="com/github/crittscott/somegoogly/gametest/package-summary.html">com.github.crittscott.somegoogly.gametest</a></dt>
 <dd>
@@ -1528,8 +1534,9 @@ stack.</div>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/EligibilityGameTestsLogic.html#slimyEyeSelfApplyRequiresSneak(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">slimyEyeSelfApplyRequiresSneak(GameTestHelper, Player)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/EligibilityGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest">EligibilityGameTestsLogic</a></dt>
 <dd>
-<div class="block"><code>SlimyEyeItem.use(Level, Player, InteractionHand)</code>: only a sneaking use applies the eye to the player; a plain right-click
-passes.</div>
+<div class="block"><code>SlimyEyeItem.use(Level, Player, InteractionHand)</code>: only a sneaking use aimed at nothing applies the eye to the player; a plain
+right-click passes, and so does a sneaking one aimed at a mob or a block, which vanilla also routes here when
+the click on that target passes.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/gametest/SomeGooglyGameTestMod.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.gametest">SomeGooglyGameTestMod</a> - Class in <a href="com/github/crittscott/somegoogly/gametest/package-summary.html">com.github.crittscott.somegoogly.gametest</a></dt>
 <dd>
@@ -1656,6 +1663,10 @@ expression with its squint off.</div>
 <dd>
 <div class="block">The loader's use hooks apply and harvest eyes on a cow, a boat, an armor stand, a placed head, and the player,
 and with <code>testRefusal</code>, a protection listener's refusal leaves everything as it was.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/gametest/EyeItemServiceGameTests.html#usingTheLastSlimyEyeReportsIt(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">usingTheLastSlimyEyeReportsIt(GameTestHelper)</a> - Static method in class com.github.crittscott.somegoogly.gametest.<a href="com/github/crittscott/somegoogly/gametest/EyeItemServiceGameTests.html" title="class in com.github.crittscott.somegoogly.gametest">EyeItemServiceGameTests</a></dt>
+<dd>
+<div class="block">Using up the last Slimy Eye posts one native destruction event, as a hotbar-refill mod expects.</div>
 </dd>
 </dl>
 <h2 class="title" id="I:V">V</h2>

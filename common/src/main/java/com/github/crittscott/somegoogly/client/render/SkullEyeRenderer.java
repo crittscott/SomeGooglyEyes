@@ -68,6 +68,8 @@ public final class SkullEyeRenderer {
     private static final Map<Class<?>, Optional<Field>> HEAD_FIELDS = new HashMap<>();
     private static final float PIXELS_PER_BLOCK = 16F;
     private static final float ENDERMAN_EYE_CLEARANCE = 0.5F / PIXELS_PER_BLOCK;
+    private static final Identifier ENDERMAN = EntityType.getKey(EntityType.ENDERMAN);
+    private static final Identifier SNOW_GOLEM = EntityType.getKey(EntityType.SNOW_GOLEM);
     private static final float SNOW_GOLEM_EYE_SETBACK = 0.06F;
     /** Fitted placements by Heads-mod head model and eye attach token; empty where fitting failed. */
     private static final Map<ModelPart, Map<String, Optional<Placement>>> PLACEMENTS =
@@ -155,8 +157,11 @@ public final class SkullEyeRenderer {
      */
     @Nullable
     public static PresentationEyes extract(BlockEntity skull) {
+        if (!SkullEyeState.hasEyes(skull)) {
+            return null;
+        }
         Identifier entity = SkullEyeState.entityFor(skull.getBlockState().getBlock());
-        if (!SkullEyeState.hasEyes(skull) || !mayShow(entity)) {
+        if (!mayShow(entity)) {
             return null;
         }
         PresentationEyes eyes = ClientEyeRuntime.skullEyes(skull, entity);
@@ -372,8 +377,8 @@ public final class SkullEyeRenderer {
         pose.pushPose();
         head.translateAndRotate(pose);
         // The Enderman Skull's face uses the mob layout's head-local coordinates.
-        boolean endermanFace = headsMod && EntityType.getKey(EntityType.ENDERMAN).equals(entity);
-        boolean snowGolemFace = headsMod && EntityType.getKey(EntityType.SNOW_GOLEM).equals(entity);
+        boolean endermanFace = headsMod && ENDERMAN.equals(entity);
+        boolean snowGolemFace = headsMod && SNOW_GOLEM.equals(entity);
         for (int part : parts) {
             Placement placement = null;
             if (headsMod && !endermanFace) {

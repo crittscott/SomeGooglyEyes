@@ -92,7 +92,7 @@ loadScripts(document, 'script');</script>
 <span class="extends-implements">extends <a href="GooglyEyeItem.html" title="class in com.github.crittscott.somegoogly.item">GooglyEyeItem</a></span></div>
 <div class="block">A googly eye bedded in a slimeball: the applicator. Right-clicking a living entity with it sticks
 eyes on that entity, using the appearance the eye carried into the craft
-(<a href="EyeItemProperties.html" title="class in com.github.crittscott.somegoogly.item"><code>EyeItemProperties</code></a>); sneak + use applies it to the player themselves. A Slimy Eye, applied by
+(<a href="EyeItemProperties.html" title="class in com.github.crittscott.somegoogly.item"><code>EyeItemProperties</code></a>); sneak + use on air applies it to the player themselves. A Slimy Eye, applied by
 the player or by another player, is the only way a player gets eyes (players are excluded from the
 at-spawn roll). It shares the Googly Eye's
 stored appearance and tooltip.
@@ -163,7 +163,7 @@ self-apply (<a href="#use(net.minecraft.world.level.Level,net.minecraft.world.en
  net.minecraft.world.entity.player.Player&nbsp;player,
  net.minecraft.world.InteractionHand&nbsp;hand)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Sneak + use: eye yourself.</div>
+<div class="block">Sneak + use on air: eye yourself.</div>
 </div>
 </div>
 </div>
@@ -214,7 +214,8 @@ self-apply (<a href="#use(net.minecraft.world.level.Level,net.minecraft.world.en
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">net.minecraft.world.InteractionResult</span>&nbsp;<span class="element-name">use</span><wbr><span class="parameters">(net.minecraft.world.level.Level&nbsp;level,
  net.minecraft.world.entity.player.Player&nbsp;player,
  net.minecraft.world.InteractionHand&nbsp;hand)</span></div>
-<div class="block">Sneak + use: eye yourself. Without the sneak this would fire on every stray right-click.</div>
+<div class="block">Sneak + use on air: eye yourself. Without the sneak this would fire on every stray right-click. Vanilla also
+reaches here when a click on a mob, head, or block passed, so a use aimed at anything is left alone.</div>
 <dl class="notes">
 <dt>Overrides:</dt>
 <dd><code>use</code>&nbsp;in class&nbsp;<code>net.minecraft.world.item.Item</code></dd>

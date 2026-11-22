@@ -25,7 +25,6 @@ public final class SomeGooglyGameTests {
      * A survival-mode server player for tests whose item and interaction paths run server-side. Forge's
      * {@code makeMockPlayer} is not a {@code ServerPlayer}, so those paths need the in-level mock instead.
      */
-    @SuppressWarnings("removal")
     static ServerPlayer survivalPlayer(GameTestHelper helper) {
         ServerPlayer player = helper.makeMockServerPlayerInLevel();
         player.setGameMode(GameType.SURVIVAL);
