@@ -11,6 +11,7 @@ import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import com.github.crittscott.somegoogly.platform.ItemDestruction;
 import com.github.crittscott.somegoogly.registry.ModContent;
+import com.github.crittscott.somegoogly.util.LookTarget;
 import java.util.function.Consumer;
 import javax.annotation.Nullable;
 import net.minecraft.advancements.CriteriaTriggers;
@@ -84,17 +85,11 @@ public final class EyeItemService {
 
     /**
      * The Slimy Eye apply verb for a placed mob head whose {@link #verdictFor(SkullBlockEntity) verdict}
-     * {@link #useOnSkull} found {@link Verdict#CAN_HAVE}, server side, clicked on its {@code face}: the head gains
-     * eyes carrying the stack's appearance on a freshly rolled placement variant, consuming one eye outside
-     * creative. The player must be allowed to use the item on that block, as placing a block there would require;
-     * otherwise it refuses ({@code FAIL}) and consumes nothing.
+     * {@link #useOnSkull} found {@link Verdict#CAN_HAVE} and allowed, server side: the head gains eyes carrying
+     * the stack's appearance on a freshly rolled placement variant, consuming one eye outside creative.
      */
-    private static InteractionResult applySlimyEye(ItemStack stack, ServerPlayer player, SkullBlockEntity skull,
-                                                   Direction face) {
+    private static InteractionResult applySlimyEye(ItemStack stack, ServerPlayer player, SkullBlockEntity skull) {
         BlockPos pos = skull.getBlockPos();
-        if (!mayAlter(player, pos, face, stack)) {
-            return InteractionResult.FAIL;
-        }
         SkullEyeState.set(skull, new EyeState.Snapshot(true, player.getRandom().nextFloat(), EyeItemProperties.get(stack)));
         recordBlockUse(player, pos, stack);
         consumeOne(player, stack);
@@ -127,7 +122,7 @@ public final class EyeItemService {
         if (stack.isEmpty()) {
             InteractionHand hand = player.getMainHandItem() == stack ? InteractionHand.MAIN_HAND
                     : InteractionHand.OFF_HAND;
-            ItemDestruction.report(player, original, hand);
+            ItemDestruction.reportConsumed(player, original, hand);
         }
     }
 
@@ -137,20 +132,14 @@ public final class EyeItemService {
     }
 
     /**
-     * The Optometrist harvest for an eyed placed mob head {@link #useOnSkull} accepted, server side, clicked on
-     * its {@code face}: one Googly Eye carrying the head's effective appearance pops out of the block, the head
-     * loses its eyes, the shears in {@code hand} lose one durability, the shearing sound plays, and
-     * {@link GameEvent#SHEAR} is emitted. Returns {@link InteractionResult#PASS} when the player isn't allowed
-     * to use the shears on that block.
+     * The Optometrist harvest for an eyed placed mob head {@link #useOnSkull} accepted and allowed, server side:
+     * one Googly Eye carrying the head's effective appearance pops out of the block, the head loses its eyes, the
+     * shears in {@code hand} lose one durability, the shearing sound plays, and {@link GameEvent#SHEAR} is emitted.
      */
-    private static InteractionResult harvestSkull(ServerPlayer player, InteractionHand hand, SkullBlockEntity skull,
-                                                  Direction face) {
+    private static InteractionResult harvestSkull(ServerPlayer player, InteractionHand hand, SkullBlockEntity skull) {
         ItemStack shears = player.getItemInHand(hand);
         BlockPos pos = skull.getBlockPos();
         ResourceLocation entity = SkullEyeState.entityFor(skull.getBlockState().getBlock());
-        if (!mayAlter(player, pos, face, shears)) {
-            return InteractionResult.PASS;
-        }
         ServerLevel level = player.serverLevel();
         EyeState.Snapshot state = SkullEyeState.snapshot(skull);
         HeadInfo helper = ServerEyeConfigs.resolveHead(entity, state.variantRoll());
@@ -326,8 +315,8 @@ public final class EyeItemService {
      * additionally deal a bare-handed hit's worth (base attack damage, whatever the main hand holds) of
      * {@link ModContent#SELF_SHEAR} damage, which has no
      * attacker so PvP and team rules don't cancel it. Returns {@link InteractionResult#PASS}
-     * when it doesn't apply (spectating, not sneaking, not shears, no eyes, {@code googlyEyesEnabled} off) so
-     * the vanilla item use proceeds.
+     * when it doesn't apply (spectating, not sneaking, not shears, no eyes, {@code googlyEyesEnabled} off, or
+     * aimed at a block or entity, which a passed click on it also brings here) so the vanilla item use proceeds.
      */
     public static InteractionResult selfRemoveWithShears(Player player, InteractionHand hand) {
         if (player.isSpectator()) {
@@ -335,7 +324,7 @@ public final class EyeItemService {
         }
         ItemStack stack = player.getItemInHand(hand);
         if (!enabled(player.level()) || !player.isShiftKeyDown()
-                || !stack.is(ModContent.SHEARS) || !EyeState.hasEyes(player)) {
+                || !stack.is(ModContent.SHEARS) || !EyeState.hasEyes(player) || !LookTarget.aimsAtNothing(player)) {
             return InteractionResult.PASS;
         }
         if (player.level().isClientSide()) {
@@ -374,11 +363,13 @@ public final class EyeItemService {
     /**
      * Right-click-on-block entry point for both eye items aimed at a placed mob head: a Slimy Eye on a head whose
      * {@link #verdictFor(SkullBlockEntity) verdict} is {@link Verdict#CAN_HAVE} goes to
-     * {@link #applySlimyEye(ItemStack, ServerPlayer, SkullBlockEntity, Direction)}, Optometrist shears on an eyed
-     * head, with eyes enabled, to {@link #harvestSkull}. Both sides decide those cases from the state they hold,
-     * and the client answers {@link InteractionResult#SUCCESS} in exactly them, so it neither runs nor sends the
-     * item's own use on top (a sneaking player's self-apply or self-shear). Anything else, including plain
-     * shears, an eyed head, or a spectator's click, returns {@link InteractionResult#PASS}. The
+     * {@link #applySlimyEye(ItemStack, ServerPlayer, SkullBlockEntity)}, Optometrist shears on an eyed head, with
+     * eyes enabled, to {@link #harvestSkull}. Either needs the player allowed to use the item on that block, as
+     * building there would; otherwise both sides refuse ({@link InteractionResult#FAIL}) and nothing is spent.
+     * Both sides decide those cases from the state they hold, and the client answers
+     * {@link InteractionResult#SUCCESS} in exactly the allowed ones, so it neither runs nor sends the item's own
+     * use on top. Anything else, including plain shears, an eyed head, or a spectator's click, returns
+     * {@link InteractionResult#PASS}. The
      * Slimy Eye comes here rather than through {@code Item#useOn} for the reason a mob's click does: a modded head
      * block can have a use of its own that takes the click first.
      */
@@ -397,12 +388,14 @@ public final class EyeItemService {
                         || !SkullEyeState.hasEyes(skull)) {
             return InteractionResult.PASS;
         }
+        if (!mayAlter(player, skull.getBlockPos(), hit.getDirection(), stack)) {
+            return InteractionResult.FAIL;
+        }
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
         ServerPlayer serverPlayer = (ServerPlayer) player;
-        return slimy ? applySlimyEye(stack, serverPlayer, skull, hit.getDirection())
-                : harvestSkull(serverPlayer, hand, skull, hit.getDirection());
+        return slimy ? applySlimyEye(stack, serverPlayer, skull) : harvestSkull(serverPlayer, hand, skull);
     }
 
     /** Whether the entity {@code target} can receive eyes, by what its side knows. */
@@ -448,7 +441,7 @@ public final class EyeItemService {
         ItemStack original = shears.copy();
         shears.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
         if (shears.isEmpty()) {
-            ItemDestruction.report(player, original, hand);
+            ItemDestruction.reportBroken(player, original, hand);
         }
     }
 }

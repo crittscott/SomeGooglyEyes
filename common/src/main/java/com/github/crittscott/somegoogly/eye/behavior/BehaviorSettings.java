@@ -3,6 +3,7 @@ package com.github.crittscott.somegoogly.eye.behavior;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import io.netty.handler.codec.DecoderException;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.levelgen.RandomSupport;
@@ -38,6 +39,10 @@ public record BehaviorSettings(boolean ambient, int minTicks, int maxTicks, List
     public static final BehaviorSettings NONE = new BehaviorSettings(false,
             ServerConfig.AMBIENT_MIN_TICKS.defaultValue(), ServerConfig.AMBIENT_MAX_TICKS.defaultValue(), List.of(), 0,
             false, ServerConfig.SWIRL_HEAL_COOLDOWN_TICKS.defaultValue(), Set.of());
+
+    /** The settings as clients receive them, validated on decode. */
+    public static final StreamCodec<FriendlyByteBuf, BehaviorSettings> STREAM_CODEC =
+            StreamCodec.ofMember(BehaviorSettings::write, BehaviorSettings::read);
 
     public BehaviorSettings {
         pool = List.copyOf(pool);
@@ -128,7 +133,7 @@ public record BehaviorSettings(boolean ambient, int minTicks, int maxTicks, List
     }
 
     /** Decode and validate settings written by {@link #write}. */
-    public static BehaviorSettings read(FriendlyByteBuf buffer) {
+    private static BehaviorSettings read(FriendlyByteBuf buffer) {
         boolean ambient = buffer.readBoolean();
         int minTicks = readTicks(buffer);
         int maxTicks = readTicks(buffer);
@@ -196,7 +201,7 @@ public record BehaviorSettings(boolean ambient, int minTicks, int maxTicks, List
     }
 
     /** Encode these settings for the client. */
-    public void write(FriendlyByteBuf buffer) {
+    private void write(FriendlyByteBuf buffer) {
         buffer.writeBoolean(ambient);
         buffer.writeVarInt(minTicks);
         buffer.writeVarInt(maxTicks);

@@ -118,6 +118,41 @@ public final class EyeItemServiceGameTests {
         helper.succeed();
     }
 
+    /**
+     * Using up the last Slimy Eye posts one native destruction event, as a hotbar-refill mod expects. In game, with
+     * a mod that refills an emptied hotbar slot, apply your last Slimy Eye to a cow in survival. The slot is
+     * refilled.
+     */
+    @GameTest(template = TEMPLATE, timeoutTicks = 40)
+    public static void usingTheLastSlimyEyeReportsIt(GameTestHelper helper) {
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        // Creative skips consumption.
+        player.setGameMode(GameType.SURVIVAL);
+        Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+        EyeState.setHasEyes(cow, false);
+        helper.assertTrue(EyeItemService.verdictFor(cow) == EyeItemService.Verdict.CAN_HAVE,
+                "the bundled cow definition lets a cow take eyes");
+        ItemStack eye = new ItemStack(ModContent.SLIMY_EYE.get());
+        player.setItemInHand(InteractionHand.MAIN_HAND, eye);
+
+        List<PlayerDestroyItemEvent> reports = new ArrayList<>();
+        Consumer<PlayerDestroyItemEvent> listener = event -> {
+            if (event.getEntity() == player) {
+                reports.add(event);
+            }
+        };
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, PlayerDestroyItemEvent.class, listener);
+        try {
+            EyeItemService.interact(player, helper.getLevel(), InteractionHand.MAIN_HAND, cow);
+        } finally {
+            MinecraftForge.EVENT_BUS.unregister(listener);
+        }
+
+        helper.assertTrue(EyeState.hasEyes(cow) && eye.isEmpty(), "the last Slimy Eye is applied and used up");
+        helper.assertTrue(reports.size() == 1, "the used-up Slimy Eye is reported once, got " + reports.size());
+        helper.succeed();
+    }
+
     private static ItemStack optometristShears(GameTestHelper helper) {
         ItemStack shears = new ItemStack(Items.SHEARS);
         shears.enchant(helper.getLevel().registryAccess().lookupOrThrow(Registries.ENCHANTMENT)

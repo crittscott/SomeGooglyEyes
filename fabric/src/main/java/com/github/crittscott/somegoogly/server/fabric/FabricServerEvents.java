@@ -71,7 +71,9 @@ public final class FabricServerEvents {
         UseBlockCallback.EVENT.register(LATE_PHASE, (player, level, hand, hitResult) ->
                 EyeItemService.useOnSkull(player, level, hand, hitResult));
         // Breaking an eyed head copies its eye state onto the dropped head item, where placing it restores it.
-        // The Forge and NeoForge counterpart is HeadEyesLootModifier.
+        // The Forge and NeoForge counterpart is HeadEyesLootModifier, which copies onto head items only
+        // (SkullEyeState.copyEyesOntoHeadLoot). This Fabric API has no per-roll drops event, so the copy is added
+        // to every pool of a head block's table and reaches whatever else such a table drops.
         LootTableEvents.MODIFY.register((key, tableBuilder, source, registries) -> {
             if (headLootTables().contains(key)) {
                 tableBuilder.modifyPools(pool -> pool.apply(SkullEyeState.headLootCopy()));
@@ -89,8 +91,12 @@ public final class FabricServerEvents {
                 ServerServices.onConverted(previous, converted));
         // Respawning or leaving the End replaces the player.
         ServerPlayerEvents.COPY_FROM.register(ServerServices::onPlayerCloned);
-        ServerLivingEntityEvents.AFTER_DAMAGE.register((entity, source, baseDamage, damageTaken, blocked) ->
-                ServerBehaviorScheduler.onHurt(entity, source));
+        // Only a hit that took health is a hurt, not one a shield blocked.
+        ServerLivingEntityEvents.AFTER_DAMAGE.register((entity, source, baseDamage, damageTaken, blocked) -> {
+            if (damageTaken > 0.0F) {
+                ServerBehaviorScheduler.onHurt(entity, source);
+            }
+        });
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) ->
                 ServerServices.onPlayerLeft(handler.player));
         // Sent with the rest of the joining player's game data, ahead of their own eye state.

@@ -7,6 +7,7 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot;
 import com.github.crittscott.somegoogly.registry.ModContent;
+import com.google.common.base.Suppliers;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
@@ -18,11 +19,15 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SkullBlock;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.functions.CopyComponentsFunction;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
 /**
@@ -43,6 +48,12 @@ public final class SkullEyeState {
 
     /** The key of the eye-state compound in a head block entity's saved data. */
     public static final String DATA_KEY = "somegoogly:data";
+    /**
+     * The loot function that copies a placed head's eye state onto a dropped item, as the
+     * {@link ModContent#HEAD_EYES} component the block entity reports; built on first use, because the component
+     * is not registered at class load.
+     */
+    private static final Supplier<LootItemFunction> HEAD_LOOT_COPY = Suppliers.memoize(() -> headLootCopy().build());
     private static final Map<SkullBlock.Type, EntityType<?>> MOBS = Map.of(
             SkullBlock.Types.CREEPER, EntityType.CREEPER,
             SkullBlock.Types.PIGLIN, EntityType.PIGLIN,
@@ -100,6 +111,34 @@ public final class SkullEyeState {
         return false;
     }
 
+    /**
+     * Breaking an eyed head copies its eye state onto the head items among {@code drops}, the loot rolled in
+     * {@code context}, where placing one restores it. Other drops are left alone. The Forge and NeoForge head-loot
+     * modifiers run each finished loot roll through here.
+     */
+    public static void copyEyesOntoHeadLoot(List<ItemStack> drops, LootContext context) {
+        if (!(context.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof SkullBlockEntity skull)
+                || !hasEyes(skull)) {
+            return;
+        }
+        for (int index = 0; index < drops.size(); index++) {
+            ItemStack stack = drops.get(index);
+            if (entityFor(stack) != null) {
+                drops.set(index, HEAD_LOOT_COPY.get().apply(stack, context));
+            }
+        }
+    }
+
+    /**
+     * The loot function that copies a placed head's eye state onto a dropped item, as the
+     * {@link ModContent#HEAD_EYES} component the block entity reports. {@link #copyEyesOntoHeadLoot} applies it
+     * to head items; Fabric's head loot tables apply it to their whole pools.
+     */
+    public static LootItemFunction.Builder headLootCopy() {
+        return CopyComponentsFunction.copyComponents(CopyComponentsFunction.Source.BLOCK_ENTITY)
+                .include(ModContent.HEAD_EYES.get());
+    }
+
     /** The placed head's eye-state compound, or {@code null} if it has none; read it, don't write it. */
     @Nullable
     public static CompoundTag data(SkullBlockEntity skull) {
@@ -141,15 +180,6 @@ public final class SkullEyeState {
     public static boolean hasEyes(SkullBlockEntity skull) {
         CompoundTag data = data(skull);
         return data != null && data.getBoolean(EyeState.HAS_EYES);
-    }
-
-    /**
-     * The loot function that copies a placed head's eye state onto its dropped item, as the
-     * {@link ModContent#HEAD_EYES} component the block entity reports. Every loader's head loot uses it.
-     */
-    public static LootItemFunction.Builder headLootCopy() {
-        return CopyComponentsFunction.copyComponents(CopyComponentsFunction.Source.BLOCK_ENTITY)
-                .include(ModContent.HEAD_EYES.get());
     }
 
     /**

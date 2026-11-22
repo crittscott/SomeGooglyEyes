@@ -29,6 +29,7 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 - 1.20.1: the server swings the arm when the interaction result is `SUCCESS`, not `CONSUME`. Server paths return `CONSUME`. [recalled]
 - `ItemStack.useOn` awards `Stats.ITEM_USED`, and `ServerPlayerGameMode.useItemOn` fires `ITEM_USED_ON_BLOCK`. A cancelled click event returns before both, so a handler that takes over must award them itself. [recalled]
 - `LivingEntity.heal` is called without a health check by some vanilla code, for example horse regeneration. [recalled]
+- 1.21.4: `Player.blockInteractionRange()` and `entityInteractionRange()` read the `BLOCK_INTERACTION_RANGE`/`ENTITY_INTERACTION_RANGE` attributes, the reaches vanilla's crosshair pick uses; an item's `use` is also reached when a click on a block or entity passed, so a "use on air" must check the aim itself. [recalled]
 - `Player` overrides `LivingEntity.actuallyHurt` without calling super, so an injection on `LivingEntity` misses players. [tested]
 - `dropCustomDeathLoot` and the loot table drop run only inside the `shouldDropLoot() && doMobLoot` gate in `dropAllDeathLoot`. A drop rolled by mod code is not covered by that gate. [tested]
 - `LivingEntity.hurt` returns false on the client before `actuallyHurt`, and the client's trade menu uses `ClientSideMerchant`, not an `AbstractVillager`. [recalled]
@@ -67,6 +68,7 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 - 1.20.1: a loot modifier is the normal way to change existing loot, because Forge has no way to add a function to an existing pool. [recalled]
 - 1.20.1: `AddLayers.getRenderer` casts generically and throws `ClassCastException` for non-living renderers. Walk `EntityRenderDispatcher.renderers`, widened by an access widener, instead. [tested]
 - There is no Forge `FakePlayer` after 1.20.1.
+- 1.21.4: Forge fires `PlayerDestroyItemEvent` from `hurtAndBreak` (the Forge `harvestBreakingShearsReportsThem` gametest counts one event with no report of our own), but not for a stack a use empties; `ForgeEventFactory.onPlayerDestroyItem(Player, ItemStack, InteractionHand)` reports that. [recalled]
 
 ## Fabric
 
@@ -80,6 +82,7 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 - `getAttachedOrCreate` on a persistent attachment makes a read write to the save. Use `getAttached` for reads. [tested]
 - For a tracking broadcast, build one packet with `ServerPlayNetworking.createS2CPacket` and send it with `ServerChunkCache.broadcastAndSend`, the mechanism Forge's `TRACKING_ENTITY_AND_SELF` uses. [tested]
 - 1.21.4: `EntityTrackingEvents.START_TRACKING` fires at the tail of `ServerEntity.addPairing` (fabric-networking-api-v1 `EntityTrackerEntryMixin`), after the entity's spawn packet is sent, so a packet about the entity sent from it reaches a client that already has the entity. (Fabric API's 1.21.1 branch fires it at the head, before the spawn packet.) [source]
+- Fabric API 0.119.4+1.21.4: `LootTableEvents` has no `MODIFY_DROPS`, so a loot function added through `MODIFY` applies to every item its pool rolls. [compiled]
 - `ClientPlayConnectionEvents.JOIN` passes the live `ClientPacketListener`; use it instead of looking one up. [tested]
 - A login query reply can carry a version, which distinguishes a version mismatch from a missing mod. [tested]
 

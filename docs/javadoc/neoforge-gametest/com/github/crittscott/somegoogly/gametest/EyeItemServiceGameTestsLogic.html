@@ -142,7 +142,8 @@ loadScripts(document, 'script');</script>
  net.minecraft.world.entity.player.Player&nbsp;player)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Sneak + shears on air removes your own eyes for one durability, whether or not the shears carry
- Optometrist; only a non-sneaking use is left to the vanilla item.</div>
+ Optometrist; a non-sneaking use, or a sneaking one aimed at a mob or a block (which a click on that target
+ that passed also brings here), is left to the vanilla item.</div>
 </div>
 </div>
 </div>
@@ -209,12 +210,13 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">selfRemoveWithShearsDropsAnEyeAndCostsDurability</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.world.entity.player.Player&nbsp;player)</span></div>
 <div class="block">Sneak + shears on air removes your own eyes for one durability, whether or not the shears carry
- Optometrist; only a non-sneaking use is left to the vanilla item. The plain-shears self-damage
+ Optometrist; a non-sneaking use, or a sneaking one aimed at a mob or a block (which a click on that target
+ that passed also brings here), is left to the vanilla item. The plain-shears self-damage
  (a melee hit's worth of health) is not asserted here — fake players are inert to <code>hurt</code> —
  and stays source-verified. In game: apply a Slimy Eye to yourself, then sneak and right-click the
  air with Optometrist shears; your eyes come off, one Googly Eye drops, the shears lose one durability,
- and you take no damage. Repeat with plain shears and you also lose some health. Without sneaking, or
- with <code>googlyEyesEnabled = false</code>, nothing happens.
+ and you take no damage. Repeat with plain shears and you also lose some health. Without sneaking, sneaking
+ while aiming at a mob or a block, or with <code>googlyEyesEnabled = false</code>, your eyes stay on.
  The refusal case has no in-game form without a protection mod; it guards that a loader's denial of
  item use leaves eyes, drops, durability, and health unchanged.
  Callback ordering needs a connected client; this service test bypasses the loader callback.</div>
