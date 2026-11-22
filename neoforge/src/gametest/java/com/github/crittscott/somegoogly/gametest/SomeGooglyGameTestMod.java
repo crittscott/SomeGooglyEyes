@@ -82,6 +82,7 @@ public final class SomeGooglyGameTestMod {
         functions.register("eyeitemservicegametests/optometrist_interact_passes_when_not_applicable", () -> EyeItemServiceGameTests::optometristInteractPassesWhenNotApplicable);
         functions.register("eyeitemservicegametests/optometrist_rolls_only_onto_shears_and_books", () -> EyeItemServiceGameTests::optometristRollsOnlyOntoShearsAndBooks);
         functions.register("eyeitemservicegametests/self_remove_with_shears_drops_an_eye_and_costs_durability", () -> EyeItemServiceGameTests::selfRemoveWithShearsDropsAnEyeAndCostsDurability);
+        functions.register("eyeitemservicegametests/using_the_last_slimy_eye_reports_it", () -> EyeItemServiceGameTests::usingTheLastSlimyEyeReportsIt);
         functions.register("eyeitemservicegametests/another_players_eyes_follow_the_pvp_rules", () -> EyeItemServiceGameTests::anotherPlayersEyesFollowThePvpRules);
         functions.register("eyeitemservicegametests/harvest_breaking_shears_reports_them", () -> EyeItemServiceGameTests::harvestBreakingShearsReportsThem);
         functions.register("eyeitemservicegametests/optometrist_acts_on_armor_stand_before_it_takes_the_shears", () -> EyeItemServiceGameTests::optometristActsOnArmorStandBeforeItTakesTheShears);

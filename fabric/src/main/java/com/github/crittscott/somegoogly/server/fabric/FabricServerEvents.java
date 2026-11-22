@@ -6,9 +6,6 @@ import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import com.github.crittscott.somegoogly.item.EyeItemService;
 import com.github.crittscott.somegoogly.server.ServerServices;
-import java.util.HashSet;
-import java.util.Set;
-import javax.annotation.Nullable;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
@@ -22,12 +19,8 @@ import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.storage.loot.LootTable;
 
 /** Fabric event wiring for the loader-neutral authoritative server services. */
 public final class FabricServerEvents {
@@ -39,24 +32,7 @@ public final class FabricServerEvents {
     private static final ResourceLocation LATE_PHASE =
             SomeGooglyCommon.id("after_protection");
 
-    /** The loot tables of the heads that can have eyes, gathered on first use, once blocks are registered. */
-    @Nullable
-    private static Set<ResourceKey<LootTable>> headLootTables;
-
     private FabricServerEvents() {
-    }
-
-    private static Set<ResourceKey<LootTable>> headLootTables() {
-        if (headLootTables == null) {
-            Set<ResourceKey<LootTable>> tables = new HashSet<>();
-            for (Block block : BuiltInRegistries.BLOCK) {
-                if (SkullEyeState.entityFor(block) != null) {
-                    block.getLootTable().ifPresent(tables::add);
-                }
-            }
-            headLootTables = Set.copyOf(tables);
-        }
-        return headLootTables;
     }
 
     /** Subscribe the server listeners; called once from the mod initializer. */
@@ -71,11 +47,8 @@ public final class FabricServerEvents {
                 EyeItemService.useOnSkull(player, level, hand, hitResult));
         // Breaking an eyed head copies its eye state onto the dropped head item, where placing it restores it.
         // The Forge and NeoForge counterpart is HeadEyesLootModifier.
-        LootTableEvents.MODIFY.register((key, tableBuilder, source, registries) -> {
-            if (headLootTables().contains(key)) {
-                tableBuilder.modifyPools(pool -> pool.apply(SkullEyeState.headLootCopy()));
-            }
-        });
+        LootTableEvents.MODIFY_DROPS.register((table, context, drops) ->
+                SkullEyeState.copyEyesOntoHeadLoot(drops, context));
         UseItemCallback.EVENT.addPhaseOrdering(Event.DEFAULT_PHASE, LATE_PHASE);
         UseItemCallback.EVENT.register(LATE_PHASE, (player, level, hand) ->
                 EyeItemService.selfRemoveWithShears(player, hand));
@@ -88,8 +61,12 @@ public final class FabricServerEvents {
                 ServerServices.onConverted(previous, converted));
         // Respawning or leaving the End replaces the player.
         ServerPlayerEvents.COPY_FROM.register(ServerServices::onPlayerCloned);
-        ServerLivingEntityEvents.AFTER_DAMAGE.register((entity, source, baseDamage, damageTaken, blocked) ->
-                ServerBehaviorScheduler.onHurt(entity, source));
+        // Only a hit that took health is a hurt, not one a shield blocked.
+        ServerLivingEntityEvents.AFTER_DAMAGE.register((entity, source, baseDamage, damageTaken, blocked) -> {
+            if (damageTaken > 0.0F) {
+                ServerBehaviorScheduler.onHurt(entity, source);
+            }
+        });
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) ->
                 ServerServices.onPlayerLeft(handler.player));
         // Sent with the rest of the joining player's game data, ahead of their own eye state.

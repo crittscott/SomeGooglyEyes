@@ -79,7 +79,7 @@ dependencies {
     shadowBundle project(path: ':common', configuration: 'transformProductionNeoForge')
 }
 
-// Expands ${...} placeholders in neoforge.mods.toml, common's pack.mcmeta, and this module's Mixin configs.
+// Expands ${...} placeholders in neoforge.mods.toml and common's pack.mcmeta.
 tasks.named('processResources', ProcessResources).configure {
     // This loader's resource root must be a data pack in development as well as in the bundled jar.
     from project(':common').file('src/main/resources/pack.mcmeta')
@@ -90,7 +90,7 @@ tasks.named('processResources', ProcessResources).configure {
     ]
     inputs.properties replaceProperties
 
-    filesMatching(['META-INF/neoforge.mods.toml', 'pack.mcmeta', '*.mixins.json']) {
+    filesMatching(['META-INF/neoforge.mods.toml', 'pack.mcmeta']) {
         expand replaceProperties
     }
 }

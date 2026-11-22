@@ -24,7 +24,7 @@ Includes attachment support for GeckoLib-, Citadel-, and Uranus-based mobs, as w
 
 **Set it in slime**: googly eye + slimeball → a **Slimy Eye**, which inherits the eye's colors.
 
-**Apply it**: right-click a mob with the slimy eye to give it eyes, or sneak and use it to grow your own. Each application picks the mob's eye arrangement anew. A mob that already has eyes refuses it. Pluck them off first to restyle. To take your own off, sneak and right-click the air with shears.
+**Apply it**: right-click a mob with the slimy eye to give it eyes, or sneak and use it on the air to grow your own. Each application picks the mob's eye arrangement anew. A mob that already has eyes refuses it. Pluck them off first to restyle. To take your own off, sneak and right-click the air with shears.
 
 **Loose eyes are lively too**: a Googly Eye's pupils roll around in your hand, in item frames, and in your inventory, bulge when you're hurt, and swirl when you heal.
 

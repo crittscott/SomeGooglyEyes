@@ -1,5 +1,6 @@
 package com.github.crittscott.somegoogly.item;
 
+import com.github.crittscott.somegoogly.util.LookTarget;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -9,7 +10,7 @@ import net.minecraft.world.level.Level;
 /**
  * A googly eye bedded in a slimeball: the applicator. Right-clicking a living entity with it sticks
  * eyes on that entity, using the appearance the eye carried into the craft
- * ({@link EyeItemProperties}); sneak + use applies it to the player themselves. A Slimy Eye, applied by
+ * ({@link EyeItemProperties}); sneak + use on air applies it to the player themselves. A Slimy Eye, applied by
  * the player or by another player, is the only way a player gets eyes (players are excluded from the
  * at-spawn roll). It shares the Googly Eye's
  * stored appearance and tooltip.
@@ -33,10 +34,13 @@ public class SlimyEyeItem extends GooglyEyeItem {
         super(properties);
     }
 
-    /** Sneak + use: eye yourself. Without the sneak this would fire on every stray right-click. */
+    /**
+     * Sneak + use on air: eye yourself. Without the sneak this would fire on every stray right-click. Vanilla also
+     * reaches here when a click on a mob, head, or block passed, so a use aimed at anything is left alone.
+     */
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
-        if (!player.isShiftKeyDown()) {
+        if (!player.isShiftKeyDown() || !LookTarget.aimsAtNothing(player)) {
             return InteractionResult.PASS;
         }
         return EyeItemService.applySlimyEye(player.getItemInHand(hand), player, player);

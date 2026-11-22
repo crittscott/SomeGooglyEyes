@@ -40,21 +40,21 @@ Persistent entity keys: `somegoogly:hasGooglyEyes`, `somegoogly:eyeVariantRoll`,
 
 Mutations send one full snapshot (`Snapshot.STREAM_CODEC`); stored rolls clamp to 0..1, received rolls outside it fail decode. Eye state and roll initialize together once. Initialization and tracking skip default state; mid-life mutations always send. `EyeState.copy` handles conversion and non-death respawn; joining players get their own snapshot.
 
-Eye items carry `AppearanceOverride` in the synced `somegoogly:eye_properties` component, never geometry; harvesting copies the first eye's effective appearance, the modifier recipe changes only that component, and the Slimy Eye transmute copies every component.
+Eye items carry `AppearanceOverride` in the synced `somegoogly:eye_properties` component, never geometry; harvest copies the first eye's effective appearance, the modifier recipe changes only that component, the transmute copies all.
 
 `SkullEyeState` stores placed-head snapshots in the Mixin-added `somegoogly:data` compound, sanitized to the eye snapshot on load and carried by update tags. Head items use the implicit `somegoogly:head_eyes` component. Heads borrow adult definitions, selecting variants with eyes on the head part; modded heads have no mapping. Mutations send block updates.
 
 Saved data from the 1.21.4 release is already in current form; nothing migrates.
 
-`EyeItemService` owns eye application, harvest, and the eligibility verdict shared with the inspector. Loader hooks honor protection listeners and item-use denials. The service excludes spectators, respects PvP and teams for other-player changes, and checks the clicked head for adventure restrictions. Successful use records item statistics and the head-use advancement trigger. Death harvest honors `doMobLoot`. Forge and NeoForge stamp head drops at `LOWEST`; Fabric at `spawnAtLocation`. Placed-head loot copies the state with `SkullEyeState.headLootCopy` (Forge/NeoForge loot modifiers, Fabric loot-table event). Plain-shears self-damage uses the attacker-less `self_shear` type.
+`EyeItemService` owns eye application, harvest, and the eligibility verdict shared with the inspector. Loader hooks honor protection listeners and item-use denials. The service excludes spectators, respects PvP and teams for other-player changes, and checks the clicked head for adventure restrictions. Successful use records item statistics and the head-use advancement trigger. Death harvest honors `doMobLoot`. Forge and NeoForge stamp head drops at `LOWEST`; Fabric at `spawnAtLocation`. `SkullEyeState.copyEyesOntoHeadLoot` copies placed-head state onto head loot only (loot modifiers; Fabric `MODIFY_DROPS`). Sneak self-use acts only when `LookTarget.aimsAtNothing`. Head refusals `FAIL` on both sides. `ItemDestruction` reports used-up stacks and broken shears. Plain-shears self-damage uses the attacker-less `self_shear` type.
 
-Successful Slimy Eye applications emit `GameEvent.ENTITY_INTERACT` (`BLOCK_CHANGE` on a head), harvests `GameEvent.SHEAR`; refusals emit neither.
+Slimy Eye applications emit `ENTITY_INTERACT` (`BLOCK_CHANGE` on a head), harvests `SHEAR`; refusals emit neither.
 
 ## Eligibility and behaviors
 
 `ServerServices.onLivingEntityLoaded` owns natural eye initialization; later configuration changes never revisit an initialized entity.
 
-`EyeBehavior` catalogs expressions; `OngoingBehavior` catalogs ongoing states. `BehaviorInstance` carries id/duration/seed/elapsed. `ServerBehaviorScheduler` runs watched eyed mobs and damage/heal/trade/milking/shearing/entity-event triggers on the server tick clock; sleepers start nothing. It also sends held-eye hurt (any damage) and heal reactions per hand. `GooglyTracker` applies enabled ongoing states. `PresentationEyes` caches ambient slots for items, hands, placed heads, and boats. Heads seed by position. Only paired layouts cross-eye. Slots fit the longest eligible expression or the synced mean interval, whichever is greater. Anger syncs on change/new viewer. `ClientEyeRuntime` owns mob, boat, head, frame, hand, and GUI simulations, retains mob and hand reports independently of them, and ages expressions offscreen. Only recently rendered trackers simulate; idle trackers expire. Heads cache by position and recheck replaced eye data at draw; resting head items cache layouts by component. Frames cache by entity and recheck item contents at extraction. Level changes/disconnect clear all. The master switch pauses mob scheduling while retaining watchers and expiring effects; authoring triggers remain available. Client behaviors start inactive until sync.
+`EyeBehavior` catalogs expressions; `OngoingBehavior` catalogs ongoing states. `BehaviorInstance` carries id/duration/seed/elapsed. `ServerBehaviorScheduler` runs watched eyed mobs and damage/heal/trade/milking/shearing/entity-event triggers on the server tick clock; sleepers start nothing. It also sends held-eye hurt (any damage) and heal reactions per hand. `GooglyTracker` applies enabled ongoing states. `PresentationEyes` caches ambient slots for items, hands, placed heads, and boats. Heads seed by position. Only paired layouts cross-eye. Slots fit the longest eligible expression or the synced mean interval, whichever is greater. Anger syncs on change/new viewer. `ClientEyeRuntime` owns mob, boat, head, frame, hand, and GUI simulations, retains mob and hand reports independently of them, and ages expressions offscreen. Idle trackers expire. Heads cache by position and recheck replaced eye data at draw; resting head items cache layouts by component. Frames cache by entity and recheck item contents at extraction. Level changes/disconnect clear all. The master switch pauses mob scheduling, keeping watchers; authoring triggers remain. Client behaviors start inactive until sync.
 
 ## Rendering and attachment
 
@@ -74,13 +74,13 @@ Seven play payloads carry definitions, settings, entity eye state, expressions, 
 
 A joining player receives definitions and settings. After config apply or reload, `ServerServices.broadcastEyeSyncIfChanged` broadcasts each independently when it changes. Only a definition change resets simulations. Behavior triggers carry an entity ID, a target (entity or hand), and a behavior ID.
 
-Sends go through `@ExpectPlatform` `Networking` and client-only `ClientNetworking`; clientbound handlers reach `ClientNetworkHandler` only inside lambdas, so servers never link it. Serverbound handlers reauthorize the sender; the client rejects exports over vanilla's cap; unknown entity ids are ignored.
+Sends go through `@ExpectPlatform` `Networking` (Fabric fans out with vanilla's tracking-and-self send) and client-only `ClientNetworking`; clientbound handlers reach `ClientNetworkHandler` only in lambdas. Serverbound handlers reauthorize the sender; the client rejects exports over vanilla's cap; unknown entity ids are ignored.
 
 ## Picker and commands
 
 The client owns picker drafts and previews; the server owns freezing, spawning, movement, and export. `PickerState.DraftSession` retains separate drafts keyed by species and age. Both export paths use `ConfigFile.overlay` to replace authored ages while retaining untouched age buckets, including disabled ones. `ModelPartVocabulary` shares attachment naming between editing and export.
 
-`PickerFreezeService` preserves prior `NoAI`, reconciles locks at load/logout/stop, and allows one editor. `PickerGate` owns authorization (creative plus permission level 2) and throttles; spawn-all also needs server enablement. `PickerSpawnService` uses `MobSpawning` for loader spawn finalization, honors cancellation, then sets `NoAI`, persistence, and rotation. Its `refusal` filters commands and suggestions. Bulk terrain edits follow accepted finalization and insertion. Vanilla inserts the mob and its riders. The group is discarded if any insertion is refused. World export writes the generated datapack, export-all the game-directory export tree. Both use `ConfigFile.exportVersion`; bulk-export disk failures log the entity and target.
+`PickerFreezeService` keeps prior `NoAI`, reconciles locks at load/logout/stop, and allows one editor. `PickerGate` owns authorization (creative plus permission level 2) and throttles; spawn-all also needs server enablement. `PickerSpawnService` uses `MobSpawning` for loader spawn finalization, honors cancellation, then sets `NoAI`, persistence, and rotation. Its `refusal` filters commands and suggestions. Bulk terrain edits follow accepted finalization and insertion. Vanilla inserts the mob and its riders. The group is discarded if any insertion is refused. World export writes the generated datapack, export-all the game-directory export tree. Both use `ConfigFile.exportVersion`; bulk-export disk failures log the entity and target.
 
 `LookTarget` limits entity intersections by the nearest blocking surface; the inspector compares actual hit distances. Client and server own disjoint `/sg` branches: editing is client-side; admin, spawn, spawn-all, and mob-pose are server-side. Fabric forwards those server branches, since its client root would capture them, and adds picker verbs to the received server tree (`ClientPacketListenerCommandsMixin`).
 
@@ -94,9 +94,9 @@ Forge's required `PayloadChannel` marks payloads handled. NeoForge and Forge iso
 
 ## Automated verification
 
-GameTest scenarios: Fabric 186, Forge 189, NeoForge 189. Fabric client tests (`fabric/src/clientGametest`, scenarios in `docs/client-test-plan.md`) stage each scenario through `Scene` and write screenshots with expectations to `run/clientgametest/review/<time>/`, judged in `../screenshot-review`. Forge and NeoForge visuals use the checklists in `docs/*-testing.md`; protection ordering needs manual checks.
+GameTest scenarios: Fabric 186, Forge 190, NeoForge 190. Fabric client tests (`fabric/src/clientGametest`, `docs/client-test-plan.md`) stage scenarios through `Scene` and write screenshots with expectations to `run/clientgametest/review/<time>/` for `../screenshot-review`. Forge and NeoForge visuals use the checklists in `docs/*-testing.md`; protection ordering needs manual checks.
 
 ## Operational boundaries
 
-- Optional renderer integrations log failures once.
+- Optional renderers log failures once.
 - `build-env/` mirrors build inputs as described in `orientation-build.md`.
