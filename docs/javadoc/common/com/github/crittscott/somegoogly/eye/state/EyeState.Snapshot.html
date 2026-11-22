@@ -123,7 +123,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color"><code>static final net.minecraft.network.codec.StreamCodec<wbr>&lt;io.netty.buffer.ByteBuf,<wbr><a href="EyeState.Snapshot.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeState.Snapshot</a>&gt;</code></div>
 <div class="col-second even-row-color"><code><a href="#STREAM_CODEC" class="member-name-link">STREAM_CODEC</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">The roll is clamped on decode, as a stored roll is.</div>
+<div class="block">A roll outside 0..1 fails the decode, as it does in <a href="#CODEC"><code>CODEC</code></a>.</div>
 </div>
 </div>
 </section>
@@ -231,7 +231,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="STREAM_CODEC">
 <h3>STREAM_CODEC</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">net.minecraft.network.codec.StreamCodec&lt;io.netty.buffer.ByteBuf,<wbr><a href="EyeState.Snapshot.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeState.Snapshot</a>&gt;</span>&nbsp;<span class="element-name">STREAM_CODEC</span></div>
-<div class="block">The roll is clamped on decode, as a stored roll is.</div>
+<div class="block">A roll outside 0..1 fails the decode, as it does in <a href="#CODEC"><code>CODEC</code></a>.</div>
 </section>
 </li>
 </ul>

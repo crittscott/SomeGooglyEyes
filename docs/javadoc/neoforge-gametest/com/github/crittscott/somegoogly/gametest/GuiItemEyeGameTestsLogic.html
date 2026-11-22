@@ -238,7 +238,7 @@ loadScripts(document, 'script');</script>
 <div class="block">One nested draw context carries GUI identity, the selected animation, and the item being drawn; closing an
  inner scope restores the enclosing one. A GUI item's animation is selected inside its slot's scope while its
  render state is filled, and the state carries that selection to its later draw, which no GUI scope encloses.
- In game: put eyed heads and Googly Eyes in inventory slots, the hotbar, and item frames; each animates on its
+ A slot or render state whose item can have no eyes opens no scope of its own. In game: put eyed heads and Googly Eyes in inventory slots, the hotbar, and item frames; each animates on its
  own and a head drawn inside another item's slot keeps its eyes.</div>
 </section>
 </li>

@@ -19,6 +19,7 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 - 1.20.1 and 1.21.1 draw items immediately and have no use for item render state code; 1.21.4 and later use it. [tested on 1.20.1]
 - 1.20.1: the render pose holds the view rotation `V = Rx(pitch) Ry(yaw + 180)`, and `cameraOrientation` is `Ry(-yaw) Rx(pitch)`. The true inverse of `V` is `cameraOrientation * Ry(180)`; without the 180 degree turn, pitch doubles instead of canceling. [tested in game; the matrices themselves are recalled]
 - The view convention differs by version, so derive what each version's pose holds instead of copying a fix. 1.21.1, 1.21.4, and 1.21.8 pass `cameraOrientation`; 1.21.11 and later have been treated as world-space poses. [recalled]
+- 1.21.8: `GuiGraphics.renderItem` only extracts an item render state; the GUI renderer draws it later, outside any scope opened around that call. `AbstractContainerScreen.renderFloatingItem(GuiGraphics, ItemStack, int, int, String)` takes the carried or returning stack. [recalled]
 - `ItemColor` is asked once per tinted quad, and `item/generated` makes a quad for each edge pixel run, so a tint callback can run dozens of times per item per frame. [recalled]
 
 ### Interaction and items
@@ -40,6 +41,7 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 - 1.20.1: `BlockItem` merges a stack's `BlockEntityTag` into the block entity and calls `load`, and heads are not an op-only block entity. A creative player needs no operator rights to supply that NBT, so a `load` that keeps a whole compound stores and rebroadcasts whatever was sent. [recalled]
 - 1.21.8: `ClientboundBlockEntityDataPacket.create(blockEntity)` carries `getUpdateTag`, and the client applies it with `loadWithComponents` on a `TagValueInput`. [recalled]
 - 1.20.1: `ResourceLocation.isValidNamespace` is private; test a namespace with `ResourceLocation.tryBuild(namespace, "x") != null`. Its visibility on 1.21.8 is unchecked. [tested on 1.20.1: compile error]
+- 1.21.8: `PackMetadataSection` is a record `(Component description, int packFormat, Optional<InclusiveRange<Integer>> supportedFormats)` whose public `CODEC` encodes the contents of `pack.mcmeta`'s `pack` object. [recalled]
 - A non-special recipe needs an unlock advancement, or `doLimitedCrafting` blocks it and the recipe book never offers it. The path is `data/<ns>/advancements/recipes/...` on 1.20.1 and uses the `advancement` directory on later versions. [tested on 1.20.1]
 
 ### Commands
@@ -95,7 +97,7 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 
 ## Architectury and Loom
 
-- Common Mixins compile in `common/src/main/java` with no `refmap` key in the config; Loom produces and remaps the refmap. A wrong refmap surfaces only at runtime, so check a production-jar launch after changing this. [tested on 1.20.1]
+- Common Mixins compile in `common/src/main/java` and need their own refmap, named by `loom.mixin.defaultRefmapName` in common and by the `refmap` key in the common Mixin config: Fabric resolves them against intermediary names, and the Fabric module's refmap covers only Mixins compiled there. Forge and NeoForge run on Mojang names, so their jars exclude that refmap and their dev runs set `mixin.env.disableRefMap`. Architectury's transformer logs a request to remove the `refmap` key during development runs; the key stays because Fabric production needs it. A wrong refmap surfaces only at runtime, so check a production-jar launch after changing this. [tested on 1.21.1; this checkout's build files match]
 - `@ExpectPlatform` needs a per-loader class, so its one-line forwarding is forced. [tested]
 - Forge and NeoForge receive the Fabric access widener converted to an access transformer at remap time; one file serves every loader. [tested] Loom's `forge { convertAccessWideners = true; extraAccessWideners.add <widener name> }` does the conversion by filling `remapJar`'s `atAccessWideners`; NeoForge sets `atAccessWideners` directly because whether its extension has the same switches is unknown. [recalled]
 - GeckoLib publishes no common artifact for 1.20.1. Common compiles against the Fabric artifact with `modCompileOnly`. Only `GeoRenderEvent` differs by loader. [tested]

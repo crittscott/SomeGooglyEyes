@@ -37,7 +37,7 @@ loadScripts(document, 'script');</script>
 <li>
 <p>Summary:</p>
 <ul>
-<li>Nested</li>
+<li><a href="#nested-class-summary">Nested</a></li>
 <li>Field</li>
 <li>Constr</li>
 <li><a href="#method-summary">Method</a></li>
@@ -57,7 +57,7 @@ loadScripts(document, 'script');</script>
 <div id="navbar-sub-list">
 <ul class="sub-nav-list">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested-class-summary">Nested</a>&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method-summary">Method</a></li>
@@ -95,10 +95,10 @@ loadScripts(document, 'script');</script>
  their part tree — a model-wide <code>pushPose → scale → translate</code> wrapped entirely inside the model's
  own <code>renderToBuffer</code>. A resolver can only replay <code>translateAndRotate</code> down the part tree, so
  without this the eyes land in the model's unscaled space: wrong pivots, oversized motion arcs, offset
- placement. <a href="#preTransform(net.minecraft.client.model.EntityModel,boolean,com.mojang.blaze3d.vertex.PoseStack)"><code>preTransform(net.minecraft.client.model.EntityModel&lt;?&gt;, boolean, com.mojang.blaze3d.vertex.PoseStack)</code></a> pre-multiplies the same transform onto the pose stack before the
- resolver walk (the model applies its transform before any part's <code>translateAndRotate</code>, so
- pre-multiplying composes identically). <code>EyeAttachmentResolver#toAttachmentSpace</code> calls it
- before replaying the attachment; it is a no-op for every unlisted model.
+ placement. <a href="#wholeModel(net.minecraft.client.model.EntityModel)"><code>wholeModel(net.minecraft.client.model.EntityModel&lt;?&gt;)</code></a> finds a listed model's transform once per model; it is pre-multiplied onto the
+ pose stack before the resolver walk (the model applies its transform before any part's
+ <code>translateAndRotate</code>, so pre-multiplying composes identically). <code>EyeAttachmentResolver#toAttachmentSpace</code>
+ applies it before replaying the attachment; unlisted models have none.
 
  <p>Each table is keyed by fully qualified model class name, so there is no compile-time or classloading
  dependency on either mod. The branch is chosen by the render state's baby flag — the same age the
@@ -117,6 +117,23 @@ loadScripts(document, 'script');</script>
 </section>
 <section class="summary">
 <ul class="summary-list">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<li>
+<section class="nested-class-summary" id="nested-class-summary">
+<h2>Nested Class Summary</h2>
+<div class="caption"><span>Nested Classes</span></div>
+<div class="summary-table three-column-summary">
+<div class="table-header col-first">Modifier and Type</div>
+<div class="table-header col-second">Class</div>
+<div class="table-header col-last">Description</div>
+<div class="col-first even-row-color"><code>static final record&nbsp;</code></div>
+<div class="col-second even-row-color"><code><a href="ThirdPartyModelWraps.Entry.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.client.compat">ThirdPartyModelWraps.Entry</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Per-model transforms; <code>adult</code> is <code>null</code> where the adult branch renders at identity.</div>
+</div>
+</div>
+</section>
+</li>
 <!-- ========== METHOD SUMMARY =========== -->
 <li>
 <section class="method-summary" id="method-summary">
@@ -128,13 +145,11 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#preTransform(net.minecraft.client.model.EntityModel,boolean,com.mojang.blaze3d.vertex.PoseStack)" class="member-name-link">preTransform</a><wbr>(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model,
- boolean&nbsp;young,
- com.mojang.blaze3d.vertex.PoseStack&nbsp;poseStack)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="ThirdPartyModelWraps.Entry.html" title="class in com.github.crittscott.somegoogly.client.compat">ThirdPartyModelWraps.Entry</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#wholeModel(net.minecraft.client.model.EntityModel)" class="member-name-link">wholeModel</a><wbr>(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Reproduce a listed model's whole-model render transform on <code>poseStack</code>, choosing the branch by
- <code>young</code>.</div>
+<div class="block">The whole-model render transform a listed model applies outside its part tree, or <code>null</code> for every
+ unlisted model.</div>
 </div>
 </div>
 </div>
@@ -154,14 +169,12 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="preTransform(net.minecraft.client.model.EntityModel,boolean,com.mojang.blaze3d.vertex.PoseStack)">
-<h3>preTransform</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">preTransform</span><wbr><span class="parameters">(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model,
- boolean&nbsp;young,
- com.mojang.blaze3d.vertex.PoseStack&nbsp;poseStack)</span></div>
-<div class="block">Reproduce a listed model's whole-model render transform on <code>poseStack</code>, choosing the branch by
- <code>young</code>. No-op for every unlisted model and for a listed model whose active branch renders at
- identity.</div>
+<section class="detail" id="wholeModel(net.minecraft.client.model.EntityModel)">
+<h3>wholeModel</h3>
+<div class="member-signature"><span class="annotations">@Nullable
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="ThirdPartyModelWraps.Entry.html" title="class in com.github.crittscott.somegoogly.client.compat">ThirdPartyModelWraps.Entry</a></span>&nbsp;<span class="element-name">wholeModel</span><wbr><span class="parameters">(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model)</span></div>
+<div class="block">The whole-model render transform a listed model applies outside its part tree, or <code>null</code> for every
+ unlisted model. Fixed for the model instance's life; apply it each draw with the render state's age.</div>
 </section>
 </li>
 </ul>

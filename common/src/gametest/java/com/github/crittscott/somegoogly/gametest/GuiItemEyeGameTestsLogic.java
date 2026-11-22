@@ -213,14 +213,22 @@ public final class GuiItemEyeGameTestsLogic {
      * One nested draw context carries GUI identity, the selected animation, and the item being drawn; closing an
      * inner scope restores the enclosing one. A GUI item's animation is selected inside its slot's scope while its
      * render state is filled, and the state carries that selection to its later draw, which no GUI scope encloses.
-     * In game: put eyed heads and Googly Eyes in inventory slots, the hotbar, and item frames; each animates on its
+     * A slot or render state whose item can have no eyes opens no scope of its own. In game: put eyed heads and Googly Eyes in inventory slots, the hotbar, and item frames; each animates on its
      * own and a head drawn inside another item's slot keeps its eyes.
      */
     public static void nestedDrawContextsRestoreOuterSelection(GameTestHelper helper) {
         Object view = new Object();
         PresentationEyes eyes = PresentationEyes.create(new UUID(1L, 2L), eye());
         PresentationEyes.Draw stored;
-        ClientEyeRuntime.beginGuiPresentation(view, ClientEyeRuntime.GuiKind.SLOT, 3);
+        ClientEyeRuntime.DrawContext outside = ClientEyeRuntime.currentDraw();
+        ClientEyeRuntime.beginGuiPresentation(view, ClientEyeRuntime.GuiKind.SLOT, 4, new ItemStack(Items.STICK));
+        try {
+            helper.assertTrue(ClientEyeRuntime.currentDraw() == outside,
+                    Component.literal("a slot whose item can have no eyes keeps the enclosing scope"));
+        } finally {
+            ClientEyeRuntime.endItemDraw();
+        }
+        ClientEyeRuntime.beginGuiPresentation(view, ClientEyeRuntime.GuiKind.SLOT, 3, eye());
         try {
             ClientEyeRuntime.beginItemDraw(new PresentationEyes.Draw(eyes, 0.5F));
             try {
@@ -241,12 +249,11 @@ public final class GuiItemEyeGameTestsLogic {
         ItemStack stack = eye();
         ClientEyeRuntime.beginItemState(stack, stored);
         try {
-            ItemStack head = new ItemStack(Items.SKELETON_SKULL);
-            ClientEyeRuntime.beginItemState(head, PresentationEyes.Draw.NONE);
+            ClientEyeRuntime.beginItemState(null, PresentationEyes.Draw.NONE);
             try {
                 ClientEyeRuntime.DrawContext context = ClientEyeRuntime.currentDraw();
-                helper.assertTrue(context.item() == head && context.draw().eyes() == null,
-                        Component.literal("a nested item state carries its own stack and extracted animation"));
+                helper.assertTrue(context.item() == null && context.draw().eyes() == null,
+                        Component.literal("a nested item state whose item can have no eyes shows no outer item"));
             } finally {
                 ClientEyeRuntime.endItemDraw();
             }

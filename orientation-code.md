@@ -30,7 +30,7 @@ Common uses adapters and `@ExpectPlatform`; no loader imports. The server owns g
 
 `ServerConfig` and `ClientConfig` declare typed settings once for all three loaders. Forge and NeoForge bind them to native CLIENT/SERVER specs. Fabric uses NightConfig at startup and `/reload`, adding only missing keys and keeping the original text in `.bak`. Malformed input leaves effective settings intact. Successful loads log the effective server spawn and client visibility settings.
 
-Eye definitions are datapack resources at `data/<namespace>/eyes/*.json`, modeled by `EyeConfigModel`. Reload resolves one version per entity type, validates, encodes to NBT, and swaps `ServerEyeConfigs` only if the encoding differs, keeping the old set on failure. That encoding is the sync payload, so `ClientEyeConfigs` never selects versions. Size and geometry limits stay aligned across reload, picker export, and network decode, including the total sync size. `EyeColor` codecs reject out-of-range channels on decode. `EyeConfigLimits.Issue` gives translated feedback and log diagnostics.
+Eye definitions are datapack resources at `data/<namespace>/eyes/*.json`, modeled by `EyeConfigModel`. Reload resolves one version per entity type, validates, encodes to NBT, and swaps `ServerEyeConfigs` only if the encoding differs, keeping the old set on failure. That encoding is the sync payload, so `ClientEyeConfigs` never selects versions. Size and geometry limits match across reload, picker export, and network decode. `EyeColor` codecs reject out-of-range channels on decode. `EyeConfigLimits.Issue` gives translated feedback and log diagnostics.
 
 ## Entity and item state
 
@@ -38,7 +38,7 @@ Eye definitions are datapack resources at `data/<namespace>/eyes/*.json`, modele
 
 Persistent entity keys: `somegoogly:hasGooglyEyes`, `somegoogly:eyeVariantRoll`, `somegoogly:eyeOverrides`.
 
-Mutations send one full snapshot; stored rolls clamp to 0..1. Eye state and roll initialize together once. Initialization and tracking skip default state; mid-life mutations always send. `EyeState.copy` handles conversion and non-death respawn; joining players get their own snapshot.
+Mutations send one full snapshot (`Snapshot.STREAM_CODEC`); stored rolls clamp to 0..1, received rolls outside it fail decode. Eye state and roll initialize together once. Initialization and tracking skip default state; mid-life mutations always send. `EyeState.copy` handles conversion and non-death respawn; joining players get their own snapshot.
 
 Eye items carry `AppearanceOverride` in the synced `somegoogly:eye_properties` component, never geometry; harvesting copies the first eye's effective appearance, the modifier recipe changes only that component, and the Slimy Eye transmute copies every component.
 
@@ -58,11 +58,11 @@ Successful Slimy Eye applications emit `GameEvent.ENTITY_INTERACT` (`BLOCK_CHANG
 
 ## Rendering and attachment
 
-`ClientRenderLayers` installs `LayerGooglyEyes` once per renderer rebuild, before slime's outer layer; GeckoLib uses `CompileRenderLayers`. Both draw picker previews. `LayerGooglyEyes` insets sheared adult sheep `body` eyes by wool depth. Common Mixins store `EyeRenderData` on `LivingEntityRenderState`; GeckoLib captures it during render-state extraction and registers per-bone drawing tasks with state-owned eye data and copied picker drafts. `GooglyEyeRenderer.drawEye` draws every eye, `drawAnimatedEye` simulated ones. `ClientEyeRuntime` owns the shared simulation eviction rule and one nested draw context for item and head draws. Rendering (cached in `HeadInfo`) and pupil projection share `EyePlacement.orientation`.
+`ClientRenderLayers` installs `LayerGooglyEyes` once per renderer rebuild, before slime's outer layer; GeckoLib uses `CompileRenderLayers`. Both draw picker previews. `LayerGooglyEyes` insets sheared adult sheep `body` eyes by wool depth. Common Mixins store `EyeRenderData` on `LivingEntityRenderState`; GeckoLib captures it during render-state extraction and registers per-bone drawing tasks with state-owned eye data and copied picker drafts. `GooglyEyeRenderer.drawEye` draws every eye, `drawAnimatedEye` simulated ones. `ClientEyeRuntime` owns the shared simulation eviction rule and one nested draw context for item and head draws; items that cannot have eyes open no scope of their own. Rendering (cached in `HeadInfo`) and pupil projection share `EyePlacement.orientation`.
 
 Attachment resolvers cache by model identity and replay `ThirdPartyModelWraps`. `RootModelResolver` walks `EntityModel.root()` after reflected Citadel/Uranus/LLibrary resolvers. The picker selects separate baby models by age.
 
-The picker gizmo uses a registered no-depth render pipeline. The picker HUD follows Fabric's subtitles, tops NeoForge's layers, and is appended last to Forge's layered HUD draw. Common Mixins bracket placed-head and head-item rendering and key head items' GUI identity on eyes. `SkullEyeRenderer` draws on the widened `SkullModel`/`PiglinHeadModel` head part after the model. Worn heads get no eyes.
+The picker gizmo uses a registered no-depth render pipeline. The picker HUD follows Fabric's subtitles, tops NeoForge's layers, and is last in Forge's layered HUD. Common Mixins bracket placed-head and head-item rendering and key head items' GUI identity on eyes. `SkullEyeRenderer` draws on the widened `SkullModel`/`PiglinHeadModel` head part after the model. Worn heads get no eyes.
 
 GeckoLib links only after detection; attach failures cannot block loading.
 
@@ -72,7 +72,7 @@ GeckoLib links only after detection; attach failures cannot block loading.
 
 Seven play payloads carry definitions, settings, entity eye state, expressions, anger, picker freeze, and export. `NetworkProtocol` holds the payload table every loader registers from. Forge and NeoForge require native protocol version `19`. Fabric exchanges the version during configuration.
 
-A joining player receives definitions and settings. After config apply or reload, `ServerServices.broadcastEyeSyncIfChanged` broadcasts each independently when it changes. Only a definition change resets simulations. Behavior triggers carry a compact entity ID, a target (the entity or one hand), and an explicit behavior ID.
+A joining player receives definitions and settings. After config apply or reload, `ServerServices.broadcastEyeSyncIfChanged` broadcasts each independently when it changes. Only a definition change resets simulations. Behavior triggers carry an entity ID, a target (entity or hand), and a behavior ID.
 
 Sends go through `@ExpectPlatform` `Networking` and client-only `ClientNetworking`; clientbound handlers reach `ClientNetworkHandler` only inside lambdas, so servers never link it. Serverbound handlers reauthorize the sender; the client rejects exports over vanilla's cap; unknown entity ids are ignored.
 
@@ -80,9 +80,9 @@ Sends go through `@ExpectPlatform` `Networking` and client-only `ClientNetworkin
 
 The client owns picker drafts and previews; the server owns freezing, spawning, movement, and export. `PickerState.DraftSession` retains separate drafts keyed by species and age. Both export paths use `ConfigFile.overlay` to replace authored ages while retaining untouched age buckets, including disabled ones. `ModelPartVocabulary` shares attachment naming between editing and export.
 
-`PickerFreezeService` preserves prior `NoAI`, reconciles locks at load/logout/stop, and allows one editor. `PickerGate` owns authorization (creative plus permission level 2) and throttles; spawn-all also needs server enablement. `PickerSpawnService` uses `MobSpawning` for loader spawn finalization, honors cancellation, then sets `NoAI`, persistence, and rotation. Its `refusal` filters commands and suggestions. Bulk terrain edits follow accepted finalization and insertion. Vanilla inserts the mob and its riders. The group is discarded if any insertion is refused. World export writes the generated datapack, export-all the game-directory export tree. Both use `ConfigFile.exportVersion`; bulk-export disk failures log the entity, target, completed count, and exception.
+`PickerFreezeService` preserves prior `NoAI`, reconciles locks at load/logout/stop, and allows one editor. `PickerGate` owns authorization (creative plus permission level 2) and throttles; spawn-all also needs server enablement. `PickerSpawnService` uses `MobSpawning` for loader spawn finalization, honors cancellation, then sets `NoAI`, persistence, and rotation. Its `refusal` filters commands and suggestions. Bulk terrain edits follow accepted finalization and insertion. Vanilla inserts the mob and its riders. The group is discarded if any insertion is refused. World export writes the generated datapack, export-all the game-directory export tree. Both use `ConfigFile.exportVersion`; bulk-export disk failures log the entity and target.
 
-`LookTarget` limits entity intersections by the nearest blocking surface; the inspector compares actual hit distances. Client and server own disjoint `/sg` branches: editing is client-side; admin, spawn, spawn-all, and mob-pose are server-side. Fabric forwards those server branches explicitly, since its client root would capture them, and adds the picker verbs to the received server tree (`ClientPacketListenerCommandsMixin`).
+`LookTarget` limits entity intersections by the nearest blocking surface; the inspector compares actual hit distances. Client and server own disjoint `/sg` branches: editing is client-side; admin, spawn, spawn-all, and mob-pose are server-side. Fabric forwards those server branches, since its client root would capture them, and adds picker verbs to the received server tree (`ClientPacketListenerCommandsMixin`).
 
 ## Loader integration
 

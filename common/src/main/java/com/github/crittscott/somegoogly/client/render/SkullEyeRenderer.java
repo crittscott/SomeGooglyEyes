@@ -41,7 +41,7 @@ public final class SkullEyeRenderer {
     /** An item render state's link to the stack it was last filled from, added by a Mixin. */
     public interface ItemHolder {
 
-        /** The stack, or {@code null} when the state is clear. */
+        /** The stack, or {@code null} when the state is clear or its item can have no eyes. */
         @Nullable
         ItemStack somegoogly$item();
 

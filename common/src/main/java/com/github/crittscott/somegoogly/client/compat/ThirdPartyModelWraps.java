@@ -11,10 +11,10 @@ import java.util.Map;
  * their part tree — a model-wide {@code pushPose → scale → translate} wrapped entirely inside the model's
  * own {@code renderToBuffer}. A resolver can only replay {@code translateAndRotate} down the part tree, so
  * without this the eyes land in the model's unscaled space: wrong pivots, oversized motion arcs, offset
- * placement. {@link #preTransform} pre-multiplies the same transform onto the pose stack before the
- * resolver walk (the model applies its transform before any part's {@code translateAndRotate}, so
- * pre-multiplying composes identically). {@code EyeAttachmentResolver#toAttachmentSpace} calls it
- * before replaying the attachment; it is a no-op for every unlisted model.
+ * placement. {@link #wholeModel} finds a listed model's transform once per model; it is pre-multiplied onto the
+ * pose stack before the resolver walk (the model applies its transform before any part's
+ * {@code translateAndRotate}, so pre-multiplying composes identically). {@code EyeAttachmentResolver#toAttachmentSpace}
+ * applies it before replaying the attachment; unlisted models have none.
  *
  * <p>Each table is keyed by fully qualified model class name, so there is no compile-time or classloading
  * dependency on either mod. The branch is chosen by the render state's baby flag — the same age the
@@ -42,7 +42,15 @@ public final class ThirdPartyModelWraps {
     }
 
     /** Per-model transforms; {@code adult} is {@code null} where the adult branch renders at identity. */
-    private record Entry(@Nullable Transform adult, Transform baby) {
+    public record Entry(@Nullable Transform adult, Transform baby) {
+
+        /** Apply the branch for the render state's baby flag; holds no reference to any model. */
+        public void apply(boolean young, PoseStack poseStack) {
+            Transform transform = young ? baby : adult;
+            if (transform != null) {
+                transform.apply(poseStack);
+            }
+        }
     }
 
     private static final String ALEXS_MOBS_PKG = "com.github.alexthe666.alexsmobs.client.model.";
@@ -153,23 +161,13 @@ public final class ThirdPartyModelWraps {
     }
 
     /**
-     * Reproduce a listed model's whole-model render transform on {@code poseStack}, choosing the branch by
-     * {@code young}. No-op for every unlisted model and for a listed model whose active branch renders at
-     * identity.
+     * The whole-model render transform a listed model applies outside its part tree, or {@code null} for every
+     * unlisted model. Fixed for the model instance's life; apply it each draw with the render state's age.
      */
-    public static void preTransform(EntityModel<?> model, boolean young, PoseStack poseStack) {
+    @Nullable
+    public static Entry wholeModel(EntityModel<?> model) {
         String name = model.getClass().getName();
-        apply(EXOTIC_BIRDS.get(name), young, poseStack);
-        apply(ALEXS_MOBS.get(name), young, poseStack);
-    }
-
-    private static void apply(@Nullable Entry entry, boolean young, PoseStack poseStack) {
-        if (entry == null) {
-            return;
-        }
-        Transform transform = young ? entry.baby() : entry.adult();
-        if (transform != null) {
-            transform.apply(poseStack);
-        }
+        Entry birds = EXOTIC_BIRDS.get(name);
+        return birds != null ? birds : ALEXS_MOBS.get(name);
     }
 }
