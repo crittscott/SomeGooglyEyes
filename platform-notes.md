@@ -20,6 +20,7 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 - 1.20.1: the render pose holds the view rotation `V = Rx(pitch) Ry(yaw + 180)`, and `cameraOrientation` is `Ry(-yaw) Rx(pitch)`. The true inverse of `V` is `cameraOrientation * Ry(180)`; without the 180 degree turn, pitch doubles instead of canceling. [tested in game; the matrices themselves are recalled]
 - The view convention differs by version, so derive what each version's pose holds instead of copying a fix. 1.21.1, 1.21.4, and 1.21.8 pass `cameraOrientation`; 1.21.11 and later have been treated as world-space poses. [recalled]
 - `ItemColor` is asked once per tinted quad, and `item/generated` makes a quad for each edge pixel run, so a tint callback can run dozens of times per item per frame. [recalled]
+- `PoseStack.mulPose` multiplies the pose by its quaternion without modifying the argument, so one cached rotation can be passed on every draw. [recalled]
 
 ### Interaction and items
 
@@ -32,11 +33,12 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 - `dropCustomDeathLoot` and the loot table drop run only inside the `shouldDropLoot() && doMobLoot` gate in `dropAllDeathLoot`. A drop rolled by mod code is not covered by that gate. [tested]
 - `LivingEntity.hurt` returns false on the client before `actuallyHurt`, and the client's trade menu uses `ClientSideMerchant`, not an `AbstractVillager`. [recalled]
 - `ItemStack.isSameItemSameTags` is the 1.20.1 name; later versions need the component equivalent. [tested on 1.20.1]
+- 1.21+: `ItemStack.get` returns the stored component value itself, and copying a stack shares those immutable values, so a component value's identity changes only when the component is set again. [recalled]
 - The name of `DamageSource.isDirect` appears to differ between release lines. [recalled]
 
 ### Data and block entities
 
-- 1.21.x and later: the client ignores a block-entity data packet whose tag is empty (vanilla's handler and NeoForge's `onDataPacket` both check `isEmpty`), so state that clears to "save nothing" must still put something in the update tag or clients keep the old state. 1.20.1 loads any non-null tag. [recalled; head-shearing fix tested in game on 1.21.1/1.21.4]
+- 1.21.x and later: the client ignores a block-entity data packet whose tag is empty (vanilla's handler and NeoForge's `onDataPacket` both check `isEmpty`), so state that clears to "save nothing" must still put something in the update tag or clients keep the old state. 1.20.1 behaves the same: an empty update tag reaches its client as no tag, which the client skips. [recalled; head-shearing fix tested in game on 1.21.1/1.21.4]
 - 1.20.1: `BlockItem` merges a stack's `BlockEntityTag` into the block entity and calls `load`, and heads are not an op-only block entity. A creative player needs no operator rights to supply that NBT, so a `load` that keeps a whole compound stores and rebroadcasts whatever was sent. [recalled]
 - A non-special recipe needs an unlock advancement, or `doLimitedCrafting` blocks it and the recipe book never offers it. The path is `data/<ns>/advancements/recipes/...` on 1.20.1 and uses the `advancement` directory on later versions. [tested on 1.20.1]
 
@@ -45,6 +47,7 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 - 1.20.1: a distant command spawn can return true from `tryAddFreshEntityWithPassengers` while an immediate `getEntity(UUID)` does not return that entity. Treating this lookup as an insertion failure discards accepted distant spawns. [tested in game: fixed-distance cutoff in Minecraft and Animania authoring grids; diagnostic confirmed this branch]
 - Brigadier evaluates `requires` at parse time for each execution, but the client's copy of the tree is only resent on login, reload, and permission change, not on `/gamemode`. Mutable state in `requires` gives stale tab completion. [recalled]
 - `StringArgumentType.word()` stops at `:`, and `FloatArgumentType` accepts a dot only, whatever the locale. [recalled]
+- 1.20.1: `ResourceLocation.isValidNamespace` is private; test a namespace with `tryBuild(namespace, "x") != null`. The visibility of `Identifier.isValidNamespace` on 26.1.1 is unchecked. [tested on 1.20.1: compile error]
 
 ### Text
 
@@ -101,6 +104,7 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 ## Libraries and other mods
 
 - Maven `VersionRange` reads a bare version as a soft recommendation that matches everything, so it is not a drop-in reader for data where a bare version means an exact one. [recalled]
+- Guava `MapMaker().weakKeys()` compares keys by identity, not `equals`, and drops an entry once its key is otherwise unreachable; a value that references its own key keeps the entry alive. [recalled]
 - GeckoLib's 26.1 branch: `GeoEntityRenderer.createRenderState(entity, partialTick)` is `@ApiStatus.Internal` and final, but not marked for removal. [source]
 - Twilight Forest's `AbstractTrophyBlock.use` always consumes the click, so an item's `useOn` never runs on a trophy unless the player sneaks. [recalled]
 - GeckoLib 5.4 runs `PerBoneRender` tasks after `RenderUtil.transformToBone`, which ends at the bone's pivot; GeckoLib 5.2 gave them the bone's frame at the model origin. A pose set in a renderer's `preRenderPass` (such as a model scale) is included. [GeckoLib source; tested on 1.21.11]
