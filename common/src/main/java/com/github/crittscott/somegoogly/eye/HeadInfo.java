@@ -2,22 +2,26 @@ package com.github.crittscott.somegoogly.eye;
 
 import com.github.crittscott.somegoogly.config.EyeConfigModel.HeadConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
+import org.joml.Quaternionf;
 
 import java.util.List;
 
 /**
  * Resolved view of one entity eye configuration after age and weighted placement-variant selection.
  * Storage, selection, serialization, caching, and rendering transforms are owned by their respective
- * domains; this class only exposes the selected heads and eyes to consumers.
+ * domains; this class only exposes the selected heads and eyes to consumers, keeping each eye's aim once built.
  */
 public final class HeadInfo {
 
     private final RuntimeConfig entityConfig;
     private final List<HeadConfig> heads;
+    /** Each selected eye's aim, built on first draw so server-side views never compute it. */
+    private final Quaternionf[][] orientations;
 
     public HeadInfo(RuntimeConfig config, int variantIndex) {
         this.entityConfig = config;
         this.heads = headsOfVariant(config, variantIndex);
+        this.orientations = heads == null ? null : new Quaternionf[heads.size()][];
     }
 
     /** Resolve only the selected variant's groups on one attachment, preserving within-group eye indexes. */
@@ -26,6 +30,7 @@ public final class HeadInfo {
         List<HeadConfig> selected = headsOfVariant(config, variantIndex);
         this.heads = selected == null ? null : selected.stream()
                 .filter(head -> attachToken.equals(head.attachPoint)).toList();
+        this.orientations = heads == null ? null : new Quaternionf[heads.size()][];
     }
 
     /** The selected eye's config appearance. */
@@ -67,6 +72,22 @@ public final class HeadInfo {
     /** The selected variant's head list; its identity invalidates per-mob trackers. */
     public List<HeadConfig> headsRef() {
         return heads;
+    }
+
+    /**
+     * The selected eye's {@link EyePlacement#orientation()}, built once and shared by every draw of this view;
+     * callers must not modify it.
+     */
+    public Quaternionf orientationAt(int headIndex, int eyeIndex) {
+        Quaternionf[] row = orientations[headIndex];
+        if (row == null) {
+            row = orientations[headIndex] = new Quaternionf[getEyeCount(headIndex)];
+        }
+        Quaternionf orientation = row[eyeIndex];
+        if (orientation == null) {
+            orientation = row[eyeIndex] = placementAt(headIndex, eyeIndex).orientation();
+        }
+        return orientation;
     }
 
     /** The selected eye's placement. */

@@ -38,6 +38,13 @@ public final class BehaviorInstance {
     /** Color-change target, or {@code null} until a color-change behavior initializes it. */
     @Nullable
     public float[] tintColor;
+    /**
+     * Seeded cross-eye aim indexed by {@code [head][eye]}: the unit pupil-plane anchor toward the eye's partner,
+     * {@code {0, 0}} when the partner sits on the pupil axis, or {@code null} for an eye with no partner. The
+     * whole array is {@code null} for other behaviors and for a lone eye.
+     */
+    @Nullable
+    public float[][][] crossAim;
     /** Seeded side-eye direction: {@code -1} or {@code +1} after side-eye initialization. */
     public int dirSign;
     /** Seeded blink participation indexed by {@code [head][eye]}, or {@code null} for other behaviors. */

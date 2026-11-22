@@ -32,6 +32,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerPlayer;
@@ -217,12 +218,16 @@ public final class SkullEyeGameTestsLogic {
     /**
      * Optometrist shears take a head's eyes off as one Googly Eye; plain shears leave them. In game: give a skeleton
      * skull purple eyes with a Slimy Eye, right-click it with plain shears (nothing happens), then with Optometrist
-     * shears; the eyes vanish, a purple Googly Eye pops out, the shearing sound plays, and the shears lose one
-     * durability.
+     * shears; the eyes vanish from the head, a purple Googly Eye pops out, the shearing sound plays, and the shears
+     * lose one durability. Right-clicking again with the same shears does nothing.
      */
     public static void optometristHarvestsAPlacedHead(GameTestHelper helper, Player player) {
         SkullBlockEntity skull = placeHead(helper, Blocks.SKELETON_SKULL);
         SkullEyeState.set(skull, purpleEyes());
+        // A watching client's copy of the head, kept current only by the block-update packets the server sends.
+        SkullBlockEntity watched = new SkullBlockEntity(skull.getBlockPos(), skull.getBlockState());
+        watched.loadWithComponents(ClientboundBlockEntityDataPacket.create(skull).getTag(),
+                helper.getLevel().registryAccess());
 
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.SHEARS));
         helper.assertTrue(use(helper, player, skull) == InteractionResult.PASS, "plain shears pass");
@@ -233,10 +238,14 @@ public final class SkullEyeGameTestsLogic {
         helper.assertTrue(use(helper, player, skull) == InteractionResult.CONSUME, "Optometrist shears harvest");
         helper.assertTrue(!skull.saveWithoutMetadata(helper.getLevel().registryAccess()).contains(SkullEyeState.DATA_KEY),
                 "a head without eyes saves no eye data, so its drop stacks with plain heads");
-        CompoundTag update = skull.getUpdateTag(helper.getLevel().registryAccess());
+        CompoundTag update = ClientboundBlockEntityDataPacket.create(skull).getTag();
+        helper.assertTrue(update != null && !update.isEmpty(),
+                "the block update still carries a tag after the eyes come off; clients skip an empty one");
         helper.assertTrue(update.contains(SkullEyeState.DATA_KEY)
                         && !update.getCompound(SkullEyeState.DATA_KEY).getBoolean(EyeState.HAS_EYES),
-                "the update tag tells clients the eyes are gone; clients skip an empty one");
+                "the update tag tells clients the eyes are gone");
+        watched.loadWithComponents(update, helper.getLevel().registryAccess());
+        helper.assertTrue(!SkullEyeState.hasEyes(watched), "the watching client's head loses its eyes too");
         helper.assertTrue(!SkullEyeState.hasEyes(skull), "the harvest clears the head's eyes");
         helper.assertTrue(shears.getDamageValue() == 1, "the harvest spends one shears durability");
         List<ItemEntity> eyes = drops(helper, HEAD, ModContent.GOOGLY_EYE.get());

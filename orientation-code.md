@@ -22,7 +22,7 @@
 | `neoforge/src/main` | NeoForge bootstrap, events, native config, adapters, client integration, metadata |
 | `neoforge/src/gametest` | NeoForge wrappers, persistence proof, dev-mod entry point, discovery metadata |
 
-Server owns gameplay/authorization; client owns rendering/picker UI.
+Server owns gameplay and authorization; client, rendering and picker.
 
 `ModContent` registers two items, the appearance and head-eyes components, creative tab, and recipe serializers through the `@ExpectPlatform` `Registration`. Optometrist and `self_shear` are data-driven enchantment and damage-type definitions.
 
@@ -54,21 +54,21 @@ Applications emit `ENTITY_INTERACT` (`BLOCK_CHANGE` on heads); harvests emit `SH
 
 `ServerServices.onLivingEntityLoaded` owns natural eye initialization; later configuration changes never revisit an initialized entity.
 
-`EyeBehavior` catalogs expressions; `OngoingBehavior` ongoing states. `ServerBehaviorScheduler` handles watched mobs, each player counting as their own watcher, and gameplay triggers; sleepers start nothing. `GooglyTracker` applies enabled ongoing states. The scheduler also sends held-eye hurt/heal reactions per hand (any damage). Presentations cache seeded ambient slots. Placed heads seed by position. `BoatEyeLayout` restricts boat support to vanilla registry types and woods, selects weighted variants with the matching `hull`/`raft` attachment, and filters other attachment groups. Boats receive eyes only through items; tracking sends their complete state without living behavior scheduling. `ClientEyeRuntime` owns mob, boat, head, frame, hand, and GUI simulations, retains mob and hand reports separately, and runs every cache through `sweep`: unshown simulations evict, recently shown ones step. New simulations settle on the rim toward gravity at first capture. Head caches use position and block-entity data identity, frame caches entity identity; contents and level changes invalidate them. Its one nested `DrawContext` carries GUI key, item animation, and head; Mixins push and pop it. The master switch pauses mob scheduling while retaining watchers and expiring effects. Authoring triggers remain available. Behaviors start inactive until sync.
+`EyeBehavior` catalogs expressions; `OngoingBehavior` ongoing states. `ServerBehaviorScheduler` handles watched mobs, each player counting as their own watcher, and gameplay triggers; sleepers start nothing. `GooglyTracker` applies enabled ongoing states. The scheduler also sends held-eye hurt/heal reactions per hand (any damage). Presentations cache seeded ambient slots. Placed heads seed by position. `BoatEyeLayout` restricts boat support to vanilla registry types and woods, selects weighted variants with the matching `hull`/`raft` attachment, and filters other attachment groups. Boats receive eyes only through items; tracking sends their complete state without living behavior scheduling. `ClientEyeRuntime` owns mob, boat, head, frame, hand, and GUI simulations, retains mob and hand reports separately, and runs every cache through `sweep`: unshown simulations evict, recently shown ones step. New simulations settle on the rim toward gravity at first capture. Head caches use position and block-entity data identity, frame caches entity identity, resting head items weak component keys; contents and level changes invalidate them. Its one nested `DrawContext` carries GUI key, item animation, and head; Mixins push and pop it. The master switch pauses mob scheduling while retaining watchers and expiring effects. Authoring triggers remain available. Behaviors start inactive until sync.
 
 ## Rendering and attachment
 
-`ClientRenderLayers` installs eye layers per renderer rebuild, before slime's outer layer; GeckoLib uses `CompileRenderLayers`. Both use `EyeRenderData` for previews. `LayerGooglyEyes` insets sheared sheep `body` eyes by wool depth.  `GooglyEyeRenderer` draws static and simulated eyes for every path through `renderHead`; it holds the one `ModelGooglyEye`. `EyePlacement.orientation` orients rendering and pupils.
+`ClientRenderLayers` installs eye layers per renderer rebuild, before slime's outer layer; GeckoLib uses `CompileRenderLayers`. Both use `EyeRenderData` for previews. `LayerGooglyEyes` insets sheared sheep `body` eyes by wool depth.  `GooglyEyeRenderer` draws every path through `renderHead` with the one `ModelGooglyEye`. `EyePlacement.orientation` orients rendering and pupils; `HeadInfo.orientationAt` caches it per eye.
 
-Resolvers cache by model identity, clear on renderer/runtime reset, and replay `ThirdPartyModelWraps` whole-model and group (baby) transforms; `Resolvers` selects the model family, with `ChildMapResolver` as its non-null fallback.
+Resolvers cache by model identity, clear on renderer/runtime reset, and replay `ThirdPartyModelWraps` transforms; `Resolvers` selects the model family, with `ChildMapResolver` as its non-null fallback.
 
 Common client Mixins bracket a placed head's draw (`SkullBlockRendererMixin`) and a head item's (`HeadItemRendererMixin`); `SkullEyeRenderer` draws after `renderSkull`'s model draw on the widened `SkullModel`/`PiglinHeadModel` head part or a Heads model's reflected `head`, mapping its mob part's largest cube onto the Heads cube (`Placement`). Worn heads get no eyes.
 
 The common `somegoogly.accesswidener` serves common compilation and every loader; Forge and NeoForge convert it to an access transformer at remap.
 
-GeckoLib is optional: common compiles against compile-only `geckolib-common`, touching `client.compat.gecko` only once `GeckoCompat` finds it; a failed attach can't block load.
+GeckoLib is optional: `client.compat.gecko` is touched only once `GeckoCompat` finds it; a failed attach can't block load.
 
-`PresentationEyes` supplies frame, GUI, hand, and boat layouts. `BoatRendererMixin` draws through `GooglyEyeRenderer.renderBoat` before the hull pose is popped, with its rocking/bubble transforms. `EyeInfo.capturePose` reads gravity and motion axes from a world-aligned pose, once per tick; the view rotation lives in the model-view matrix. `PresentationEyes` samples boat/holder motion and re-primes after gaps. Hands key by holder/hand, shared by first and third person; GUI entries by view key on a UI clock that runs while paused. GUI icons keep GUI scale; loose framed eyes use 3x diameter. No packets/saved fields.
+`PresentationEyes` supplies frame, GUI, hand, and boat layouts. `BoatRendererMixin` draws through `GooglyEyeRenderer.renderBoat` before the hull pose is popped, inside its rocking transforms. `EyeInfo.capturePose` reads gravity and motion axes from a world-aligned pose, once per tick; the view rotation lives in the model-view matrix. `PresentationEyes` samples boat/holder motion and re-primes after gaps. Hands key by holder/hand, shared by first and third person; GUI entries by view key on a UI clock that runs while paused. GUI icons keep GUI scale; loose framed eyes use 3x diameter. No packets/saved fields.
 
 ## Networking
 
@@ -90,13 +90,13 @@ Client picker drafts/previews are separate from server freezing/spawning/movemen
 
 Fabric Mixins (`somegoogly-fabric.mixins.json`, `mixin.fabric`) cover data migration, hurt and heal, trades, lightning conversion, shears-kill and head drops, tracking start after the spawn packet, and client level replacement; common Mixins (`somegoogly-common.mixins.json`, `mixin.common`) report milking, sheep shearing, and entity events and hold head eyes. The optional Twilight config is not required. All target the pinned Minecraft version; Fabric and common write fixed refmaps.
 
-NeoForge and Forge keep client bootstrap apart from the dedicated server's.
+Forge and NeoForge keep client bootstrap off the dedicated server.
 
 ## Automated verification
 
-GameTest scenarios: Fabric 201, Forge 202, NeoForge 207, including thirteen shared boat scenarios per loader. Item coverage: twelve frame, seven GUI, seven hand scenarios. Manual checklists: `docs/*-testing.md`. Visuals, multiplayer, protection ordering, commands, and real saves need manual checks.
+GameTest scenarios: Fabric 201, Forge 202, NeoForge 207, with thirteen shared boat scenarios each. Item coverage: twelve frame, seven GUI, seven hand scenarios. Manual checklists: `docs/*-testing.md`. Visuals, multiplayer, protection ordering, commands, and real saves need manual checks.
 
 ## Operational boundaries
 
 - Integration failures log once.
-- `build-env/` is not a build input but a snapshot (see `orientation-build.md`); mirror every edit to a file it covers.
+- `build-env/` is a snapshot, not a build input (see `orientation-build.md`); mirror edits to files it covers.

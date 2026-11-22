@@ -10,7 +10,6 @@ import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
-import com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -246,20 +245,25 @@ public final class SkullEyeRenderer {
      * {@code model} was just drawn in and the head's {@code packedLight}.
      */
     public static void render(PoseStack pose, MultiBufferSource bufferSource, int packedLight, SkullModelBase model) {
-        render(pose, bufferSource, packedLight, headPart(model), false);
+        render(pose, bufferSource, packedLight, model, null);
     }
 
     /** Draw a trophy's eyes on its {@code head} part, in Twilight Forest's model space. */
     public static void renderTrophy(PoseStack pose, MultiBufferSource bufferSource, int packedLight, ModelPart head) {
-        render(pose, bufferSource, packedLight, head, true);
+        render(pose, bufferSource, packedLight, null, head);
     }
 
+    /**
+     * Draw on a trophy's {@code trophyHead}, or else on {@code model}'s head part, which is looked up only once
+     * there are eyes to draw because a Heads-mod model's lookup is a reflective read.
+     */
     private static void render(PoseStack pose, MultiBufferSource bufferSource, int packedLight,
-                               @Nullable ModelPart head, boolean trophy) {
+                               @Nullable SkullModelBase model, @Nullable ModelPart trophyHead) {
         ClientEyeRuntime.DrawContext draw = ClientEyeRuntime.currentDraw();
-        if (draw.block() == null && draw.item() == null || head == null) {
+        if (draw.block() == null && draw.item() == null) {
             return;
         }
+        boolean trophy = trophyHead != null;
         BlockEntity skull = draw.block();
         ItemStack stack = draw.item();
         if (skull != null) {
@@ -269,7 +273,8 @@ public final class SkullEyeRenderer {
                 return;
             }
             PresentationEyes eyes = ClientEyeRuntime.skullEyes(skull, entity);
-            if (eyes != null) {
+            ModelPart head = eyes == null ? null : trophy ? trophyHead : headPart(model);
+            if (head != null) {
                 eyes.markRendered(ClientEyeRuntime.clientTicks());
                 renderEyes(pose, bufferSource, packedLight, head, usesFit(block, entity, trophy), entity,
                         eyes.helper, eyes.parts, eyes.eyes, eyes.snapshot.properties(), draw.partialTick());
@@ -281,20 +286,18 @@ public final class SkullEyeRenderer {
             }
             PresentationEyes.Draw itemDraw = ClientEyeRuntime.itemDraw(stack);
             PresentationEyes framed = itemDraw.eyes();
+            ClientEyeRuntime.RestingHead resting = framed == null ? ClientEyeRuntime.restingHead(stack, entity) : null;
+            ModelPart head = framed == null && resting == null ? null : trophy ? trophyHead : headPart(model);
+            if (head == null) {
+                return;
+            }
             boolean fitted = usesFit(item.getBlock(), entity, trophy);
             if (framed != null) {
                 renderEyes(pose, bufferSource, packedLight, head, fitted, entity, framed.helper, framed.parts,
                         framed.eyes, framed.properties, itemDraw.partialTick());
-                return;
-            }
-            Snapshot snapshot = SkullEyeState.itemSnapshot(stack);
-            if (snapshot == null) {
-                return;
-            }
-            HeadInfo helper = ClientEyeConfigs.resolveHead(entity, snapshot.variantRoll());
-            if (helper.hasConfig()) {
-                renderEyes(pose, bufferSource, packedLight, head, fitted, entity, helper,
-                        SkullEyeState.headParts(entity, helper), null, snapshot.properties(), itemDraw.partialTick());
+            } else {
+                renderEyes(pose, bufferSource, packedLight, head, fitted, entity, resting.helper(), resting.parts(),
+                        null, resting.snapshot().properties(), itemDraw.partialTick());
             }
         }
     }

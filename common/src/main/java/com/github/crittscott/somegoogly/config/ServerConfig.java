@@ -327,7 +327,8 @@ public class ServerConfig {
      * {@link #SPAWN_EXCLUDED_MODS}, the client's {@code disabledMods}, and the {@code /sg spawnall} filter.
      */
     public static boolean validateNamespace(String value) {
-        // A namespace is valid exactly when it builds a location with any valid path.
+        // ResourceLocation.isValidNamespace is not confirmed public in this version; a namespace is valid exactly
+        // when it builds a location with any valid path.
         return !value.isEmpty() && ResourceLocation.tryBuild(value, "x") != null;
     }
 
