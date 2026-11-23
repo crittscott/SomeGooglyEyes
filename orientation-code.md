@@ -82,7 +82,7 @@ Application emits `ENTITY_INTERACT` (`BLOCK_CHANGE` on a head), harvest `SHEAR`,
 
 ## Rendering and attachment
 
-`ClientRenderLayers` installs eye layers once per renderer rebuild, before slime's outer layer; GeckoLib uses `CompileRenderLayers`. Both draw picker previews through `EyeRenderData`. `LayerGooglyEyes` insets sheared adult sheep `body` eyes by wool depth. `ClientEyeConfigs` caches resolved views. `GooglyEyeRenderer` draws static and simulated eyes; `ClientLifecycle` advances the shared presentation runtime.
+`ClientRenderLayers` installs eyes before slime's outer layer; GeckoLib uses `CompileRenderLayers`. Both layers use `EyeRenderData`. `LayerGooglyEyes` insets sheared adult sheep body eyes by wool depth. `ClientEyeConfigs` caches views; `GooglyEyeRenderer` draws eyes; `ClientLifecycle` advances presentation. `SpellbooksCompat` installs nested summon renderers; both render paths and the picker use vanilla part coordinates.
 
 Resolvers cache by model identity, clear on renderer/runtime reset, and replay `ThirdPartyModelWraps`, which owns whole-model and named-root-group transforms; `Resolvers` binds each model once to its family resolver (`ChildMapResolver` as non-null fallback) and whole-model wrap.
 

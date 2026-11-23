@@ -79,3 +79,9 @@ Each mob and passenger is inserted individually, with the insertion call's resul
 | `/sg admin tint clear` | Clear both color overrides |
 | `/sg admin glow <on\|off\|config>` | Force glow, or revert to the mob's config |
 | `/sg admin behavior <id\|random>` | Play an expression now (e.g. `blink`, `swirl`, `color_change`) |
+
+## Spellbooks placement checks
+
+With Iron's Spells 'n Spellbooks 1.20.1-3.16.4 in a creative test world, turn on the picker and inspect `irons_spellbooks:ice_spider`: four eyes should cover the front black patches and four should cover the top patches. Check Scapegoat and Spectral Steed from both sides. Debug Wizard, Cryomancer, Citadel Keeper, Fire Boss, Frozen Humanoid, and Priest should have no eye arrangement.
+
+Use Raise Dead to summon zombies and skeletons with the picker on. Their eyes should remain on their faces throughout the rising animation and after it ends. Choose each summon, adjust a head eye, and release it; the preview should use the same head coordinates before and after rising. Reload resources and repeat to check that nested renderer layers are reinstalled without duplicate eyes. This requires a client; dedicated-server GameTests cannot observe either rendering path.

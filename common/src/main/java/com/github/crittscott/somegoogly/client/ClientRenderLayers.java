@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.client;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.client.compat.GeckoCompat;
+import com.github.crittscott.somegoogly.client.compat.SpellbooksCompat;
 import com.github.crittscott.somegoogly.client.render.LayerGooglyEyes;
 import com.github.crittscott.somegoogly.client.render.SkullEyeRenderer;
 import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
@@ -17,6 +18,7 @@ import net.minecraft.client.renderer.entity.layers.SlimeOuterLayer;
 /**
  * Installs the vanilla-model eye layer on living renderers after renderer rebuilds. GeckoLib renderers are
  * not living renderers; they receive their layer from GeckoLib's own compile-render-layers event.
+ * Spellbooks' hybrid summons also expose a nested vanilla renderer that needs this layer.
  */
 public final class ClientRenderLayers {
 
@@ -60,14 +62,19 @@ public final class ClientRenderLayers {
     }
 
     /**
-     * Install the vanilla-model eye layer on one renderer; any renderer that is not a living renderer is
-     * ignored. Duplicate-safe through the weak {@code INSTALLED} set. Client-hidden entities still get the
+     * Install the vanilla-model eye layer on a living renderer or a supported nested renderer.
+     * Duplicate-safe through the weak {@code INSTALLED} set. Client-hidden entities still get the
      * layer; the per-frame render gate hides them, so a config change applies without a renderer rebuild.
      */
     @SuppressWarnings("rawtypes")
     public static void install(EntityRenderer<?> renderer) {
         if (renderer instanceof LivingEntityRenderer livingRenderer) {
             addLiving(livingRenderer);
+        } else {
+            LivingEntityRenderer<?, ?> nested = SpellbooksCompat.vanillaRenderer(renderer);
+            if (nested != null) {
+                addLiving(nested);
+            }
         }
     }
 }

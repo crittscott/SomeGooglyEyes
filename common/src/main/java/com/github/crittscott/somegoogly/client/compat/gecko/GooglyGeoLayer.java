@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.client.compat.gecko;
 
 import com.github.crittscott.somegoogly.client.GooglyTracker;
+import com.github.crittscott.somegoogly.client.compat.SpellbooksCompat;
 import com.github.crittscott.somegoogly.client.picker.PickerState;
 import com.github.crittscott.somegoogly.client.render.EyeRenderData;
 import com.github.crittscott.somegoogly.client.render.GooglyEyeRenderer;
@@ -46,6 +47,8 @@ public class GooglyGeoLayer<T extends Entity & GeoAnimatable> extends GeoRenderL
      */
     private Frame frame;
 
+    private final boolean vanillaPartSpace;
+
     /** Either a picker preview ({@code preview} true) or normal synced-config rendering. */
     private static final class Frame {
         // Normal rendering: config + per-mob state, with each head's attach token resolved to a bone
@@ -65,6 +68,7 @@ public class GooglyGeoLayer<T extends Entity & GeoAnimatable> extends GeoRenderL
 
     public GooglyGeoLayer(GeoRenderer<T> renderer) {
         super(renderer);
+        this.vanillaPartSpace = SpellbooksCompat.isHybridRenderer(renderer.getClass().getName());
     }
 
     @Override
@@ -119,9 +123,16 @@ public class GooglyGeoLayer<T extends Entity & GeoAnimatable> extends GeoRenderL
         if (frame == null) {
             return;
         }
+        if (vanillaPartSpace) {
+            poseStack.pushPose();
+            SpellbooksCompat.applyPartSpace(poseStack, bone.getPivotX(), bone.getPivotY(), bone.getPivotZ());
+        }
         boolean drew = frame.preview
                 ? renderPreviewAt(poseStack, bone, frame, bufferSource, packedLight, packedOverlay)
                 : renderEyesAt(poseStack, bone, frame, bufferSource, packedLight, packedOverlay, partialTick);
+        if (vanillaPartSpace) {
+            poseStack.popPose();
+        }
         if (drew) {
             // renderForBone contract: we rendered into our own RenderTypes, so restore the model's buffer.
             bufferSource.getBuffer(renderType);

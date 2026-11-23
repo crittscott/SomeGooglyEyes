@@ -118,6 +118,9 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 
 ## Libraries and other mods
 
+- GeckoLib 4 on 1.20.1 invokes per-bone render layers after translating away from the pivot. Its baked cube coordinates retain model-space Y/Z and negate X; eye placements in that callback therefore use model coordinates unless an integration explicitly normalizes the bone frame. [source: supplied GeckoLib `GeoEntityRenderer.renderRecursively`, `BakedModelFactory.Builtin.constructCube`, and `RenderUtils`]
+- Iron's Spells 'n Spellbooks 1.20.1-3.16.4: `SummonedZombieMultiRenderer` and `SummonedSkeletonMultiRenderer` use GeckoLib while `isAnimatingRise()` is true, then their package-private `vanillaRenderer` fields. Both GeckoLib models have a head pivot at `(0, 24, 0)` and the vanilla-style head geometry. [source: owner-authorized inspection of the local Spellbooks jar and its geometry JSON]
+
 - Maven `VersionRange` reads a bare version as a soft recommendation that matches everything, so it is not a drop-in reader for data where a bare version means an exact one. [recalled]
 - Twilight Forest's `AbstractTrophyBlock.use` always consumes the click, so an item's `useOn` never runs on a trophy unless the player sneaks. [recalled]
 - GeckoLib 4: the entity compile-render-layers event fires for every `GeoEntityRenderer`, non-living entities included. `BakedGeoModel` is a record and `GeoBone` defines `equals`, so two baked models of the same structure compare equal; key caches by identity. [recalled]

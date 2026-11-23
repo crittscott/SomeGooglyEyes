@@ -1,8 +1,8 @@
 <!-- FIXED HEADER: not content. Do not edit, trim, or count toward the size limit. -->
-> **Orientation snapshot, not a specification.** Describes the code as it currently is; the code wins on any disagreement. See CLAUDE.md § Orientation files.
+> **Orientation snapshot, not a specification.** Describes the code as it currently is; the code wins on any disagreement. See CLAUDE.md Â§ Orientation files.
 <!-- END FIXED HEADER -->
 
-# Some Googly Eyes — player-facing behavior
+# Some Googly Eyes â€” player-facing behavior
 
 `orientation-code.md` covers code structure.
 
@@ -104,7 +104,7 @@ Forge applies edits as soon as they reload the file; Fabric applies them at worl
 | Key | Default | Effect |
 | --- | ---: | --- |
 | `googlyEyesEnabled` | `true` | Master switch for the whole mod |
-| `globalPercent` | `5` | Default spawn chance, 0–100 |
+| `globalPercent` | `5` | Default spawn chance, 0â€“100 |
 | `harvestOnKillPercent` | `25` | Shears-kill drop chance |
 | `entityOverrides` | empty | Entity-specific spawn chances |
 
@@ -170,13 +170,15 @@ Eye definitions belong at:
 data/<entity namespace>/eyes/<entity path>.json
 ```
 
-They specify adult and baby arrangements, attachment points, size, position, direction, colors, glow, and weighted variants. Changes take effect on world start or `/reload` and are synchronized to clients.
+Definitions set age-specific placements, appearance, and weighted variants. World start and `/reload` sync them to clients.
 
-Definitions are included for Minecraft, Ad Astra, Adorable Hamster Pets, AdventureZ, Alex's Mobs, Ars Elemental, Ars Nouveau, Artifacts, Autumnity, Critters and Companions, EvilCraft, Exotic Birds, Farming for Blockheads, Forbidden Arcanus, Friends & Foes, Hamsters Plus Lite, Ice and Fire Community Edition, Illager Invasion, Immersive Engineering, Let's Do Alpine Whispers, Let's Do Brewery, Let's Do Furniture, Let's Do Meadow, Let's Do Vinery, Living Things, MmmMmmMmmMmm, Mowzie's Mobs, Naturalist, Occultism, Oh The Biomes We've Gone, Productive Bees, Regions Unexplored, Rotten Creatures, Shiny, Simply Cats, Supplementaries, Sushi Go Crafting, The Aether, The Bumblezone, Tiny Skeletons, Twilight Forest, Variants & Ventures, and WilderNature. These mods are optional; their definitions may need adjusting when their models change.
+Definitions are included for Minecraft, Ad Astra, Adorable Hamster Pets, AdventureZ, Alex's Mobs, Ars Elemental, Ars Nouveau, Artifacts, Autumnity, Critters and Companions, EvilCraft, Exotic Birds, Farming for Blockheads, Forbidden Arcanus, Friends & Foes, Hamsters Plus Lite, Ice and Fire Community Edition, Illager Invasion, Immersive Engineering, Iron's Spells 'n Spellbooks, Let's Do Alpine Whispers/Brewery/Furniture/Meadow/Vinery, Living Things, MmmMmmMmmMmm, Mowzie's Mobs, Naturalist, Occultism, Oh The Biomes We've Gone, Productive Bees, Regions Unexplored, Rotten Creatures, Shiny, Simply Cats, Supplementaries, Sushi Go Crafting, The Aether, The Bumblezone, Tiny Skeletons, Twilight Forest, Variants & Ventures, and WilderNature. Optional mods' model changes may require placement adjustments.
 
 The 991 eye drafts from `othersource/myassets` need in-game adjustment; see `docs/dumped-eyes.md` and its CSV.
 
-All 77 bundled Minecraft definitions select 1.20.1, including the player and armor stand; the witch's `[1.20.1,)` range matches every supported version. Endermite, pufferfish, silverfish, tadpole, and tropical fish have none.
+All 77 Minecraft definitions cover 1.20.1, including player and armor stand; witch uses `[1.20.1,)`. Endermite, pufferfish, silverfish, tadpole, and tropical fish have none.
+
+Undergarden 0.8.14: Nargoyle disabled; 17 enabled mobs. Dweller/Rotling/Gwib/Gwibling use side eyes; Scintling eyes follow stalk tips; Minion/Forgotten Guardian have one eye.
 
 Resource packs replace eye textures/item models. There is no JEI plugin.
 
