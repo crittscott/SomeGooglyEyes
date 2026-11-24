@@ -14,10 +14,10 @@
                 {
                   "depth": 1.0,
                   "inclination": 90.0,
-                  "azimuth": 9.0,
+                  "azimuth": 0.0,
                   "crossTarget": -1,
                   "position": [
-                    0.15,
+                    0.125,
                     0.0,
                     0.0
                   ],
@@ -41,7 +41,7 @@
                   "azimuth": 180.0,
                   "crossTarget": -1,
                   "position": [
-                    -0.15,
+                    -0.125,
                     0.0,
                     0.0
                   ],
