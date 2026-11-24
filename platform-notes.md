@@ -105,5 +105,7 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 
 ## Libraries and other mods
 
+- Undergarden 0.9.7's ListModel classes expose individual positional roots: `#0` selects the head for Stoneborn, Sploogie, Rotwalker, and Rotbeast; the lower jaw for Muncher; the shell for Minion; and the body for Gwibling. [source: owner-authorized inspection of the project jar's field order and constructor bindings; tested: owner confirmed Stoneborn exposes `0` in the reduced 1.21.1 mod set]
+
 - Maven `VersionRange` reads a bare version as a soft recommendation that matches everything, so it is not a drop-in reader for data where a bare version means an exact one. [recalled]
 - Twilight Forest's `AbstractTrophyBlock.use` always consumes the click, so an item's `useOn` never runs on a trophy unless the player sneaks. [recalled]

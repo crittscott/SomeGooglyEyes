@@ -79,3 +79,9 @@ To keep junk entities out of the grid, list namespaces in `spawnExcludedMods` or
 | `/sg admin tint clear` | Clear both color overrides |
 | `/sg admin glow <on\|off\|config>` | Force glow, or revert to the mob's config |
 | `/sg admin behavior <id\|random>` | Play an expression now (e.g. `blink`, `swirl`, `color_change`) |
+
+## Undergarden placement checks
+
+With The Undergarden 0.9.7 in a creative test world, enable the picker and inspect the mob definitions. Check Dweller, Greater Dweller, Rotling, Gwib, and Gwibling from both sides; their eyes face outward. Scintling's eyes should sit on the stalk tops and follow their movement. Nargoyle should have no eye arrangement. Compare both Denizen variants and check Mysterious Pot while it moves.
+
+Stoneborn, Sploogie, Rotwalker, Rotbeast, Muncher, Minion, and Gwibling use `#0` in the bundled 0.9.7 models. This is the individual head, lower jaw, shell, or body part, respectively. Their eyes should follow that part; Sploogie uses X ±0.38, Y 0, its existing Z, and eye scale 1.

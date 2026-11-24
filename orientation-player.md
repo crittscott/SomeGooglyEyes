@@ -180,6 +180,8 @@ The 79 bundled Minecraft definitions all select 1.21.1 and are enabled, includin
 
 Resource packs replace eye textures/item models.
 
+The Undergarden 0.9.7 has 22 mob definitions; Nargoyle is disabled.
+
 ## Creative eye picker
 
 Picker and `/sg` require creative/operator level 2; rebind keys under **Options > Controls > Some Googly Eyes**.
