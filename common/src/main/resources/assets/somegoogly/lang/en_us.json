@@ -34,7 +34,7 @@
   "somegoogly.command.picker.choose_success": "Chose %s — %s parts.",
   "somegoogly.command.picker.choose_success_many_eyes": "Chose %1$s (%2$s eyes) — %3$s parts.",
   "somegoogly.command.picker.choose_success_one_eye": "Chose %1$s (1 eye) — %3$s parts.",
-  "somegoogly.command.picker.choose_unsupported_model": "Unsupported model — no reachable vanilla parts or GeckoLib bones.",
+  "somegoogly.command.picker.choose_unsupported_model": "Unsupported model for %s — no reachable attachment parts.",
   "somegoogly.command.picker.deleted_eye": "Deleted eye #%s (%s left).",
   "somegoogly.command.picker.deleted_variant": "Deleted variant #%s (%s left).",
   "somegoogly.command.picker.depth_set": "depth = %s",

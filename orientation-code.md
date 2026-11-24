@@ -102,6 +102,8 @@ Client sends use `ClientNetworking`; clientbound handlers reach `ClientNetworkHa
 
 ## Picker and commands
 
+`PickerState.lockOn` names the entity type in unsupported-model feedback so custom-rendered replacements can be distinguished from their original mobs.
+
 Client owns picker drafts/previews; server owns freezing/spawning/movement/export. Resolvers normalize and suffix-match `EyeConfigModel` attachment syntax, and `ModelPartVocabulary` canonicalizes editing and bulk export tokens. `PickerState.DraftSession` keeps drafts by type and age, seeded once; both exports `ConfigFile.overlay` authored ages onto untouched ones (disabled buckets included), canonicalizing only copied base tokens. `EyeConfigLimits.Issue` gives translatable feedback and log diagnostics.
 
 `PickerFreezeService` restores prior `NoAI` on release, load, logout, or stop and permits one editor. `PickerGate` also throttles. `LookTarget` caps extended entity rays at blocking surfaces; inspection reads vanilla's crosshair target. `PickerSpawnService` finalizes through `MobSpawning`, checks each mob/passenger insertion result and rolls back partial additions on refusal, and applies planned terrain only after acceptance. Its `refusal` also filters suggestions. World export writes a datapack; bulk export writes under the game directory and logs disk failures; both use `ConfigFile.exportVersion`.

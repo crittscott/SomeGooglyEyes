@@ -414,12 +414,11 @@ public final class PickerState {
         if (!(looked instanceof LivingEntity living)) {
             return Component.translatable("somegoogly.command.picker.choose_look_at_mob");
         }
+        ResourceLocation newType = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType());
         ModelPartVocabulary vocabulary = ModelPartVocabulary.forEntity(living);
         if (vocabulary == null) {
-            return Component.translatable("somegoogly.command.picker.choose_unsupported_model");
+            return Component.translatable("somegoogly.command.picker.choose_unsupported_model", newType);
         }
-
-        ResourceLocation newType = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType());
 
         unfreeze(); // release a previously frozen mob, if any
         target = new WeakReference<>(living);

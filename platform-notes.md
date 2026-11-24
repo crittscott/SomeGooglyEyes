@@ -118,6 +118,12 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 
 ## Libraries and other mods
 
+- Ice and Fire 2.1.13 beta 5 on 1.20.1: a troll exposed to sufficiently bright sky during the day replaces itself with `iceandfire:stone_statue`. `RenderStoneStatue` extends `EntityRenderer`, selects the trapped mob's model inside `render`, and draws it directly rather than through a living renderer's layers. A statue therefore does not expose the live troll's model to the picker or eye-layer installation. [source: supplied original Ice and Fire `EntityTroll.aiStep` and `RenderStoneStatue`]
+
+- Ice and Fire 2.1.13 beta 5 on 1.20.1: `EntityMyrmexBase.isBaby()` is true for growth stages 0 and 1. `RenderMyrmexBase` uses `ModelMyrmexPupa` for both stages and its caste model for adults; its scale and passenger rotation wrap the renderer and therefore already reach render layers. [source: supplied original Ice and Fire `EntityMyrmexBase` and `RenderMyrmexBase`]
+
+- Citadel's 1.20 source exposes public `AdvancedEntityModel.getAllParts()`, `AdvancedModelBox.getParent()`, `translateAndRotate(PoseStack)`, and `boxName`; unnamed box constructors set `boxName` to null. Original Ice and Fire's `ModelTroll` extends `ModelDragonBase`, which extends `AdvancedEntityModel`, and enumerates its boxes through `getAllParts()`. [source: supplied Ice and Fire models and published [Citadel model sources](https://github.com/AlexModGuy/Citadel/tree/1.20/src/main/java/com/github/alexthe666/citadel/client/model)]
+
 - GeckoLib 4 on 1.20.1 invokes per-bone render layers after translating away from the pivot. Its baked cube coordinates retain model-space Y/Z and negate X; eye placements in that callback therefore use model coordinates unless an integration explicitly normalizes the bone frame. [source: supplied GeckoLib `GeoEntityRenderer.renderRecursively`, `BakedModelFactory.Builtin.constructCube`, and `RenderUtils`]
 - Iron's Spells 'n Spellbooks 1.20.1-3.16.4: `SummonedZombieMultiRenderer` and `SummonedSkeletonMultiRenderer` use GeckoLib while `isAnimatingRise()` is true, then their package-private `vanillaRenderer` fields. Both GeckoLib models have a head pivot at `(0, 24, 0)` and the vanilla-style head geometry. [source: owner-authorized inspection of the local Spellbooks jar and its geometry JSON]
 
