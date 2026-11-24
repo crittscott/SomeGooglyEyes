@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.client.picker;
 
 import com.github.crittscott.somegoogly.client.compat.ClientIntegrationFailures;
 import com.github.crittscott.somegoogly.client.compat.GeckoCompat;
+import com.github.crittscott.somegoogly.client.compat.SpellbooksCompat;
 import com.github.crittscott.somegoogly.client.render.resolver.EyeAttachmentResolver;
 import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
 import net.minecraft.client.Minecraft;
@@ -40,6 +41,10 @@ public final class ModelPartVocabulary {
     @Nullable
     public static ModelPartVocabulary forEntity(LivingEntity living) {
         EntityRenderer<?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(living);
+        LivingEntityRenderer<?, ?> nested = SpellbooksCompat.vanillaRenderer(renderer);
+        if (nested != null) {
+            renderer = nested;
+        }
         if (renderer instanceof LivingEntityRenderer<?, ?> livingRenderer) {
             EntityModel<?> model = livingRenderer.getModel();
             EyeAttachmentResolver resolver = Resolvers.forModel(model);

@@ -58,15 +58,17 @@ Applications emit `ENTITY_INTERACT` (`BLOCK_CHANGE` on heads); harvests emit `SH
 
 ## Rendering and attachment
 
-`ClientRenderLayers` installs eye layers per renderer rebuild, before slime's outer layer; GeckoLib uses `CompileRenderLayers`. Both use `EyeRenderData` for previews. `LayerGooglyEyes` insets sheared sheep `body` eyes by wool depth. `GooglyEyeRenderer` draws every path through `renderHead` with the one `ModelGooglyEye`. `EyePlacement.orientation` orients rendering and pupils; `HeadInfo.orientationAt` caches it per eye.
+`ClientRenderLayers` installs layers per renderer rebuild, before slime's outer layer; GeckoLib uses `CompileRenderLayers`. Both use `EyeRenderData`. `LayerGooglyEyes` insets sheared sheep body eyes. `GooglyEyeRenderer.renderHead` draws through `ModelGooglyEye`; `HeadInfo.orientationAt` caches `EyePlacement.orientation` per eye.
 
-Resolvers cache by model identity, clear on renderer/runtime reset, and replay `ThirdPartyModelWraps` transforms; `Resolvers` binds each model once to its family resolver (fallback `ChildMapResolver`) and whole-model wrap.
+`SpellbooksCompat` supplies summoned skeleton/zombie private vanilla renderers for layers and picker parts, and converts their GeckoLib bone space to vanilla part space while rising.
+
+`Resolvers` caches model-identity bindings and attachments, clears on renderer/runtime reset, and replays `ThirdPartyModelWraps`; fallback is `ChildMapResolver`.
 
 Common client Mixins bracket a placed head's draw (`SkullBlockRendererMixin`) and a head item's (`HeadItemRendererMixin`); `SkullEyeRenderer` draws after `renderSkull`'s model draw on the widened `SkullModel`/`PiglinHeadModel` head part or a Heads model's reflected `head`, mapping its mob part's largest cube onto the Heads cube (`Placement`). Worn heads get no eyes.
 
 The common `somegoogly.accesswidener` serves common compilation and every loader; Forge and NeoForge convert it to an access transformer at remap.
 
-GeckoLib is optional: `client.compat.gecko` is touched only once `GeckoCompat` finds it; a failed attach can't block load.
+`GeckoCompat` gates optional `client.compat.gecko` loading; failed attachments can't block load.
 
 `PresentationEyes` supplies frame, GUI, hand, and boat layouts. `BoatRendererMixin` draws through `GooglyEyeRenderer.renderBoat` before the hull pose is popped, inside its rocking transforms. `EyeInfo.capturePose` reads gravity and motion axes from a world-aligned pose once per tick; view rotation lives in the model-view matrix. `PresentationEyes` samples boat/holder motion and re-primes after gaps. Hands key by holder/hand; GUI entries by view key on a UI clock that runs while paused. GUI icons keep GUI scale; loose framed eyes use 3x diameter. No packets/saved fields.
 
@@ -98,5 +100,4 @@ GameTest scenarios: Fabric 201, Forge 203, NeoForge 208, with thirteen shared bo
 
 ## Operational boundaries
 
-- Integration failures log once.
-- `build-env/` is a snapshot, not a build input (see `orientation-build.md`); mirror edits to files it covers.
+Integration failures log once. Mirror covered build-file edits in the `build-env/` snapshot; see `orientation-build.md`.

@@ -105,6 +105,10 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 
 ## Libraries and other mods
 
+- Iron's Spells 'n Spellbooks 1.21.1-3.16.4: `SummonedSkeletonMultiRenderer` and `SummonedZombieMultiRenderer` extend the GeckoLib-based `HumanoidRenderer`, use it while `isAnimatingRise()` is true, then delegate to their package-private `vanillaRenderer` fields (`SkeletonRenderer` and `ZombieRenderer`). Those nested renderers are constructed inside the wrappers, so installing layers or enumerating parts only through the registered wrapper misses the normal rendering path. [source: owner-authorized bytecode inspection of the local Spellbooks jar; not tested in game]
+
+- Iron's Spells 'n Spellbooks 1.21.1-3.16.4: the summoned skeleton uses `skeleton_mob.geo.json` and the summoned zombie uses `abstract_casting_mob.geo.json`. Both models' `head` bones have pivot `(0, 24, 0)` and the same vanilla-style head cubes as the 1.20.1 integration expects. [source: owner-authorized inspection of the local Spellbooks jar's model classes and geometry JSON; not tested in game]
+
 - Undergarden 0.9.7's ListModel classes expose individual positional roots: `#0` selects the head for Stoneborn, Sploogie, Rotwalker, and Rotbeast; the lower jaw for Muncher; the shell for Minion; and the body for Gwibling. [source: owner-authorized inspection of the project jar's field order and constructor bindings; tested: owner confirmed Stoneborn exposes `0` in the reduced 1.21.1 mod set]
 
 - Maven `VersionRange` reads a bare version as a soft recommendation that matches everything, so it is not a drop-in reader for data where a bare version means an exact one. [recalled]
