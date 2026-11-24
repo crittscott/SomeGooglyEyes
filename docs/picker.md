@@ -79,3 +79,9 @@ To keep junk entities out of the grid, list namespaces in `spawnExcludedMods` or
 | `/sg admin tint clear` | Clear both color overrides |
 | `/sg admin glow <on\|off\|config>` | Force glow, or revert to the mob's config |
 | `/sg admin behavior <id\|random>` | Play an expression now (e.g. `blink`, `swirl`, `color_change`) |
+
+## Undergarden placement checks
+
+With The Undergarden 0.9.8 in a creative test world, enable the picker and inspect the mob definitions. Check Dweller, Greater Dweller, Rotling, Gwib, and Gwibling from both sides; their eyes face outward. Scintling's eyes should sit on the stalk tops and follow their movement. Nargoyle should have no eye arrangement. Compare both Denizen variants and check Mysterious Pot while it moves.
+
+Compare adults and babies of Brute, Dweller, Gloomper, Mog, Smog Mog, and Scintling. Each age has its own layout and attachment names. Both ages of Smog Mog have three eyes. Undergar has two side-facing eyes.

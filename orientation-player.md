@@ -176,6 +176,8 @@ Definitions are included for Minecraft, Ad Astra, Adorable Hamster Pets, Adventu
 
 The 85 bundled Minecraft definitions are all enabled, including the player and armor stand. The 38 for mobs whose babies 26.1 redesigned select `[26.1,)` and add baby placements, mobs added after 1.21.4 select a range starting at the release that introduced them, the witch's selects `[1.20.1,)`, and the rest select 1.21.4 through the nearest-version fallback. Axolotl, endermite, pufferfish, silverfish, tadpole, and tropical fish have no bundled definition.
 
+The Undergarden 0.9.8 has 23 mob definitions, including six distinct baby layouts. Nargoyle is disabled.
+
 ## Creative eye picker
 
 The picker is an in-world authoring tool for operators (permission level 2) in creative mode; every `/sg` command and the picker keys refuse anyone else. Its keys are rebindable under **Options > Controls > Some Googly Eyes**.
