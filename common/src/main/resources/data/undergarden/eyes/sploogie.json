@@ -13,11 +13,11 @@
               "eyes": [
                 {
                   "position": [
-                    -0.40625,
-                    -0.09375,
+                    -0.38,
+                    0.0,
                     -0.5625
                   ],
-                  "eyeScale": 0.65,
+                  "eyeScale": 1.0,
                   "irisScale": 0.6,
                   "depth": 1.0,
                   "inclination": 90.0,
@@ -37,11 +37,11 @@
                 },
                 {
                   "position": [
-                    0.40625,
-                    -0.09375,
+                    0.38,
+                    0.0,
                     -0.5625
                   ],
-                  "eyeScale": 0.65,
+                  "eyeScale": 1.0,
                   "irisScale": 0.6,
                   "depth": 1.0,
                   "inclination": 90.0,
