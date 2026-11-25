@@ -92,7 +92,8 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">ClientRenderLayers</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Installs the vanilla-model eye layer on living renderers after renderer rebuilds. GeckoLib renderers are
- not living renderers; they receive their layer from GeckoLib's own compile-render-layers event.</div>
+ not living renderers; they receive their layer from GeckoLib's own compile-render-layers event.
+ Spellbooks' hybrid summons also expose a nested vanilla renderer that needs this layer.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -116,8 +117,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#install(net.minecraft.client.renderer.entity.EntityRenderer)" class="member-name-link">install</a><wbr>(net.minecraft.client.renderer.entity.EntityRenderer&lt;?&gt;&nbsp;renderer)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Install the vanilla-model eye layer on one renderer; any renderer that is not a living renderer is
- ignored.</div>
+<div class="block">Install the vanilla-model eye layer on a living renderer or a supported nested renderer.</div>
 </div>
 </div>
 </div>
@@ -148,8 +148,8 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="install(net.minecraft.client.renderer.entity.EntityRenderer)">
 <h3>install</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">install</span><wbr><span class="parameters">(net.minecraft.client.renderer.entity.EntityRenderer&lt;?&gt;&nbsp;renderer)</span></div>
-<div class="block">Install the vanilla-model eye layer on one renderer; any renderer that is not a living renderer is
- ignored. Duplicate-safe through the weak <code>INSTALLED</code> set. Client-hidden entities still get the
+<div class="block">Install the vanilla-model eye layer on a living renderer or a supported nested renderer.
+ Duplicate-safe through the weak <code>INSTALLED</code> set. Client-hidden entities still get the
  layer; the per-frame render gate hides them, so a config change applies without a renderer rebuild.</div>
 </section>
 </li>
