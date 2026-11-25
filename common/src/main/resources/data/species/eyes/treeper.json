@@ -9,7 +9,7 @@
           "weight": 1.0,
           "heads": [
             {
-              "attachPoint": "root",
+              "attachPoint": "root/trunk/rightEye",
               "eyes": [
                 {
                   "depth": 1.0,
@@ -17,47 +17,52 @@
                   "azimuth": 270.0,
                   "crossTarget": -1,
                   "position": [
-                    -0.499688,
-                    -4.0,
-                    -1.000625
+                    0.0,
+                    0.0,
+                    -0.025
                   ],
-                  "eyeScale": 0.75,
+                  "eyeScale": 1.5,
                   "irisScale": 0.6,
                   "corneaColors": [
-                    1.0,
-                    1.0,
-                    1.0
-                  ],
-                  "irisColors": [
-                    0.0,
-                    0.0,
+                    0.025098,
+                    0.533333,
                     0.0
                   ],
-                  "glows": false
-                },
+                  "irisColors": [
+                    0.047059,
+                    1.0,
+                    0.0
+                  ],
+                  "glows": true
+                }
+              ]
+            },
+            {
+              "attachPoint": "root/trunk/leftEye",
+              "eyes": [
                 {
                   "depth": 1.0,
                   "inclination": 90.0,
                   "azimuth": 270.0,
                   "crossTarget": -1,
                   "position": [
-                    0.499688,
-                    -4.0,
-                    -1.000625
+                    0.0,
+                    0.0,
+                    -0.025
                   ],
-                  "eyeScale": 0.75,
+                  "eyeScale": 1.5,
                   "irisScale": 0.6,
                   "corneaColors": [
-                    1.0,
-                    1.0,
-                    1.0
-                  ],
-                  "irisColors": [
-                    0.0,
-                    0.0,
+                    0.025098,
+                    0.533333,
                     0.0
                   ],
-                  "glows": false
+                  "irisColors": [
+                    0.047059,
+                    1.0,
+                    0.0
+                  ],
+                  "glows": true
                 }
               ]
             }
