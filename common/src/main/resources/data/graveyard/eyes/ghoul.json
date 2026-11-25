@@ -3,7 +3,7 @@
     {
       "version": "(,)",
       "age": "any",
-      "enabled": false,
+      "enabled": true,
       "variants": [
         {
           "weight": 1.0,
@@ -13,13 +13,13 @@
               "eyes": [
                 {
                   "depth": 1.0,
-                  "inclination": 90.0,
+                  "inclination": 85.0,
                   "azimuth": 270.0,
                   "crossTarget": -1,
                   "position": [
-                    -0.125,
-                    0.041667,
-                    1.31125
+                    -0.15625,
+                    1.945788,
+                    -1.085795
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,
@@ -37,13 +37,13 @@
                 },
                 {
                   "depth": 1.0,
-                  "inclination": 90.0,
+                  "inclination": 85.0,
                   "azimuth": 270.0,
                   "crossTarget": -1,
                   "position": [
-                    0.125,
-                    0.041667,
-                    1.31125
+                    0.15625,
+                    1.945788,
+                    -1.085795
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,
