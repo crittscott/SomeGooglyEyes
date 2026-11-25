@@ -32,7 +32,9 @@ Identity: mod id `somegoogly`, package `com.github.crittscott.somegoogly`, versi
 
 One typed schema defines keys, table order, defaults, and bounds for native specs and Fabric TOML. Apply logs summarize spawn and visibility.
 
-Eye definitions are datapack files at `data/<namespace>/eyes/*.json` (`EyeConfigModel`). Reload resolves one version per entity type, validates, encodes to NBT, and swaps `ServerEyeConfigs` only on a changed encoding, keeping the old set on failure. That encoding is the sync payload, so `ClientEyeConfigs` never selects versions. Size and geometry limits match across reload, export, and decode. `EyeColor` codecs reject bad channels. `EyeConfigLimits.Issue` gives translated feedback.
+Datapack definitions (`EyeConfigModel`) live at `data/<namespace>/eyes/*.json`. Reload selects and validates a version per entity type, encoding it as NBT for sync. `ServerEyeConfigs` swaps only on changed encoding, retaining old data on failure; `ClientEyeConfigs` never selects versions. Reload/export/decode share limits; `EyeColor` validates channels and `EyeConfigLimits.Issue` translates errors.
+
+Aether II's `aether_ii` data uses the standard resolver and separate baby layouts.
 
 ## Entity and item state
 
