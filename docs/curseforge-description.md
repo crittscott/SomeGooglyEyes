@@ -68,12 +68,13 @@ Ships with predefined eye configs for:
 | AdventureZ | Let's Do Alpine Whispers | Supplementaries |
 | Alex's Mobs | Let's Do Brewery | Sushi Go Crafting |
 | Ars Elemental | Let's Do Furniture | The Aether |
-| Ars Nouveau | Let's Do Meadow | The Bumblezone |
-| Artifacts | Let's Do Vinery | Tiny Skeletons |
-| Critters and Companions | Living Things | Twilight Forest |
-| Ecologics | MmmMmmMmmMmm | Variants & Ventures |
-| EvilCraft | Mowzie's Mobs | WilderNature |
-| Exotic Birds | Naturalist |  |
+| Ars Magica: Legacy | Let's Do Meadow | The Bumblezone |
+| Ars Nouveau | Let's Do Vinery | Tiny Skeletons |
+| Artifacts | Living Things | Twilight Forest |
+| Critters and Companions | MmmMmmMmmMmm | Variants & Ventures |
+| Ecologics | Mowzie's Mobs | WilderNature |
+| EvilCraft | Naturalist |  |
+| Exotic Birds |  |  |
 
 Use the in-game eye config system to generate custom datapacks. Submissions for future releases appreciated! Find a mob that doesn't behave? [Open an issue](https://github.com/crittscott/SomeGooglyEyes/issues).
 
