@@ -3,6 +3,7 @@
 1.21.1 support, for Fabric, NeoForge, and Forge.
 
 ### Added
+- Thaumaturge eye placements for 31 mobs, including single-eye eldritch designs and animated taint models.
 - Many mods: Abnormals Caverns & Chasms, Abnormals Environmental, Abnormals Upgrade Aquatic, Ad Astra, Adorable Hamster Pets, AdventureZ, Ars Elemental, Artifacts, Critters and Companions, Ecologics, EvilCraft, Forbidden Arcanus, Friends & Foes, Illager Invasion, Let's Do Alpine Whispers, Let's Do Brewery, Let's Do Furniture, Let's Do Meadow, Let's Do Vinery, Living Things, MmmMmmMmmMmm, Naturalist, Occultism, Oh The Biomes We've Gone, Productive Bees, Regions Unexplored, Rotten Creatures, Shiny, Supplementaries, The Aether, The Bumblezone, Tiny Skeletons, Variants & Ventures, WilderNature
 - Eyes on a sheep's rear move in to the bare body when it is sheared and back out when the wool regrows.
 
@@ -16,6 +17,7 @@
 - Architectury API is no longer a runtime dependency on any loader.
 
 ### Fixed
+- Model-part eyes disappear with hidden ancestors, including the eldritch golem's head and core during phase changes.
 - Eyes on heads, frames, boats, and mobs fall toward world down wherever the camera points, and eyes coming back into view are already settled.
 - The shears-kill Googly Eye honors the `doMobLoot` game rule, and shearing an eyed armor stand on NeoForge or Forge takes its eyes instead of handing it the shears.
 - Optometrist shears can't take eyes from a player protected from PvP, and spectators can't use eye items on heads or shear themselves.

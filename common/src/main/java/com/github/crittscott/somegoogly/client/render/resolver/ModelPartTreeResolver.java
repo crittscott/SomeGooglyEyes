@@ -108,6 +108,10 @@ abstract class ModelPartTreeResolver implements EyeAttachmentResolver {
                 preTransform.accept(poseStack);
             }
             for (ModelPart part : chain) {
+                // skipDraw may leave geometry to another material layer; visible hides the subtree.
+                if (!part.visible) {
+                    return false;
+                }
                 part.translateAndRotate(poseStack);
             }
             return true;

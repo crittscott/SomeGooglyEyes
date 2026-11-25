@@ -58,7 +58,7 @@ Applications emit `ENTITY_INTERACT` (`BLOCK_CHANGE` on heads); harvests emit `SH
 
 ## Rendering and attachment
 
-`ClientRenderLayers` installs layers per renderer rebuild, before slime's outer layer; GeckoLib uses `CompileRenderLayers`. Both use `EyeRenderData`. `LayerGooglyEyes` insets sheared sheep body eyes. `GooglyEyeRenderer.renderHead` draws through `ModelGooglyEye`; `HeadInfo.orientationAt` caches `EyePlacement.orientation` per eye.
+`ClientRenderLayers` installs layers per renderer rebuild, before slime's outer layer; GeckoLib uses `CompileRenderLayers`. Both use `EyeRenderData`; hidden parts hide eyes. `LayerGooglyEyes` insets sheared sheep body eyes. `GooglyEyeRenderer.renderHead` draws through `ModelGooglyEye`; `HeadInfo.orientationAt` caches `EyePlacement.orientation` per eye.
 
 `SpellbooksCompat` supplies summoned skeleton/zombie private vanilla renderers for layers and picker parts, and converts their GeckoLib bone space to vanilla part space while rising.
 
