@@ -74,7 +74,7 @@ Ships with predefined eye configs for:
 | Critters and Companions | MmmMmmMmmMmm | Twilight Forest |
 | Ecologics | Mowzie's Mobs | Variants & Ventures |
 | EvilCraft | Naturalist | WilderNature |
-| Exotic Birds |  |  |
+| Exotic Birds | Just Another Witchery Remake |  |
 
 Use the in-game eye config system to generate custom datapacks. Submissions for future releases appreciated! Find a mob that doesn't behave? [Open an issue](https://github.com/crittscott/SomeGooglyEyes/issues).
 
