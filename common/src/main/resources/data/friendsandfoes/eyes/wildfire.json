@@ -9,7 +9,7 @@
           "weight": 1.0,
           "heads": [
             {
-              "attachPoint": "root/head",
+              "attachPoint": "root/body/head",
               "eyes": [
                 {
                   "depth": 1.0,
@@ -18,8 +18,8 @@
                   "crossTarget": 1,
                   "position": [
                     0.13,
-                    -0.05,
-                    -0.25
+                    -0.09,
+                    -0.24
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,
@@ -42,8 +42,8 @@
                   "crossTarget": 0,
                   "position": [
                     -0.13,
-                    -0.05,
-                    -0.25
+                    -0.09,
+                    -0.24
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,
@@ -74,7 +74,7 @@
           "weight": 1.0,
           "heads": [
             {
-              "attachPoint": "root/head",
+              "attachPoint": "root/body/head",
               "eyes": [
                 {
                   "depth": 1.0,
@@ -83,7 +83,7 @@
                   "crossTarget": -1,
                   "position": [
                     0.13,
-                    -0.28,
+                    -0.09,
                     -0.24
                   ],
                   "eyeScale": 0.75,
@@ -103,7 +103,7 @@
               ]
             },
             {
-              "attachPoint": "root/head/helmet",
+              "attachPoint": "root/body/head",
               "eyes": [
                 {
                   "depth": 1.0,
@@ -112,7 +112,7 @@
                   "crossTarget": -1,
                   "position": [
                     -0.13,
-                    -0.28,
+                    -0.09,
                     -0.24
                   ],
                   "eyeScale": 0.75,
