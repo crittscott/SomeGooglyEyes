@@ -3,6 +3,7 @@
 26.1.2 support, for Fabric, NeoForge, and Forge. The 1.20.1, 1.21.1, 1.21.4, 1.21.8, 1.21.11, 26.1, and 26.1.1 builds remain supported.
 
 ### Added
+- Thaumaturge eye placements for 27 mobs, including single-eye eldritch designs and animated taint models.
 - Minecraft 26.1.2 builds: Fabric (Loader 0.19.5+, Fabric API 0.155.3+), NeoForge 26.1.2.112+, and Forge 64.1.5+. GeckoLib 5.5.2+ remains optional.
 - GeckoLib-based mobs get eyes on Forge again.
 - Eyes on a sheep's rear move in to the bare body when it is sheared and back out when the wool regrows.
@@ -10,6 +11,7 @@
 - Twilight Forest skull candles and trophies get eyes on Fabric.
 
 ### Fixed
+- Model-part eyes disappear with hidden ancestors, including the eldritch golem's head and core during phase changes.
 - Use the clicked head for Adventure-mode item permissions. Applying and harvesting eyes count toward item-use statistics.
 - Apply PvP and team rules to eye harvesting. Honor spectator and mob-drop rules, and harvest armor stands before their equipment interaction on Forge and NeoForge.
 - Settle animated pupils using the submitted eye pose. Keep eye motion across settings-only updates and identical state packets.
