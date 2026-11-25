@@ -172,13 +172,15 @@ data/<entity namespace>/eyes/<entity path>.json
 
 Definitions set age-specific placements, appearance, and weighted variants. World start and `/reload` sync them to clients.
 
-Definitions cover Minecraft, Ad Astra, Adorable Hamster Pets, AdventureZ, Alex's Mobs, Ars Elemental, Ars Nouveau, Artifacts, Autumnity, Critters and Companions, EvilCraft, Exotic Birds, Farming for Blockheads, Forbidden Arcanus, Friends & Foes, Hamsters Plus Lite, Ice and Fire Community Edition, Illager Invasion, Immersive Engineering, Iron's Spells 'n Spellbooks, Let's Do Alpine Whispers/Brewery/Furniture/Meadow/Vinery, Living Things, MmmMmmMmmMmm, Mowzie's Mobs, Naturalist, Occultism, Oh The Biomes We've Gone, Productive Bees, Regions Unexplored, Rotten Creatures, Shiny, Simply Cats, Supplementaries, Sushi Go Crafting, The Aether, The Aether II, The Bumblezone, Tiny Skeletons, Twilight Forest, Variants & Ventures, and WilderNature. Model changes may require placement adjustments.
+Definitions cover Minecraft, Ad Astra, Adorable Hamster Pets, AdventureZ, Alex's Mobs, Ars Elemental, Ars Magica: Legacy, Ars Nouveau, Artifacts, Autumnity, Critters and Companions, EvilCraft, Exotic Birds, Farming for Blockheads, Forbidden Arcanus, Friends & Foes, Hamsters Plus Lite, Ice and Fire Community Edition, Illager Invasion, Immersive Engineering, Iron's Spells 'n Spellbooks, Let's Do Alpine Whispers/Brewery/Furniture/Meadow/Vinery, Living Things, MmmMmmMmmMmm, Mowzie's Mobs, Naturalist, Occultism, Oh The Biomes We've Gone, Productive Bees, Regions Unexplored, Rotten Creatures, Shiny, Simply Cats, Supplementaries, Sushi Go Crafting, The Aether, The Aether II, The Bumblezone, Tiny Skeletons, Twilight Forest, Variants & Ventures, and WilderNature. Model changes may require placement adjustments.
 
 The 991 eye drafts from `othersource/myassets` need in-game adjustment; see `docs/dumped-eyes.md` and its CSV.
 
 All 77 Minecraft definitions cover 1.20.1, including player and armor stand; witch uses `[1.20.1,)`. Endermite, pufferfish, silverfish, tadpole, and tropical fish have none.
 
 Undergarden 0.8.14: Nargoyle disabled; 17 enabled mobs. Dweller/Rotling/Gwib/Gwibling use side eyes; Scintling eyes follow stalk tips; Minion/Forgotten Guardian have one eye.
+
+Ars Magica: Legacy 1.5.0: nine visible mobs have definitions; life, lightning, and water guardians are disabled, as is the mage with its empty renderer. Fire and nature guardians use side eyes. See `docs/ars-magica-legacy-eyes-testing.md` for placement notes and client checks.
 
 Resource packs replace eye textures/item models. There is no JEI plugin.
 
