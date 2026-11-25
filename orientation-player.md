@@ -174,7 +174,9 @@ data/<entity namespace>/eyes/<entity path>.json
 
 They specify adult and baby arrangements, attachment points, size, position, direction, colors, glow, and weighted variants. Changes take effect on world start or `/reload` and are synchronized to clients.
 
-Definitions are included for Minecraft, Ad Astra, Adorable Hamster Pets, AdventureZ, Alex's Mobs, Ars Elemental, Ars Nouveau, Artifacts, Autumnity, Critters and Companions, EvilCraft, Exotic Birds, Farming for Blockheads, Forbidden Arcanus, Friends & Foes, Hamsters Plus Lite, Ice and Fire Community Edition, Illager Invasion, Immersive Engineering, Let's Do Alpine Whispers, Let's Do Brewery, Let's Do Furniture, Let's Do Meadow, Let's Do Vinery, Living Things, MmmMmmMmmMmm, Mowzie's Mobs, Naturalist, Occultism, Oh The Biomes We've Gone, Productive Bees, Regions Unexplored, Rotten Creatures, Shiny, Simply Cats, Supplementaries, Sushi Go Crafting, The Aether, The Aether II, The Bumblezone, Tiny Skeletons, Twilight Forest, Variants & Ventures, and WilderNature. Apart from Ice and Fire Community Edition's, they are unverified against 1.21.1 releases of those mods. Their definitions may need adjusting when their models change.
+Bundled definitions cover Minecraft and the mods listed in `docs/curseforge-description.md`. Apart from Ice and Fire Community Edition's, they are unverified against 1.21.1 releases of those mods. Their definitions may need adjusting when their models change.
+
+Bundled Ars Magica: Legacy definitions retain the source version `1.5.0` placements: nine visible mobs enabled; life, lightning, and water guardians disabled, plus the mage whose source renderer is empty. Fire and nature guardians use side eyes. Runtime compatibility on this Minecraft version is unverified; see `docs/ars-magica-legacy-eyes-testing.md`.
 
 The 79 bundled Minecraft definitions all select 1.21.1 and are enabled, including the player, armor stand, boat, and chest boat. Axolotl, endermite, pufferfish, silverfish, tadpole, and tropical fish have no bundled definition. The witch definition uses the range `[1.20.1,)`, so it matches every supported version.
 
