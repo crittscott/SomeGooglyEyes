@@ -259,6 +259,10 @@ loadScripts(document, 'script');</script>
  lerping: the active behavior's <code>influence</code> (neutral when none), with the ongoing states the
  caller derives on top of it.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/client/compat/SpellbooksCompat.html#applyPartSpace(com.mojang.blaze3d.vertex.PoseStack,float,float,float)" class="member-name-link">applyPartSpace(PoseStack, float, float, float)</a> - Static method in class com.github.crittscott.somegoogly.client.compat.<a href="com/github/crittscott/somegoogly/client/compat/SpellbooksCompat.html" title="class in com.github.crittscott.somegoogly.client.compat">SpellbooksCompat</a></dt>
+<dd>
+<div class="block">GeckoLib's bone callback is in model coordinates after translating away from the pivot.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/ClientEyeConfigs.html#applySettings(boolean,com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)" class="member-name-link">applySettings(boolean, BehaviorSettings)</a> - Static method in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ClientEyeConfigs.html" title="class in com.github.crittscott.somegoogly.config">ClientEyeConfigs</a></dt>
 <dd>
 <div class="block">Take the server's <code>googlyEyesEnabled</code> master switch and behavior settings.</div>
@@ -2227,8 +2231,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/ClientRenderLayers.html#install(net.minecraft.client.renderer.entity.EntityRenderer)" class="member-name-link">install(EntityRenderer&lt;?&gt;)</a> - Static method in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/ClientRenderLayers.html" title="class in com.github.crittscott.somegoogly.client">ClientRenderLayers</a></dt>
 <dd>
-<div class="block">Install the vanilla-model eye layer on one renderer; any renderer that is not a living renderer is
- ignored.</div>
+<div class="block">Install the vanilla-model eye layer on a living renderer or a supported nested renderer.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/config/ConfigValue.html#integer(java.lang.String,java.lang.String,int,int,int,java.lang.String)" class="member-name-link">integer(String, String, int, int, int, String)</a> - Static method in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ConfigValue.html" title="class in com.github.crittscott.somegoogly.config">ConfigValue</a></dt>
 <dd>
@@ -2299,6 +2302,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/github/crittscott/somegoogly/config/ServerEyeConfigs.html#isExcluded(net.minecraft.resources.ResourceLocation)" class="member-name-link">isExcluded(ResourceLocation)</a> - Static method in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ServerEyeConfigs.html" title="class in com.github.crittscott.somegoogly.config">ServerEyeConfigs</a></dt>
 <dd>
 <div class="block">Entity kinds for which the renderer cannot display eyes.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/compat/SpellbooksCompat.html#isHybridRenderer(java.lang.String)" class="member-name-link">isHybridRenderer(String)</a> - Static method in class com.github.crittscott.somegoogly.client.compat.<a href="com/github/crittscott/somegoogly/client/compat/SpellbooksCompat.html" title="class in com.github.crittscott.somegoogly.client.compat">SpellbooksCompat</a></dt>
+<dd>
+<div class="block">Whether this renderer switches between a GeckoLib model and a private vanilla renderer.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/state/EyeState.html#isInitialized(net.minecraft.world.entity.Entity)" class="member-name-link">isInitialized(Entity)</a> - Static method in class com.github.crittscott.somegoogly.eye.state.<a href="com/github/crittscott/somegoogly/eye/state/EyeState.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeState</a></dt>
 <dd>
@@ -3948,6 +3955,10 @@ loadScripts(document, 'script');</script>
 <div class="block">Spawn a single <code>type</code> at the block the player is targeting (within 20.0
  blocks) — the <code>/sg spawn &lt;type&gt;</code> server-thread half.</div>
 </dd>
+<dt><a href="com/github/crittscott/somegoogly/client/compat/SpellbooksCompat.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.client.compat">SpellbooksCompat</a> - Class in <a href="com/github/crittscott/somegoogly/client/compat/package-summary.html">com.github.crittscott.somegoogly.client.compat</a></dt>
+<dd>
+<div class="block">Spellbooks' zombie and skeleton summons use GeckoLib while rising, then a private vanilla renderer.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/GooglyTracker.EyeInfo.html#squashY" class="member-name-link">squashY</a> - Variable in class com.github.crittscott.somegoogly.client.<a href="com/github/crittscott/somegoogly/client/GooglyTracker.EyeInfo.html" title="class in com.github.crittscott.somegoogly.client">GooglyTracker.EyeInfo</a></dt>
 <dd>
 <div class="block">Blink squash times the sleeping squint; see <a href="com/github/crittscott/somegoogly/client/GooglyTracker.EyeInfo.html#scaleMul"><code>GooglyTracker.EyeInfo.scaleMul</code></a>.</div>
@@ -4423,6 +4434,10 @@ the order they are declared.</div>
 <dd>
 <div class="block">Returns an array containing the constants of this enum class, in
 the order they are declared.</div>
+</dd>
+<dt><a href="com/github/crittscott/somegoogly/client/compat/SpellbooksCompat.html#vanillaRenderer(net.minecraft.client.renderer.entity.EntityRenderer)" class="member-name-link">vanillaRenderer(EntityRenderer&lt;?&gt;)</a> - Static method in class com.github.crittscott.somegoogly.client.compat.<a href="com/github/crittscott/somegoogly/client/compat/SpellbooksCompat.html" title="class in com.github.crittscott.somegoogly.client.compat">SpellbooksCompat</a></dt>
+<dd>
+<div class="block">The normal renderer behind a hybrid summon, or null for an unrelated or unavailable integration.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/config/EyeConfigModel.Variant.html#%3Cinit%3E()" class="member-name-link">Variant()</a> - Constructor for class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/EyeConfigModel.Variant.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.Variant</a></dt>
 <dd>&nbsp;</dd>
