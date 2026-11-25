@@ -184,6 +184,8 @@ Resource packs replace eye textures/item models.
 
 The Undergarden 0.9.7 has 22 mob definitions; Nargoyle is disabled.
 
+Witchery has 21 enabled mob definitions for NeoForge 0.5.40. The 1.21.1 files also cover Fabric 0.3.7. Ent's trunk layout covers all wood textures; Mog and Gulg use their eye joints. Imp, Banshee, Poltergeist, Spectre, and Mirror Demon are unconfigured. Placements need in-game verification; see `docs/witchery-eyes-testing.md`.
+
 ## Creative eye picker
 
 Picker and `/sg` require creative/operator level 2; rebind keys under **Options > Controls > Some Googly Eyes**.
