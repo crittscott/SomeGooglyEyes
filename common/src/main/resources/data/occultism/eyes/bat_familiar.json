@@ -9,7 +9,7 @@
           "weight": 1.0,
           "heads": [
             {
-              "attachPoint": "#0/body1/head/rightEye",
+              "attachPoint": "#0/head/rightEye",
               "eyes": [
                 {
                   "depth": 1.0,
@@ -38,7 +38,7 @@
               ]
             },
             {
-              "attachPoint": "#0/body1/head/leftEye",
+              "attachPoint": "#0/head/leftEye",
               "eyes": [
                 {
                   "depth": 1.0,

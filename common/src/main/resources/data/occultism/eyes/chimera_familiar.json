@@ -9,7 +9,7 @@
           "weight": 1.0,
           "heads": [
             {
-              "attachPoint": "#0/body/head",
+              "attachPoint": "#0/head",
               "eyes": [
                 {
                   "depth": 1.0,
@@ -62,7 +62,7 @@
               ]
             },
             {
-              "attachPoint": "#0/body/snake1/snake2/snake3/snake4",
+              "attachPoint": "#0/snake1/snake2/snake3/snake4",
               "eyes": [
                 {
                   "depth": 1.0,
@@ -115,7 +115,7 @@
               ]
             },
             {
-              "attachPoint": "#0/body/goatNeck/goatHead",
+              "attachPoint": "#0/goatNeck/goatHead",
               "eyes": [
                 {
                   "depth": 1.0,
@@ -173,7 +173,7 @@
           "weight": 1.0,
           "heads": [
             {
-              "attachPoint": "#0/body/head",
+              "attachPoint": "#0/head",
               "eyes": [
                 {
                   "depth": 1.0,
@@ -231,7 +231,7 @@
           "weight": 1.0,
           "heads": [
             {
-              "attachPoint": "#0/body/snake1/snake2/snake3/snake4",
+              "attachPoint": "#0/snake1/snake2/snake3/snake4",
               "eyes": [
                 {
                   "depth": 1.0,
@@ -289,7 +289,7 @@
           "weight": 1.0,
           "heads": [
             {
-              "attachPoint": "#0/body/goatNeck/goatHead",
+              "attachPoint": "#0/goatNeck/goatHead",
               "eyes": [
                 {
                   "depth": 1.0,
