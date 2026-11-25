@@ -3,7 +3,7 @@
     {
       "version": "(,)",
       "age": "any",
-      "enabled": false,
+      "enabled": true,
       "variants": [
         {
           "weight": 1.0,
@@ -18,8 +18,8 @@
                   "crossTarget": -1,
                   "position": [
                     -0.15625,
-                    -0.03125,
-                    -0.43875
+                    1.875,
+                    -0.81375
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,
@@ -42,8 +42,8 @@
                   "crossTarget": -1,
                   "position": [
                     0.15625,
-                    -0.03125,
-                    -0.43875
+                    1.875,
+                    -0.81375
                   ],
                   "eyeScale": 0.75,
                   "irisScale": 0.6,
