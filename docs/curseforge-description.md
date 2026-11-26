@@ -68,7 +68,7 @@ Ships with predefined eye configs for:
 | AdventureZ | Legendary Monsters | Supplementaries |
 | Alex's Caves | Let's Do Alpine Whispers | Sushi Go Crafting |
 | Alex's Mobs | Let's Do Brewery | Thaumaturge |
-| Animania | Let's Do Furniture | The Aether |
+| Animania Reborn | Let's Do Furniture | The Aether |
 | Ars Elemental | Let's Do Meadow | The Aether II |
 | Ars Magica: Legacy | Let's Do Vinery | The Bumblezone |
 | Ars Nouveau | Living Things | The Graveyard |
