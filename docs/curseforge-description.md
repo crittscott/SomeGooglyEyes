@@ -58,23 +58,28 @@ Ships with predefined eye configs for:
 
 | | | |
 |---|---|---|
-| Minecraft | Farming for Blockheads | Occultism |
-| Abnormals Autumnity | Forbidden Arcanus | Oh The Biomes We've Gone |
-| Abnormals Caverns & Chasms | Friends & Foes | Productive Bees |
-| Abnormals Environmental | Hamsters Plus Lite | Regions Unexplored |
-| Abnormals Upgrade Aquatic | Ice and Fire Community Edition | Rotten Creatures |
-| Ad Astra | Illager Invasion | Shiny |
-| Adorable Hamster Pets | Immersive Engineering | Simply Cats |
-| AdventureZ | Let's Do Alpine Whispers | Supplementaries |
+| Minecraft | Forbidden Arcanus | Realm RPG: Dragon Wyrms |
+| Abnormals Autumnity | Friends & Foes | Realm RPG: Imps & Demons |
+| Abnormals Caverns & Chasms | Guard Villagers | Regions Unexplored |
+| Abnormals Environmental | Hamsters Plus Lite | Rotten Creatures |
+| Abnormals Upgrade Aquatic | Ice and Fire Community Edition | Shiny |
+| Ad Astra | Illager Invasion | Simply Cats |
+| Adorable Hamster Pets | Immersive Engineering | Species |
+| AdventureZ | Legendary Monsters | Spore |
+| Alex's Caves | Let's Do Alpine Whispers | Supplementaries |
 | Alex's Mobs | Let's Do Brewery | Sushi Go Crafting |
-| Ars Elemental | Let's Do Furniture | The Aether |
-| Ars Magica: Legacy | Let's Do Meadow | The Aether II |
-| Ars Nouveau | Let's Do Vinery | The Bumblezone |
-| Artifacts | Living Things | Tiny Skeletons |
-| Critters and Companions | MmmMmmMmmMmm | Twilight Forest |
-| Ecologics | Mowzie's Mobs | Variants & Ventures |
-| EvilCraft | Naturalist | WilderNature |
-| Exotic Birds |  |  |
+| Animania | Let's Do Furniture | The Aether |
+| Ars Elemental | Let's Do Meadow | The Aether II |
+| Ars Magica: Legacy | Let's Do Vinery | The Bumblezone |
+| Ars Nouveau | Living Things | The Graveyard |
+| Artifacts | MmmMmmMmmMmm | Tiny Skeletons |
+| Creatures and Beasts | MobZ | Twilight Forest |
+| Critters and Companions | Mowzie's Mobs | Undermod |
+| Ecologics | Mutants and Zombies | Variants & Ventures |
+| Enemy Expansion | Naturalist | Villager Recruits |
+| EvilCraft | Occultism | WilderNature |
+| Exotic Birds | Oh The Biomes We've Gone | Zombie Extreme |
+| Farming for Blockheads | Productive Bees |  |
 
 Use the in-game eye config system to generate custom datapacks. Submissions for future releases appreciated! Find a mob that doesn't behave? [Open an issue](https://github.com/crittscott/SomeGooglyEyes/issues).
 
