@@ -4,7 +4,7 @@
 
 ### Added
 - Thaumaturge eye placements for 27 mobs, including single-eye eldritch designs and animated taint models.
-- Minecraft 26.1.2 builds: Fabric (Loader 0.19.5+, Fabric API 0.155.3+), NeoForge 26.1.2.109+, and Forge 64.1.5+. GeckoLib 5.5.2+ remains optional.
+- Minecraft 26.1.2 builds: Fabric (Loader 0.19.3+, Fabric API 0.155.3+), NeoForge 26.1.2.109+, and Forge 64.1.0+. GeckoLib 5.5.2+ remains optional.
 - GeckoLib-based mobs get eyes on Forge again.
 - Eyes on a sheep's rear move in to the bare body when it is sheared and back out when the wool regrows.
 - Ice and Fire Community Edition mobs get eyes again with its Uranus 3.0 renderers on NeoForge and Forge, in the picker as well.
