@@ -57,7 +57,7 @@ Forge/NeoForge owns its native loot declarations. Native `processResources` copi
 | Mojang mappings | Official mappings for `1.21.1` | Base mapping layer; no separate mapping version is declared |
 | Parchment mappings | `org.parchmentmc.data:parchment-1.21.1:2024.11.17@zip` | Layer over the official mappings |
 | Forge | `net.minecraftforge:forge:1.21.1-52.1.2` | Exact Forge compile and development-run baseline |
-| NeoForge | `net.neoforged:neoforge:21.1.209` | Exact NeoForge compile and development-run baseline |
+| NeoForge | `net.neoforged:neoforge:21.1.249` | Exact NeoForge compile and development-run baseline |
 | Fabric Loader | `net.fabricmc:fabric-loader:0.16.14` | Fabric loader dependency |
 | Fabric API | `net.fabricmc.fabric-api:fabric-api:0.102.1+1.21.1` | Fabric runtime and development API |
 | GeckoLib | `software.bernie.geckolib:geckolib-{common,fabric,forge,neoforge}-1.21.1:4.7.4` | Compile-only optional render integration in common and each loader; development runs also load the loader artifacts (`modLocalRuntime`), plus `mixinextras-forge` (`localRuntime`) for GeckoLib's Mixins on Forge, never published |
@@ -82,7 +82,7 @@ Each loader expands its metadata (`fabric.mod.json`, `META-INF/mods.toml`, `META
 | Minecraft compatibility | exactly `1.21.1`; Forge and NeoForge syntax `[1.21.1]`, Fabric syntax `=1.21.1` |
 | Forge compatibility | `[52.1.2,53)` |
 | Forge JavaFML loader compatibility | `[52,53)` |
-| NeoForge compatibility | `[21.1.209,21.2)` |
+| NeoForge compatibility | `[21.1.249,21.2)` |
 | NeoForge JavaFML loader compatibility | `[1,)` |
 | Fabric Loader compatibility | `>=0.16.14` |
 | Fabric Java compatibility | `>=21` |
