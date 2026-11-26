@@ -8,7 +8,7 @@
 
 Some Googly Eyes adds animated eyes to mobs, players, heads, and vanilla boats. Harvest eyes, customize their appearance, and apply them with slime.
 
-This checkout targets Minecraft 26.1.1, on Fabric, NeoForge, and Forge. Fabric requires Fabric Loader 0.19.5+ and Fabric API 0.145.4+26.1.1+. NeoForge requires NeoForge 26.1.1.15-beta+ below 26.1.2. Forge requires Forge 63.0.2+ within the 63 line. All loaders require Java 25. GeckoLib integration is optional on Fabric and NeoForge and compiles against the published 26.1/5.5 API; no exact-26.1.1 release is listed by the publisher, and runtime compatibility is unverified. Clients and servers need the same network version.
+This checkout targets Minecraft 26.1.1, on Fabric, NeoForge, and Forge. Fabric requires Fabric Loader 0.18.4+ and Fabric API 0.145.4+26.1.1+. NeoForge requires NeoForge 26.1.1.15-beta+ below 26.1.2. Forge requires Forge 63.0.2+ within the 63 line. All loaders require Java 25. GeckoLib integration is optional on Fabric and NeoForge and compiles against the published 26.1/5.5 API; no exact-26.1.1 release is listed by the publisher, and runtime compatibility is unverified. Clients and servers need the same network version.
 
 ## Mobs with eyes
 

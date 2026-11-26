@@ -58,7 +58,7 @@ The root `collectJars` task copies each enabled loader's already-built productio
 | Minecraft | `26.1.1` | Compile and runtime target |
 | Forge | `net.minecraftforge:forge:26.1.1-63.0.2` | Exact Forge compile and development-run baseline |
 | NeoForge | `net.neoforged:neoforge:26.1.1.15-beta` | Exact NeoForge compile and development-run baseline |
-| Fabric Loader | `net.fabricmc:fabric-loader:0.19.5` | Fabric loader dependency; also supplies the common annotation dependency |
+| Fabric Loader | `net.fabricmc:fabric-loader:0.18.4` | Fabric loader dependency; also supplies the common annotation dependency |
 | Fabric API | `net.fabricmc.fabric-api:fabric-api:0.145.4+26.1.1` | Fabric runtime and development API |
 | GeckoLib | `com.geckolib:geckolib-{common,fabric,neoforge}-26.1:5.5` | Compile-only optional render integration in common, Fabric, and NeoForge; built for Minecraft 26.1; development runs also load the loader artifacts (`runtimeOnly`), never published |
 | NightConfig | `com.electronwill.night-config:{core,toml}:3.8.3` | Bundled Fabric TOML parser |
@@ -82,7 +82,7 @@ Each loader expands its metadata (`fabric.mod.json`, `META-INF/mods.toml`, `META
 | Forge JavaFML loader compatibility | `[63,64)` |
 | NeoForge compatibility | `[26.1.1.15-beta,26.1.2)` |
 | NeoForge JavaFML loader compatibility | `[1,)` |
-| Fabric Loader compatibility | `>=0.19.5` |
+| Fabric Loader compatibility | `>=0.18.4` |
 | Fabric Java compatibility | `>=25` |
 | Fabric API runtime declaration | `>=0.145.4+26.1.1`; compilation uses `0.145.4+26.1.1` |
 | GeckoLib | metadata permits optional `5.5` or newer on Fabric and NeoForge; runtime compatibility on 26.1.1 is unverified |
