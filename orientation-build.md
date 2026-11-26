@@ -56,9 +56,9 @@ The root `collectJars` task copies each enabled loader's already-built productio
 | GradleUp Shadow plugin | `9.4.3` | Bundles transformed common output into loader JARs |
 | Java toolchain level | `25` | Compilation, Javadoc, and Java execution |
 | Minecraft | `26.2` | Compile and runtime target |
-| Forge | `net.minecraftforge:forge:26.2-65.1.5` | Exact Forge compile and development-run baseline |
+| Forge | `net.minecraftforge:forge:26.2-65.1.0` | Exact Forge compile and development-run baseline |
 | NeoForge | `net.neoforged:neoforge:26.2.0.57` | Exact NeoForge compile and development-run baseline |
-| Fabric Loader | `net.fabricmc:fabric-loader:0.19.5` | Fabric loader dependency; also supplies the common annotation dependency |
+| Fabric Loader | `net.fabricmc:fabric-loader:0.19.3` | Fabric loader dependency; also supplies the common annotation dependency |
 | Fabric API | `net.fabricmc.fabric-api:fabric-api:0.161.0+26.2` | Fabric runtime and development API |
 | GeckoLib | `com.geckolib:geckolib-{common,fabric,forge,neoforge}-26.2:5.5.5` | Compile-only optional render integration in common and every loader; development runs also load the loader artifacts (`runtimeOnly`), never published |
 | NightConfig | `com.electronwill.night-config:{core,toml}:3.8.3` | Bundled Fabric TOML parser |
@@ -78,11 +78,11 @@ Each loader expands its metadata (`fabric.mod.json`, `META-INF/mods.toml`, `META
 | Some Googly Eyes artifact | `0.8.3` |
 | Fabric, Forge, and NeoForge GameTest support mods | `0.8.3` |
 | Minecraft compatibility | exactly `26.2`; Forge and NeoForge syntax `[26.2]`, Fabric syntax `=26.2` |
-| Forge compatibility | `[65.1.5,66)` |
+| Forge compatibility | `[65.1.0,66)` |
 | Forge JavaFML loader compatibility | `[65,66)` |
 | NeoForge compatibility | `[26.2.0.57,26.2.1)` |
 | NeoForge JavaFML loader compatibility | `[1,)` |
-| Fabric Loader compatibility | `>=0.19.5` |
+| Fabric Loader compatibility | `>=0.19.3` |
 | Fabric Java compatibility | `>=25` |
 | Fabric API runtime declaration | `>=0.161.0+26.2`; compilation uses `0.161.0+26.2` |
 | GeckoLib | metadata permits optional `5.5.5` or newer on every loader |
