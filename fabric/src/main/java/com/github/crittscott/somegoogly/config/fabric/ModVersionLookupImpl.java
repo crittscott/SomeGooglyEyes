@@ -1,13 +1,13 @@
 package com.github.crittscott.somegoogly.config.fabric;
 
-import java.util.Optional;
 import net.fabricmc.loader.api.FabricLoader;
+
+import java.util.Optional;
 
 /** Fabric implementation of the loaded-mod version lookup. */
 public final class ModVersionLookupImpl {
 
-    private ModVersionLookupImpl() {
-    }
+    private ModVersionLookupImpl() {}
 
     public static Optional<String> modVersion(String modId) {
         return FabricLoader.getInstance()

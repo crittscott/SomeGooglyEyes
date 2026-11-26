@@ -3,16 +3,19 @@ package com.github.crittscott.somegoogly.network;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
+
 import io.netty.handler.codec.DecoderException;
+
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * Server → client sync of a single entity's full eye state: the {@code hasGooglyEyes} flag, the chosen
- * placement-variant roll, plus the optional per-mob appearance overrides (see {@link EyeState}). Sent on
- * start-tracking (so a newly watching player gets current state) and whenever the state is mutated
- * mid-life (so changes from shears, a Slimy Eye, or {@code /sg admin} appear immediately on every
- * tracking client). Both paths follow the entity's own spawn on the same connection, so the client always knows the entity id.
+ * Server → client sync of a single entity's full eye state: the {@code hasGooglyEyes} flag, the
+ * chosen placement-variant roll, plus the optional per-mob appearance overrides (see {@link
+ * EyeState}). Sent on start-tracking (so a newly watching player gets current state) and whenever
+ * the state is mutated mid-life (so changes from shears, a Slimy Eye, or {@code /sg admin} appear
+ * immediately on every tracking client). Both paths follow the entity's own spawn on the same
+ * connection, so the client always knows the entity id.
  */
 public record EyeStatePacket(int entityId, EyeState.Snapshot snapshot) implements Payload {
 
@@ -27,7 +30,8 @@ public record EyeStatePacket(int entityId, EyeState.Snapshot snapshot) implement
             throw new DecoderException("Invalid eye placement variant roll");
         }
         AppearanceOverride overrides = AppearanceOverride.read(buffer);
-        return new EyeStatePacket(entityId, new EyeState.Snapshot(hasGooglyEyes, variantRoll, overrides));
+        return new EyeStatePacket(
+                entityId, new EyeState.Snapshot(hasGooglyEyes, variantRoll, overrides));
     }
 
     @Override

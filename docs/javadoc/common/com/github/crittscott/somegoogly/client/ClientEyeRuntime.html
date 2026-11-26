@@ -77,8 +77,8 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">ClientEyeRuntime</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Loader-neutral owner of mob, boat, placed-head, framed-item, and held eye simulations and their lifecycle, and of
- the scope that tells an item draw which animation it belongs to.</div>
+<div class="block">Loader-neutral owner of mob, boat, placed-head, framed-item, and held eye simulations and their
+ lifecycle, and of the scope that tells an item draw which animation it belongs to.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -103,7 +103,8 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color"><code>static final record&nbsp;</code></div>
 <div class="col-second odd-row-color"><code><a href="ClientEyeRuntime.RestingHead.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.client">ClientEyeRuntime.RestingHead</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block">A resting head item's decoded eyes: its state, its layout, and the layout's heads shown on the item.</div>
+<div class="block">A resting head item's decoded eyes: its state, its layout, and the layout's heads shown on
+ the item.</div>
 </div>
 </div>
 </section>
@@ -152,7 +153,8 @@ loadScripts(document, 'script');</script>
  int&nbsp;index,
  net.minecraft.world.item.ItemStack&nbsp;stack)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">GUI identity and selected animations inherit through the one nested draw stack; ended by <a href="#endItemDraw()"><code>endItemDraw()</code></a>.</div>
+<div class="block">GUI identity and selected animations inherit through the one nested draw stack; ended by
+ <a href="#endItemDraw()"><code>endItemDraw()</code></a>.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#beginHead(net.minecraft.world.level.block.entity.BlockEntity,float)" class="member-name-link">beginHead</a><wbr>(net.minecraft.world.level.block.entity.BlockEntity&nbsp;block,
@@ -199,8 +201,8 @@ loadScripts(document, 'script');</script>
  <a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a>&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The tracker for this entity's current placement, creating one on first use and replacing any
- existing tracker whose <a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye"><code>HeadInfo</code></a> no longer matches (the eye array is shaped from it, so a
- variant or age change cannot reuse the old tracker).</div>
+ existing tracker whose <a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye"><code>HeadInfo</code></a> no longer matches (the eye array is shaped from it,
+ so a variant or age change cannot reuse the old tracker).</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client">PresentationEyes</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#guiEyes(com.github.crittscott.somegoogly.client.ClientEyeRuntime.GuiKey,net.minecraft.world.item.ItemStack)" class="member-name-link">guiEyes</a><wbr>(<a href="ClientEyeRuntime.GuiKey.html" title="class in com.github.crittscott.somegoogly.client">ClientEyeRuntime.GuiKey</a>&nbsp;key,
@@ -240,7 +242,8 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="GooglyTracker.html" title="class in com.github.crittscott.somegoogly.client">GooglyTracker</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#peek(net.minecraft.world.entity.LivingEntity)" class="member-name-link">peek</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;living)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The live tracker for this entity, or <code>null</code> if none exists yet (no rebuild on mismatch).</div>
+<div class="block">The live tracker for this entity, or <code>null</code> if none exists yet (no rebuild on
+ mismatch).</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#removeHands(java.util.UUID)" class="member-name-link">removeHands</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;holder)</code></div>
@@ -249,13 +252,14 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#restingHead(net.minecraft.world.item.ItemStack,net.minecraft.resources.ResourceLocation)" class="member-name-link">restingHead</a><wbr>(net.minecraft.world.item.ItemStack&nbsp;stack,
  net.minecraft.resources.ResourceLocation&nbsp;entity)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The eyes to draw on <code>stack</code>, a head item of <code>entity</code>'s kind drawn without an animation, decoded
- once per eye state; <code>null</code> when it has none to show.</div>
+<div class="block">The eyes to draw on <code>stack</code>, a head item of <code>entity</code>'s kind drawn without an
+ animation, decoded once per eye state; <code>null</code> when it has none to show.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#restingLook(net.minecraft.world.item.ItemStack)" class="member-name-link">restingLook</a><wbr>(net.minecraft.world.item.ItemStack&nbsp;stack)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The appearance of <code>stack</code>, a loose eye drawn without an animation, decoded once per appearance.</div>
+<div class="block">The appearance of <code>stack</code>, a loose eye drawn without an animation, decoded once per
+ appearance.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#setAngry(net.minecraft.world.entity.LivingEntity,boolean)" class="member-name-link">setAngry</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;living,
@@ -284,9 +288,9 @@ loadScripts(document, 'script');</script>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#skullEyes(net.minecraft.world.level.block.entity.BlockEntity,net.minecraft.resources.ResourceLocation)" class="member-name-link">skullEyes</a><wbr>(net.minecraft.world.level.block.entity.BlockEntity&nbsp;skull,
  net.minecraft.resources.ResourceLocation&nbsp;entity)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The eyes of the eyed head <code>skull</code>, a head of <code>entity</code>'s kind, creating them on first use and
- replacing any built for another kind of head at the same position or from another state; <code>null</code>
- when the client's definitions give it nothing to draw.</div>
+<div class="block">The eyes of the eyed head <code>skull</code>, a head of <code>entity</code>'s kind, creating them on
+ first use and replacing any built for another kind of head at the same position or from
+ another state; <code>null</code> when the client's definitions give it nothing to draw.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tick(net.minecraft.world.level.Level,boolean,java.lang.Object)" class="member-name-link">tick</a><wbr>(net.minecraft.world.level.Level&nbsp;level,
@@ -364,9 +368,9 @@ loadScripts(document, 'script');</script>
  int&nbsp;index,
  @Nullable
  net.minecraft.world.item.ItemStack&nbsp;stack)</span></div>
-<div class="block">GUI identity and selected animations inherit through the one nested draw stack; ended by <a href="#endItemDraw()"><code>endItemDraw()</code></a>.
- <code>stack</code> is the one item the scope draws, or null for a scope over several items (the hotbar); a scope
- for an item that can have no eyes changes nothing.</div>
+<div class="block">GUI identity and selected animations inherit through the one nested draw stack; ended by
+ <a href="#endItemDraw()"><code>endItemDraw()</code></a>. <code>stack</code> is the one item the scope draws, or null for a scope over
+ several items (the hotbar); a scope for an item that can have no eyes changes nothing.</div>
 </section>
 </li>
 <li>
@@ -437,8 +441,8 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="GooglyTracker.html" title="class in com.github.crittscott.somegoogly.client">GooglyTracker</a></span>&nbsp;<span class="element-name">get</span><wbr><span class="parameters">(net.minecraft.world.entity.LivingEntity&nbsp;living,
  <a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a>&nbsp;helper)</span></div>
 <div class="block">The tracker for this entity's current placement, creating one on first use and replacing any
- existing tracker whose <a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye"><code>HeadInfo</code></a> no longer matches (the eye array is shaped from it, so a
- variant or age change cannot reuse the old tracker).</div>
+ existing tracker whose <a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye"><code>HeadInfo</code></a> no longer matches (the eye array is shaped from it,
+ so a variant or age change cannot reuse the old tracker).</div>
 </section>
 </li>
 <li>
@@ -499,7 +503,8 @@ loadScripts(document, 'script');</script>
 <h3>peek</h3>
 <div class="member-signature"><span class="annotations">@Nullable
 </span><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="GooglyTracker.html" title="class in com.github.crittscott.somegoogly.client">GooglyTracker</a></span>&nbsp;<span class="element-name">peek</span><wbr><span class="parameters">(net.minecraft.world.entity.LivingEntity&nbsp;living)</span></div>
-<div class="block">The live tracker for this entity, or <code>null</code> if none exists yet (no rebuild on mismatch).</div>
+<div class="block">The live tracker for this entity, or <code>null</code> if none exists yet (no rebuild on
+ mismatch).</div>
 </section>
 </li>
 <li>
@@ -522,15 +527,16 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="annotations">@Nullable
 </span><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="ClientEyeRuntime.RestingHead.html" title="class in com.github.crittscott.somegoogly.client">ClientEyeRuntime.RestingHead</a></span>&nbsp;<span class="element-name">restingHead</span><wbr><span class="parameters">(net.minecraft.world.item.ItemStack&nbsp;stack,
  net.minecraft.resources.ResourceLocation&nbsp;entity)</span></div>
-<div class="block">The eyes to draw on <code>stack</code>, a head item of <code>entity</code>'s kind drawn without an animation, decoded
- once per eye state; <code>null</code> when it has none to show.</div>
+<div class="block">The eyes to draw on <code>stack</code>, a head item of <code>entity</code>'s kind drawn without an
+ animation, decoded once per eye state; <code>null</code> when it has none to show.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="restingLook(net.minecraft.world.item.ItemStack)">
 <h3>restingLook</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></span>&nbsp;<span class="element-name">restingLook</span><wbr><span class="parameters">(net.minecraft.world.item.ItemStack&nbsp;stack)</span></div>
-<div class="block">The appearance of <code>stack</code>, a loose eye drawn without an animation, decoded once per appearance.</div>
+<div class="block">The appearance of <code>stack</code>, a loose eye drawn without an animation, decoded once per
+ appearance.</div>
 </section>
 </li>
 <li>
@@ -560,9 +566,10 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="annotations">@Nullable
 </span><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client">PresentationEyes</a></span>&nbsp;<span class="element-name">skullEyes</span><wbr><span class="parameters">(net.minecraft.world.level.block.entity.BlockEntity&nbsp;skull,
  net.minecraft.resources.ResourceLocation&nbsp;entity)</span></div>
-<div class="block">The eyes of the eyed head <code>skull</code>, a head of <code>entity</code>'s kind, creating them on first use and
- replacing any built for another kind of head at the same position or from another state; <code>null</code>
- when the client's definitions give it nothing to draw. A load with unchanged state keeps the pupils.</div>
+<div class="block">The eyes of the eyed head <code>skull</code>, a head of <code>entity</code>'s kind, creating them on
+ first use and replacing any built for another kind of head at the same position or from
+ another state; <code>null</code> when the client's definitions give it nothing to draw. A load
+ with unchanged state keeps the pupils.</div>
 </section>
 </li>
 <li>
@@ -574,8 +581,8 @@ loadScripts(document, 'script');</script>
  @Nullable
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;activeView)</span></div>
 <div class="block">Advance the tick counter, evict any tracker idle past <code>EVICT_IDLE_TICKS</code>, and step the
- physics of those rendered this tick or last when <code>simulate</code> is true. The client lifecycle
- disables simulation while there is no level or the game is paused.</div>
+ physics of those rendered this tick or last when <code>simulate</code> is true. The client
+ lifecycle disables simulation while there is no level or the game is paused.</div>
 </section>
 </li>
 <li>

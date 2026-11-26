@@ -79,17 +79,16 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">OptometristEnchantment</span>
 <span class="extends-implements">extends net.minecraft.world.item.enchantment.Enchantment</span></div>
-<div class="block">"Optometrist" — a shears-only enchantment that enables non-lethal eye harvesting: right-clicking an
- eyed mob with optometrist shears pulls its googly eyes off without harming it (see
- <code>EyeItemService</code>). Without it, plain shears can only collect eyes by killing the mob.
+<div class="block">"Optometrist" — a shears-only enchantment that enables non-lethal eye harvesting: right-clicking
+ an eyed mob with optometrist shears pulls its googly eyes off without harming it (see <code>
+ EyeItemService</code>). Without it, plain shears can only collect eyes by killing the mob.
 
- <p>Treasure-only (so it never appears in the enchanting table) but left discoverable and tradeable,
- matching the vanilla Mending/Frost-Walker pattern: it shows up in loot-chest / fishing enchanted
- books and librarian trades without needing any loot-table or trade datapack edits.
+ <p>Treasure-only (so it never appears in the enchanting table) but left discoverable and
+ tradeable, matching the vanilla Mending/Frost-Walker pattern: it shows up in loot-chest / fishing
+ enchanted books and librarian trades without needing any loot-table or trade datapack edits.
 
- <p>The closest closed vanilla category is <code>EnchantmentCategory.BREAKABLE</code>;
- <a href="#canEnchant(net.minecraft.world.item.ItemStack)"><code>canEnchant(ItemStack)</code></a> narrows that category to shears on both loaders, and <a href="#canRollOn(net.minecraft.world.item.ItemStack)"><code>canRollOn(net.minecraft.world.item.ItemStack)</code></a> narrows
- loot's enchant-by-level roll the same way.</div>
+ <p>The closest closed vanilla category is <code>EnchantmentCategory.BREAKABLE</code>; <a href="#canEnchant(net.minecraft.world.item.ItemStack)"><code>canEnchant(ItemStack)</code></a> narrows that category to shears on both loaders, and <a href="#canRollOn(net.minecraft.world.item.ItemStack)"><code>canRollOn(net.minecraft.world.item.ItemStack)</code></a>
+ narrows loot's enchant-by-level roll the same way.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -141,7 +140,8 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#canRollOn(net.minecraft.world.item.ItemStack)" class="member-name-link">canRollOn</a><wbr>(net.minecraft.world.item.ItemStack&nbsp;stack)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Whether loot rolling enchantments by level may put Optometrist on <code>stack</code>: shears, or a book.</div>
+<div class="block">Whether loot rolling enchantments by level may put Optometrist on <code>stack</code>: shears, or a
+ book.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getMaxCost(int)" class="member-name-link">getMaxCost</a><wbr>(int&nbsp;level)</code></div>
@@ -200,7 +200,8 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="canRollOn(net.minecraft.world.item.ItemStack)">
 <h3>canRollOn</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">canRollOn</span><wbr><span class="parameters">(net.minecraft.world.item.ItemStack&nbsp;stack)</span></div>
-<div class="block">Whether loot rolling enchantments by level may put Optometrist on <code>stack</code>: shears, or a book.</div>
+<div class="block">Whether loot rolling enchantments by level may put Optometrist on <code>stack</code>: shears, or a
+ book.</div>
 </section>
 </li>
 <li>

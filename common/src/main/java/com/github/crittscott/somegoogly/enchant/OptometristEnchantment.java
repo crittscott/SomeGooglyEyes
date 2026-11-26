@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.enchant;
 
 import com.github.crittscott.somegoogly.registry.ModContent;
+
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -8,23 +9,25 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 
 /**
- * "Optometrist" — a shears-only enchantment that enables non-lethal eye harvesting: right-clicking an
- * eyed mob with optometrist shears pulls its googly eyes off without harming it (see
- * {@code EyeItemService}). Without it, plain shears can only collect eyes by killing the mob.
+ * "Optometrist" — a shears-only enchantment that enables non-lethal eye harvesting: right-clicking
+ * an eyed mob with optometrist shears pulls its googly eyes off without harming it (see {@code
+ * EyeItemService}). Without it, plain shears can only collect eyes by killing the mob.
  *
- * <p>Treasure-only (so it never appears in the enchanting table) but left discoverable and tradeable,
- * matching the vanilla Mending/Frost-Walker pattern: it shows up in loot-chest / fishing enchanted
- * books and librarian trades without needing any loot-table or trade datapack edits.
+ * <p>Treasure-only (so it never appears in the enchanting table) but left discoverable and
+ * tradeable, matching the vanilla Mending/Frost-Walker pattern: it shows up in loot-chest / fishing
+ * enchanted books and librarian trades without needing any loot-table or trade datapack edits.
  *
- * <p>The closest closed vanilla category is {@link EnchantmentCategory#BREAKABLE};
- * {@link #canEnchant(ItemStack)} narrows that category to shears on both loaders, and {@link #canRollOn} narrows
- * loot's enchant-by-level roll the same way.
+ * <p>The closest closed vanilla category is {@link EnchantmentCategory#BREAKABLE}; {@link
+ * #canEnchant(ItemStack)} narrows that category to shears on both loaders, and {@link #canRollOn}
+ * narrows loot's enchant-by-level roll the same way.
  */
 public class OptometristEnchantment extends Enchantment {
 
     public OptometristEnchantment() {
-        super(Rarity.RARE, EnchantmentCategory.BREAKABLE,
-                new EquipmentSlot[]{EquipmentSlot.MAINHAND, EquipmentSlot.OFFHAND});
+        super(
+                Rarity.RARE,
+                EnchantmentCategory.BREAKABLE,
+                new EquipmentSlot[] {EquipmentSlot.MAINHAND, EquipmentSlot.OFFHAND});
     }
 
     @Override
@@ -32,7 +35,10 @@ public class OptometristEnchantment extends Enchantment {
         return stack.is(ModContent.SHEARS);
     }
 
-    /** Whether loot rolling enchantments by level may put Optometrist on {@code stack}: shears, or a book. */
+    /**
+     * Whether loot rolling enchantments by level may put Optometrist on {@code stack}: shears, or a
+     * book.
+     */
     public static boolean canRollOn(ItemStack stack) {
         return stack.is(Items.BOOK) || ModContent.OPTOMETRIST.get().canEnchant(stack);
     }

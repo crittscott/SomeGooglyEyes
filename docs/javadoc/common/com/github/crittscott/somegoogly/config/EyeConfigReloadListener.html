@@ -88,9 +88,9 @@ loadScripts(document, 'script');</script>
 <div class="block">Loads eye geometry configs from datapacks: scans <code>data/&lt;namespace&gt;/eyes/*.json</code>, one file
  per entity (the file path is the entity id). Each file contains versioned/age-selected entries;
  reload selects the entries that match the currently loaded mod version for that namespace. When
- no entry matches, the nearest generation is used instead (<a href="VersionRangeMatcher.html#nearestVersion(java.util.Collection,java.lang.String)"><code>VersionRangeMatcher.nearestVersion(java.util.Collection&lt;java.lang.String&gt;, java.lang.String)</code></a>)
- and the mismatch is logged — eyes are cosmetic, so degraded placement beats silently dropping the
- file (which would also permanently store a no-eyes roll for mobs spawned during the window).</div>
+ no entry matches, the nearest generation is used instead (<a href="VersionRangeMatcher.html#nearestVersion(java.util.Collection,java.lang.String)"><code>VersionRangeMatcher.nearestVersion(java.util.Collection&lt;java.lang.String&gt;, java.lang.String)</code></a>) and the mismatch is logged — eyes are cosmetic, so degraded
+ placement beats silently dropping the file (which would also permanently store a no-eyes roll for
+ mobs spawned during the window).</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -232,8 +232,9 @@ loadScripts(document, 'script');</script>
 <h3>eyeFile</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a></span>&nbsp;<span class="element-name">eyeFile</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;packRoot,
  net.minecraft.resources.ResourceLocation&nbsp;typeId)</span></div>
-<div class="block">Construct the file path for <code>typeId</code>'s eye definition. Does not check filesystem containment;
- callers accepting a client-authored identifier must first require membership in the entity registry.</div>
+<div class="block">Construct the file path for <code>typeId</code>'s eye definition. Does not check filesystem
+ containment; callers accepting a client-authored identifier must first require membership in
+ the entity registry.</div>
 </section>
 </li>
 <li>

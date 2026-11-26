@@ -3,28 +3,31 @@ package com.github.crittscott.somegoogly.network.forge;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.network.NetworkProtocol;
 import com.github.crittscott.somegoogly.network.Payload;
-import java.util.function.Supplier;
+
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 
+import java.util.function.Supplier;
+
 /**
- * Required Forge payload channel and native packet distribution. The channel's version is the network
- * version, and both sides require it, so Forge refuses a client or server without a matching mod.
+ * Required Forge payload channel and native packet distribution. The channel's version is the
+ * network version, and both sides require it, so Forge refuses a client or server without a
+ * matching mod.
  */
 public final class ForgeNetworkTransport {
 
     /** The payload channel; each payload's {@code index} in {@link Payload} is its wire id here. */
-    public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
-            SomeGooglyCommon.id("network"),
-            () -> NetworkProtocol.NETWORK_VERSION,
-            NetworkProtocol.NETWORK_VERSION::equals,
-            NetworkProtocol.NETWORK_VERSION::equals);
+    public static final SimpleChannel CHANNEL =
+            NetworkRegistry.newSimpleChannel(
+                    SomeGooglyCommon.id("network"),
+                    () -> NetworkProtocol.NETWORK_VERSION,
+                    NetworkProtocol.NETWORK_VERSION::equals,
+                    NetworkProtocol.NETWORK_VERSION::equals);
 
-    private ForgeNetworkTransport() {
-    }
+    private ForgeNetworkTransport() {}
 
     /** Register every payload; called once from the mod constructor, before any send. */
     public static void register() {
@@ -48,7 +51,8 @@ public final class ForgeNetworkTransport {
         CHANNEL.messageBuilder(payload.type(), payload.index(), NetworkDirection.PLAY_TO_SERVER)
                 .encoder(Payload::write)
                 .decoder(payload.reader())
-                .consumerMainThread((packet, context) -> payload.handler().accept(packet, sender(context)))
+                .consumerMainThread(
+                        (packet, context) -> payload.handler().accept(packet, sender(context)))
                 .add();
     }
 

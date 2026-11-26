@@ -13,18 +13,7 @@ import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.registry.ModContent;
 import com.google.common.collect.MapMaker;
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.function.BiConsumer;
-import java.util.function.BiPredicate;
-import java.util.function.ToLongFunction;
-import javax.annotation.Nullable;
+
 import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -43,9 +32,23 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
+import java.util.function.ToLongFunction;
+
+import javax.annotation.Nullable;
+
 /**
- * Loader-neutral owner of mob, boat, placed-head, framed-item, and held eye simulations and their lifecycle, and of
- * the scope that tells an item draw which animation it belongs to.
+ * Loader-neutral owner of mob, boat, placed-head, framed-item, and held eye simulations and their
+ * lifecycle, and of the scope that tells an item draw which animation it belongs to.
  */
 public final class ClientEyeRuntime {
 
@@ -53,62 +56,83 @@ public final class ClientEyeRuntime {
     private static final Set<Integer> ANGRY = new HashSet<>();
     private static final Map<LivingEntity, ReceivedBehavior> BEHAVIORS = new HashMap<>();
     private static final Map<Boat, BoatEntry> BOATS = new HashMap<>();
+
     /** The enclosing item draws' animations; the innermost is in {@link #currentDraw}. */
     private static final Deque<DrawContext> DRAWS = new ArrayDeque<>();
 
     /** Evict a simulation once it has gone unshown for more than this many of its cache's ticks. */
     private static final int EVICT_IDLE_TICKS = 10;
+
     private static final Map<ItemFrame, PresentationEyes> FRAMES = new HashMap<>();
     private static final Map<GuiKey, GuiEntry> GUI = new HashMap<>();
     private static final Map<HandKey, HandBehavior> HAND_BEHAVIORS = new HashMap<>();
     private static final Map<HandKey, HandEntry> HANDS = new HashMap<>();
     public static final Object HUD = new Object();
     private static final long NANOS_PER_TICK = 1_000_000_000L / SharedConstants.TICKS_PER_SECOND;
+
     /**
-     * Decoded eye state of head items drawn without an animation, by the item's eye-state compound. Keys are weak
-     * and compared by identity: every change to an item's eyes writes a new compound, and a stack that is gone
-     * frees its entry.
+     * Decoded eye state of head items drawn without an animation, by the item's eye-state compound.
+     * Keys are weak and compared by identity: every change to an item's eyes writes a new compound,
+     * and a stack that is gone frees its entry.
      */
-    private static final Map<CompoundTag, RestingHead> RESTING_HEADS = new MapMaker().weakKeys().makeMap();
-    /** Decoded appearance of loose eyes drawn without an animation, keyed like {@link #RESTING_HEADS}. */
-    private static final Map<CompoundTag, AppearanceOverride> RESTING_LOOKS = new MapMaker().weakKeys().makeMap();
+    private static final Map<CompoundTag, RestingHead> RESTING_HEADS =
+            new MapMaker().weakKeys().makeMap();
+
+    /**
+     * Decoded appearance of loose eyes drawn without an animation, keyed like {@link
+     * #RESTING_HEADS}.
+     */
+    private static final Map<CompoundTag, AppearanceOverride> RESTING_LOOKS =
+            new MapMaker().weakKeys().makeMap();
+
     /** Simulate only what was shown this tick or last (freezes off-screen eyes). */
     private static final int SIMULATE_IDLE_TICKS = 1;
-    /** Placed heads' eyes by position, under the same render-driven eviction and simulation as mob trackers. */
+
+    /**
+     * Placed heads' eyes by position, under the same render-driven eviction and simulation as mob
+     * trackers.
+     */
     private static final Map<BlockPos, PresentationEyes> SKULLS = new HashMap<>();
+
     private static final Map<LivingEntity, GooglyTracker> TRACKERS = new HashMap<>();
     private static int clientTicks;
-    private static DrawContext current = new DrawContext(null, null, 0F, PresentationEyes.Draw.NONE, null);
+    private static DrawContext current =
+            new DrawContext(null, null, 0F, PresentationEyes.Draw.NONE, null);
     private static long guiSeed;
     private static long guiTicks;
     private static long lastGuiTickNanos = System.nanoTime();
     private static long simulationTicks;
 
-    private ClientEyeRuntime() {
+    private ClientEyeRuntime() {}
+
+    public enum GuiKind {
+        CURSOR,
+        HOTBAR,
+        POSITION,
+        SLOT
     }
 
-    public enum GuiKind { CURSOR, HOTBAR, POSITION, SLOT }
+    public record DrawContext(
+            @Nullable BlockEntity block,
+            @Nullable ItemStack item,
+            float partialTick,
+            PresentationEyes.Draw draw,
+            @Nullable GuiKey guiKey) {}
 
-    public record DrawContext(@Nullable BlockEntity block, @Nullable ItemStack item, float partialTick,
-        PresentationEyes.Draw draw, @Nullable GuiKey guiKey) {
-    }
+    public record GuiKey(Object view, GuiKind kind, int x, int y, int seed) {}
 
-    public record GuiKey(Object view, GuiKind kind, int x, int y, int seed) {
-    }
+    private record HandBehavior(LivingEntity holder, ReceivedBehavior received) {}
 
-    private record HandBehavior(LivingEntity holder, ReceivedBehavior received) {
-    }
-
-    private record HandKey(UUID holder, InteractionHand hand) {
-    }
+    private record HandKey(UUID holder, InteractionHand hand) {}
 
     /** Entity-lifetime expression timing, independent of any disposable render tracker. */
-    record ReceivedBehavior(EyeBehavior behavior, long seed, long startedAt) {
-    }
+    record ReceivedBehavior(EyeBehavior behavior, long seed, long startedAt) {}
 
-    /** A resting head item's decoded eyes: its state, its layout, and the layout's heads shown on the item. */
-    public record RestingHead(Snapshot snapshot, @Nullable HeadInfo helper, int[] parts) {
-    }
+    /**
+     * A resting head item's decoded eyes: its state, its layout, and the layout's heads shown on
+     * the item.
+     */
+    public record RestingHead(Snapshot snapshot, @Nullable HeadInfo helper, int[] parts) {}
 
     private static final class BoatEntry {
         final String attachment;
@@ -130,45 +154,69 @@ public final class ClientEyeRuntime {
     private static final class GuiEntry {
         final PresentationEyes eyes;
         long lastShown;
-        GuiEntry(PresentationEyes eyes) { this.eyes = eyes; }
+
+        GuiEntry(PresentationEyes eyes) {
+            this.eyes = eyes;
+        }
     }
 
     private static final class HandEntry {
         final PresentationEyes eyes;
         final LivingEntity holder;
         long lastShown;
-        HandEntry(PresentationEyes eyes, LivingEntity holder) { this.eyes = eyes; this.holder = holder; }
-    }
 
-    /** {@code frame}'s item draw starts, with its eye if the item has one; ended by {@link #endItemDraw}. */
-    public static void beginFrame(ItemFrame frame, float partialTick) {
-        PresentationEyes eyes = frameEye(frame);
-        beginItemDraw(eyes == null ? PresentationEyes.Draw.NONE : new PresentationEyes.Draw(eyes, partialTick));
-    }
-
-    public static void beginGuiDraw(ItemStack stack, int x, int y, int seed) {
-        beginItemDraw(PresentationEyes.supports(stack) ? guiDraw(stack, x, y, seed) : PresentationEyes.Draw.NONE);
+        HandEntry(PresentationEyes eyes, LivingEntity holder) {
+            this.eyes = eyes;
+            this.holder = holder;
+        }
     }
 
     /**
-     * GUI identity and selected animations inherit through the one nested draw stack; ended by {@link #endItemDraw}.
-     * {@code stack} is the one item the scope draws, or null for a scope over several items (the hotbar); a scope
-     * for an item that can have no eyes changes nothing.
+     * {@code frame}'s item draw starts, with its eye if the item has one; ended by {@link
+     * #endItemDraw}.
      */
-    public static void beginGuiPresentation(Object view, GuiKind kind, int index, @Nullable ItemStack stack) {
+    public static void beginFrame(ItemFrame frame, float partialTick) {
+        PresentationEyes eyes = frameEye(frame);
+        beginItemDraw(
+                eyes == null
+                        ? PresentationEyes.Draw.NONE
+                        : new PresentationEyes.Draw(eyes, partialTick));
+    }
+
+    public static void beginGuiDraw(ItemStack stack, int x, int y, int seed) {
+        beginItemDraw(
+                PresentationEyes.supports(stack)
+                        ? guiDraw(stack, x, y, seed)
+                        : PresentationEyes.Draw.NONE);
+    }
+
+    /**
+     * GUI identity and selected animations inherit through the one nested draw stack; ended by
+     * {@link #endItemDraw}. {@code stack} is the one item the scope draws, or null for a scope over
+     * several items (the hotbar); a scope for an item that can have no eyes changes nothing.
+     */
+    public static void beginGuiPresentation(
+            Object view, GuiKind kind, int index, @Nullable ItemStack stack) {
         if (stack != null && !PresentationEyes.supports(stack)) {
             push(current);
             return;
         }
-        push(new DrawContext(current.block(), current.item(), current.partialTick(), current.draw(),
-            new GuiKey(view, kind, index, 0, 0)));
+        push(
+                new DrawContext(
+                        current.block(),
+                        current.item(),
+                        current.partialTick(),
+                        current.draw(),
+                        new GuiKey(view, kind, index, 0, 0)));
     }
 
     public static void beginHead(BlockEntity block, float partialTick) {
         push(new DrawContext(block, null, partialTick, current.draw(), current.guiKey()));
     }
 
-    /** Unsupported built-in renderers may cancel before RETURN; only head items own this bracket. */
+    /**
+     * Unsupported built-in renderers may cancel before RETURN; only head items own this bracket.
+     */
     public static void beginHeadItem(ItemStack stack) {
         if (SkullEyeState.entityFor(stack) != null) {
             push(new DrawContext(null, stack, 0F, current.draw(), current.guiKey()));
@@ -177,8 +225,15 @@ public final class ClientEyeRuntime {
 
     /** An item draw starts, animated by {@code draw}; ended by {@link #endItemDraw}. */
     public static void beginItemDraw(PresentationEyes.Draw draw) {
-        push(draw == current.draw() ? current
-            : new DrawContext(current.block(), current.item(), current.partialTick(), draw, current.guiKey()));
+        push(
+                draw == current.draw()
+                        ? current
+                        : new DrawContext(
+                                current.block(),
+                                current.item(),
+                                current.partialTick(),
+                                draw,
+                                current.guiKey()));
     }
 
     /** The current boat layout, rebuilt only when its state, geometry, or definition changes. */
@@ -198,8 +253,11 @@ public final class ClientEyeRuntime {
             }
             var snapshot = EyeState.snapshot(boat);
             HeadInfo helper = BoatEyeLayout.resolve(boat, config, snapshot.variantRoll());
-            entry = new BoatEntry(BoatEyeLayout.attachment(boat), config,
-                PresentationEyes.create(boat.getUUID(), type, snapshot, helper));
+            entry =
+                    new BoatEntry(
+                            BoatEyeLayout.attachment(boat),
+                            config,
+                            PresentationEyes.create(boat.getUUID(), type, snapshot, helper));
             BOATS.put(boat, entry);
         }
         entry.lastShown = clientTicks;
@@ -237,10 +295,14 @@ public final class ClientEyeRuntime {
         current = DRAWS.pop();
     }
 
-    /** The rendered frame's eye, or none while its item or the global switches disallow animation. */
+    /**
+     * The rendered frame's eye, or none while its item or the global switches disallow animation.
+     */
     @Nullable
     private static PresentationEyes frameEye(ItemFrame frame) {
-        if (!ClientEyeConfigs.eyesVisible() || frame.isRemoved() || !PresentationEyes.supports(frame.getItem())) {
+        if (!ClientEyeConfigs.eyesVisible()
+                || frame.isRemoved()
+                || !PresentationEyes.supports(frame.getItem())) {
             if (!FRAMES.isEmpty()) {
                 FRAMES.remove(frame);
             }
@@ -261,13 +323,18 @@ public final class ClientEyeRuntime {
 
     /**
      * The tracker for this entity's current placement, creating one on first use and replacing any
-     * existing tracker whose {@link HeadInfo} no longer matches (the eye array is shaped from it, so a
-     * variant or age change cannot reuse the old tracker).
+     * existing tracker whose {@link HeadInfo} no longer matches (the eye array is shaped from it,
+     * so a variant or age change cannot reuse the old tracker).
      */
     public static GooglyTracker get(LivingEntity living, HeadInfo helper) {
         GooglyTracker tracker = TRACKERS.get(living);
         if (tracker == null || !tracker.matches(helper)) {
-            tracker = new GooglyTracker(living, helper, ANGRY.contains(living.getId()), ClientEyeConfigs.behaviors());
+            tracker =
+                    new GooglyTracker(
+                            living,
+                            helper,
+                            ANGRY.contains(living.getId()),
+                            ClientEyeConfigs.behaviors());
             TRACKERS.put(living, tracker);
             synchronizeBehavior(living, tracker);
         }
@@ -288,8 +355,14 @@ public final class ClientEyeRuntime {
             key = new GuiKey(HUD, GuiKind.HOTBAR, seed, 0, 0);
         }
         PresentationEyes eyes = guiEyes(key, stack);
-        return eyes == null ? PresentationEyes.Draw.NONE : new PresentationEyes.Draw(eyes,
-            Mth.clamp((float) (System.nanoTime() - lastGuiTickNanos) / NANOS_PER_TICK, 0F, 1F));
+        return eyes == null
+                ? PresentationEyes.Draw.NONE
+                : new PresentationEyes.Draw(
+                        eyes,
+                        Mth.clamp(
+                                (float) (System.nanoTime() - lastGuiTickNanos) / NANOS_PER_TICK,
+                                0F,
+                                1F));
     }
 
     public static PresentationEyes guiEyes(GuiKey key, ItemStack stack) {
@@ -308,27 +381,38 @@ public final class ClientEyeRuntime {
         return entry.eyes;
     }
 
-    public static PresentationEyes.Draw handContext(@Nullable LivingEntity holder, ItemStack stack,
-        ItemDisplayContext display) {
-        if (holder == null || (display != ItemDisplayContext.THIRD_PERSON_LEFT_HAND
-            && display != ItemDisplayContext.THIRD_PERSON_RIGHT_HAND
-            && display != ItemDisplayContext.FIRST_PERSON_LEFT_HAND
-            && display != ItemDisplayContext.FIRST_PERSON_RIGHT_HAND) || !PresentationEyes.supports(stack)) {
+    public static PresentationEyes.Draw handContext(
+            @Nullable LivingEntity holder, ItemStack stack, ItemDisplayContext display) {
+        if (holder == null
+                || (display != ItemDisplayContext.THIRD_PERSON_LEFT_HAND
+                        && display != ItemDisplayContext.THIRD_PERSON_RIGHT_HAND
+                        && display != ItemDisplayContext.FIRST_PERSON_LEFT_HAND
+                        && display != ItemDisplayContext.FIRST_PERSON_RIGHT_HAND)
+                || !PresentationEyes.supports(stack)) {
             return PresentationEyes.Draw.NONE;
         }
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.level == null || !ClientEyeConfigs.eyesVisible()) {
             return PresentationEyes.Draw.NONE;
         }
-        HumanoidArm arm = (display == ItemDisplayContext.THIRD_PERSON_LEFT_HAND || display == ItemDisplayContext.FIRST_PERSON_LEFT_HAND) ? HumanoidArm.LEFT : HumanoidArm.RIGHT;
-        InteractionHand hand = arm == holder.getMainArm() ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
-        if ((display == ItemDisplayContext.FIRST_PERSON_LEFT_HAND || display == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND)
-            && !stack.is(ModContent.GOOGLY_EYE.get())) return PresentationEyes.Draw.NONE;
+        HumanoidArm arm =
+                (display == ItemDisplayContext.THIRD_PERSON_LEFT_HAND
+                                || display == ItemDisplayContext.FIRST_PERSON_LEFT_HAND)
+                        ? HumanoidArm.LEFT
+                        : HumanoidArm.RIGHT;
+        InteractionHand hand =
+                arm == holder.getMainArm() ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
+        if ((display == ItemDisplayContext.FIRST_PERSON_LEFT_HAND
+                        || display == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND)
+                && !stack.is(ModContent.GOOGLY_EYE.get())) return PresentationEyes.Draw.NONE;
         PresentationEyes eyes = handEyes(holder, hand, stack);
-        return eyes == null ? PresentationEyes.Draw.NONE : new PresentationEyes.Draw(eyes, minecraft.getFrameTime());
+        return eyes == null
+                ? PresentationEyes.Draw.NONE
+                : new PresentationEyes.Draw(eyes, minecraft.getFrameTime());
     }
 
-    public static PresentationEyes handEyes(LivingEntity holder, InteractionHand hand, ItemStack stack) {
+    public static PresentationEyes handEyes(
+            LivingEntity holder, InteractionHand hand, ItemStack stack) {
         HandKey key = new HandKey(holder.getUUID(), hand);
         if (holder.isRemoved()) {
             HANDS.remove(key);
@@ -352,12 +436,15 @@ public final class ClientEyeRuntime {
     /** The animation for {@code stack} in the current item draw, if its state still matches. */
     public static PresentationEyes.Draw itemDraw(ItemStack stack) {
         return current.draw().eyes() != null && current.draw().eyes().matches(stack)
-        ? current.draw() : PresentationEyes.Draw.NONE;
+                ? current.draw()
+                : PresentationEyes.Draw.NONE;
     }
 
     private static boolean mayShow(Boat boat, ResourceLocation type) {
-        return EyeState.hasEyes(boat) && !boat.isInvisible() && !boat.isRemoved()
-        && ClientEyeConfigs.eyesVisible(type);
+        return EyeState.hasEyes(boat)
+                && !boat.isInvisible()
+                && !boat.isRemoved()
+                && ClientEyeConfigs.eyesVisible(type);
     }
 
     /** A boat's eye state arrived from the server; a differing state replaces its simulation. */
@@ -390,7 +477,10 @@ public final class ClientEyeRuntime {
         simulationTicks = 0;
     }
 
-    /** The live tracker for this entity, or {@code null} if none exists yet (no rebuild on mismatch). */
+    /**
+     * The live tracker for this entity, or {@code null} if none exists yet (no rebuild on
+     * mismatch).
+     */
     @Nullable
     public static GooglyTracker peek(LivingEntity living) {
         return TRACKERS.get(living);
@@ -405,7 +495,9 @@ public final class ClientEyeRuntime {
         HANDS.keySet().removeIf(key -> key.holder().equals(holder));
     }
 
-    /** Record the server-reported anger of {@code living} and pass it to its live tracker, if any. */
+    /**
+     * Record the server-reported anger of {@code living} and pass it to its live tracker, if any.
+     */
     public static void setAngry(LivingEntity living, boolean angry) {
         if (angry) {
             ANGRY.add(living.getId());
@@ -419,8 +511,8 @@ public final class ClientEyeRuntime {
     }
 
     /**
-     * The eyes to draw on {@code stack}, a head item of {@code entity}'s kind drawn without an animation, decoded
-     * once per eye state; {@code null} when it has none to show.
+     * The eyes to draw on {@code stack}, a head item of {@code entity}'s kind drawn without an
+     * animation, decoded once per eye state; {@code null} when it has none to show.
      */
     @Nullable
     public static RestingHead restingHead(ItemStack stack, ResourceLocation entity) {
@@ -428,25 +520,36 @@ public final class ClientEyeRuntime {
         if (data == null) {
             return null;
         }
-        RestingHead resting = RESTING_HEADS.computeIfAbsent(data, key -> {
-            Snapshot snapshot = Snapshot.read(key);
-            if (!snapshot.hasEyes()) {
-                return new RestingHead(snapshot, null, new int[0]);
-            }
-            HeadInfo helper = ClientEyeConfigs.resolveHead(entity, snapshot.variantRoll());
-            return new RestingHead(snapshot, helper, SkullEyeState.headParts(entity, helper));
-        });
+        RestingHead resting =
+                RESTING_HEADS.computeIfAbsent(
+                        data,
+                        key -> {
+                            Snapshot snapshot = Snapshot.read(key);
+                            if (!snapshot.hasEyes()) {
+                                return new RestingHead(snapshot, null, new int[0]);
+                            }
+                            HeadInfo helper =
+                                    ClientEyeConfigs.resolveHead(entity, snapshot.variantRoll());
+                            return new RestingHead(
+                                    snapshot, helper, SkullEyeState.headParts(entity, helper));
+                        });
         return resting.parts().length == 0 ? null : resting;
     }
 
-    /** The appearance of {@code stack}, a loose eye drawn without an animation, decoded once per appearance. */
+    /**
+     * The appearance of {@code stack}, a loose eye drawn without an animation, decoded once per
+     * appearance.
+     */
     public static AppearanceOverride restingLook(ItemStack stack) {
         CompoundTag tag = stack.getTagElement(EyeItemProperties.TAG_EYE_PROPERTIES);
-        return tag == null ? AppearanceOverride.EMPTY : RESTING_LOOKS.computeIfAbsent(tag, AppearanceOverride::fromNbt);
+        return tag == null
+                ? AppearanceOverride.EMPTY
+                : RESTING_LOOKS.computeIfAbsent(tag, AppearanceOverride::fromNbt);
     }
 
     /** Retain the latest server expression even before this known entity has rendered. */
-    public static void setBehavior(LivingEntity living, EyeBehavior behavior, long seed, int elapsed) {
+    public static void setBehavior(
+            LivingEntity living, EyeBehavior behavior, long seed, int elapsed) {
         BEHAVIORS.put(living, new ReceivedBehavior(behavior, seed, simulationTicks - elapsed));
         GooglyTracker tracker = TRACKERS.get(living);
         if (tracker != null) {
@@ -455,15 +558,23 @@ public final class ClientEyeRuntime {
     }
 
     /** Keep received hand reactions independent of disposable presentation entries. */
-    public static void setHandBehavior(LivingEntity holder, InteractionHand hand, EyeBehavior behavior, long seed, int elapsed) {
-        HAND_BEHAVIORS.put(new HandKey(holder.getUUID(), hand),
-            new HandBehavior(holder, new ReceivedBehavior(behavior, seed, simulationTicks - elapsed)));
+    public static void setHandBehavior(
+            LivingEntity holder,
+            InteractionHand hand,
+            EyeBehavior behavior,
+            long seed,
+            int elapsed) {
+        HAND_BEHAVIORS.put(
+                new HandKey(holder.getUUID(), hand),
+                new HandBehavior(
+                        holder, new ReceivedBehavior(behavior, seed, simulationTicks - elapsed)));
     }
 
     /**
-     * The eyes of the eyed head {@code skull}, a head of {@code entity}'s kind, creating them on first use and
-     * replacing any built for another kind of head at the same position or from another state; {@code null}
-     * when the client's definitions give it nothing to draw. A load with unchanged state keeps the pupils.
+     * The eyes of the eyed head {@code skull}, a head of {@code entity}'s kind, creating them on
+     * first use and replacing any built for another kind of head at the same position or from
+     * another state; {@code null} when the client's definitions give it nothing to draw. A load
+     * with unchanged state keeps the pupils.
      */
     @Nullable
     public static PresentationEyes skullEyes(BlockEntity skull, ResourceLocation entity) {
@@ -484,7 +595,9 @@ public final class ClientEyeRuntime {
                 SKULLS.remove(skull.getBlockPos());
                 return null;
             }
-            eyes = PresentationEyes.placedHead(Mth.getSeed(skull.getBlockPos()), entity, snapshot, layout, parts);
+            eyes =
+                    PresentationEyes.placedHead(
+                            Mth.getSeed(skull.getBlockPos()), entity, snapshot, layout, parts);
             eyes.headData = data;
             SKULLS.put(skull.getBlockPos().immutable(), eyes);
         }
@@ -492,12 +605,16 @@ public final class ClientEyeRuntime {
     }
 
     /**
-     * The render-driven lifecycle every eye cache shares, on that cache's own clock: an entry unshown past
-     * {@link #EVICT_IDLE_TICKS} or now {@code stale} is removed, and one shown within
+     * The render-driven lifecycle every eye cache shares, on that cache's own clock: an entry
+     * unshown past {@link #EVICT_IDLE_TICKS} or now {@code stale} is removed, and one shown within
      * {@link #SIMULATE_IDLE_TICKS} steps.
      */
-    static <K, V> void sweep(Map<K, V> entries, long now, ToLongFunction<V> lastShown,
-        BiPredicate<K, V> stale, BiConsumer<K, V> step) {
+    static <K, V> void sweep(
+            Map<K, V> entries,
+            long now,
+            ToLongFunction<V> lastShown,
+            BiPredicate<K, V> stale,
+            BiConsumer<K, V> step) {
         Iterator<Map.Entry<K, V>> iterator = entries.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<K, V> entry = iterator.next();
@@ -523,7 +640,11 @@ public final class ClientEyeRuntime {
             return;
         }
         if (tracker.receivedBehavior != received) {
-            tracker.install(received.behavior(), received.behavior().defaultDuration(), received.seed(), (int) elapsed);
+            tracker.install(
+                    received.behavior(),
+                    received.behavior().defaultDuration(),
+                    received.seed(),
+                    (int) elapsed);
             tracker.receivedBehavior = received;
         } else if (tracker.active != null) {
             tracker.active.age = (int) elapsed;
@@ -532,8 +653,8 @@ public final class ClientEyeRuntime {
 
     /**
      * Advance the tick counter, evict any tracker idle past {@link #EVICT_IDLE_TICKS}, and step the
-     * physics of those rendered this tick or last when {@code simulate} is true. The client lifecycle
-     * disables simulation while there is no level or the game is paused.
+     * physics of those rendered this tick or last when {@code simulate} is true. The client
+     * lifecycle disables simulation while there is no level or the game is paused.
      */
     public static void tick(@Nullable Level level, boolean simulate, @Nullable Object activeView) {
         lastGuiTickNanos = System.nanoTime();
@@ -552,58 +673,103 @@ public final class ClientEyeRuntime {
         if (simulate) tickWorld(level.getGameTime(), settings);
     }
 
-    /** Advance received expression time once per unpaused simulation tick, even for unrendered entities. */
+    /**
+     * Advance received expression time once per unpaused simulation tick, even for unrendered
+     * entities.
+     */
     private static void tickBehaviors() {
         simulationTicks++;
-        BEHAVIORS.entrySet().removeIf(entry -> {
-            boolean expired = simulationTicks - entry.getValue().startedAt() >= entry.getValue().behavior().defaultDuration();
-            if (expired) {
-                GooglyTracker tracker = TRACKERS.get(entry.getKey());
-                if (tracker != null) {
-                    tracker.active = null;
-                    tracker.receivedBehavior = null;
-                }
-            }
-            return expired;
-        });
+        BEHAVIORS
+                .entrySet()
+                .removeIf(entry -> {
+                    boolean expired =
+                            simulationTicks - entry.getValue().startedAt()
+                                    >= entry.getValue().behavior().defaultDuration();
+                    if (expired) {
+                        GooglyTracker tracker = TRACKERS.get(entry.getKey());
+                        if (tracker != null) {
+                            tracker.active = null;
+                            tracker.receivedBehavior = null;
+                        }
+                    }
+                    return expired;
+                });
     }
 
     /** Advance view time even while the world is paused. */
     public static void tickGui(@Nullable Object view, BehaviorSettings settings) {
         guiTicks++;
-        sweep(GUI, guiTicks, entry -> entry.lastShown,
-            (key, entry) -> key.view() != HUD && key.view() != view,
-            (key, entry) -> entry.eyes.tick(guiTicks, settings));
+        sweep(
+                GUI,
+                guiTicks,
+                entry -> entry.lastShown,
+                (key, entry) -> key.view() != HUD && key.view() != view,
+                (key, entry) -> entry.eyes.tick(guiTicks, settings));
     }
 
     /** A single world clock serves every world-owned presentation cache. */
     public static void tickWorld(long gameTime, BehaviorSettings settings) {
         clientTicks++;
         tickBehaviors();
-        HAND_BEHAVIORS.entrySet().removeIf(entry -> {
-            HandBehavior report = entry.getValue();
-            return report.holder().isRemoved() || !report.holder().getItemInHand(entry.getKey().hand()).is(ModContent.GOOGLY_EYE.get())
-            || simulationTicks - report.received().startedAt() >= report.received().behavior().defaultDuration();
-        });
-        sweep(HANDS, clientTicks, entry -> entry.lastShown,
-            (key, entry) -> entry.holder.isRemoved() || !entry.eyes.matches(entry.holder.getItemInHand(key.hand())),
-            (key, entry) -> {
-            HandBehavior report = HAND_BEHAVIORS.get(key);
-            ReceivedBehavior received = report == null ? null : report.received();
-            if (received != null) entry.eyes.react(received.behavior(), received.seed(),
-                (int) (simulationTicks - received.startedAt()));
-            entry.eyes.tick(gameTime, settings, entry.holder);
-        });
-        sweep(BOATS, clientTicks, entry -> entry.lastShown,
-            (boat, entry) -> !mayShow(boat, EntityType.getKey(boat.getType())) || !entry.matches(boat,
-            ClientEyeConfigs.get(EntityType.getKey(boat.getType()), false)),
-            (boat, entry) -> entry.eyes.tick(gameTime, settings, boat));
-        sweep(FRAMES, clientTicks, eye -> eye.lastRenderTick,
-            (frame, eye) -> frame.isRemoved(), (frame, eye) -> eye.tick(gameTime, settings));
-        sweep(SKULLS, clientTicks, eyes -> eyes.lastRenderTick, (pos, eyes) -> false,
-            (pos, eyes) -> eyes.tick(gameTime, settings));
-        sweep(TRACKERS, clientTicks, tracker -> tracker.lastRenderTick, (living, tracker) -> false,
-            (living, tracker) -> { synchronizeBehavior(living, tracker); tracker.update(settings); });
+        HAND_BEHAVIORS
+                .entrySet()
+                .removeIf(entry -> {
+                    HandBehavior report = entry.getValue();
+                    return report.holder().isRemoved()
+                            || !report.holder()
+                                    .getItemInHand(entry.getKey().hand())
+                                    .is(ModContent.GOOGLY_EYE.get())
+                            || simulationTicks - report.received().startedAt()
+                                    >= report.received().behavior().defaultDuration();
+                });
+        sweep(
+                HANDS,
+                clientTicks,
+                entry -> entry.lastShown,
+                (key, entry) ->
+                        entry.holder.isRemoved()
+                                || !entry.eyes.matches(entry.holder.getItemInHand(key.hand())),
+                (key, entry) -> {
+                    HandBehavior report = HAND_BEHAVIORS.get(key);
+                    ReceivedBehavior received = report == null ? null : report.received();
+                    if (received != null)
+                        entry.eyes.react(
+                                received.behavior(),
+                                received.seed(),
+                                (int) (simulationTicks - received.startedAt()));
+                    entry.eyes.tick(gameTime, settings, entry.holder);
+                });
+        sweep(
+                BOATS,
+                clientTicks,
+                entry -> entry.lastShown,
+                (boat, entry) ->
+                        !mayShow(boat, EntityType.getKey(boat.getType()))
+                                || !entry.matches(
+                                        boat,
+                                        ClientEyeConfigs.get(
+                                                EntityType.getKey(boat.getType()), false)),
+                (boat, entry) -> entry.eyes.tick(gameTime, settings, boat));
+        sweep(
+                FRAMES,
+                clientTicks,
+                eye -> eye.lastRenderTick,
+                (frame, eye) -> frame.isRemoved(),
+                (frame, eye) -> eye.tick(gameTime, settings));
+        sweep(
+                SKULLS,
+                clientTicks,
+                eyes -> eyes.lastRenderTick,
+                (pos, eyes) -> false,
+                (pos, eyes) -> eyes.tick(gameTime, settings));
+        sweep(
+                TRACKERS,
+                clientTicks,
+                tracker -> tracker.lastRenderTick,
+                (living, tracker) -> false,
+                (living, tracker) -> {
+                    synchronizeBehavior(living, tracker);
+                    tracker.update(settings);
+                });
     }
-
 }

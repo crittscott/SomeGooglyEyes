@@ -1,14 +1,15 @@
 package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
+
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
 
 /**
- * Forge GameTest entry points for {@link SerializationGameTestsLogic}; see that class for the actual
- * assertions.
+ * Forge GameTest entry points for {@link SerializationGameTestsLogic}; see that class for the
+ * actual assertions.
  */
 @GameTestHolder(SomeGooglyCommon.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -16,8 +17,7 @@ public final class SerializationGameTests {
 
     private static final String TEMPLATE = "empty";
 
-    private SerializationGameTests() {
-    }
+    private SerializationGameTests() {}
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void networkProtocolIdsAreUnique(GameTestHelper helper) {

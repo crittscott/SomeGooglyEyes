@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.recipe;
 
 import com.github.crittscott.somegoogly.registry.ModContent;
 import com.google.gson.JsonObject;
+
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
@@ -15,18 +16,23 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
 
 /**
- * Googly eye + slimeball → slimy eye, carrying all of the eye's NBT (its appearance, name, and the rest)
- * onto the result, as a vanilla transmute does, so the applied mob ends up with the eye you actually dyed
- * or harvested.
+ * Googly eye + slimeball → slimy eye, carrying all of the eye's NBT (its appearance, name, and the
+ * rest) onto the result, as a vanilla transmute does, so the applied mob ends up with the eye you
+ * actually dyed or harvested.
  *
- * <p>A {@link ShapelessRecipe} subclass rather than a {@code CustomRecipe} (as {@link EyeModifierRecipe}
- * is): the ingredients are fixed and declared, so the recipe book and JEI can show it without any
- * plugin of ours. Only the result's NBT is dynamic, which is what {@link #assemble} copies.
+ * <p>A {@link ShapelessRecipe} subclass rather than a {@code CustomRecipe} (as {@link
+ * EyeModifierRecipe} is): the ingredients are fixed and declared, so the recipe book and JEI can
+ * show it without any plugin of ours. Only the result's NBT is dynamic, which is what {@link
+ * #assemble} copies.
  */
 public class SlimyEyeRecipe extends ShapelessRecipe {
 
-    public SlimyEyeRecipe(ResourceLocation id, String group, CraftingBookCategory category,
-                           ItemStack result, NonNullList<Ingredient> ingredients) {
+    public SlimyEyeRecipe(
+            ResourceLocation id,
+            String group,
+            CraftingBookCategory category,
+            ItemStack result,
+            NonNullList<Ingredient> ingredients) {
         super(id, group, category, result, ingredients);
     }
 
@@ -50,14 +56,19 @@ public class SlimyEyeRecipe extends ShapelessRecipe {
     }
 
     /**
-     * Parses the ordinary shapeless recipe shape. Vanilla's serializer does all the work and we rebuild
-     * its output as our subclass, so the JSON and the network form stay exactly a shapeless recipe.
+     * Parses the ordinary shapeless recipe shape. Vanilla's serializer does all the work and we
+     * rebuild its output as our subclass, so the JSON and the network form stay exactly a shapeless
+     * recipe.
      */
     public static class Serializer implements RecipeSerializer<SlimyEyeRecipe> {
 
         private static SlimyEyeRecipe rebuild(ShapelessRecipe base) {
-            return new SlimyEyeRecipe(base.getId(), base.getGroup(), base.category(),
-                    base.getResultItem(RegistryAccess.EMPTY), base.getIngredients());
+            return new SlimyEyeRecipe(
+                    base.getId(),
+                    base.getGroup(),
+                    base.category(),
+                    base.getResultItem(RegistryAccess.EMPTY),
+                    base.getIngredients());
         }
 
         @Override

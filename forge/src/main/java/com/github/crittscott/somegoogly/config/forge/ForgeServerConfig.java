@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.config.forge;
 
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.server.ServerServices;
+
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -15,6 +16,7 @@ public final class ForgeServerConfig {
 
     /** Copies the loaded file's values into {@link ServerConfig}. */
     private static final Runnable COPY_VALUES;
+
     /** Native schema used to load and correct this loader's world server file. */
     public static final ForgeConfigSpec SPEC;
 
@@ -24,8 +26,7 @@ public final class ForgeServerConfig {
         SPEC = builder.build();
     }
 
-    private ForgeServerConfig() {
-    }
+    private ForgeServerConfig() {}
 
     private static void applyValues() {
         COPY_VALUES.run();
@@ -40,8 +41,9 @@ public final class ForgeServerConfig {
             ServerConfig.resetDefaults();
             return;
         }
-        // A reload arrives off the server thread from the file watcher, and can find clients connected, so the
-        // whole change is handed to the server thread: no tick sees it half copied.
+        // A reload arrives off the server thread from the file watcher, and can find clients
+        // connected, so the whole change is handed to the server thread: no tick sees it half
+        // copied.
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
         if (event instanceof ModConfigEvent.Reloading && server != null) {
             server.execute(() -> {
@@ -53,7 +55,10 @@ public final class ForgeServerConfig {
         }
     }
 
-    /** Register the SERVER config spec and copy its values into {@link ServerConfig} on load and reload. */
+    /**
+     * Register the SERVER config spec and copy its values into {@link ServerConfig} on load and
+     * reload.
+     */
     public static void register(FMLJavaModLoadingContext context) {
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, SPEC, ServerConfig.FILE_NAME);
         context.getModEventBus().addListener(ForgeServerConfig::onConfigChanged);

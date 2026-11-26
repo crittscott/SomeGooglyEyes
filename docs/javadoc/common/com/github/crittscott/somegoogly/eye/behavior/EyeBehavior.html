@@ -84,19 +84,20 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public enum </span><span class="element-name type-name-label">EyeBehavior</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Enum.html" title="class or interface in java.lang" class="external-link">Enum</a>&lt;<a href="EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a>&gt;</span></div>
 <div class="block">The named one-shot eye expressions a mob can play, keyed by a <code>ResourceLocation</code> id; the
- behaviors that last as long as a mob stays in some state are the <a href="OngoingBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior"><code>OngoingBehavior</code></a>s. These are
- code-defined client animations, and both sides only need the ids to agree: the server names a
- behavior by its <code>wireId</code> in the trigger packet and the client looks it up to play. All per-play
- state lives in a <a href="BehaviorInstance.html" title="class in com.github.crittscott.somegoogly.eye.behavior"><code>BehaviorInstance</code></a>.
+ behaviors that last as long as a mob stays in some state are the <a href="OngoingBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior"><code>OngoingBehavior</code></a>s. These
+ are code-defined client animations, and both sides only need the ids to agree: the server names a
+ behavior by its <code>wireId</code> in the trigger packet and the client looks it up to play. All
+ per-play state lives in a <a href="BehaviorInstance.html" title="class in com.github.crittscott.somegoogly.eye.behavior"><code>BehaviorInstance</code></a>.
 
- <p>A mob plays at most one behavior at a time (the server enforces this), so behaviors never compose.
- They participate in the eye <b>physics simulation</b>, not the renderer: once per simulation tick the
- simulator asks the single active behavior to fill an <a href="EyeInfluence.html" title="class in com.github.crittscott.somegoogly.eye.behavior"><code>EyeInfluence</code></a> per eye — a pupil spring
- (anchor + stiffness) and/or the non-physical overlays (eye scale, pupil size, squash, tint). The renderer then just
- interpolates and draws the resulting eye state; it never touches behaviors.
+ <p>A mob plays at most one behavior at a time (the server enforces this), so behaviors never
+ compose. They participate in the eye <b>physics simulation</b>, not the renderer: once per
+ simulation tick the simulator asks the single active behavior to fill an <a href="EyeInfluence.html" title="class in com.github.crittscott.somegoogly.eye.behavior"><code>EyeInfluence</code></a> per
+ eye — a pupil spring (anchor + stiffness) and/or the non-physical overlays (eye scale, pupil
+ size, squash, tint). The renderer then just interpolates and draws the resulting eye state; it
+ never touches behaviors.
 
- <p>This type must stay free of client-only imports: the server class-loads it to pick and schedule
- behaviors, and only the client ever calls <a href="#influence(com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance,int,int,com.github.crittscott.somegoogly.eye.behavior.EyeInfluence)"><code>influence(com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance, int, int, com.github.crittscott.somegoogly.eye.behavior.EyeInfluence)</code></a>.</div>
+ <p>This type must stay free of client-only imports: the server class-loads it to pick and
+ schedule behaviors, and only the client ever calls <a href="#influence(com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance,int,int,com.github.crittscott.somegoogly.eye.behavior.EyeInfluence)"><code>influence(com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance, int, int, com.github.crittscott.somegoogly.eye.behavior.EyeInfluence)</code></a>.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -127,9 +128,9 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first even-row-color"><code><a href="#CROSS_EYE" class="member-name-link">CROSS_EYE</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">Pupils are sprung to center, then their anchors slide toward each eye's configured cross-target —
- the other eye it should look at (<a href="../EyePlacement.html#crossTarget()"><code>EyePlacement.crossTarget()</code></a>, an index within the same head)
- — and hold before the spring releases.</div>
+<div class="block">Pupils are sprung to center, then their anchors slide toward each eye's configured
+ cross-target — the other eye it should look at (<a href="../EyePlacement.html#crossTarget()"><code>EyePlacement.crossTarget()</code></a>, an index
+ within the same head) — and hold before the spring releases.</div>
 </div>
 <div class="col-first odd-row-color"><code><a href="#GROW" class="member-name-link">GROW</a></code></div>
 <div class="col-last odd-row-color">
@@ -141,17 +142,18 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first odd-row-color"><code><a href="#SIDE_EYE" class="member-name-link">SIDE_EYE</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block">Pupils are sprung to center, then the anchor slides slowly to one side (chosen from the seed) and
- holds there before the spring releases.</div>
+<div class="block">Pupils are sprung to center, then the anchor slides slowly to one side (chosen from the seed)
+ and holds there before the spring releases.</div>
 </div>
 <div class="col-first even-row-color"><code><a href="#STARE" class="member-name-link">STARE</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">Pupils are sprung to center and held, then released so they drop back into the physics wobble.</div>
+<div class="block">Pupils are sprung to center and held, then released so they drop back into the physics
+ wobble.</div>
 </div>
 <div class="col-first odd-row-color"><code><a href="#SWIRL" class="member-name-link">SWIRL</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block">Pupils orbit rapidly, the orbit radius shrinking to zero so they spiral into the center as the
- effect ends.</div>
+<div class="block">Pupils orbit rapidly, the orbit radius shrinking to zero so they spiral into the center as
+ the effect ends.</div>
 </div>
 </div>
 </section>
@@ -193,8 +195,8 @@ loadScripts(document, 'script');</script>
  int&nbsp;eye,
  <a href="EyeInfluence.html" title="class in com.github.crittscott.somegoogly.eye.behavior">EyeInfluence</a>&nbsp;out)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Fill <code>out</code> (already reset) with this eye's influence for the current simulation tick, derived
- from <code>instance.age</code>.</div>
+<div class="block">Fill <code>out</code> (already reset) with this eye's influence for the current simulation tick,
+ derived from <code>instance.age</code>.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#onStart(com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance)" class="member-name-link">onStart</a><wbr>(<a href="BehaviorInstance.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorInstance</a>&nbsp;instance)</code></div>
@@ -215,7 +217,8 @@ the order they are declared.</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#wireId()" class="member-name-link">wireId</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">The stable number the trigger packet names this behavior by, independent of declaration order.</div>
+<div class="block">The stable number the trigger packet names this behavior by, independent of declaration
+ order.</div>
 </div>
 </div>
 </div>
@@ -241,34 +244,36 @@ the order they are declared.</div>
 <section class="detail" id="STARE">
 <h3>STARE</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a></span>&nbsp;<span class="element-name">STARE</span></div>
-<div class="block">Pupils are sprung to center and held, then released so they drop back into the physics wobble. A
- center spring whose stiffness eases in, holds, and eases back out; when it fades, gravity carries
- the pupil down naturally (no snap).</div>
+<div class="block">Pupils are sprung to center and held, then released so they drop back into the physics
+ wobble. A center spring whose stiffness eases in, holds, and eases back out; when it fades,
+ gravity carries the pupil down naturally (no snap).</div>
 </section>
 </li>
 <li>
 <section class="detail" id="BLINK">
 <h3>BLINK</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a></span>&nbsp;<span class="element-name">BLINK</span></div>
-<div class="block">Squashes between 1 and N of the mob's eyes shut and open again. The participating set is chosen
- once from the seed, so a "wink" (one eye) and a full blink are the same behavior at different
- counts. Non-physical overlay: drives the squash channel only — the pupil keeps wobbling underneath.</div>
+<div class="block">Squashes between 1 and N of the mob's eyes shut and open again. The participating set is
+ chosen once from the seed, so a "wink" (one eye) and a full blink are the same behavior at
+ different counts. Non-physical overlay: drives the squash channel only — the pupil keeps
+ wobbling underneath.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="GROW">
 <h3>GROW</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a></span>&nbsp;<span class="element-name">GROW</span></div>
-<div class="block">Eyes briefly bulge larger and settle back. Non-physical overlay: drives the eye-scale channel.</div>
+<div class="block">Eyes briefly bulge larger and settle back. Non-physical overlay: drives the eye-scale
+ channel.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="LOVE">
 <h3>LOVE</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a></span>&nbsp;<span class="element-name">LOVE</span></div>
-<div class="block">Pupils swell to several times their size, hold, and shrink back. Non-physical overlay: drives the
- pupil-size channel only — the pupil keeps wobbling underneath, though a pupil swollen to the cornea
- rim has no room left to move.</div>
+<div class="block">Pupils swell to several times their size, hold, and shrink back. Non-physical overlay: drives
+ the pupil-size channel only — the pupil keeps wobbling underneath, though a pupil swollen to
+ the cornea rim has no room left to move.</div>
 </section>
 </li>
 <li>
@@ -283,29 +288,30 @@ the order they are declared.</div>
 <section class="detail" id="SWIRL">
 <h3>SWIRL</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a></span>&nbsp;<span class="element-name">SWIRL</span></div>
-<div class="block">Pupils orbit rapidly, the orbit radius shrinking to zero so they spiral into the center as the
- effect ends. A firm spring to a moving anchor; because the anchor itself spirals to center, the
- pupil ends near center and the release is soft (no drop from the rim).</div>
+<div class="block">Pupils orbit rapidly, the orbit radius shrinking to zero so they spiral into the center as
+ the effect ends. A firm spring to a moving anchor; because the anchor itself spirals to
+ center, the pupil ends near center and the release is soft (no drop from the rim).</div>
 </section>
 </li>
 <li>
 <section class="detail" id="SIDE_EYE">
 <h3>SIDE_EYE</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a></span>&nbsp;<span class="element-name">SIDE_EYE</span></div>
-<div class="block">Pupils are sprung to center, then the anchor slides slowly to one side (chosen from the seed) and
- holds there before the spring releases. The stiffness eases in during the brief centering and out
- at the very end, so the held side-glance drops back to physics naturally.</div>
+<div class="block">Pupils are sprung to center, then the anchor slides slowly to one side (chosen from the seed)
+ and holds there before the spring releases. The stiffness eases in during the brief centering
+ and out at the very end, so the held side-glance drops back to physics naturally.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="CROSS_EYE">
 <h3>CROSS_EYE</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a></span>&nbsp;<span class="element-name">CROSS_EYE</span></div>
-<div class="block">Pupils are sprung to center, then their anchors slide toward each eye's configured cross-target —
- the other eye it should look at (<a href="../EyePlacement.html#crossTarget()"><code>EyePlacement.crossTarget()</code></a>, an index within the same head)
- — and hold before the spring releases. Each eye aims the direction to its partner, projected into
- its own pupil plane, so convergence is correct regardless of how many eyes a head has or how
- they're aimed. An eye with no configured target (the default) simply doesn't cross.</div>
+<div class="block">Pupils are sprung to center, then their anchors slide toward each eye's configured
+ cross-target — the other eye it should look at (<a href="../EyePlacement.html#crossTarget()"><code>EyePlacement.crossTarget()</code></a>, an index
+ within the same head) — and hold before the spring releases. Each eye aims the direction to
+ its partner, projected into its own pupil plane, so convergence is correct regardless of how
+ many eyes a head has or how they're aimed. An eye with no configured target (the default)
+ simply doesn't cross.</div>
 </section>
 </li>
 </ul>
@@ -384,9 +390,10 @@ not permitted.)</div>
  int&nbsp;head,
  int&nbsp;eye,
  <a href="EyeInfluence.html" title="class in com.github.crittscott.somegoogly.eye.behavior">EyeInfluence</a>&nbsp;out)</span></div>
-<div class="block">Fill <code>out</code> (already reset) with this eye's influence for the current simulation tick, derived
- from <code>instance.age</code>. Called per eye, so per-eye behaviors (blink mask, cross-eye target
- direction) can vary their output by <code>head</code>/<code>eye</code> via <code>instance.helper</code>.</div>
+<div class="block">Fill <code>out</code> (already reset) with this eye's influence for the current simulation tick,
+ derived from <code>instance.age</code>. Called per eye, so per-eye behaviors (blink mask,
+ cross-eye target direction) can vary their output by <code>head</code>/<code>eye</code> via <code>
+ instance.helper</code>.</div>
 </section>
 </li>
 <li>
@@ -400,7 +407,8 @@ not permitted.)</div>
 <section class="detail" id="wireId()">
 <h3>wireId</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">wireId</span>()</div>
-<div class="block">The stable number the trigger packet names this behavior by, independent of declaration order.</div>
+<div class="block">The stable number the trigger packet names this behavior by, independent of declaration
+ order.</div>
 </section>
 </li>
 </ul>

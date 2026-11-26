@@ -6,9 +6,7 @@ import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import com.github.crittscott.somegoogly.item.EyeItemService;
 import com.github.crittscott.somegoogly.server.ServerServices;
-import java.util.HashSet;
-import java.util.Set;
-import javax.annotation.Nullable;
+
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
@@ -28,6 +26,11 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.Block;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.annotation.Nullable;
+
 /** Fabric event wiring for the loader-neutral authoritative server services. */
 public final class FabricServerEvents {
 
@@ -35,15 +38,15 @@ public final class FabricServerEvents {
      * Late phase for entity interaction and self-shearing: protection callbacks in the default
      * phase can veto item use before either service mutates player or entity state.
      */
-    private static final ResourceLocation LATE_PHASE =
-            SomeGooglyCommon.id("after_protection");
+    private static final ResourceLocation LATE_PHASE = SomeGooglyCommon.id("after_protection");
 
-    /** The loot tables of the heads that can have eyes, gathered on first use, once blocks are registered. */
-    @Nullable
-    private static Set<ResourceLocation> headLootTables;
+    /**
+     * The loot tables of the heads that can have eyes, gathered on first use, once blocks are
+     * registered.
+     */
+    @Nullable private static Set<ResourceLocation> headLootTables;
 
-    private FabricServerEvents() {
-    }
+    private FabricServerEvents() {}
 
     private static Set<ResourceLocation> headLootTables() {
         if (headLootTables == null) {
@@ -63,24 +66,34 @@ public final class FabricServerEvents {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
                 GooglyServerCommands.register(dispatcher, registryAccess));
         UseEntityCallback.EVENT.addPhaseOrdering(Event.DEFAULT_PHASE, LATE_PHASE);
-        UseEntityCallback.EVENT.register(LATE_PHASE, (player, level, hand, entity, hitResult) ->
-                EyeItemService.interact(player, level, hand, entity));
+        UseEntityCallback.EVENT.register(
+                LATE_PHASE,
+                (player, level, hand, entity, hitResult) ->
+                        EyeItemService.interact(player, level, hand, entity));
         UseBlockCallback.EVENT.addPhaseOrdering(Event.DEFAULT_PHASE, LATE_PHASE);
-        UseBlockCallback.EVENT.register(LATE_PHASE, (player, level, hand, hitResult) ->
-                EyeItemService.useOnSkull(player, level, hand, hitResult));
-        // Breaking an eyed head copies its eye state onto the dropped head item, where placing it restores it.
-        // The Forge counterpart is HeadEyesLootModifier. A head without eyes saves no compound, so nothing copies.
-        // Fabric API for 1.20.1 has no finished-drops event to run SkullEyeState.copyEyesOntoHeadLoot from, and a
-        // loot condition cannot see the stack, so the copy applies to every pool of a head's table. Vanilla heads'
-        // tables drop only the head.
-        LootTableEvents.MODIFY.register((resourceManager, lootManager, id, tableBuilder, source) -> {
-            if (headLootTables().contains(id)) {
-                tableBuilder.modifyPools(pool -> pool.apply(SkullEyeState.headLootCopy()));
-            }
-        });
+        UseBlockCallback.EVENT.register(
+                LATE_PHASE,
+                (player, level, hand, hitResult) ->
+                        EyeItemService.useOnSkull(player, level, hand, hitResult));
+        // Breaking an eyed head copies its eye state onto the dropped head item, where placing it
+        // restores it. The Forge counterpart is HeadEyesLootModifier. A head without eyes saves no
+        // compound, so nothing copies. Fabric API for 1.20.1 has no finished-drops event to run
+        // SkullEyeState.copyEyesOntoHeadLoot from, and a loot condition cannot see the stack, so
+        // the copy applies to every pool of a head's table. Vanilla heads' tables drop only the
+        // head.
+        LootTableEvents.MODIFY.register(
+                (resourceManager, lootManager, id, tableBuilder, source) -> {
+                    if (headLootTables().contains(id)) {
+                        tableBuilder.modifyPools(pool -> pool.apply(SkullEyeState.headLootCopy()));
+                    }
+                });
         UseItemCallback.EVENT.addPhaseOrdering(Event.DEFAULT_PHASE, LATE_PHASE);
-        UseItemCallback.EVENT.register(LATE_PHASE, (player, level, hand) -> new InteractionResultHolder<>(
-                EyeItemService.selfRemoveWithShears(player, hand), player.getItemInHand(hand)));
+        UseItemCallback.EVENT.register(
+                LATE_PHASE,
+                (player, level, hand) ->
+                        new InteractionResultHolder<>(
+                                EyeItemService.selfRemoveWithShears(player, hand),
+                                player.getItemInHand(hand)));
         ServerEntityEvents.ENTITY_LOAD.register((entity, level) -> {
             if (entity instanceof LivingEntity living) {
                 ServerServices.onLivingEntityLoaded(living);
@@ -90,20 +103,23 @@ public final class FabricServerEvents {
                 ServerServices.onConverted(previous, converted));
         // Respawning or leaving the End replaces the player.
         ServerPlayerEvents.COPY_FROM.register(ServerServices::onPlayerCloned);
-        ServerPlayConnectionEvents.DISCONNECT.register((handler, server) ->
-                ServerServices.onPlayerLeft(handler.player));
+        ServerPlayConnectionEvents.DISCONNECT.register(
+                (handler, server) -> ServerServices.onPlayerLeft(handler.player));
         // Sent with the rest of the joining player's game data, ahead of their own eye state.
         ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register((player, joined) -> {
             if (joined) {
                 ServerServices.syncJoiningPlayer(player);
             }
         });
-        // Once per reload, after the eye definitions and the re-read server config are both applied.
-        ServerLifecycleEvents.END_DATA_PACK_RELOAD.register((server, resources, success) ->
-                ServerServices.broadcastEyeSyncIfChanged(server));
+        // Once per reload, after the eye definitions and the re-read server config are both
+        // applied.
+        ServerLifecycleEvents.END_DATA_PACK_RELOAD.register(
+                (server, resources, success) -> ServerServices.broadcastEyeSyncIfChanged(server));
         ServerLifecycleEvents.SERVER_STOPPING.register(ServerServices::onServerStopping);
         ServerTickEvents.END_SERVER_TICK.register(server -> ServerBehaviorScheduler.serverTick());
-        // Tracking starts in ServerEntityPairingMixin, because START_TRACKING fires before the spawn packet.
-        EntityTrackingEvents.STOP_TRACKING.register((entity, player) -> ServerServices.onStopTracking(entity));
+        // Tracking starts in ServerEntityPairingMixin, because START_TRACKING fires before the
+        // spawn packet.
+        EntityTrackingEvents.STOP_TRACKING.register(
+                (entity, player) -> ServerServices.onStopTracking(entity));
     }
 }

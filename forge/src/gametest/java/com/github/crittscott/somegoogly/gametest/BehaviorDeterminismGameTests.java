@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
+
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraftforge.gametest.GameTestHolder;
@@ -16,8 +17,7 @@ public final class BehaviorDeterminismGameTests {
 
     private static final String TEMPLATE = "empty";
 
-    private BehaviorDeterminismGameTests() {
-    }
+    private BehaviorDeterminismGameTests() {}
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
     public static void everyBehaviorIsSeedDeterministicOverItsRun(GameTestHelper helper) {

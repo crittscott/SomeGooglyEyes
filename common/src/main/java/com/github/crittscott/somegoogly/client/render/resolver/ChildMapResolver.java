@@ -2,6 +2,10 @@ package com.github.crittscott.somegoogly.client.render.resolver;
 
 import com.github.crittscott.somegoogly.client.compat.ClientIntegrationFailures;
 import com.github.crittscott.somegoogly.config.EyeConfigModel;
+
+import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.geom.ModelPart;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,21 +14,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
-import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.geom.ModelPart;
 
 /**
- * Catch-all resolver for any vanilla {@link EntityModel} that isn't a
- * {@link net.minecraft.client.model.HierarchicalModel} or {@link net.minecraft.client.model.AgeableListModel}
- * — and the final fallback for everything else. It finds the model's top-level {@link ModelPart}s by
- * reflecting fields <b>by type</b> (never by name — those are SRG-mangled in production) and keeping only
- * those that aren't a descendant of another collected part, so genuine roots aren't double-counted.
+ * Catch-all resolver for any vanilla {@link EntityModel} that isn't a {@link
+ * net.minecraft.client.model.HierarchicalModel} or {@link
+ * net.minecraft.client.model.AgeableListModel} — and the final fallback for everything else. It
+ * finds the model's top-level {@link ModelPart}s by reflecting fields <b>by type</b> (never by name
+ * — those are SRG-mangled in production) and keeping only those that aren't a descendant of another
+ * collected part, so genuine roots aren't double-counted.
  *
- * <p>Roots get positional names ({@code #0}, {@code #1}, … in subclass-first field order), but every
- * descendant below a root is named by its real {@code children}-map key (made readable by the mod's access
- * transformer). So a model that nests named parts under a root yields stable paths like {@code #0/head1},
- * while a model whose head is a bare nameless root resolves as {@code #0}. Matching is the shared suffix
- * match, so a stored {@code head1} attaches regardless of which positional root it hangs under.
+ * <p>Roots get positional names ({@code #0}, {@code #1}, … in subclass-first field order), but
+ * every descendant below a root is named by its real {@code children}-map key (made readable by the
+ * mod's access transformer). So a model that nests named parts under a root yields stable paths
+ * like {@code #0/head1}, while a model whose head is a bare nameless root resolves as {@code #0}.
+ * Matching is the shared suffix match, so a stored {@code head1} attaches regardless of which
+ * positional root it hangs under.
  */
 public class ChildMapResolver extends ModelPartTreeResolver {
 
@@ -47,10 +51,10 @@ public class ChildMapResolver extends ModelPartTreeResolver {
     }
 
     /**
-     * Collect {@link ModelPart} fields by type (subclass-first: a model's own fields precede those it
-     * inherits), drop any that are a descendant of another collected part, and name the survivors
-     * positionally. Every access is guarded, so an unreflectable model just yields no roots (no eyes) —
-     * never a crash.
+     * Collect {@link ModelPart} fields by type (subclass-first: a model's own fields precede those
+     * it inherits), drop any that are a descendant of another collected part, and name the
+     * survivors positionally. Every access is guarded, so an unreflectable model just yields no
+     * roots (no eyes) — never a crash.
      */
     private static List<NamedRoot> reflectRoots(EntityModel<?> model) {
         Set<ModelPart> seen = Collections.newSetFromMap(new IdentityHashMap<>());
@@ -66,8 +70,11 @@ public class ChildMapResolver extends ModelPartTreeResolver {
                         ordered.add(part);
                     }
                 } catch (ReflectiveOperationException | RuntimeException accessDenied) {
-                    ClientIntegrationFailures.warnOnce("ModelPart reflection", "root field access",
-                            model.getClass().getName(), accessDenied);
+                    ClientIntegrationFailures.warnOnce(
+                            "ModelPart reflection",
+                            "root field access",
+                            model.getClass().getName(),
+                            accessDenied);
                     return List.of();
                 }
             }

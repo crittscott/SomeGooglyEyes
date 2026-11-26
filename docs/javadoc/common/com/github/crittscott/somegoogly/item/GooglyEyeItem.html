@@ -87,20 +87,18 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">GooglyEyeItem</span>
 <span class="extends-implements">extends net.minecraft.world.item.Item</span></div>
-<div class="block">A single eye, as an item. Its appearance lives in stack NBT as
- <a href="../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state"><code>AppearanceOverride</code></a> (see <a href="EyeItemProperties.html" title="class in com.github.crittscott.somegoogly.item"><code>EyeItemProperties</code></a>), so it round-trips through drops and
- crafting.
+<div class="block">A single eye, as an item. Its appearance lives in stack NBT as <a href="../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state"><code>AppearanceOverride</code></a> (see
+ <a href="EyeItemProperties.html" title="class in com.github.crittscott.somegoogly.item"><code>EyeItemProperties</code></a>), so it round-trips through drops and crafting.
 
- <p>Geometry is intentionally NOT stored here: an eye item is placement-independent. Attaching it to
- a mob reuses the mob's configured placement (see <a href="../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state"><code>AppearanceOverride</code></a>).
+ <p>Geometry is intentionally NOT stored here: an eye item is placement-independent. Attaching it
+ to a mob reuses the mob's configured placement (see <a href="../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state"><code>AppearanceOverride</code></a>).
 
- <p>This item is an ingredient, not an applicator: crafting it with a slimeball yields a
- <a href="SlimyEyeItem.html" title="class in com.github.crittscott.somegoogly.item"><code>SlimyEyeItem</code></a>, which is what actually sticks eyes onto a mob. The Slimy Eye extends this class
+ <p>This item is an ingredient, not an applicator: crafting it with a slimeball yields a <a href="SlimyEyeItem.html" title="class in com.github.crittscott.somegoogly.item"><code>SlimyEyeItem</code></a>, which is what actually sticks eyes onto a mob. The Slimy Eye extends this class
  for the stored appearance and tooltip.
 
- <p>The custom 3D item renderer is attached per loader (see <code>GooglyEyeItemFactory</code>), not here:
- on Forge it is an <code>Item#initializeClient</code> override its patched <code>Item</code> adds, on Fabric a
- separate client-init registration.</div>
+ <p>The custom 3D item renderer is attached per loader (see <code>GooglyEyeItemFactory</code>), not
+ here: on Forge it is an <code>Item#initializeClient</code> override its patched <code>Item</code> adds, on
+ Fabric a separate client-init registration.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">

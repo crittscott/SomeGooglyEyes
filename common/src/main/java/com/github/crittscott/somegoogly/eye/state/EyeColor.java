@@ -2,10 +2,9 @@ package com.github.crittscott.somegoogly.eye.state;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+
 import io.netty.handler.codec.DecoderException;
-import java.util.List;
-import java.util.Optional;
-import javax.annotation.Nullable;
+
 import net.minecraft.nbt.CollectionTag;
 import net.minecraft.nbt.FloatTag;
 import net.minecraft.nbt.ListTag;
@@ -14,29 +13,40 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.FastColor;
 
+import java.util.List;
+import java.util.Optional;
+
+import javax.annotation.Nullable;
+
 /**
  * One RGB color, each channel 0..1. The single color representation across the mod — config,
  * item/entity override, and the renderer all use this.
  *
- * <p>Serialized as a {@code [r, g, b]} list, the datapack JSON's color layout. The codec, the NBT form
- * ({@link #fromNbt}), and the network form ({@link #read}) all reject a channel outside 0..1 on decode, so
- * every decoded color is in range.
+ * <p>Serialized as a {@code [r, g, b]} list, the datapack JSON's color layout. The codec, the NBT
+ * form ({@link #fromNbt}), and the network form ({@link #read}) all reject a channel outside 0..1
+ * on decode, so every decoded color is in range.
  */
 public record EyeColor(float r, float g, float b) {
 
     public static final EyeColor BLACK = new EyeColor(0F, 0F, 0F);
 
-    public static final Codec<EyeColor> CODEC = Codec.FLOAT.listOf().comapFlatMap(
-            list -> {
-                if (list.size() != 3) {
-                    return DataResult.error(() -> "Expected 3 color channels, got " + list.size());
-                }
-                EyeColor color = new EyeColor(list.get(0), list.get(1), list.get(2));
-                return color.isValid()
-                        ? DataResult.success(color)
-                        : DataResult.error(() -> "Color channel outside 0..1: " + list);
-            },
-            color -> List.of(color.r, color.g, color.b));
+    public static final Codec<EyeColor> CODEC =
+            Codec.FLOAT
+                    .listOf()
+                    .comapFlatMap(
+                            list -> {
+                                if (list.size() != 3) {
+                                    return DataResult.error(
+                                            () -> "Expected 3 color channels, got " + list.size());
+                                }
+                                EyeColor color =
+                                        new EyeColor(list.get(0), list.get(1), list.get(2));
+                                return color.isValid()
+                                        ? DataResult.success(color)
+                                        : DataResult.error(
+                                                () -> "Color channel outside 0..1: " + list);
+                            },
+                            color -> List.of(color.r, color.g, color.b));
 
     public static final EyeColor WHITE = new EyeColor(1F, 1F, 1F);
 
@@ -49,7 +59,10 @@ public record EyeColor(float r, float g, float b) {
         return new EyeColor(rgb[0], rgb[1], rgb[2]);
     }
 
-    /** The {@link #toNbt} form, or nothing unless {@code tag} is a list of three in-range numbers of any type. */
+    /**
+     * The {@link #toNbt} form, or nothing unless {@code tag} is a list of three in-range numbers of
+     * any type.
+     */
     public static Optional<EyeColor> fromNbt(@Nullable Tag tag) {
         if (!(tag instanceof CollectionTag<?> list) || list.size() != 3) {
             return Optional.empty();
@@ -100,7 +113,7 @@ public record EyeColor(float r, float g, float b) {
 
     /** The renderer/model APIs take a {@code float[3]}. */
     public float[] toArray() {
-        return new float[]{r, g, b};
+        return new float[] {r, g, b};
     }
 
     /** The NBT form: a list of three floats. */
@@ -122,7 +135,10 @@ public record EyeColor(float r, float g, float b) {
         return FastColor.ARGB32.color(255, channel(r), channel(g), channel(b));
     }
 
-    /** {@code RRGGBB} — six uppercase hex digits, no leading {@code #}; display templates add their own. */
+    /**
+     * {@code RRGGBB} — six uppercase hex digits, no leading {@code #}; display templates add their
+     * own.
+     */
     public String toHex() {
         return String.format("%06X", toRgb24());
     }

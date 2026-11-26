@@ -83,17 +83,18 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public enum </span><span class="element-name type-name-label">OngoingBehavior</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Enum.html" title="class or interface in java.lang" class="external-link">Enum</a>&lt;<a href="OngoingBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">OngoingBehavior</a>&gt;</span></div>
-<div class="block">The named eye behaviors that last as long as the mob stays in some state, as opposed to the one-shot
- <a href="EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior"><code>EyeBehavior</code></a> expressions. Each client derives a state from what vanilla already syncs, so nothing about
- one crosses the mod's own network except its server switch, sent with the eye definitions in
- <a href="BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior"><code>BehaviorSettings</code></a>. A state never blocks an expression: the client folds it in on top of whatever plays.
+<div class="block">The named eye behaviors that last as long as the mob stays in some state, as opposed to the
+ one-shot <a href="EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior"><code>EyeBehavior</code></a> expressions. Each client derives a state from what vanilla already
+ syncs, so nothing about one crosses the mod's own network except its server switch, sent with the
+ eye definitions in <a href="BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior"><code>BehaviorSettings</code></a>. A state never blocks an expression: the client folds
+ it in on top of whatever plays.
 
- <p>Each entry owns its id, its server switch, and the vanilla state that drives it (<a href="#level(net.minecraft.world.entity.LivingEntity)"><code>level(net.minecraft.world.entity.LivingEntity)</code></a>); how the
- eyes show it lives with the eye simulation in <code>GooglyTracker</code>. The one state with a server-reported half
- is <a href="#ANGER"><code>ANGER</code></a>: anger vanilla keeps on the server reaches clients through <code>EyeAngerPacket</code>, and the
- tracker folds it into this level.
+ <p>Each entry owns its id, its server switch, and the vanilla state that drives it (<a href="#level(net.minecraft.world.entity.LivingEntity)"><code>level(net.minecraft.world.entity.LivingEntity)</code></a>); how the eyes show it lives with the eye simulation in <code>GooglyTracker</code>. The one
+ state with a server-reported half is <a href="#ANGER"><code>ANGER</code></a>: anger vanilla keeps on the server reaches
+ clients through <code>EyeAngerPacket</code>, and the tracker folds it into this level.
 
- <p>This type must stay free of client-only imports: the server class-loads it to build the synced settings.</div>
+ <p>This type must stay free of client-only imports: the server class-loads it to build the synced
+ settings.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -116,13 +117,13 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code><a href="#AIM_WINK" class="member-name-link">AIM_WINK</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">A skeleton drawing a ranged weapon, or a player drawing a bow, closes the eye away from the arm holding
- it.</div>
+<div class="block">A skeleton drawing a ranged weapon, or a player drawing a bow, closes the eye away from the
+ arm holding it.</div>
 </div>
 <div class="col-first odd-row-color"><code><a href="#ANGER" class="member-name-link">ANGER</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block">An attacking mob's pupils ease to red; so do those of a mob the server reports angry, which the tracker
- adds to this level.</div>
+<div class="block">An attacking mob's pupils ease to red; so do those of a mob the server reports angry, which
+ the tracker adds to this level.</div>
 </div>
 <div class="col-first even-row-color"><code><a href="#CREEPY_PULSE" class="member-name-link">CREEPY_PULSE</a></code></div>
 <div class="col-last even-row-color">
@@ -167,8 +168,8 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>abstract float</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#level(net.minecraft.world.entity.LivingEntity)" class="member-name-link">level</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;entity)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">How strongly this behavior applies to <code>entity</code> right now, from 0 (not at all) to 1, read from state
- vanilla syncs to every viewer.</div>
+<div class="block">How strongly this behavior applies to <code>entity</code> right now, from 0 (not at all) to 1,
+ read from state vanilla syncs to every viewer.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#serverAngry(net.minecraft.world.entity.LivingEntity)" class="member-name-link">serverAngry</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;entity)</code></div>
@@ -215,16 +216,17 @@ the order they are declared.</div>
 <section class="detail" id="AIM_WINK">
 <h3>AIM_WINK</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="OngoingBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">OngoingBehavior</a></span>&nbsp;<span class="element-name">AIM_WINK</span></div>
-<div class="block">A skeleton drawing a ranged weapon, or a player drawing a bow, closes the eye away from the arm holding
- it. A player's crossbow doesn't count: charging it is item use, but aiming it once loaded is not.</div>
+<div class="block">A skeleton drawing a ranged weapon, or a player drawing a bow, closes the eye away from the
+ arm holding it. A player's crossbow doesn't count: charging it is item use, but aiming it
+ once loaded is not.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="ANGER">
 <h3>ANGER</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="OngoingBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">OngoingBehavior</a></span>&nbsp;<span class="element-name">ANGER</span></div>
-<div class="block">An attacking mob's pupils ease to red; so do those of a mob the server reports angry, which the tracker
- adds to this level.</div>
+<div class="block">An attacking mob's pupils ease to red; so do those of a mob the server reports angry, which
+ the tracker adds to this level.</div>
 </section>
 </li>
 <li>
@@ -313,8 +315,9 @@ not permitted.)</div>
 <section class="detail" id="level(net.minecraft.world.entity.LivingEntity)">
 <h3>level</h3>
 <div class="member-signature"><span class="modifiers">public abstract</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">level</span><wbr><span class="parameters">(net.minecraft.world.entity.LivingEntity&nbsp;entity)</span></div>
-<div class="block">How strongly this behavior applies to <code>entity</code> right now, from 0 (not at all) to 1, read from state
- vanilla syncs to every viewer. Most are on or off; the swell rattle grows with the swell.</div>
+<div class="block">How strongly this behavior applies to <code>entity</code> right now, from 0 (not at all) to 1,
+ read from state vanilla syncs to every viewer. Most are on or off; the swell rattle grows
+ with the swell.</div>
 </section>
 </li>
 <li>

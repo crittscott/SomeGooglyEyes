@@ -76,18 +76,17 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">EligibilityGameTestsLogic</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block"><code>EyeConfigModel.RuntimeConfig.isUsable(com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig)</code> is the single eligibility predicate behind the slimy eye's targeting,
- the at-spawn gate, and the client's held-eye inspect indicator, so its endpoints — and
- <code>EyeItemService.verdictFor(net.minecraft.world.level.block.entity.BlockEntity)</code> reading it — are what keep those three in agreement.
- The delegation test swaps the config store via <a href="TestEyeConfigs.html" title="class in com.github.crittscott.somegoogly.gametest"><code>TestEyeConfigs</code></a> (restored afterwards, the same
+<div class="block"><code>EyeConfigModel.RuntimeConfig.isUsable(com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig)</code> is the single eligibility predicate behind the slimy eye's
+ targeting, the at-spawn gate, and the client's held-eye inspect indicator, so its endpoints — and
+ <code>EyeItemService.verdictFor(net.minecraft.world.level.block.entity.BlockEntity)</code> reading it — are what keep those three in agreement. The
+ delegation test swaps the config store via <a href="TestEyeConfigs.html" title="class in com.github.crittscott.somegoogly.gametest"><code>TestEyeConfigs</code></a> (restored afterwards, the same
  force-and-restore pattern as <code>SpawnGatingGameTests</code>) rather than depending on which configs
  happen to ship.
 
- <p><a href="#slimyEyeAppliesOnlyToEligibleTargets(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)"><code>slimyEyeAppliesOnlyToEligibleTargets(net.minecraft.gametest.framework.GameTestHelper, net.minecraft.world.entity.player.Player)</code></a>, <a href="#slimyEyeRefusesAnAlreadyEyedTarget(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)"><code>slimyEyeRefusesAnAlreadyEyedTarget(net.minecraft.gametest.framework.GameTestHelper, net.minecraft.world.entity.player.Player)</code></a>, and
- <a href="#slimyEyeRerollsThePlacementVariant(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)"><code>slimyEyeRerollsThePlacementVariant(net.minecraft.gametest.framework.GameTestHelper, net.minecraft.world.entity.player.Player)</code></a> then pin the apply verb
- (<code>EyeItemService.applySlimyEye(net.minecraft.world.item.ItemStack, net.minecraft.world.entity.player.Player, net.minecraft.world.entity.Entity)</code>): an eyeless, configured mob gains eyes carrying the stack's
- appearance on a freshly drawn variant roll and one eye is consumed; an unconfigured or already-eyed
- mob is refused with nothing consumed and nothing touched.</div>
+ <p><a href="#slimyEyeAppliesOnlyToEligibleTargets(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)"><code>slimyEyeAppliesOnlyToEligibleTargets(net.minecraft.gametest.framework.GameTestHelper, net.minecraft.world.entity.player.Player)</code></a>, <a href="#slimyEyeRefusesAnAlreadyEyedTarget(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)"><code>slimyEyeRefusesAnAlreadyEyedTarget(net.minecraft.gametest.framework.GameTestHelper, net.minecraft.world.entity.player.Player)</code></a>,
+ and <a href="#slimyEyeRerollsThePlacementVariant(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)"><code>slimyEyeRerollsThePlacementVariant(net.minecraft.gametest.framework.GameTestHelper, net.minecraft.world.entity.player.Player)</code></a> then pin the apply verb (<code>EyeItemService.applySlimyEye(net.minecraft.world.item.ItemStack, net.minecraft.world.entity.player.Player, net.minecraft.world.entity.Entity)</code>): an eyeless, configured mob gains eyes carrying the stack's
+ appearance on a freshly drawn variant roll and one eye is consumed; an unconfigured or
+ already-eyed mob is refused with nothing consumed and nothing touched.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -105,16 +104,16 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#canEverWearEyesSpansBothAgeBuckets(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">canEverWearEyesSpansBothAgeBuckets</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block"><code>ServerEyeConfigs.canEverWearEyes(net.minecraft.world.entity.LivingEntity)</code> consults <b>both</b> age buckets, so the at-spawn roll is
- offered to a mob that only has a config for the life stage it is not currently in — otherwise it
- would store <code>hasGooglyEyes=false</code> for life and never gain eyes on aging.</div>
+<div class="block"><code>ServerEyeConfigs.canEverWearEyes(net.minecraft.world.entity.LivingEntity)</code> consults <b>both</b> age buckets, so the at-spawn
+ roll is offered to a mob that only has a config for the life stage it is not currently in —
+ otherwise it would store <code>hasGooglyEyes=false</code> for life and never gain eyes on aging.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#naturalDecisionRespectsMasterToggleAndIsOneShot(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">naturalDecisionRespectsMasterToggleAndIsOneShot</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The natural-eye decision in <code>ServerServices.onLivingEntityLoaded(net.minecraft.world.entity.LivingEntity)</code>: <code>googlyEyesEnabled</code>
- suppresses the roll but the entity is still marked initialized, and a later load never revisits an
- entity that already has a decision and a variant roll.</div>
+<div class="block">The natural-eye decision in <code>ServerServices.onLivingEntityLoaded(net.minecraft.world.entity.LivingEntity)</code>: <code>
+ googlyEyesEnabled</code> suppresses the roll but the entity is still marked initialized, and a
+ later load never revisits an entity that already has a decision and a variant roll.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#slimyEyeAppliesOnlyToEligibleTargets(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">slimyEyeAppliesOnlyToEligibleTargets</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
@@ -126,8 +125,8 @@ loadScripts(document, 'script');</script>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#slimyEyeCreativeApplicationDoesNotConsume(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">slimyEyeCreativeApplicationDoesNotConsume</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.world.entity.player.Player&nbsp;player)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">A creative slimy-eye application succeeds and gains the target eyes, but spends no eye from the
- stack.</div>
+<div class="block">A creative slimy-eye application succeeds and gains the target eyes, but spends no eye from
+ the stack.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#slimyEyeRefusesAnAlreadyEyedTarget(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">slimyEyeRefusesAnAlreadyEyedTarget</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
@@ -145,9 +144,9 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#slimyEyeSelfApplyRequiresSneak(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.world.entity.player.Player)" class="member-name-link">slimyEyeSelfApplyRequiresSneak</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.world.entity.player.Player&nbsp;player)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block"><code>SlimyEyeItem.use(net.minecraft.world.level.Level, net.minecraft.world.entity.player.Player, net.minecraft.world.InteractionHand)</code>: only a sneaking use aimed at nothing applies the eye to the player; a plain
- right-click passes, and so does a sneaking one aimed at a mob or a block, which vanilla also routes here when
- the click on that target passes.</div>
+<div class="block"><code>SlimyEyeItem.use(net.minecraft.world.level.Level, net.minecraft.world.entity.player.Player, net.minecraft.world.InteractionHand)</code>: only a sneaking use aimed at nothing applies the eye to the player;
+ a plain right-click passes, and so does a sneaking one aimed at a mob or a block, which
+ vanilla also routes here when the click on that target passes.</div>
 </div>
 </div>
 </div>
@@ -170,25 +169,25 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="canEverWearEyesSpansBothAgeBuckets(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>canEverWearEyesSpansBothAgeBuckets</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">canEverWearEyesSpansBothAgeBuckets</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block"><code>ServerEyeConfigs.canEverWearEyes(net.minecraft.world.entity.LivingEntity)</code> consults <b>both</b> age buckets, so the at-spawn roll is
- offered to a mob that only has a config for the life stage it is not currently in — otherwise it
- would store <code>hasGooglyEyes=false</code> for life and never gain eyes on aging. In game: add a
- datapack whose <code>data/minecraft/eyes/cow.json</code> has only an <code>"adult"</code> entry, run
- <code>/reload</code>, set <code>entityOverrides = ["minecraft:cow,100"]</code>, and use a cow spawn egg on an
- adult cow; the calf has no eyes, and once it grows up it does.</div>
+<div class="block"><code>ServerEyeConfigs.canEverWearEyes(net.minecraft.world.entity.LivingEntity)</code> consults <b>both</b> age buckets, so the at-spawn
+ roll is offered to a mob that only has a config for the life stage it is not currently in —
+ otherwise it would store <code>hasGooglyEyes=false</code> for life and never gain eyes on aging.
+ In game: add a datapack whose <code>data/minecraft/eyes/cow.json</code> has only an <code>
+ "adult"</code> entry, run <code>/reload</code>, set <code>entityOverrides = ["minecraft:cow,100"]</code>, and
+ use a cow spawn egg on an adult cow; the calf has no eyes, and once it grows up it does.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="naturalDecisionRespectsMasterToggleAndIsOneShot(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>naturalDecisionRespectsMasterToggleAndIsOneShot</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">naturalDecisionRespectsMasterToggleAndIsOneShot</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">The natural-eye decision in <code>ServerServices.onLivingEntityLoaded(net.minecraft.world.entity.LivingEntity)</code>: <code>googlyEyesEnabled</code>
- suppresses the roll but the entity is still marked initialized, and a later load never revisits an
- entity that already has a decision and a variant roll. In game: set <code>googlyEyesEnabled = false</code>
- and <code>entityOverrides = ["minecraft:cow,100"]</code> and spawn cows; none has eyes, and they still have
- none after <code>googlyEyesEnabled</code> is turned back on, while newly spawned cows do. Then set
- <code>entityOverrides = ["minecraft:cow,0"]</code> and rejoin the world; the eyed cows keep their eyes in
- the same places.</div>
+<div class="block">The natural-eye decision in <code>ServerServices.onLivingEntityLoaded(net.minecraft.world.entity.LivingEntity)</code>: <code>
+ googlyEyesEnabled</code> suppresses the roll but the entity is still marked initialized, and a
+ later load never revisits an entity that already has a decision and a variant roll. In game:
+ set <code>googlyEyesEnabled = false</code> and <code>entityOverrides = ["minecraft:cow,100"]</code> and
+ spawn cows; none has eyes, and they still have none after <code>googlyEyesEnabled</code> is turned
+ back on, while newly spawned cows do. Then set <code>entityOverrides = ["minecraft:cow,0"]</code>
+ and rejoin the world; the eyed cows keep their eyes in the same places.</div>
 </section>
 </li>
 <li>
@@ -196,11 +195,12 @@ loadScripts(document, 'script');</script>
 <h3>slimyEyeAppliesOnlyToEligibleTargets</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">slimyEyeAppliesOnlyToEligibleTargets</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.world.entity.player.Player&nbsp;player)</span></div>
-<div class="block">A Slimy Eye applies only to an eligible, eyeless mob, and only while the mod is enabled. In game, in
- survival, craft a red-iris Slimy Eye (Googly Eye plus red dye, then plus a slimeball) and right-click:
- a cow disabled by the <code>"enabled": false</code> datapack from the disabled-definition example (refused,
- item kept); an eyeless cow with <code>googlyEyesEnabled = false</code> (refused, item kept); and an eyeless
- cow with it <code>true</code> (the cow gains red-iris eyes and one Slimy Eye is used).</div>
+<div class="block">A Slimy Eye applies only to an eligible, eyeless mob, and only while the mod is enabled. In
+ game, in survival, craft a red-iris Slimy Eye (Googly Eye plus red dye, then plus a
+ slimeball) and right-click: a cow disabled by the <code>"enabled": false</code> datapack from the
+ disabled-definition example (refused, item kept); an eyeless cow with <code>
+ googlyEyesEnabled = false</code> (refused, item kept); and an eyeless cow with it <code>true</code> (the
+ cow gains red-iris eyes and one Slimy Eye is used).</div>
 </section>
 </li>
 <li>
@@ -208,9 +208,9 @@ loadScripts(document, 'script');</script>
 <h3>slimyEyeCreativeApplicationDoesNotConsume</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">slimyEyeCreativeApplicationDoesNotConsume</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.world.entity.player.Player&nbsp;player)</span></div>
-<div class="block">A creative slimy-eye application succeeds and gains the target eyes, but spends no eye from the
- stack. In game: in creative, right-click an eyeless cow with a Slimy Eye; the cow gains eyes and the
- stack count does not change.</div>
+<div class="block">A creative slimy-eye application succeeds and gains the target eyes, but spends no eye from
+ the stack. In game: in creative, right-click an eyeless cow with a Slimy Eye; the cow gains
+ eyes and the stack count does not change.</div>
 </section>
 </li>
 <li>
@@ -218,9 +218,10 @@ loadScripts(document, 'script');</script>
 <h3>slimyEyeRefusesAnAlreadyEyedTarget</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">slimyEyeRefusesAnAlreadyEyedTarget</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.world.entity.player.Player&nbsp;player)</span></div>
-<div class="block">An already-eyed mob refuses a Slimy Eye, keeps its look, and gets the click for its own use. In game:
- right-click a cow with red-iris eyes using a blue-iris Slimy Eye; the item is kept and the cow's eyes stay
- red and in place. Right-click an eyed horse with a Slimy Eye in hand; you mount it.</div>
+<div class="block">An already-eyed mob refuses a Slimy Eye, keeps its look, and gets the click for its own use.
+ In game: right-click a cow with red-iris eyes using a blue-iris Slimy Eye; the item is kept
+ and the cow's eyes stay red and in place. Right-click an eyed horse with a Slimy Eye in hand;
+ you mount it.</div>
 </section>
 </li>
 <li>
@@ -228,9 +229,9 @@ loadScripts(document, 'script');</script>
 <h3>slimyEyeRerollsThePlacementVariant</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">slimyEyeRerollsThePlacementVariant</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.world.entity.player.Player&nbsp;player)</span></div>
-<div class="block">Each application draws a fresh placement. In game: take a pig's eyes off with Optometrist shears and put
- them back with a Slimy Eye, over and over; usually the eyes land on its head, but now and then on its
- rear.</div>
+<div class="block">Each application draws a fresh placement. In game: take a pig's eyes off with Optometrist
+ shears and put them back with a Slimy Eye, over and over; usually the eyes land on its head,
+ but now and then on its rear.</div>
 </section>
 </li>
 <li>
@@ -238,11 +239,12 @@ loadScripts(document, 'script');</script>
 <h3>slimyEyeSelfApplyRequiresSneak</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">slimyEyeSelfApplyRequiresSneak</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.world.entity.player.Player&nbsp;player)</span></div>
-<div class="block"><code>SlimyEyeItem.use(net.minecraft.world.level.Level, net.minecraft.world.entity.player.Player, net.minecraft.world.InteractionHand)</code>: only a sneaking use aimed at nothing applies the eye to the player; a plain
- right-click passes, and so does a sneaking one aimed at a mob or a block, which vanilla also routes here when
- the click on that target passes. In game: holding a Slimy Eye, right-click the air and nothing happens; sneak
- and right-click a mob that already has eyes, or a block, and nothing happens either; sneak and right-click
- the air, and you have eyes (visible in third person) and the Slimy Eye is used.</div>
+<div class="block"><code>SlimyEyeItem.use(net.minecraft.world.level.Level, net.minecraft.world.entity.player.Player, net.minecraft.world.InteractionHand)</code>: only a sneaking use aimed at nothing applies the eye to the player;
+ a plain right-click passes, and so does a sneaking one aimed at a mob or a block, which
+ vanilla also routes here when the click on that target passes. In game: holding a Slimy Eye,
+ right-click the air and nothing happens; sneak and right-click a mob that already has eyes,
+ or a block, and nothing happens either; sneak and right-click the air, and you have eyes
+ (visible in third person) and the Slimy Eye is used.</div>
 </section>
 </li>
 </ul>

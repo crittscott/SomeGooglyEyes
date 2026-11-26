@@ -78,9 +78,8 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">Resolvers</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Picks the first <a href="EyeAttachmentResolver.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver"><code>EyeAttachmentResolver</code></a> that handles a given model. Order matters: the
- named-model resolvers come first (they give the cleanest, most stable tokens), and
- <a href="ChildMapResolver.html" title="class in com.github.crittscott.somegoogly.client.render.resolver"><code>ChildMapResolver</code></a> is the catch-all last (it handles every model, falling back to positional
- root names where no stable name exists).</div>
+ named-model resolvers come first (they give the cleanest, most stable tokens), and <a href="ChildMapResolver.html" title="class in com.github.crittscott.somegoogly.client.render.resolver"><code>ChildMapResolver</code></a> is the catch-all last (it handles every model, falling back to positional root
+ names where no stable name exists).</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -98,7 +97,8 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#availableFamilies()" class="member-name-link">availableFamilies</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The log names of the reflected model families whose library this client found and could bind to.</div>
+<div class="block">The log names of the reflected model families whose library this client found and could bind
+ to.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#clearCaches()" class="member-name-link">clearCaches</a>()</code></div>
@@ -132,16 +132,17 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="availableFamilies()">
 <h3>availableFamilies</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">availableFamilies</span>()</div>
-<div class="block">The log names of the reflected model families whose library this client found and could bind to.</div>
+<div class="block">The log names of the reflected model families whose library this client found and could bind
+ to.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="clearCaches()">
 <h3>clearCaches</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">clearCaches</span>()</div>
-<div class="block">Drop every model-keyed cache. Call when the models themselves are replaced — a client resource
- reload rebuilds each renderer and its model, so every cached part, box, and chain then points into
- a dead model, and <a href="ModelMemo.html" title="class in com.github.crittscott.somegoogly.client.render.resolver"><code>ModelMemo</code></a> entries go only here.</div>
+<div class="block">Drop every model-keyed cache. Call when the models themselves are replaced — a client
+ resource reload rebuilds each renderer and its model, so every cached part, box, and chain
+ then points into a dead model, and <a href="ModelMemo.html" title="class in com.github.crittscott.somegoogly.client.render.resolver"><code>ModelMemo</code></a> entries go only here.</div>
 </section>
 </li>
 <li>

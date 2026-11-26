@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
+
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraftforge.gametest.GameTestHolder;
@@ -13,8 +14,7 @@ public final class BoatEyeGameTests {
 
     private static final String TEMPLATE = "empty";
 
-    private BoatEyeGameTests() {
-    }
+    private BoatEyeGameTests() {}
 
     @GameTest(template = TEMPLATE)
     public static void boatsBeginEyelessAndSelectGeometry(GameTestHelper helper) {
@@ -38,7 +38,8 @@ public final class BoatEyeGameTests {
 
     @GameTest(template = TEMPLATE)
     public static void boatsHarvestOneEye(GameTestHelper helper) {
-        BoatEyeGameTestsLogic.boatsHarvestOneEye(helper, SomeGooglyGameTests.survivalPlayer(helper));
+        BoatEyeGameTestsLogic.boatsHarvestOneEye(
+                helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
 
     @GameTest(template = TEMPLATE)
@@ -48,17 +49,20 @@ public final class BoatEyeGameTests {
 
     @GameTest(template = TEMPLATE)
     public static void boatsHonorCreativeConsumption(GameTestHelper helper) {
-        BoatEyeGameTestsLogic.boatsHonorCreativeConsumption(helper, SomeGooglyGameTests.survivalPlayer(helper));
+        BoatEyeGameTestsLogic.boatsHonorCreativeConsumption(
+                helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
 
     @GameTest(template = TEMPLATE)
     public static void boatsHonorInteractionGates(GameTestHelper helper) {
-        BoatEyeGameTestsLogic.boatsHonorInteractionGates(helper, SomeGooglyGameTests.survivalPlayer(helper));
+        BoatEyeGameTestsLogic.boatsHonorInteractionGates(
+                helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
 
     @GameTest(template = TEMPLATE)
     public static void boatsReceiveAppearanceAndRefuseRestyling(GameTestHelper helper) {
-        BoatEyeGameTestsLogic.boatsReceiveAppearanceAndRefuseRestyling(helper, SomeGooglyGameTests.survivalPlayer(helper));
+        BoatEyeGameTestsLogic.boatsReceiveAppearanceAndRefuseRestyling(
+                helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
 
     @GameTest(template = TEMPLATE)

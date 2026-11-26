@@ -1,7 +1,9 @@
 package com.github.crittscott.somegoogly.platform;
 
 import com.github.crittscott.somegoogly.network.Payload;
+
 import dev.architectury.injectables.annotations.ExpectPlatform;
+
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -9,8 +11,7 @@ import net.minecraft.world.entity.Entity;
 /** Loader bridge for native clientbound payload sends. */
 public final class Networking {
 
-    private Networking() {
-    }
+    private Networking() {}
 
     /** Send a clientbound payload to every player on {@code server}, encoding it once. */
     @ExpectPlatform
@@ -25,8 +26,8 @@ public final class Networking {
     }
 
     /**
-     * Send a clientbound payload to every player tracking {@code entity} and, when the entity is itself
-     * a server player, to that player too.
+     * Send a clientbound payload to every player tracking {@code entity} and, when the entity is
+     * itself a server player, to that player too.
      */
     @ExpectPlatform
     public static void sendTrackingAndSelf(Entity entity, Payload payload) {

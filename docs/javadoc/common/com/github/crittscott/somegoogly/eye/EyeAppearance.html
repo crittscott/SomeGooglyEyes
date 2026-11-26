@@ -79,12 +79,12 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public record </span><span class="element-name type-name-label">EyeAppearance</span>(<a href="state/EyeColor.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeColor</a>&nbsp;cornea, <a href="state/EyeColor.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeColor</a>&nbsp;iris, boolean&nbsp;glow)
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a></span></div>
-<div class="block">The concrete, placement-independent look of an eye: cornea color, iris color, and whether it glows.
- Always has values (a datapack eye, or <a href="#DEFAULT"><code>DEFAULT</code></a>); the sparse override that layers on top is
- <a href="state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state"><code>AppearanceOverride</code></a>.
+<div class="block">The concrete, placement-independent look of an eye: cornea color, iris color, and whether it
+ glows. Always has values (a datapack eye, or <a href="#DEFAULT"><code>DEFAULT</code></a>); the sparse override that layers
+ on top is <a href="state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state"><code>AppearanceOverride</code></a>.
 
- <p>Serialized with the datapack JSON's flat field names (<code>corneaColors</code>,
- <code>irisColors</code>, <code>glows</code>), so it embeds directly into <a href="EyeDefinition.html" title="class in com.github.crittscott.somegoogly.eye"><code>EyeDefinition</code></a>.</div>
+ <p>Serialized with the datapack JSON's flat field names (<code>corneaColors</code>, <code>
+ irisColors</code>, <code>glows</code>), so it embeds directly into <a href="EyeDefinition.html" title="class in com.github.crittscott.somegoogly.eye"><code>EyeDefinition</code></a>.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -103,8 +103,8 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color"><code>static final com.mojang.serialization.MapCodec&lt;<a href="EyeAppearance.html" title="class in com.github.crittscott.somegoogly.eye">EyeAppearance</a>&gt;</code></div>
 <div class="col-second odd-row-color"><code><a href="#MAP_CODEC" class="member-name-link">MAP_CODEC</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block">A <code>MapCodec</code> so <a href="EyeDefinition.html" title="class in com.github.crittscott.somegoogly.eye"><code>EyeDefinition</code></a> can flatten these
-  fields next to placement at the same JSON level.</div>
+<div class="block">A <code>MapCodec</code> so <a href="EyeDefinition.html" title="class in com.github.crittscott.somegoogly.eye"><code>EyeDefinition</code></a> can flatten
+ these fields next to placement at the same JSON level.</div>
 </div>
 </div>
 </section>
@@ -170,7 +170,8 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toOverride()" class="member-name-link">toOverride</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">A fully-populated override carrying this whole appearance (used when harvesting onto an item).</div>
+<div class="block">A fully-populated override carrying this whole appearance (used when harvesting onto an
+ item).</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
@@ -204,8 +205,9 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="MAP_CODEC">
 <h3>MAP_CODEC</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">com.mojang.serialization.MapCodec&lt;<a href="EyeAppearance.html" title="class in com.github.crittscott.somegoogly.eye">EyeAppearance</a>&gt;</span>&nbsp;<span class="element-name">MAP_CODEC</span></div>
-<div class="block">A <code>MapCodec</code> so <a href="EyeDefinition.html" title="class in com.github.crittscott.somegoogly.eye"><code>EyeDefinition</code></a> can flatten these
-  fields next to placement at the same JSON level. Required, like every other config field.</div>
+<div class="block">A <code>MapCodec</code> so <a href="EyeDefinition.html" title="class in com.github.crittscott.somegoogly.eye"><code>EyeDefinition</code></a> can flatten
+ these fields next to placement at the same JSON level. Required, like every other config
+ field.</div>
 </section>
 </li>
 </ul>
@@ -250,7 +252,8 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="toOverride()">
 <h3>toOverride</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></span>&nbsp;<span class="element-name">toOverride</span>()</div>
-<div class="block">A fully-populated override carrying this whole appearance (used when harvesting onto an item).</div>
+<div class="block">A fully-populated override carrying this whole appearance (used when harvesting onto an
+ item).</div>
 </section>
 </li>
 <li>

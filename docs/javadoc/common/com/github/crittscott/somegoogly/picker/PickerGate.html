@@ -77,21 +77,20 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">PickerGate</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Server-side authorization and throttling for client-driven picker operations — the two halves of the
- same gate, always checked together by the packet handlers.
+<div class="block">Server-side authorization and throttling for client-driven picker operations — the two halves of
+ the same gate, always checked together by the packet handlers.
 
- <p>Authorization (<a href="#mayUsePicker(net.minecraft.world.entity.player.Player)"><code>mayUsePicker(net.minecraft.world.entity.player.Player)</code></a>) is creative mode plus permission level 2, the level of vanilla
- <code>/summon</code>, <code>/tp</code>, and <code>/fill</code>: the picker freezes, moves, and spawns mobs and can
- rewrite blocks without firing the events protection mods listen to, so it is an operator tool. The
- client CLI and keyboard picker apply the same rule as UX only and are never trusted; packet handlers
- use <a href="#authorized(net.minecraft.server.level.ServerPlayer)"><code>authorized(net.minecraft.server.level.ServerPlayer)</code></a>, which refuses silently so unauthorized custom-payload spam cannot amplify
- into server feedback packets.
+ <p>Authorization (<a href="#mayUsePicker(net.minecraft.world.entity.player.Player)"><code>mayUsePicker(net.minecraft.world.entity.player.Player)</code></a>) is creative mode plus permission level 2, the level of
+ vanilla <code>/summon</code>, <code>/tp</code>, and <code>/fill</code>: the picker freezes, moves, and spawns
+ mobs and can rewrite blocks without firing the events protection mods listen to, so it is an
+ operator tool. The client CLI and keyboard picker apply the same rule as UX only and are never
+ trusted; packet handlers use <a href="#authorized(net.minecraft.server.level.ServerPlayer)"><code>authorized(net.minecraft.server.level.ServerPlayer)</code></a>, which refuses silently so unauthorized
+ custom-payload spam cannot amplify into server feedback packets.
 
  <p>Every picker throttle lives here: one request per player per tick, the server-wide spawn-all
  cooldown, and the two export limits. Each successful export triggers a full datapack reload, so
- successes have the longer <a href="#EXPORT_COOLDOWN_TICKS"><code>EXPORT_COOLDOWN_TICKS</code></a>; every attempt has the short
- <a href="#EXPORT_ATTEMPT_COOLDOWN_TICKS"><code>EXPORT_ATTEMPT_COOLDOWN_TICKS</code></a>, applied before any codec work. Per-player state is released
- when the player leaves and all of it at server stop, since <code>getTickCount</code> restarts from 0 with
+ successes have the longer <a href="#EXPORT_COOLDOWN_TICKS"><code>EXPORT_COOLDOWN_TICKS</code></a>; every attempt has the short <a href="#EXPORT_ATTEMPT_COOLDOWN_TICKS"><code>EXPORT_ATTEMPT_COOLDOWN_TICKS</code></a>, applied before any codec work. Per-player state is released when
+ the player leaves and all of it at server stop, since <code>getTickCount</code> restarts from 0 with
  the next (single-player) world and a stale large tick would read as a far-future cooldown.</div>
 </section>
 <section class="summary">
@@ -147,7 +146,8 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#authorized(net.minecraft.server.level.ServerPlayer)" class="member-name-link">authorized</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;sender)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Whether <code>sender</code> may drive one picker request now: <a href="#mayUsePicker(net.minecraft.world.entity.player.Player)"><code>mayUsePicker(net.minecraft.world.entity.player.Player)</code></a>, and not rate-limited this tick.</div>
+<div class="block">Whether <code>sender</code> may drive one picker request now: <a href="#mayUsePicker(net.minecraft.world.entity.player.Player)"><code>mayUsePicker(net.minecraft.world.entity.player.Player)</code></a>, and not
+ rate-limited this tick.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#exportSucceeded(net.minecraft.server.MinecraftServer,java.util.UUID)" class="member-name-link">exportSucceeded</a><wbr>(net.minecraft.server.MinecraftServer&nbsp;server,
@@ -163,12 +163,14 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onPlayerLeft(java.util.UUID)" class="member-name-link">onPlayerLeft</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Forget a player's request and export throttles; called from <code>ServerServices.onPlayerLeft</code>.</div>
+<div class="block">Forget a player's request and export throttles; called from <code>
+ ServerServices.onPlayerLeft</code>.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onServerStopping()" class="member-name-link">onServerStopping</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Forget every throttle, including the spawn-all cooldown; called from <code>ServerServices.onServerStopping</code>.</div>
+<div class="block">Forget every throttle, including the spawn-all cooldown; called from <code>
+ ServerServices.onServerStopping</code>.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tell(net.minecraft.server.level.ServerPlayer,net.minecraft.network.chat.Component)" class="member-name-link">tell</a><wbr>(net.minecraft.server.level.ServerPlayer&nbsp;player,
@@ -189,8 +191,9 @@ loadScripts(document, 'script');</script>
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Report a result to the command's sender under the shared picker prefix; <code>broadcast</code> also tells other
- operators and the console, as vanilla does for commands that change the world.</div>
+<div class="block">Report a result to the command's sender under the shared picker prefix; <code>broadcast</code>
+ also tells other operators and the console, as vanilla does for commands that change the
+ world.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.network.chat.Component</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#tryExport(net.minecraft.server.MinecraftServer,java.util.UUID)" class="member-name-link">tryExport</a><wbr>(net.minecraft.server.MinecraftServer&nbsp;server,
@@ -279,7 +282,8 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="authorized(net.minecraft.server.level.ServerPlayer)">
 <h3>authorized</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">authorized</span><wbr><span class="parameters">(net.minecraft.server.level.ServerPlayer&nbsp;sender)</span></div>
-<div class="block">Whether <code>sender</code> may drive one picker request now: <a href="#mayUsePicker(net.minecraft.world.entity.player.Player)"><code>mayUsePicker(net.minecraft.world.entity.player.Player)</code></a>, and not rate-limited this tick.</div>
+<div class="block">Whether <code>sender</code> may drive one picker request now: <a href="#mayUsePicker(net.minecraft.world.entity.player.Player)"><code>mayUsePicker(net.minecraft.world.entity.player.Player)</code></a>, and not
+ rate-limited this tick.</div>
 </section>
 </li>
 <li>
@@ -302,8 +306,8 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="annotations">@Nullable
 </span><span class="modifiers">public static</span>&nbsp;<span class="return-type">net.minecraft.network.chat.Component</span>&nbsp;<span class="element-name">tryExport</span><wbr><span class="parameters">(net.minecraft.server.MinecraftServer&nbsp;server,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</span></div>
-<div class="block">Arm the export attempt throttle and check both export limits. Returns <code>null</code> when the export
- may proceed, or the feedback explaining why it may not.</div>
+<div class="block">Arm the export attempt throttle and check both export limits. Returns <code>null</code> when the
+ export may proceed, or the feedback explaining why it may not.</div>
 </section>
 </li>
 <li>
@@ -318,14 +322,16 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="onPlayerLeft(java.util.UUID)">
 <h3>onPlayerLeft</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onPlayerLeft</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a>&nbsp;playerId)</span></div>
-<div class="block">Forget a player's request and export throttles; called from <code>ServerServices.onPlayerLeft</code>.</div>
+<div class="block">Forget a player's request and export throttles; called from <code>
+ ServerServices.onPlayerLeft</code>.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="onServerStopping()">
 <h3>onServerStopping</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onServerStopping</span>()</div>
-<div class="block">Forget every throttle, including the spawn-all cooldown; called from <code>ServerServices.onServerStopping</code>.</div>
+<div class="block">Forget every throttle, including the spawn-all cooldown; called from <code>
+ ServerServices.onServerStopping</code>.</div>
 </section>
 </li>
 <li>
@@ -352,8 +358,9 @@ loadScripts(document, 'script');</script>
  boolean&nbsp;broadcast,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>...&nbsp;args)</span></div>
-<div class="block">Report a result to the command's sender under the shared picker prefix; <code>broadcast</code> also tells other
- operators and the console, as vanilla does for commands that change the world.</div>
+<div class="block">Report a result to the command's sender under the shared picker prefix; <code>broadcast</code>
+ also tells other operators and the console, as vanilla does for commands that change the
+ world.</div>
 </section>
 </li>
 </ul>

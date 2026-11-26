@@ -8,6 +8,7 @@ import com.github.crittscott.somegoogly.network.fabric.FabricNetworkTransport;
 import com.github.crittscott.somegoogly.platform.fabric.EntityPersistentDataImpl;
 import com.github.crittscott.somegoogly.registry.ModContent;
 import com.github.crittscott.somegoogly.server.fabric.FabricServerEvents;
+
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.server.packs.PackType;
@@ -26,7 +27,9 @@ public final class SomeGooglyFabric implements ModInitializer {
         ResourceManagerHelper.get(PackType.SERVER_DATA)
                 .registerReloadListener(new FabricEyeConfigReloadListener());
 
-        SomeGooglyCommon.LOGGER.info("{} {} initialized on Fabric", SomeGooglyCommon.MOD_NAME,
+        SomeGooglyCommon.LOGGER.info(
+                "{} {} initialized on Fabric",
+                SomeGooglyCommon.MOD_NAME,
                 ModVersionLookup.modVersion(SomeGooglyCommon.MOD_ID).orElseThrow());
     }
 }

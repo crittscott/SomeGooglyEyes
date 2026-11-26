@@ -3,12 +3,11 @@ package com.github.crittscott.somegoogly.client.fabric;
 import com.github.crittscott.somegoogly.client.ClientLifecycle;
 import com.github.crittscott.somegoogly.client.network.fabric.FabricClientNetworkTransport;
 import com.github.crittscott.somegoogly.config.fabric.FabricClientConfig;
+
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 
-/**
- * Fabric client entry point for configuration, networking, rendering, input, HUD, and commands.
- */
+/** Fabric client entry point for configuration, networking, rendering, input, HUD, and commands. */
 public final class SomeGooglyFabricClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {

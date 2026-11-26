@@ -8,10 +8,12 @@ import net.minecraftforge.event.ForgeEventFactory;
 /** Forge implementation of the emptied-item reports, through the item-destroyed event. */
 public final class ItemDestructionImpl {
 
-    private ItemDestructionImpl() {
-    }
+    private ItemDestructionImpl() {}
 
-    /** Forge calls its item-destroyed event from the interaction code, not from {@code hurtAndBreak}, so report here. */
+    /**
+     * Forge calls its item-destroyed event from the interaction code, not from {@code
+     * hurtAndBreak}, so report here.
+     */
     public static void reportBroken(Player player, ItemStack original, InteractionHand hand) {
         ForgeEventFactory.onPlayerDestroyItem(player, original, hand);
     }

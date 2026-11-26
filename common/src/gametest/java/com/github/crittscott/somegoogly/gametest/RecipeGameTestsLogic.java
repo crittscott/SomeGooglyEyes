@@ -6,8 +6,7 @@ import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.item.GooglyEyeItem;
 import com.github.crittscott.somegoogly.registry.ModContent;
-import java.util.Arrays;
-import java.util.Optional;
+
 import net.minecraft.advancements.Advancement;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -23,16 +22,19 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeType;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 /**
  * The mod's two shipped crafting recipes, looked up through the server's recipe manager the way a
  * crafting table does and driven through a headless 2×1 grid (no player/menu UI):
  *
  * <ul>
  *   <li>{@code eye_modifier} — one googly eye plus one recognized modifier transforms the eye's
- *       {@link AppearanceOverride}. Modifier→color mappings are asserted by presence, not exact RGB, so
- *       they don't pin a particular dye palette.</li>
- *   <li>{@code slimy_eye} — eye plus slimeball, the mod's shapeless Slimy Eye recipe, which must carry
- *       the eye's appearance and other NBT onto the applicator.</li>
+ *       {@link AppearanceOverride}. Modifier→color mappings are asserted by presence, not exact
+ *       RGB, so they don't pin a particular dye palette.
+ *   <li>{@code slimy_eye} — eye plus slimeball, the mod's shapeless Slimy Eye recipe, which must
+ *       carry the eye's appearance and other NBT onto the applicator.
  * </ul>
  */
 public final class RecipeGameTestsLogic {
@@ -44,100 +46,132 @@ public final class RecipeGameTestsLogic {
     private static final ResourceLocation SLIMY_EYE_ADVANCEMENT =
             new ResourceLocation(SomeGooglyCommon.MOD_ID, "recipes/misc/slimy_eye");
 
-    private RecipeGameTestsLogic() {
-    }
+    private RecipeGameTestsLogic() {}
 
     private static CraftingContainer grid(ItemStack eye, ItemStack modifier) {
-        AbstractContainerMenu menu = new AbstractContainerMenu(MenuType.CRAFTING, 0) {
-            @Override
-            public ItemStack quickMoveStack(Player player, int index) {
-                return ItemStack.EMPTY;
-            }
+        AbstractContainerMenu menu =
+                new AbstractContainerMenu(MenuType.CRAFTING, 0) {
+                    @Override
+                    public ItemStack quickMoveStack(Player player, int index) {
+                        return ItemStack.EMPTY;
+                    }
 
-            @Override
-            public boolean stillValid(Player player) {
-                return true;
-            }
-        };
+                    @Override
+                    public boolean stillValid(Player player) {
+                        return true;
+                    }
+                };
         CraftingContainer container = new TransientCraftingContainer(menu, 2, 1);
         container.setItem(0, eye);
         container.setItem(1, modifier);
         return container;
     }
 
-    /** The server's crafting recipe for {@code grid}, if any, looked up the way a crafting table does. */
+    /**
+     * The server's crafting recipe for {@code grid}, if any, looked up the way a crafting table
+     * does.
+     */
     private static Optional<CraftingRecipe> lookUp(GameTestHelper helper, CraftingContainer grid) {
-        return helper.getLevel().getServer().getRecipeManager()
+        return helper.getLevel()
+                .getServer()
+                .getRecipeManager()
                 .getRecipeFor(RecipeType.CRAFTING, grid, helper.getLevel());
     }
 
-    /** Crafts {@code grid}, asserting that the shipped {@code eye_modifier} recipe is the one that matched. */
+    /**
+     * Crafts {@code grid}, asserting that the shipped {@code eye_modifier} recipe is the one that
+     * matched.
+     */
     private static ItemStack craftWithModifier(GameTestHelper helper, CraftingContainer grid) {
         Optional<CraftingRecipe> recipe = lookUp(helper, grid);
-        helper.assertTrue(recipe.isPresent() && recipe.get().getId().equals(EYE_MODIFIER),
+        helper.assertTrue(
+                recipe.isPresent() && recipe.get().getId().equals(EYE_MODIFIER),
                 "the grid should match the shipped eye_modifier recipe");
         return recipe.get().assemble(grid, helper.getLevel().registryAccess());
     }
 
     /**
-     * A cobweb clears every appearance override. In game: craft a Googly Eye with red dye, then craft the
-     * result with a cobweb; the new eye's tooltip lists no colors or glow, and it stacks with a plain Googly Eye.
+     * A cobweb clears every appearance override. In game: craft a Googly Eye with red dye, then
+     * craft the result with a cobweb; the new eye's tooltip lists no colors or glow, and it stacks
+     * with a plain Googly Eye.
      */
     public static void cobwebClearsAllOverrides(GameTestHelper helper) {
-        ItemStack tinted = GooglyEyeItem.create(AppearanceOverride.EMPTY.withIrisColor(new EyeColor(1F, 0F, 0F)), 1);
+        ItemStack tinted =
+                GooglyEyeItem.create(
+                        AppearanceOverride.EMPTY.withIrisColor(new EyeColor(1F, 0F, 0F)), 1);
         ItemStack result = craftWithModifier(helper, grid(tinted, new ItemStack(Items.COBWEB)));
-        helper.assertTrue(EyeItemProperties.get(result).isEmpty(), "cobweb should clear every override");
-        helper.assertTrue(ItemStack.isSameItemSameTags(result, new ItemStack(result.getItem())),
+        helper.assertTrue(
+                EyeItemProperties.get(result).isEmpty(), "cobweb should clear every override");
+        helper.assertTrue(
+                ItemStack.isSameItemSameTags(result, new ItemStack(result.getItem())),
                 "a cleared eye should stack with one that never had an appearance");
         helper.succeed();
     }
 
     /**
-     * Dye sets the iris color and keeps the eye's other data. In game: rename a Googly Eye in an anvil and craft
-     * it with red dye; the result keeps the name and its tooltip shows an iris color.
+     * Dye sets the iris color and keeps the eye's other data. In game: rename a Googly Eye in an
+     * anvil and craft it with red dye; the result keeps the name and its tooltip shows an iris
+     * color.
      */
     public static void dyeSetsIrisAndKeepsUnrelatedNbt(GameTestHelper helper) {
         ItemStack eye = GooglyEyeItem.create(AppearanceOverride.EMPTY, 1);
         Component customName = Component.literal("keep");
         eye.setHoverName(customName);
         ItemStack result = craftWithModifier(helper, grid(eye, new ItemStack(Items.RED_DYE)));
-        helper.assertTrue(EyeItemProperties.get(result).iris().isPresent(), "dye should set the iris color");
-        helper.assertTrue(result.hasCustomHoverName() && customName.equals(result.getHoverName()),
+        helper.assertTrue(
+                EyeItemProperties.get(result).iris().isPresent(), "dye should set the iris color");
+        helper.assertTrue(
+                result.hasCustomHoverName() && customName.equals(result.getHoverName()),
                 "unrelated stack NBT should survive the edit");
         helper.succeed();
     }
 
     /**
-     * Glowstone forces glow on and redstone forces it off. In game: craft a Googly Eye with glowstone dust and
-     * its tooltip shows glow on; craft one with redstone dust and it shows glow off.
+     * Glowstone forces glow on and redstone forces it off. In game: craft a Googly Eye with
+     * glowstone dust and its tooltip shows glow on; craft one with redstone dust and it shows glow
+     * off.
      */
     public static void glowstoneAndRedstoneToggleGlow(GameTestHelper helper) {
-        ItemStack onResult = craftWithModifier(helper,
-                grid(GooglyEyeItem.create(AppearanceOverride.EMPTY, 1), new ItemStack(Items.GLOWSTONE_DUST)));
-        helper.assertTrue(EyeItemProperties.get(onResult).glow().orElse(false), "glowstone should force glow on");
+        ItemStack onResult =
+                craftWithModifier(
+                        helper,
+                        grid(
+                                GooglyEyeItem.create(AppearanceOverride.EMPTY, 1),
+                                new ItemStack(Items.GLOWSTONE_DUST)));
+        helper.assertTrue(
+                EyeItemProperties.get(onResult).glow().orElse(false),
+                "glowstone should force glow on");
 
-        ItemStack offResult = craftWithModifier(helper,
-                grid(GooglyEyeItem.create(AppearanceOverride.EMPTY, 1), new ItemStack(Items.REDSTONE)));
+        ItemStack offResult =
+                craftWithModifier(
+                        helper,
+                        grid(
+                                GooglyEyeItem.create(AppearanceOverride.EMPTY, 1),
+                                new ItemStack(Items.REDSTONE)));
         AppearanceOverride off = EyeItemProperties.get(offResult);
-        helper.assertTrue(off.glow().isPresent() && !off.glow().get(), "redstone should force glow off");
+        helper.assertTrue(
+                off.glow().isPresent() && !off.glow().get(), "redstone should force glow off");
         helper.succeed();
     }
 
     /**
-     * Two Googly Eyes with no modifier are not a recipe. In game: put two Googly Eyes in a crafting grid; no
-     * result appears.
+     * Two Googly Eyes with no modifier are not a recipe. In game: put two Googly Eyes in a crafting
+     * grid; no result appears.
      */
     public static void twoEyesDoNotMatch(GameTestHelper helper) {
-        CraftingContainer grid = grid(GooglyEyeItem.create(AppearanceOverride.EMPTY, 1),
-                GooglyEyeItem.create(AppearanceOverride.EMPTY, 1));
-        helper.assertTrue(lookUp(helper, grid).isEmpty(), "two eyes and no modifier should match no recipe");
+        CraftingContainer grid =
+                grid(
+                        GooglyEyeItem.create(AppearanceOverride.EMPTY, 1),
+                        GooglyEyeItem.create(AppearanceOverride.EMPTY, 1));
+        helper.assertTrue(
+                lookUp(helper, grid).isEmpty(), "two eyes and no modifier should match no recipe");
         helper.succeed();
     }
 
     /**
-     * A Slimy Eye keeps the Googly Eye's appearance and name. In game: rename a Googly Eye, craft it with blue
-     * dye and glowstone dust, then with a slimeball; the Slimy Eye keeps the name, its tooltip shows the same
-     * iris color and glow, and its icon's iris is blue.
+     * A Slimy Eye keeps the Googly Eye's appearance and name. In game: rename a Googly Eye, craft
+     * it with blue dye and glowstone dust, then with a slimeball; the Slimy Eye keeps the name, its
+     * tooltip shows the same iris color and glow, and its icon's iris is blue.
      */
     public static void slimyEyeCarriesTheEyesAppearance(GameTestHelper helper) {
         RegistryAccess registries = helper.getLevel().registryAccess();
@@ -150,36 +184,53 @@ public final class RecipeGameTestsLogic {
         CraftingContainer grid = grid(eye, new ItemStack(Items.SLIME_BALL));
         Optional<CraftingRecipe> recipe = lookUp(helper, grid);
 
-        helper.assertTrue(recipe.isPresent(), "an eye and a slimeball should match a crafting recipe");
+        helper.assertTrue(
+                recipe.isPresent(), "an eye and a slimeball should match a crafting recipe");
 
         ItemStack result = recipe.get().assemble(grid, registries);
-        helper.assertTrue(result.is(ModContent.SLIMY_EYE.get()), "the result should be a slimy eye");
+        helper.assertTrue(
+                result.is(ModContent.SLIMY_EYE.get()), "the result should be a slimy eye");
 
         AppearanceOverride carried = EyeItemProperties.get(result);
-        helper.assertTrue(iris.equals(carried.iris().orElse(null)), "the slimy eye should carry the eye's iris color");
-        helper.assertTrue(carried.glow().orElse(false), "the slimy eye should carry the eye's glow");
-        helper.assertTrue(result.hasCustomHoverName() && customName.equals(result.getHoverName()),
+        helper.assertTrue(
+                iris.equals(carried.iris().orElse(null)),
+                "the slimy eye should carry the eye's iris color");
+        helper.assertTrue(
+                carried.glow().orElse(false), "the slimy eye should carry the eye's glow");
+        helper.assertTrue(
+                result.hasCustomHoverName() && customName.equals(result.getHoverName()),
                 "the slimy eye should carry the eye's other NBT, such as its name");
-        helper.assertTrue(EyeItemProperties.slimyEyeTint(result, EyeItemProperties.SLIMY_EYE_IRIS_TINT_INDEX)
+        helper.assertTrue(
+                EyeItemProperties.slimyEyeTint(result, EyeItemProperties.SLIMY_EYE_IRIS_TINT_INDEX)
                         == 0xFF336699,
                 "the slimy eye should render its iris color with full alpha");
-        helper.assertTrue(EyeItemProperties.slimyEyeTint(result, 0) == -1,
+        helper.assertTrue(
+                EyeItemProperties.slimyEyeTint(result, 0) == -1,
                 "the slimy eye should leave non-iris layers untinted");
-        helper.assertTrue(EyeItemProperties.slimyEyeTint(new ItemStack(ModContent.SLIMY_EYE.get()),
-                        EyeItemProperties.SLIMY_EYE_IRIS_TINT_INDEX) == 0xFF000000,
+        helper.assertTrue(
+                EyeItemProperties.slimyEyeTint(
+                                new ItemStack(ModContent.SLIMY_EYE.get()),
+                                EyeItemProperties.SLIMY_EYE_IRIS_TINT_INDEX)
+                        == 0xFF000000,
                 "the slimy eye should render its default black iris with full alpha");
         helper.succeed();
     }
 
     /**
-     * Picking up a Googly Eye unlocks the Slimy Eye recipe. In game: in a new survival world, {@code /give}
-     * yourself a Googly Eye; the recipe book offers the Slimy Eye, and it can be crafted with the
-     * {@code doLimitedCrafting} game rule on.
+     * Picking up a Googly Eye unlocks the Slimy Eye recipe. In game: in a new survival world,
+     * {@code /give} yourself a Googly Eye; the recipe book offers the Slimy Eye, and it can be
+     * crafted with the {@code doLimitedCrafting} game rule on.
      */
     public static void slimyEyeRecipeUnlocksByAdvancement(GameTestHelper helper) {
-        Advancement advancement = helper.getLevel().getServer().getAdvancements().getAdvancement(SLIMY_EYE_ADVANCEMENT);
-        helper.assertTrue(advancement != null, "the Slimy Eye recipe should have an unlock advancement");
-        helper.assertTrue(Arrays.asList(advancement.getRewards().getRecipes()).contains(SLIMY_EYE),
+        Advancement advancement =
+                helper.getLevel()
+                        .getServer()
+                        .getAdvancements()
+                        .getAdvancement(SLIMY_EYE_ADVANCEMENT);
+        helper.assertTrue(
+                advancement != null, "the Slimy Eye recipe should have an unlock advancement");
+        helper.assertTrue(
+                Arrays.asList(advancement.getRewards().getRecipes()).contains(SLIMY_EYE),
                 "the advancement should reward the Slimy Eye recipe");
         helper.succeed();
     }

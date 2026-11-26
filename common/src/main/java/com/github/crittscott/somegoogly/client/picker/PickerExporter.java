@@ -8,6 +8,13 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
 import com.github.crittscott.somegoogly.network.PickerExportPacket;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.LinkedHashSet;
@@ -15,40 +22,37 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.UnaryOperator;
-import net.minecraft.client.Minecraft;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 
 /**
- * Turns picker drafts into datapack JSON. Every config field is a required codec field, so
- * {@code ConfigFile.CODEC}'s own encode already produces the canonical, every-field-explicit form the
+ * Turns picker drafts into datapack JSON. Every config field is a required codec field, so {@code
+ * ConfigFile.CODEC}'s own encode already produces the canonical, every-field-explicit form the
  * shipped data uses. Two entry points:
+ *
  * <ul>
- *   <li>{@link #export()} — the single committed mob, sent to the server as a
- *       {@code PickerExportPacket}; the authorization-gated server handler validates it, writes
- *       {@code world/datapacks/somegoogly-picker/data/<ns>/eyes/<entity>.json}, and {@code /reload}s
- *       so it persists and re-syncs through the normal path. Works from a remote client; the result
- *       arrives as a server chat message (rate-limited server-side by {@link com.github.crittscott.somegoogly.picker.PickerGate#EXPORT_COOLDOWN_TICKS}).</li>
- *   <li>{@link #exportAll()} — a purely client-side dump of <i>every</i> eye config into
- *       {@code <gameDir>/somegoogly-export/data/…}: the synced runtime state ({@link ClientEyeConfigs})
- *       for untouched entities, overlaid with the picker's per-entity drafts
- *       ({@link PickerState#authoredConfigs()}) so a mob saved-but-never-exported is included too.
- *       For copying straight into the mod's {@code resources/}.</li>
+ *   <li>{@link #export()} — the single committed mob, sent to the server as a {@code
+ *       PickerExportPacket}; the authorization-gated server handler validates it, writes {@code
+ *       world/datapacks/somegoogly-picker/data/<ns>/eyes/<entity>.json}, and {@code /reload}s so it
+ *       persists and re-syncs through the normal path. Works from a remote client; the result
+ *       arrives as a server chat message (rate-limited server-side by {@link
+ *       com.github.crittscott.somegoogly.picker.PickerGate#EXPORT_COOLDOWN_TICKS}).
+ *   <li>{@link #exportAll()} — a purely client-side dump of <i>every</i> eye config into {@code
+ *       <gameDir>/somegoogly-export/data/…}: the synced runtime state ({@link ClientEyeConfigs})
+ *       for untouched entities, overlaid with the picker's per-entity drafts ({@link
+ *       PickerState#authoredConfigs()}) so a mob saved-but-never-exported is included too. For
+ *       copying straight into the mod's {@code resources/}.
  * </ul>
  */
 public final class PickerExporter {
 
     private static final String DUMP_DIR = "somegoogly-export";
 
-    private PickerExporter() {
-    }
+    private PickerExporter() {}
 
     /**
-     * Send the committed draft for the chosen mob to the server to be written and reloaded. Client-side
-     * we only guard the obvious (something committed, small enough to send) and codec-encode the draft;
-     * all real validation — and the authoritative feedback — is the server's ({@code PickerExportService}).
+     * Send the committed draft for the chosen mob to the server to be written and reloaded.
+     * Client-side we only guard the obvious (something committed, small enough to send) and
+     * codec-encode the draft; all real validation — and the authoritative feedback — is the
+     * server's ({@code PickerExportService}).
      */
     public static Component export() {
         ResourceLocation type = PickerState.targetType();
@@ -56,9 +60,15 @@ public final class PickerExporter {
             return Component.translatable("somegoogly.command.picker.export_nothing_committed");
         }
         RuntimeConfig config = PickerState.toConfig();
-        // Draft tokens are already canonical (seeded/authored in the picker's enumeration vocabulary).
-        CompoundTag tag = (CompoundTag) RuntimeConfig.CODEC.encodeStart(NbtOps.INSTANCE, config).getOrThrow(false, error -> { });
-        PickerExportPacket packet = new PickerExportPacket(type, PickerState.currentDraftAge(), tag);
+        // Draft tokens are already canonical (seeded/authored in the picker's enumeration
+        // vocabulary).
+        CompoundTag tag =
+                (CompoundTag)
+                        RuntimeConfig.CODEC
+                                .encodeStart(NbtOps.INSTANCE, config)
+                                .getOrThrow(false, error -> {});
+        PickerExportPacket packet =
+                new PickerExportPacket(type, PickerState.currentDraftAge(), tag);
         if (!packet.fitsServerbound()) {
             return Component.translatable("somegoogly.command.picker.export_too_large");
         }
@@ -67,16 +77,17 @@ public final class PickerExporter {
     }
 
     /**
-     * Dump every eye config to one canonical file per entity under
-     * {@code <gameDir>/somegoogly-export/data/<ns>/eyes/<entity>.json}: the synced runtime state for
-     * untouched entities, with each picker draft overlaid on its entity (so saved-but-not-exported mobs
-     * are written too). Unlike the per-mob export this is entirely client-side (no server involvement,
-     * no reload) — it just captures what's authored/live so it can be copied into the mod's
-     * {@code resources/}.
+     * Dump every eye config to one canonical file per entity under {@code
+     * <gameDir>/somegoogly-export/data/<ns>/eyes/<entity>.json}: the synced runtime state for
+     * untouched entities, with each picker draft overlaid on its entity (so saved-but-not-exported
+     * mobs are written too). Unlike the per-mob export this is entirely client-side (no server
+     * involvement, no reload) — it just captures what's authored/live so it can be copied into the
+     * mod's {@code resources/}.
      *
      * <p>The declared version is re-synthesized from the currently-loaded version of each entity's
      * namespace ({@link ConfigFile#exportVersion}), exactly as {@code /sg export} declares it; the
-     * original entry's declared range isn't preserved in the runtime config, so it can't be recovered.
+     * original entry's declared range isn't preserved in the runtime config, so it can't be
+     * recovered.
      */
     public static Component exportAll() {
         Map<ResourceLocation, RuntimeConfigSet> synced = ClientEyeConfigs.all();
@@ -85,15 +96,17 @@ public final class PickerExporter {
             return Component.translatable("somegoogly.command.picker.export_all_none_loaded");
         }
 
-        // Every entity we have anything for: synced (shipped/loaded) state plus in-progress picker drafts.
-        // A draft replaces only its authored age in the synced state, so a mob saved-but-never-exported still
-        // gets written — this is what makes exportall "export all", not just the last reloaded mob.
+        // Every entity we have anything for: synced (shipped/loaded) state plus in-progress picker
+        // drafts. A draft replaces only its authored age in the synced state, so a mob
+        // saved-but-never-exported still gets written — this is what makes exportall "export all",
+        // not just the last reloaded mob.
         Set<ResourceLocation> ids = new LinkedHashSet<>(synced.keySet());
         ids.addAll(drafts.keySet());
 
         Path root = Minecraft.getInstance().gameDirectory.toPath().resolve(DUMP_DIR);
         int files = 0;
-        // Types whose model couldn't be resolved (so synced tokens were written verbatim, not canonicalized).
+        // Types whose model couldn't be resolved (so synced tokens were written verbatim, not
+        // canonicalized).
         int verbatim = 0;
         ResourceLocation currentId = null;
         Path currentTarget = null;
@@ -115,7 +128,9 @@ public final class PickerExporter {
                 } else {
                     canon = vocabulary::canonicalize;
                 }
-                ConfigFile file = ConfigFile.overlay(synced.get(id), drafts.getOrDefault(id, Map.of()), range, canon);
+                ConfigFile file =
+                        ConfigFile.overlay(
+                                synced.get(id), drafts.getOrDefault(id, Map.of()), range, canon);
                 if (file == null) {
                     continue; // nothing usable for this entity
                 }
@@ -123,18 +138,29 @@ public final class PickerExporter {
                 files++;
             }
         } catch (IOException e) {
-            SomeGooglyCommon.LOGGER.error("Bulk eye export failed for {} at {} after {} files",
-                    currentId, currentTarget, files, e);
-            return Component.translatable("somegoogly.command.picker.export_all_failed", e.getMessage());
+            SomeGooglyCommon.LOGGER.error(
+                    "Bulk eye export failed for {} at {} after {} files",
+                    currentId,
+                    currentTarget,
+                    files,
+                    e);
+            return Component.translatable(
+                    "somegoogly.command.picker.export_all_failed", e.getMessage());
         }
-        Component note = verbatim > 0
-                ? Component.translatable(verbatim == 1
-                        ? "somegoogly.command.picker.export_all_one_verbatim"
-                        : "somegoogly.command.picker.export_all_many_verbatim", verbatim)
-                : Component.empty();
-        return Component.translatable(files == 1
+        Component note =
+                verbatim > 0
+                        ? Component.translatable(
+                                verbatim == 1
+                                        ? "somegoogly.command.picker.export_all_one_verbatim"
+                                        : "somegoogly.command.picker.export_all_many_verbatim",
+                                verbatim)
+                        : Component.empty();
+        return Component.translatable(
+                files == 1
                         ? "somegoogly.command.picker.export_all_one_result"
                         : "somegoogly.command.picker.export_all_many_result",
-                files, root, note);
+                files,
+                root,
+                note);
     }
 }

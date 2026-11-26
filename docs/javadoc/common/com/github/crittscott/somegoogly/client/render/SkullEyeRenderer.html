@@ -78,16 +78,16 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">SkullEyeRenderer</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Draws the eyes of placed mob heads and head items. Mixins bracket a placed head's draw with
- <a href="../ClientEyeRuntime.html#beginHead(net.minecraft.world.level.block.entity.BlockEntity,float)"><code>ClientEyeRuntime.beginHead(net.minecraft.world.level.block.entity.BlockEntity, float)</code></a> and a head item's with <a href="../ClientEyeRuntime.html#beginHeadItem(net.minecraft.world.item.ItemStack)"><code>ClientEyeRuntime.beginHeadItem(net.minecraft.world.item.ItemStack)</code></a>, both ending in <a href="../ClientEyeRuntime.html#endItemDraw()"><code>ClientEyeRuntime.endItemDraw()</code></a>, and call
- <a href="#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,net.minecraft.client.model.SkullModelBase)"><code>render(com.mojang.blaze3d.vertex.PoseStack, net.minecraft.client.renderer.MultiBufferSource, int, net.minecraft.client.model.SkullModelBase)</code></a> right after the head model is drawn, in the model's space. A placed head's eyes are live
- (<a href="../PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client"><code>PresentationEyes</code></a>); GUI and framed head items use configured pupils and ambient expressions; other items rest. Worn heads
- share the model draw without either bracket, so they draw no eyes.
+ <a href="../ClientEyeRuntime.html#beginHead(net.minecraft.world.level.block.entity.BlockEntity,float)"><code>ClientEyeRuntime.beginHead(net.minecraft.world.level.block.entity.BlockEntity, float)</code></a> and a head item's with <a href="../ClientEyeRuntime.html#beginHeadItem(net.minecraft.world.item.ItemStack)"><code>ClientEyeRuntime.beginHeadItem(net.minecraft.world.item.ItemStack)</code></a>,
+ both ending in <a href="../ClientEyeRuntime.html#endItemDraw()"><code>ClientEyeRuntime.endItemDraw()</code></a>, and call <a href="#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,net.minecraft.client.model.SkullModelBase)"><code>render(com.mojang.blaze3d.vertex.PoseStack, net.minecraft.client.renderer.MultiBufferSource, int, net.minecraft.client.model.SkullModelBase)</code></a> right after the
+ head model is drawn, in the model's space. A placed head's eyes are live (<a href="../PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client"><code>PresentationEyes</code></a>); GUI and framed head items use configured pupils and ambient expressions;
+ other items rest. Worn heads share the model draw without either bracket, so they draw no eyes.
 
- <p>The eyes attach to the model's head part. A vanilla head model shares that part with its mob, so the mob's
- definition places them as they are. The Heads mod's models rebuild their mob's part elsewhere, sometimes at
- another size or tilt, so each of its heads carries the eyes through a <code>SkullEyeRenderer.Placement</code> fitted from the two
- models' cubes. Honors the client display settings by the head's mob and the server's <code>googlyEyesEnabled</code>
- switch.</div>
+ <p>The eyes attach to the model's head part. A vanilla head model shares that part with its mob,
+ so the mob's definition places them as they are. The Heads mod's models rebuild their mob's part
+ elsewhere, sometimes at another size or tilt, so each of its heads carries the eyes through a
+ <code>SkullEyeRenderer.Placement</code> fitted from the two models' cubes. Honors the client display settings by the
+ head's mob and the server's <code>googlyEyesEnabled</code> switch.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -105,7 +105,8 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#clearCaches()" class="member-name-link">clearCaches</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Drop the fitted placements; called on every renderer rebuild, which replaces the head and mob models.</div>
+<div class="block">Drop the fitted placements; called on every renderer rebuild, which replaces the head and mob
+ models.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,net.minecraft.client.model.SkullModelBase)" class="member-name-link">render</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
@@ -113,8 +114,8 @@ loadScripts(document, 'script');</script>
  int&nbsp;packedLight,
  net.minecraft.client.model.SkullModelBase&nbsp;model)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Draw the current placed head's or head item's eyes, if it has any to show, with <code>pose</code> in the space
- <code>model</code> was just drawn in and the head's <code>packedLight</code>.</div>
+<div class="block">Draw the current placed head's or head item's eyes, if it has any to show, with <code>pose</code>
+ in the space <code>model</code> was just drawn in and the head's <code>packedLight</code>.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#renderTrophy(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,net.minecraft.client.model.Model)" class="member-name-link">renderTrophy</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
@@ -145,7 +146,8 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="clearCaches()">
 <h3>clearCaches</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">clearCaches</span>()</div>
-<div class="block">Drop the fitted placements; called on every renderer rebuild, which replaces the head and mob models.</div>
+<div class="block">Drop the fitted placements; called on every renderer rebuild, which replaces the head and mob
+ models.</div>
 </section>
 </li>
 <li>
@@ -155,8 +157,8 @@ loadScripts(document, 'script');</script>
  net.minecraft.client.renderer.MultiBufferSource&nbsp;bufferSource,
  int&nbsp;packedLight,
  net.minecraft.client.model.SkullModelBase&nbsp;model)</span></div>
-<div class="block">Draw the current placed head's or head item's eyes, if it has any to show, with <code>pose</code> in the space
- <code>model</code> was just drawn in and the head's <code>packedLight</code>.</div>
+<div class="block">Draw the current placed head's or head item's eyes, if it has any to show, with <code>pose</code>
+ in the space <code>model</code> was just drawn in and the head's <code>packedLight</code>.</div>
 </section>
 </li>
 <li>

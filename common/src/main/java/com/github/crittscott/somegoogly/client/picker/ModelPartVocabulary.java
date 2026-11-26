@@ -5,9 +5,7 @@ import com.github.crittscott.somegoogly.client.compat.GeckoCompat;
 import com.github.crittscott.somegoogly.client.compat.SpellbooksCompat;
 import com.github.crittscott.somegoogly.client.render.resolver.EyeAttachmentResolver;
 import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
-import java.util.List;
-import java.util.function.UnaryOperator;
-import javax.annotation.Nullable;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -17,6 +15,11 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+
+import java.util.List;
+import java.util.function.UnaryOperator;
+
+import javax.annotation.Nullable;
 
 /**
  * The picker's single view of a living model's attachment vocabulary. It composes ordinary model
@@ -34,12 +37,13 @@ public final class ModelPartVocabulary {
     }
 
     /**
-     * The attachable part vocabulary of {@code living}'s current model, from its vanilla-style model parts
-     * or else its GeckoLib bones, or {@code null} when neither yields any.
+     * The attachable part vocabulary of {@code living}'s current model, from its vanilla-style
+     * model parts or else its GeckoLib bones, or {@code null} when neither yields any.
      */
     @Nullable
     public static ModelPartVocabulary forEntity(LivingEntity living) {
-        EntityRenderer<?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(living);
+        EntityRenderer<?> renderer =
+                Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(living);
         LivingEntityRenderer<?, ?> nested = SpellbooksCompat.vanillaRenderer(renderer);
         if (nested != null) {
             renderer = nested;
@@ -49,16 +53,21 @@ public final class ModelPartVocabulary {
             EyeAttachmentResolver resolver = Resolvers.forModel(model);
             List<String> tokens = resolver.enumerateParts(model);
             if (!tokens.isEmpty()) {
-                return new ModelPartVocabulary(tokens, token -> resolver.canonicalToken(model, token));
+                return new ModelPartVocabulary(
+                        tokens, token -> resolver.canonicalToken(model, token));
             }
         }
 
         List<String> bones = List.copyOf(GeckoCompat.enumerate(renderer, living));
-        return bones.isEmpty() ? null
+        return bones.isEmpty()
+                ? null
                 : new ModelPartVocabulary(bones, token -> canonicalizeEnumerated(bones, token));
     }
 
-    /** Resolve a type through a throwaway client entity so export-all does not depend on nearby mobs. */
+    /**
+     * Resolve a type through a throwaway client entity so export-all does not depend on nearby
+     * mobs.
+     */
     @Nullable
     public static ModelPartVocabulary forType(ResourceLocation id) {
         LivingEntity sample = sampleFor(id);
@@ -95,13 +104,15 @@ public final class ModelPartVocabulary {
     }
 
     /**
-     * A throwaway client entity of type {@code id}, never added to the level, whose renderer gives the type's
-     * model; the local player for the player type, {@code null} outside a level or for a non-living type.
+     * A throwaway client entity of type {@code id}, never added to the level, whose renderer gives
+     * the type's model; the local player for the player type, {@code null} outside a level or for a
+     * non-living type.
      */
     @Nullable
     public static LivingEntity sampleFor(ResourceLocation id) {
         Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.player != null && id.equals(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.PLAYER))) {
+        if (minecraft.player != null
+                && id.equals(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.PLAYER))) {
             return minecraft.player;
         }
         ClientLevel level = minecraft.level;

@@ -6,8 +6,8 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 
 /**
- * Fabric GameTest entry points for {@link EyeItemServiceGameTestsLogic}; see that class for the actual
- * assertions.
+ * Fabric GameTest entry points for {@link EyeItemServiceGameTestsLogic}; see that class for the
+ * actual assertions.
  */
 public final class EyeItemServiceGameTests implements FabricGameTest {
 

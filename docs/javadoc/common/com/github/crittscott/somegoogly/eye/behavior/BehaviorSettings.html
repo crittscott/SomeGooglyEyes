@@ -90,10 +90,10 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public record </span><span class="element-name type-name-label">BehaviorSettings</span>(boolean&nbsp;ambient, int&nbsp;minTicks, int&nbsp;maxTicks, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a>&gt;&nbsp;pool, int&nbsp;growOnHitPercent, boolean&nbsp;swirlOnHeal, int&nbsp;swirlHealCooldownTicks, <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="OngoingBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">OngoingBehavior</a>&gt;&nbsp;ongoing)
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a></span></div>
-<div class="block">The server's behavior settings as clients receive them, for what clients run
- themselves: the <a href="OngoingBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior"><code>OngoingBehavior</code></a>s on every eyed mob, and the expressions of placed mob heads and the
- hand-held Googly Eyes. Reactive hand expressions and mob expressions are scheduled by the server (<a href="ServerBehaviorScheduler.html" title="class in com.github.crittscott.somegoogly.eye.behavior"><code>ServerBehaviorScheduler</code></a>) from
- <a href="../../config/ServerConfig.html" title="class in com.github.crittscott.somegoogly.config"><code>ServerConfig</code></a> directly.</div>
+<div class="block">The server's behavior settings as clients receive them, for what clients run themselves: the
+ <a href="OngoingBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior"><code>OngoingBehavior</code></a>s on every eyed mob, and the expressions of placed mob heads and the
+ hand-held Googly Eyes. Reactive hand expressions and mob expressions are scheduled by the server
+ (<a href="ServerBehaviorScheduler.html" title="class in com.github.crittscott.somegoogly.eye.behavior"><code>ServerBehaviorScheduler</code></a>) from <a href="../../config/ServerConfig.html" title="class in com.github.crittscott.somegoogly.config"><code>ServerConfig</code></a> directly.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -191,8 +191,8 @@ loadScripts(document, 'script');</script>
  int&nbsp;max,
  net.minecraft.util.RandomSource&nbsp;rand)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">A wait between ambient expressions: uniform between <code>min</code> and <code>max</code>, or <code>min</code> alone when
- <code>max</code> doesn't exceed it.</div>
+<div class="block">A wait between ambient expressions: uniform between <code>min</code> and <code>max</code>, or <code>
+ min</code> alone when <code>max</code> doesn't exceed it.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#enabled(com.github.crittscott.somegoogly.eye.behavior.OngoingBehavior)" class="member-name-link">enabled</a><wbr>(<a href="OngoingBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">OngoingBehavior</a>&nbsp;behavior)</code></div>
@@ -240,8 +240,8 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#meanTicks()" class="member-name-link">meanTicks</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">The mean wait between ambient expressions, as the server's own scheduler draws it: uniform between the
- two bounds, or the minimum alone when the maximum doesn't exceed it.</div>
+<div class="block">The mean wait between ambient expressions, as the server's own scheduler draws it: uniform
+ between the two bounds, or the minimum alone when the maximum doesn't exceed it.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#minTicks()" class="member-name-link">minTicks</a>()</code></div>
@@ -390,8 +390,9 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">drawAmbientTicks</span><wbr><span class="parameters">(int&nbsp;min,
  int&nbsp;max,
  net.minecraft.util.RandomSource&nbsp;rand)</span></div>
-<div class="block">A wait between ambient expressions: uniform between <code>min</code> and <code>max</code>, or <code>min</code> alone when
- <code>max</code> doesn't exceed it. Server-scheduled mob expressions draw it here; presentations use deterministic world-time slots.</div>
+<div class="block">A wait between ambient expressions: uniform between <code>min</code> and <code>max</code>, or <code>
+ min</code> alone when <code>max</code> doesn't exceed it. Server-scheduled mob expressions draw it here;
+ presentations use deterministic world-time slots.</div>
 </section>
 </li>
 <li>
@@ -429,8 +430,8 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="meanTicks()">
 <h3>meanTicks</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">meanTicks</span>()</div>
-<div class="block">The mean wait between ambient expressions, as the server's own scheduler draws it: uniform between the
- two bounds, or the minimum alone when the maximum doesn't exceed it.</div>
+<div class="block">The mean wait between ambient expressions, as the server's own scheduler draws it: uniform
+ between the two bounds, or the minimum alone when the maximum doesn't exceed it.</div>
 </section>
 </li>
 <li>

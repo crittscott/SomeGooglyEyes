@@ -81,9 +81,10 @@ loadScripts(document, 'script');</script>
  synchronization, and picker export. All serialized shapes live together here; resolved rendering
  views and side-specific storage live elsewhere.
 
- <p>Every codec field is required on serialized input; the Java initializers are construction defaults,
- not decoding defaults. Instances and their lists are mutable while a loader or picker assembles them,
- but a validated config graph is treated as read-only after installation in a side-specific store.</div>
+ <p>Every codec field is required on serialized input; the Java initializers are construction
+ defaults, not decoding defaults. Instances and their lists are mutable while a loader or picker
+ assembles them, but a validated config graph is treated as read-only after installation in a
+ side-specific store.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -150,7 +151,8 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color"><code><a href="#PART_BODY" class="member-name-link">PART_BODY</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block">The attachment tokens the renderers name a model's body, head, and root by, and eye files use.</div>
+<div class="block">The attachment tokens the renderers name a model's body, head, and root by, and eye files
+ use.</div>
 </div>
 <div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color"><code><a href="#PART_HEAD" class="member-name-link">PART_HEAD</a></code></div>
@@ -204,8 +206,8 @@ loadScripts(document, 'script');</script>
  float&nbsp;roll,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="EyeConfigModel.Variant.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.Variant</a>&gt;&nbsp;eligible)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Resolve a stable 0..1 roll through the cumulative weights of the runtime config's <code>eligible</code> variants
- alone; 0 when none has weight.</div>
+<div class="block">Resolve a stable 0..1 roll through the cumulative weights of the runtime config's <code>
+ eligible</code> variants alone; 0 when none has weight.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#lastAttachmentSegment(java.lang.String)" class="member-name-link">lastAttachmentSegment</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;token)</code></div>
@@ -275,7 +277,8 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="PART_BODY">
 <h3>PART_BODY</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">PART_BODY</span></div>
-<div class="block">The attachment tokens the renderers name a model's body, head, and root by, and eye files use.</div>
+<div class="block">The attachment tokens the renderers name a model's body, head, and root by, and eye files
+ use.</div>
 <dl class="notes">
 <dt>See Also:</dt>
 <dd>
@@ -367,8 +370,8 @@ loadScripts(document, 'script');</script>
  <a href="EyeConfigModel.RuntimeConfig.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfig</a>&nbsp;config,
  float&nbsp;roll,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Predicate.html" title="class or interface in java.util.function" class="external-link">Predicate</a>&lt;<a href="EyeConfigModel.Variant.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.Variant</a>&gt;&nbsp;eligible)</span></div>
-<div class="block">Resolve a stable 0..1 roll through the cumulative weights of the runtime config's <code>eligible</code> variants
- alone; 0 when none has weight.</div>
+<div class="block">Resolve a stable 0..1 roll through the cumulative weights of the runtime config's <code>
+ eligible</code> variants alone; 0 when none has weight.</div>
 </section>
 </li>
 <li>

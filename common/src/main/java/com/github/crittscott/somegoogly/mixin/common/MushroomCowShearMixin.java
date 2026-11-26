@@ -1,25 +1,33 @@
 package com.github.crittscott.somegoogly.mixin.common;
 
 import com.github.crittscott.somegoogly.server.ServerServices;
+
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.animal.MushroomCow;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 /**
- * Shearing a mooshroom builds its replacement cow by hand rather than through {@code Mob#convertTo}, so neither
- * loader's mob-conversion event fires for it. This hands the mooshroom's eyes (and any picker freeze) to that cow as it is
- * added to the level, as the conversion listeners do for every other conversion. Forge's shearing may spawn the cow from its
- * shared {@code shearInternal} helper rather than {@code shear} itself, so both are targeted; the helper doesn't
+ * Shearing a mooshroom builds its replacement cow by hand rather than through {@code
+ * Mob#convertTo}, so neither loader's mob-conversion event fires for it. This hands the mooshroom's
+ * eyes (and any picker freeze) to that cow as it is added to the level, as the conversion listeners
+ * do for every other conversion. Forge's shearing may spawn the cow from its shared {@code
+ * shearInternal} helper rather than {@code shear} itself, so both are targeted; the helper doesn't
  * exist on Fabric.
  */
 @Mixin(MushroomCow.class)
 abstract class MushroomCowShearMixin {
 
-    @ModifyArg(method = {"shear", "shearInternal"}, at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
+    @ModifyArg(
+            method = {"shear", "shearInternal"},
+            at =
+                    @At(
+                            value = "INVOKE",
+                            target =
+                                    "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
     private Entity somegoogly$keepEyesOnShear(Entity spawned) {
         if (spawned instanceof Cow cow) {
             ServerServices.onConverted((MushroomCow) (Object) this, cow);

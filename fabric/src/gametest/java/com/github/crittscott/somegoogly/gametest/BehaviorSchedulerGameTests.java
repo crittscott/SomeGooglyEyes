@@ -6,8 +6,8 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 
 /**
- * Fabric GameTest entry points for {@link BehaviorSchedulerGameTestsLogic}; see that class for the actual
- * assertions.
+ * Fabric GameTest entry points for {@link BehaviorSchedulerGameTestsLogic}; see that class for the
+ * actual assertions.
  */
 public final class BehaviorSchedulerGameTests implements FabricGameTest {
 
@@ -56,13 +56,19 @@ public final class BehaviorSchedulerGameTests implements FabricGameTest {
                 helper, FakePlayer.get(helper.getLevel()));
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 400, batch = "somegoogly_gameeventtriggersrespectconfig")
+    @GameTest(
+            template = TEMPLATE,
+            timeoutTicks = 400,
+            batch = "somegoogly_gameeventtriggersrespectconfig")
     public static void gameEventTriggersRespectConfig(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.gameEventTriggersRespectConfig(
                 helper, FakePlayer.get(helper.getLevel()));
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 400, batch = "somegoogly_healatfullhealthplaysnoswirl")
+    @GameTest(
+            template = TEMPLATE,
+            timeoutTicks = 400,
+            batch = "somegoogly_healatfullhealthplaysnoswirl")
     public static void healAtFullHealthPlaysNoSwirl(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.healAtFullHealthPlaysNoSwirl(
                 helper, FakePlayer.get(helper.getLevel()));
@@ -76,11 +82,13 @@ public final class BehaviorSchedulerGameTests implements FabricGameTest {
 
     @GameTest(template = TEMPLATE, timeoutTicks = 400, batch = "somegoogly_milkingplaysgrow")
     public static void milkingPlaysGrow(GameTestHelper helper) {
-        BehaviorSchedulerGameTestsLogic.milkingPlaysGrow(
-                helper, FakePlayer.get(helper.getLevel()));
+        BehaviorSchedulerGameTestsLogic.milkingPlaysGrow(helper, FakePlayer.get(helper.getLevel()));
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 400, batch = "somegoogly_onebehavioratatimeuntilitelapses")
+    @GameTest(
+            template = TEMPLATE,
+            timeoutTicks = 400,
+            batch = "somegoogly_onebehavioratatimeuntilitelapses")
     public static void oneBehaviorAtATimeUntilItElapses(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.oneBehaviorAtATimeUntilItElapses(
                 helper, FakePlayer.get(helper.getLevel()));
@@ -102,7 +110,10 @@ public final class BehaviorSchedulerGameTests implements FabricGameTest {
                 helper, FakePlayer.get(helper.getLevel()));
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 400, batch = "somegoogly_sleepingmobplaysnobehaviors")
+    @GameTest(
+            template = TEMPLATE,
+            timeoutTicks = 400,
+            batch = "somegoogly_sleepingmobplaysnobehaviors")
     public static void sleepingMobPlaysNoBehaviors(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.sleepingMobPlaysNoBehaviors(
                 helper, FakePlayer.get(helper.getLevel()));
@@ -128,13 +139,18 @@ public final class BehaviorSchedulerGameTests implements FabricGameTest {
         BehaviorSchedulerGameTestsLogic.receivedExpressionsOutliveRenderTrackers(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 60, batch = "somegoogly_disabledeyessuspendautomaticbehaviors")
+    @GameTest(
+            template = TEMPLATE,
+            timeoutTicks = 60,
+            batch = "somegoogly_disabledeyessuspendautomaticbehaviors")
     public static void disabledEyesSuspendAutomaticBehaviors(GameTestHelper helper) {
-        BehaviorSchedulerGameTestsLogic.disabledEyesSuspendAutomaticBehaviors(helper, FakePlayer.get(helper.getLevel()));
+        BehaviorSchedulerGameTestsLogic.disabledEyesSuspendAutomaticBehaviors(
+                helper, FakePlayer.get(helper.getLevel()));
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
     public static void playerHitBulgesEyes(GameTestHelper helper) {
-        BehaviorSchedulerGameTestsLogic.playerHitBulgesEyes(helper, FakePlayer.get(helper.getLevel()));
+        BehaviorSchedulerGameTestsLogic.playerHitBulgesEyes(
+                helper, FakePlayer.get(helper.getLevel()));
     }
 }

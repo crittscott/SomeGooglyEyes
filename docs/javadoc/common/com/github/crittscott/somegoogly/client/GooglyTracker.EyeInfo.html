@@ -82,8 +82,9 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public static class </span><span class="element-name type-name-label">GooglyTracker.EyeInfo</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Physics state for one pupil: its position and velocity in the eye's unit disk, the head
- orientation used to derive angular forcing, and the non-physical overlay values (grow/blink/tint)
- an active behavior writes each tick. <code>update(net.minecraft.util.RandomSource, float, float, double, double, double, float, float, float, float)</code> steps all of it by one tick.</div>
+ orientation used to derive angular forcing, and the non-physical overlay values
+ (grow/blink/tint) an active behavior writes each tick. <code>update(net.minecraft.util.RandomSource, float, float, double, double, double, float, float, float, float)</code> steps all of it by one
+ tick.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -99,7 +100,8 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color"><code>float</code></div>
 <div class="col-second even-row-color"><code><a href="#creepyPhaseOffset" class="member-name-link">creepyPhaseOffset</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">This eye's offset into the creepy pulse, in radians, so an enderman's eyes don't throb in step.</div>
+<div class="block">This eye's offset into the creepy pulse, in radians, so an enderman's eyes don't throb in
+ step.</div>
 </div>
 <div class="col-first odd-row-color"><code>float</code></div>
 <div class="col-second odd-row-color"><code><a href="#deltaX" class="member-name-link">deltaX</a></code></div>
@@ -140,7 +142,8 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color"><code>boolean</code></div>
 <div class="col-second even-row-color"><code><a href="#itemGravity" class="member-name-link">itemGravity</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">World item and boat eyes remove display scale and project owner acceleration through their captured pose.</div>
+<div class="block">World item and boat eyes remove display scale and project owner acceleration through
+ their captured pose.</div>
 </div>
 <div class="col-first odd-row-color"><code>float</code></div>
 <div class="col-second odd-row-color"><code><a href="#lid" class="member-name-link">lid</a></code></div>
@@ -160,7 +163,8 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color"><code>boolean</code></div>
 <div class="col-second even-row-color"><code><a href="#poseStale" class="member-name-link">poseStale</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">Whether physics has stepped since the last capture; it alone reads the pose, so one capture a tick is enough.</div>
+<div class="block">Whether physics has stepped since the last capture; it alone reads the pose, so one
+ capture a tick is enough.</div>
 </div>
 <div class="col-first odd-row-color"><code>float</code></div>
 <div class="col-second odd-row-color"><code><a href="#prevDeltaX" class="member-name-link">prevDeltaX</a></code></div>
@@ -190,7 +194,8 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color"><code>float</code></div>
 <div class="col-second even-row-color"><code><a href="#prevRotationPitch" class="member-name-link">prevRotationPitch</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">Head orientation, kept across ticks to differentiate into angular velocity and acceleration.</div>
+<div class="block">Head orientation, kept across ticks to differentiate into angular velocity and
+ acceleration.</div>
 </div>
 <div class="col-first odd-row-color"><code>float</code></div>
 <div class="col-second odd-row-color"><code><a href="#prevRotationYaw" class="member-name-link">prevRotationYaw</a></code></div>
@@ -200,8 +205,8 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color"><code>float</code></div>
 <div class="col-second even-row-color"><code><a href="#prevScaleMul" class="member-name-link">prevScaleMul</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">Non-physical behavior overlays, written each tick by the active behavior (neutral when none)
- and interpolated at render.</div>
+<div class="block">Non-physical behavior overlays, written each tick by the active behavior (neutral when
+ none) and interpolated at render.</div>
 </div>
 <div class="col-first odd-row-color"><code>float</code></div>
 <div class="col-second odd-row-color"><code><a href="#prevSquashY" class="member-name-link">prevSquashY</a></code></div>
@@ -226,8 +231,8 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color"><code>float</code></div>
 <div class="col-second odd-row-color"><code><a href="#scaleMul" class="member-name-link">scaleMul</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block">Non-physical behavior overlays, written each tick by the active behavior (neutral when none)
- and interpolated at render.</div>
+<div class="block">Non-physical behavior overlays, written each tick by the active behavior (neutral when
+ none) and interpolated at render.</div>
 </div>
 <div class="col-first even-row-color"><code>float</code></div>
 <div class="col-second even-row-color"><code><a href="#squashY" class="member-name-link">squashY</a></code></div>
@@ -278,16 +283,16 @@ loadScripts(document, 'script');</script>
  float&nbsp;lid,
  float&nbsp;irisTint)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Fold this tick's non-physical overlays into the eye's render state, keeping last tick's values for
- lerping: the active behavior's <code>influence</code> (neutral when none), with the ongoing states the
- caller derives on top of it.</div>
+<div class="block">Fold this tick's non-physical overlays into the eye's render state, keeping last tick's
+ values for lerping: the active behavior's <code>influence</code> (neutral when none), with the
+ ongoing states the caller derives on top of it.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#capturePose(org.joml.Matrix3fc,org.joml.Quaternionfc)" class="member-name-link">capturePose</a><wbr>(org.joml.Matrix3fc&nbsp;pose,
  org.joml.Quaternionfc&nbsp;cameraOrientation)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Capture a world draw's view-space pose and camera rotation, or a pose that holds no view rotation with
- a <code>null</code> camera.</div>
+<div class="block">Capture a world draw's view-space pose and camera rotation, or a pose that holds no view
+ rotation with a <code>null</code> camera.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#resetMotion()" class="member-name-link">resetMotion</a>()</code></div>
@@ -311,9 +316,9 @@ loadScripts(document, 'script');</script>
  double&nbsp;motionZ,
  float&nbsp;agitation)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">One tick of this pupil, eye <code>eye</code> of head <code>head</code>: ask the active behavior, if any, for its
- influence (spring and overlays), layer the owner's overlays on it, and step the physics with the spring
- folded in as a force.</div>
+<div class="block">One tick of this pupil, eye <code>eye</code> of head <code>head</code>: ask the active behavior, if
+ any, for its influence (spring and overlays), layer the owner's overlays on it, and step
+ the physics with the spring folded in as a force.</div>
 </div>
 </div>
 </div>
@@ -336,7 +341,8 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="prevRotationPitch">
 <h3>prevRotationPitch</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">prevRotationPitch</span></div>
-<div class="block">Head orientation, kept across ticks to differentiate into angular velocity and acceleration.</div>
+<div class="block">Head orientation, kept across ticks to differentiate into angular velocity and
+ acceleration.</div>
 </section>
 </li>
 <li>
@@ -407,9 +413,9 @@ loadScripts(document, 'script');</script>
 <h3>gravX</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">gravX</span></div>
 <div class="block">World-down projected into this eye's pupil plane, in the (<code>deltaX</code>, <code>deltaY</code>)
- convention. Refreshed each render by <code>GooglyEyeRenderer</code> from the eye's animated world
- orientation, so the pupil sags toward true down; <code>(0, -1)</code>, eye-local down, until the
- first render.</div>
+ convention. Refreshed each render by <code>GooglyEyeRenderer</code> from the eye's animated
+ world orientation, so the pupil sags toward true down; <code>(0, -1)</code>, eye-local down,
+ until the first render.</div>
 </section>
 </li>
 <li>
@@ -423,7 +429,8 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="itemGravity">
 <h3>itemGravity</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">itemGravity</span></div>
-<div class="block">World item and boat eyes remove display scale and project owner acceleration through their captured pose.</div>
+<div class="block">World item and boat eyes remove display scale and project owner acceleration through
+ their captured pose.</div>
 </section>
 </li>
 <li>
@@ -437,22 +444,22 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="scaleMul">
 <h3>scaleMul</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">scaleMul</span></div>
-<div class="block">Non-physical behavior overlays, written each tick by the active behavior (neutral when none)
- and interpolated at render. Kept per eye so the blink mask varies by eye. This one is the
- grow scale; <a href="#irisScaleMul"><code>irisScaleMul</code></a> is the love pupil size, <a href="#squashY"><code>squashY</code></a> the blink,
- <a href="#tintAmount"><code>tintAmount</code></a> the color-change blend, and <a href="#tintColor"><code>tintColor</code></a> the color-change target (set
- instantly, not interpolated).</div>
+<div class="block">Non-physical behavior overlays, written each tick by the active behavior (neutral when
+ none) and interpolated at render. Kept per eye so the blink mask varies by eye. This one
+ is the grow scale; <a href="#irisScaleMul"><code>irisScaleMul</code></a> is the love pupil size, <a href="#squashY"><code>squashY</code></a> the
+ blink, <a href="#tintAmount"><code>tintAmount</code></a> the color-change blend, and <a href="#tintColor"><code>tintColor</code></a> the
+ color-change target (set instantly, not interpolated).</div>
 </section>
 </li>
 <li>
 <section class="detail" id="prevScaleMul">
 <h3>prevScaleMul</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">prevScaleMul</span></div>
-<div class="block">Non-physical behavior overlays, written each tick by the active behavior (neutral when none)
- and interpolated at render. Kept per eye so the blink mask varies by eye. This one is the
- grow scale; <a href="#irisScaleMul"><code>irisScaleMul</code></a> is the love pupil size, <a href="#squashY"><code>squashY</code></a> the blink,
- <a href="#tintAmount"><code>tintAmount</code></a> the color-change blend, and <a href="#tintColor"><code>tintColor</code></a> the color-change target (set
- instantly, not interpolated).</div>
+<div class="block">Non-physical behavior overlays, written each tick by the active behavior (neutral when
+ none) and interpolated at render. Kept per eye so the blink mask varies by eye. This one
+ is the grow scale; <a href="#irisScaleMul"><code>irisScaleMul</code></a> is the love pupil size, <a href="#squashY"><code>squashY</code></a> the
+ blink, <a href="#tintAmount"><code>tintAmount</code></a> the color-change blend, and <a href="#tintColor"><code>tintColor</code></a> the
+ color-change target (set instantly, not interpolated).</div>
 </section>
 </li>
 <li>
@@ -536,14 +543,16 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="creepyPhaseOffset">
 <h3>creepyPhaseOffset</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">creepyPhaseOffset</span></div>
-<div class="block">This eye's offset into the creepy pulse, in radians, so an enderman's eyes don't throb in step.</div>
+<div class="block">This eye's offset into the creepy pulse, in radians, so an enderman's eyes don't throb in
+ step.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="poseStale">
 <h3>poseStale</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">poseStale</span></div>
-<div class="block">Whether physics has stepped since the last capture; it alone reads the pose, so one capture a tick is enough.</div>
+<div class="block">Whether physics has stepped since the last capture; it alone reads the pose, so one
+ capture a tick is enough.</div>
 </section>
 </li>
 </ul>
@@ -576,16 +585,17 @@ loadScripts(document, 'script');</script>
  float&nbsp;squash,
  float&nbsp;lid,
  float&nbsp;irisTint)</span></div>
-<div class="block">Fold this tick's non-physical overlays into the eye's render state, keeping last tick's values for
- lerping: the active behavior's <code>influence</code> (neutral when none), with the ongoing states the
- caller derives on top of it.</div>
+<div class="block">Fold this tick's non-physical overlays into the eye's render state, keeping last tick's
+ values for lerping: the active behavior's <code>influence</code> (neutral when none), with the
+ ongoing states the caller derives on top of it.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>influence</code> - the behavior's influence on this eye this tick</dd>
 <dd><code>irisPulse</code> - pupil size multiplier from the creepy pulse (1 for none)</dd>
 <dd><code>squash</code> - vertical scale multiplier from the squints (1 for none)</dd>
 <dd><code>lid</code> - how much of the eye each lid covers (0 for none)</dd>
-<dd><code>irisTint</code> - how far the pupil is blended toward <a href="GooglyTracker.html#ANGER_IRIS_COLOR"><code>GooglyTracker.ANGER_IRIS_COLOR</code></a> (0 for none)</dd>
+<dd><code>irisTint</code> - how far the pupil is blended toward <a href="GooglyTracker.html#ANGER_IRIS_COLOR"><code>GooglyTracker.ANGER_IRIS_COLOR</code></a> (0 for
+     none)</dd>
 </dl>
 </section>
 </li>
@@ -595,10 +605,11 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">capturePose</span><wbr><span class="parameters">(org.joml.Matrix3fc&nbsp;pose,
  @Nullable
  org.joml.Quaternionfc&nbsp;cameraOrientation)</span></div>
-<div class="block">Capture a world draw's view-space pose and camera rotation, or a pose that holds no view rotation with
- a <code>null</code> camera. The camera's frame looks along +Z and the view's along -Z, so undoing the view
- takes the camera rotation and a half turn about Y. A new simulation's first capture also rests its
- pupil on the rim toward gravity, so eyes rebuilt after time offscreen come into view already settled.</div>
+<div class="block">Capture a world draw's view-space pose and camera rotation, or a pose that holds no view
+ rotation with a <code>null</code> camera. The camera's frame looks along +Z and the view's
+ along -Z, so undoing the view takes the camera rotation and a half turn about Y. A new
+ simulation's first capture also rests its pupil on the rim toward gravity, so eyes
+ rebuilt after time offscreen come into view already settled.</div>
 </section>
 </li>
 <li>
@@ -627,9 +638,10 @@ loadScripts(document, 'script');</script>
  double&nbsp;motionY,
  double&nbsp;motionZ,
  float&nbsp;agitation)</span></div>
-<div class="block">One tick of this pupil, eye <code>eye</code> of head <code>head</code>: ask the active behavior, if any, for its
- influence (spring and overlays), layer the owner's overlays on it, and step the physics with the spring
- folded in as a force. <code>influence</code> is the caller's reusable scratch instance.</div>
+<div class="block">One tick of this pupil, eye <code>eye</code> of head <code>head</code>: ask the active behavior, if
+ any, for its influence (spring and overlays), layer the owner's overlays on it, and step
+ the physics with the spring folded in as a force. <code>influence</code> is the caller's
+ reusable scratch instance.</div>
 </section>
 </li>
 </ul>

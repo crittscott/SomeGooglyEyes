@@ -77,10 +77,10 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">EyeItemProperties</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">The appearance carried by an eye-bearing item, stored as the <a href="#TAG_EYE_PROPERTIES">"EyeProperties"</a> stack NBT
- compound. Shared by <a href="GooglyEyeItem.html" title="class in com.github.crittscott.somegoogly.item"><code>GooglyEyeItem</code></a>
- and <a href="SlimyEyeItem.html" title="class in com.github.crittscott.somegoogly.item"><code>SlimyEyeItem</code></a> so the eye's look survives unchanged as it is crafted from one into the
- other and finally applied to a mob. Item-to-mob transfer is a straight immutable value copy.</div>
+<div class="block">The appearance carried by an eye-bearing item, stored as the <a href="#TAG_EYE_PROPERTIES">"EyeProperties"</a> stack
+ NBT compound. Shared by <a href="GooglyEyeItem.html" title="class in com.github.crittscott.somegoogly.item"><code>GooglyEyeItem</code></a> and <a href="SlimyEyeItem.html" title="class in com.github.crittscott.somegoogly.item"><code>SlimyEyeItem</code></a> so the eye's look survives
+ unchanged as it is crafted from one into the other and finally applied to a mob. Item-to-mob
+ transfer is a straight immutable value copy.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -120,8 +120,8 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#appendHeadTooltip(net.minecraft.world.item.ItemStack,java.util.List)" class="member-name-link">appendHeadTooltip</a><wbr>(net.minecraft.world.item.ItemStack&nbsp;stack,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;net.minecraft.network.chat.Component&gt;&nbsp;tooltip)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The tooltip lines of a mob head item that carries googly eyes, appended in place: a marker line, then the
- eyes' appearance.</div>
+<div class="block">The tooltip lines of a mob head item that carries googly eyes, appended in place: a marker
+ line, then the eyes' appearance.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#appendTooltip(net.minecraft.world.item.ItemStack,java.util.List)" class="member-name-link">appendTooltip</a><wbr>(net.minecraft.world.item.ItemStack&nbsp;stack,
@@ -138,8 +138,9 @@ loadScripts(document, 'script');</script>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#set(net.minecraft.world.item.ItemStack,com.github.crittscott.somegoogly.eye.state.AppearanceOverride)" class="member-name-link">set</a><wbr>(net.minecraft.world.item.ItemStack&nbsp;stack,
  <a href="../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a>&nbsp;properties)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Store <code>properties</code> on the stack; an empty override removes the compound, and the stack's tag too when
- nothing else is left in it, so the eye stacks with one that never had an appearance.</div>
+<div class="block">Store <code>properties</code> on the stack; an empty override removes the compound, and the
+ stack's tag too when nothing else is left in it, so the eye stacks with one that never had an
+ appearance.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static int</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#slimyEyeTint(net.minecraft.world.item.ItemStack,int)" class="member-name-link">slimyEyeTint</a><wbr>(net.minecraft.world.item.ItemStack&nbsp;stack,
@@ -217,8 +218,8 @@ loadScripts(document, 'script');</script>
 <h3>appendHeadTooltip</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">appendHeadTooltip</span><wbr><span class="parameters">(net.minecraft.world.item.ItemStack&nbsp;stack,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;net.minecraft.network.chat.Component&gt;&nbsp;tooltip)</span></div>
-<div class="block">The tooltip lines of a mob head item that carries googly eyes, appended in place: a marker line, then the
- eyes' appearance. A head without eyes gets none.</div>
+<div class="block">The tooltip lines of a mob head item that carries googly eyes, appended in place: a marker
+ line, then the eyes' appearance. A head without eyes gets none.</div>
 </section>
 </li>
 <li>
@@ -241,8 +242,9 @@ loadScripts(document, 'script');</script>
 <h3>set</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">set</span><wbr><span class="parameters">(net.minecraft.world.item.ItemStack&nbsp;stack,
  <a href="../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a>&nbsp;properties)</span></div>
-<div class="block">Store <code>properties</code> on the stack; an empty override removes the compound, and the stack's tag too when
- nothing else is left in it, so the eye stacks with one that never had an appearance.</div>
+<div class="block">Store <code>properties</code> on the stack; an empty override removes the compound, and the
+ stack's tag too when nothing else is left in it, so the eye stacks with one that never had an
+ appearance.</div>
 </section>
 </li>
 </ul>

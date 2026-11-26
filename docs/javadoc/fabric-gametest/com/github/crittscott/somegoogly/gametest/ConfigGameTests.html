@@ -81,8 +81,8 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">ConfigGameTests</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
 implements net.fabricmc.fabric.api.gametest.v1.FabricGameTest</span></div>
-<div class="block">Fabric GameTest entry points for <a href="ConfigGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest"><code>ConfigGameTestsLogic</code></a>, plus the Fabric-only TOML reader behind
- Fabric's config files.</div>
+<div class="block">Fabric GameTest entry points for <a href="ConfigGameTestsLogic.html" title="class in com.github.crittscott.somegoogly.gametest"><code>ConfigGameTestsLogic</code></a>, plus the Fabric-only TOML reader
+ behind Fabric's config files.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -140,8 +140,9 @@ implements net.fabricmc.fabric.api.gametest.v1.FabricGameTest</span></div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#releasedServerTomlKeepsItsValues(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">releasedServerTomlKeepsItsValues</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">A server file written by the released 0.8.2 Fabric build loads with every value it holds, and is rewritten
- once with the keys it lacks at their defaults, keeping those values; a complete file is left alone.</div>
+<div class="block">A server file written by the released 0.8.2 Fabric build loads with every value it holds, and
+ is rewritten once with the keys it lacks at their defaults, keeping those values; a complete
+ file is left alone.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reloadFallsBackToNearestGeneration(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadFallsBackToNearestGeneration</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
@@ -161,13 +162,14 @@ implements net.fabricmc.fabric.api.gametest.v1.FabricGameTest</span></div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#serverTomlReadsLiteralStringsAndRejectsWrongTypes(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">serverTomlReadsLiteralStringsAndRejectsWrongTypes</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block"><code>TomlConfig</code> reads single-quoted literal strings, keeps quoted <code>#</code> and <code>]</code>, and
- uses the integer default for a value of the wrong type.</div>
+<div class="block"><code>TomlConfig</code> reads single-quoted literal strings, keeps quoted <code>#</code> and <code>]</code>,
+ and uses the integer default for a value of the wrong type.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#serverTomlRoundTrips(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">serverTomlRoundTrips</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block"><code>TomlConfig</code> writes defaults for an absent file, then re-reads an existing file without overwriting it.</div>
+<div class="block"><code>TomlConfig</code> writes defaults for an absent file, then re-reads an existing file without
+ overwriting it.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#spawnAllDefaultsOff(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">spawnAllDefaultsOff</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
@@ -287,40 +289,42 @@ implements net.fabricmc.fabric.api.gametest.v1.FabricGameTest</span></div>
 <section class="detail" id="serverTomlRoundTrips(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>serverTomlRoundTrips</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">serverTomlRoundTrips</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block"><code>TomlConfig</code> writes defaults for an absent file, then re-reads an existing file without overwriting it.
- In game: open a new world and <code>serverconfig/somegoogly-server.toml</code> appears with every key at its
- default; set <code>globalPercent = 17</code>, run <code>/reload</code>, and the file still says 17.</div>
+<div class="block"><code>TomlConfig</code> writes defaults for an absent file, then re-reads an existing file without
+ overwriting it. In game: open a new world and <code>serverconfig/somegoogly-server.toml</code>
+ appears with every key at its default; set <code>globalPercent = 17</code>, run <code>/reload</code>,
+ and the file still says 17.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="releasedServerTomlKeepsItsValues(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>releasedServerTomlKeepsItsValues</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">releasedServerTomlKeepsItsValues</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">A server file written by the released 0.8.2 Fabric build loads with every value it holds, and is rewritten
- once with the keys it lacks at their defaults, keeping those values; a complete file is left alone. In
- game: on Fabric, open a world made with 0.8.2 whose <code>somegoogly-server.toml</code> sets
- <code>globalPercent = 17</code>; after loading it with this version the file still says 17 and has gained the
- new keys, such as <code>squintOnSleep = true</code>.</div>
+<div class="block">A server file written by the released 0.8.2 Fabric build loads with every value it holds, and
+ is rewritten once with the keys it lacks at their defaults, keeping those values; a complete
+ file is left alone. In game: on Fabric, open a world made with 0.8.2 whose <code>
+ somegoogly-server.toml</code> sets <code>globalPercent = 17</code>; after loading it with this version
+ the file still says 17 and has gained the new keys, such as <code>squintOnSleep = true</code>.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="serverTomlReadsLiteralStringsAndRejectsWrongTypes(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>serverTomlReadsLiteralStringsAndRejectsWrongTypes</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">serverTomlReadsLiteralStringsAndRejectsWrongTypes</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block"><code>TomlConfig</code> reads single-quoted literal strings, keeps quoted <code>#</code> and <code>]</code>, and
- uses the integer default for a value of the wrong type. In game: on a Fabric server, write
- <code>spawnExcludedMods = ['minecolonies', 'create']</code> and <code>globalPercent = 5.0</code> into
- <code>serverconfig/somegoogly-server.toml</code>, run <code>/reload</code>, and check the log warns about
- <code>globalPercent</code> while both mods stay excluded.</div>
+<div class="block"><code>TomlConfig</code> reads single-quoted literal strings, keeps quoted <code>#</code> and <code>]</code>,
+ and uses the integer default for a value of the wrong type. In game: on a Fabric server,
+ write <code>spawnExcludedMods = ['minecolonies', 'create']</code> and <code>globalPercent = 5.0</code>
+ into <code>serverconfig/somegoogly-server.toml</code>, run <code>/reload</code>, and check the log
+ warns about <code>globalPercent</code> while both mods stay excluded.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="tomlCompletionPreservesAuthoredContent(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>tomlCompletionPreservesAuthoredContent</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">tomlCompletionPreservesAuthoredContent</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Valid TOML syntax and table identity survive completion; malformed input is preserved. In game:
- quote globalPercent's key and set it to 1_0, add a comment and an unknown key, then reload. The value
- becomes 10 and the authored content remains. A syntax error is logged without rewriting the file.</div>
+<div class="block">Valid TOML syntax and table identity survive completion; malformed input is preserved. In
+ game: quote globalPercent's key and set it to 1_0, add a comment and an unknown key, then
+ reload. The value becomes 10 and the authored content remains. A syntax error is logged
+ without rewriting the file.</div>
 </section>
 </li>
 </ul>

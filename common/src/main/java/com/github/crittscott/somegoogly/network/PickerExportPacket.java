@@ -1,32 +1,40 @@
 package com.github.crittscott.somegoogly.network;
 
+import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ADULT;
+import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_BABY;
+
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.picker.PickerExportService;
 import com.github.crittscott.somegoogly.picker.PickerGate;
+
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.DecoderException;
-import java.util.UUID;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ADULT;
-import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_BABY;
+
+import java.util.UUID;
 
 /**
  * Client → server: "write this authored eye config for {@code entityTypeId} into the world datapack
  * and reload" — the wire half of {@code /sg export}. The config travels as codec-encoded NBT (the
- * same {@code RuntimeConfig.CODEC} the sync packet uses in the other direction); semantic config validation,
- * path construction, the export cooldown, the file write, and the {@code /reload} live in
- * {@link PickerExportService}. It requires {@link PickerGate#authorized}.
+ * same {@code RuntimeConfig.CODEC} the sync packet uses in the other direction); semantic config
+ * validation, path construction, the export cooldown, the file write, and the {@code /reload} live
+ * in {@link PickerExportService}. It requires {@link PickerGate#authorized}.
  *
- * <p>The decoder requires an adult or baby age and a config compound. Server-dependent validation stays in
- * the export service and reports refusals to the author. The client checks {@link #fitsServerbound()} before sending.
+ * <p>The decoder requires an adult or baby age and a config compound. Server-dependent validation
+ * stays in the export service and reports refusals to the author. The client checks {@link
+ * #fitsServerbound()} before sending.
  */
 public class PickerExportPacket implements Payload {
 
-    /** What a loader adds to the encoded data on the wire: Forge's channel writes a one-byte message index first. */
+    /**
+     * What a loader adds to the encoded data on the wire: Forge's channel writes a one-byte message
+     * index first.
+     */
     private static final int LOADER_FRAMING_BYTES = 1;
 
     /** Wire bound on the age string; comfortably above the longest age name. */
@@ -61,7 +69,10 @@ public class PickerExportPacket implements Payload {
         return new PickerExportPacket(typeId, age, configNbt);
     }
 
-    /** Whether this packet's encoded data and loader framing fit under {@link #MAX_SERVERBOUND_BYTES}. */
+    /**
+     * Whether this packet's encoded data and loader framing fit under {@link
+     * #MAX_SERVERBOUND_BYTES}.
+     */
     public boolean fitsServerbound() {
         FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
         try {
@@ -85,8 +96,13 @@ public class PickerExportPacket implements Payload {
             return;
         }
         UUID playerId = sender.getUUID();
-        Component result = PickerExportService.export(
-                sender.serverLevel().getServer(), playerId, packet.typeId, packet.age, packet.configNbt);
+        Component result =
+                PickerExportService.export(
+                        sender.serverLevel().getServer(),
+                        playerId,
+                        packet.typeId,
+                        packet.age,
+                        packet.configNbt);
         PickerGate.tell(sender, result);
     }
 

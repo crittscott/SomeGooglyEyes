@@ -10,6 +10,7 @@ import com.github.crittscott.somegoogly.client.picker.PickerInput;
 import com.github.crittscott.somegoogly.config.forge.ForgeClientConfig;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.registry.ModContent;
+
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -29,19 +30,22 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 /** Physical-client registration kept out of the dedicated-server entry point. */
 public final class ForgeClientBootstrap {
 
-    private ForgeClientBootstrap() {
-    }
+    private ForgeClientBootstrap() {}
 
     /**
-     * Forge's event doesn't list its renderers and its getter casts to a living renderer, so this reads the
-     * dispatcher's map, which the reload firing the event has just rebuilt.
+     * Forge's event doesn't list its renderers and its getter casts to a living renderer, so this
+     * reads the dispatcher's map, which the reload firing the event has just rebuilt.
      */
     private static void addRendererLayers(EntityRenderersEvent.AddLayers event) {
         ClientRenderLayers.clearCaches();
         for (String skin : event.getSkins()) {
             ClientRenderLayers.install(event.getSkin(skin));
         }
-        Minecraft.getInstance().getEntityRenderDispatcher().renderers.values().forEach(ClientRenderLayers::install);
+        Minecraft.getInstance()
+                .getEntityRenderDispatcher()
+                .renderers
+                .values()
+                .forEach(ClientRenderLayers::install);
     }
 
     private static void onClientSetup(FMLClientSetupEvent event) {
@@ -104,12 +108,14 @@ public final class ForgeClientBootstrap {
     }
 
     private static void registerGuiLayers(RegisterGuiOverlaysEvent event) {
-        event.registerAboveAll("picker",
+        event.registerAboveAll(
+                "picker",
                 (gui, graphics, partialTick, width, height) -> PickerHud.render(graphics, width));
     }
 
     private static void registerItemColors(RegisterColorHandlersEvent.Item event) {
-        event.register((stack, tintIndex) -> EyeItemProperties.slimyEyeTint(stack, tintIndex),
+        event.register(
+                (stack, tintIndex) -> EyeItemProperties.slimyEyeTint(stack, tintIndex),
                 ModContent.SLIMY_EYE.get());
     }
 

@@ -4,7 +4,7 @@ import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.registry.ModContent;
-import javax.annotation.Nullable;
+
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
@@ -16,13 +16,15 @@ import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 
+import javax.annotation.Nullable;
+
 /**
- * Special crafting recipe that edits a harvested/looted googly eye's appearance: exactly one
- * {@code googly_eye} plus exactly one modifier ingredient (see {@link #modify}). There is no recipe
- * that <i>creates</i> an eye — this only transforms one you already have.
+ * Special crafting recipe that edits a harvested/looted googly eye's appearance: exactly one {@code
+ * googly_eye} plus exactly one modifier ingredient (see {@link #modify}). There is no recipe that
+ * <i>creates</i> an eye — this only transforms one you already have.
  *
- * <p>The output is a copy of the input eye (preserving unrelated stack NBT) with the
- * modifier's delta folded onto its {@link AppearanceOverride}.
+ * <p>The output is a copy of the input eye (preserving unrelated stack NBT) with the modifier's
+ * delta folded onto its {@link AppearanceOverride}.
  */
 public class EyeModifierRecipe extends CustomRecipe {
 
@@ -31,8 +33,7 @@ public class EyeModifierRecipe extends CustomRecipe {
     }
 
     /** The eye and the modifier ingredient found in a grid. */
-    private record Match(ItemStack eye, ItemStack modifierStack) {
-    }
+    private record Match(ItemStack eye, ItemStack modifierStack) {}
 
     @Override
     public ItemStack assemble(CraftingContainer input, RegistryAccess registries) {
@@ -47,9 +48,9 @@ public class EyeModifierRecipe extends CustomRecipe {
     }
 
     /**
-     * {@code current} with the modifier ingredient's change layered on, or {@code null} when
-     * {@code stack} is not a modifier: a vanilla dye sets that dye's color on the iris (set, not
-     * blended), glowstone dust forces glow on, redstone dust forces it off, and a cobweb strips every
+     * {@code current} with the modifier ingredient's change layered on, or {@code null} when {@code
+     * stack} is not a modifier: a vanilla dye sets that dye's color on the iris (set, not blended),
+     * glowstone dust forces glow on, redstone dust forces it off, and a cobweb strips every
      * override, leaving a bare eye that falls back to config appearance. Geometry stays in config.
      */
     @Nullable

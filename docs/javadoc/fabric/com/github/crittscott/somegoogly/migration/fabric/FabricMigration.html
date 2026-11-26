@@ -79,12 +79,14 @@ loadScripts(document, 'script');</script>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Conversion of what the released 0.8.2 Fabric build for Minecraft 1.20.1 saved.
 
- <p>Its config files have their first section header unquoted though it contains spaces. The released text is kept
- in a sibling <a href="#BACKUP_SUFFIX">".0.8.2.bak"</a> file, which the later reformatting backup leaves alone.
+ <p>Its config files have their first section header unquoted though it contains spaces. The
+ released text is kept in a sibling <a href="#BACKUP_SUFFIX">".0.8.2.bak"</a> file, which the later reformatting
+ backup leaves alone.
 
- <p>Its entities hold the mod's persistent compound under the <a href="#RELEASED_KEY">"somegoogly:persistentData"</a> entity-tag key. As an entity
- loads this moves it into the persistent-data attachment, after which the key is never written again. A value under
- that key that is not a compound is kept in the attachment under <a href="#SET_ASIDE_KEY">"somegoogly:unrecognizedReleasedData"</a> and logged.</div>
+ <p>Its entities hold the mod's persistent compound under the <a href="#RELEASED_KEY">"somegoogly:persistentData"</a> entity-tag
+ key. As an entity loads this moves it into the persistent-data attachment, after which the key is
+ never written again. A value under that key that is not a compound is kept in the attachment
+ under <a href="#SET_ASIDE_KEY">"somegoogly:unrecognizedReleasedData"</a> and logged.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -129,7 +131,8 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#quoteReleasedHeader(java.lang.String)" class="member-name-link">quoteReleasedHeader</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;source)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The released first table has one of these two headers, optionally after comments; other TOML is unchanged.</div>
+<div class="block">The released first table has one of these two headers, optionally after comments; other TOML
+ is unchanged.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#replaceFile(java.nio.file.Path,java.lang.String)" class="member-name-link">replaceFile</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html" title="class or interface in java.nio.file" class="external-link">Path</a>&nbsp;path,
@@ -216,7 +219,8 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="quoteReleasedHeader(java.lang.String)">
 <h3>quoteReleasedHeader</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">quoteReleasedHeader</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;source)</span></div>
-<div class="block">The released first table has one of these two headers, optionally after comments; other TOML is unchanged.</div>
+<div class="block">The released first table has one of these two headers, optionally after comments; other TOML
+ is unchanged.</div>
 </section>
 </li>
 <li>

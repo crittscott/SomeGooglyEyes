@@ -1,14 +1,15 @@
 package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
+
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
 
 /**
- * Forge GameTest entry points for {@link BehaviorSchedulerGameTestsLogic}; see that class for the actual
- * assertions.
+ * Forge GameTest entry points for {@link BehaviorSchedulerGameTestsLogic}; see that class for the
+ * actual assertions.
  */
 @GameTestHolder(SomeGooglyCommon.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -16,8 +17,7 @@ public final class BehaviorSchedulerGameTests {
 
     private static final String TEMPLATE = "empty";
 
-    private BehaviorSchedulerGameTests() {
-    }
+    private BehaviorSchedulerGameTests() {}
 
     @GameTest(template = TEMPLATE, timeoutTicks = 400, batch = "somegoogly_affectioneventsplaylove")
     public static void affectionEventsPlayLove(GameTestHelper helper) {
@@ -62,13 +62,19 @@ public final class BehaviorSchedulerGameTests {
                 helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 400, batch = "somegoogly_gameeventtriggersrespectconfig")
+    @GameTest(
+            template = TEMPLATE,
+            timeoutTicks = 400,
+            batch = "somegoogly_gameeventtriggersrespectconfig")
     public static void gameEventTriggersRespectConfig(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.gameEventTriggersRespectConfig(
                 helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 400, batch = "somegoogly_healatfullhealthplaysnoswirl")
+    @GameTest(
+            template = TEMPLATE,
+            timeoutTicks = 400,
+            batch = "somegoogly_healatfullhealthplaysnoswirl")
     public static void healAtFullHealthPlaysNoSwirl(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.healAtFullHealthPlaysNoSwirl(
                 helper, SomeGooglyGameTests.survivalPlayer(helper));
@@ -86,7 +92,10 @@ public final class BehaviorSchedulerGameTests {
                 helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 400, batch = "somegoogly_onebehavioratatimeuntilitelapses")
+    @GameTest(
+            template = TEMPLATE,
+            timeoutTicks = 400,
+            batch = "somegoogly_onebehavioratatimeuntilitelapses")
     public static void oneBehaviorAtATimeUntilItElapses(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.oneBehaviorAtATimeUntilItElapses(
                 helper, SomeGooglyGameTests.survivalPlayer(helper));
@@ -108,7 +117,10 @@ public final class BehaviorSchedulerGameTests {
                 helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 400, batch = "somegoogly_sleepingmobplaysnobehaviors")
+    @GameTest(
+            template = TEMPLATE,
+            timeoutTicks = 400,
+            batch = "somegoogly_sleepingmobplaysnobehaviors")
     public static void sleepingMobPlaysNoBehaviors(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.sleepingMobPlaysNoBehaviors(
                 helper, SomeGooglyGameTests.survivalPlayer(helper));
@@ -134,13 +146,18 @@ public final class BehaviorSchedulerGameTests {
         BehaviorSchedulerGameTestsLogic.receivedExpressionsOutliveRenderTrackers(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 60, batch = "somegoogly_disabledeyessuspendautomaticbehaviors")
+    @GameTest(
+            template = TEMPLATE,
+            timeoutTicks = 60,
+            batch = "somegoogly_disabledeyessuspendautomaticbehaviors")
     public static void disabledEyesSuspendAutomaticBehaviors(GameTestHelper helper) {
-        BehaviorSchedulerGameTestsLogic.disabledEyesSuspendAutomaticBehaviors(helper, SomeGooglyGameTests.survivalPlayer(helper));
+        BehaviorSchedulerGameTestsLogic.disabledEyesSuspendAutomaticBehaviors(
+                helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
     public static void playerHitBulgesEyes(GameTestHelper helper) {
-        BehaviorSchedulerGameTestsLogic.playerHitBulgesEyes(helper, SomeGooglyGameTests.survivalPlayer(helper));
+        BehaviorSchedulerGameTestsLogic.playerHitBulgesEyes(
+                helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
 }

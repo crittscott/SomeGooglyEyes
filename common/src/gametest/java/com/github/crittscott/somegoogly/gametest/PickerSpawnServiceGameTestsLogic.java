@@ -4,13 +4,10 @@ import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
-import com.github.crittscott.somegoogly.picker.PickerSpawnService.SpawnRefusal;
 import com.github.crittscott.somegoogly.picker.PickerSpawnService;
+import com.github.crittscott.somegoogly.picker.PickerSpawnService.SpawnRefusal;
 import com.github.crittscott.somegoogly.util.LookTarget;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -26,20 +23,29 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+
 import org.jetbrains.annotations.Nullable;
 
-/** The picker command-spawn lifecycle: which types the spawn commands accept, and the finalize order. */
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * The picker command-spawn lifecycle: which types the spawn commands accept, and the finalize
+ * order.
+ */
 public final class PickerSpawnServiceGameTestsLogic {
 
-    private PickerSpawnServiceGameTestsLogic() {
-    }
+    private PickerSpawnServiceGameTestsLogic() {}
 
     /**
-     * An accepted distant spawn does not require immediate UUID lookup visibility. In game: stand over
-     * air and run {@code /sg spawnall minecraft}; mobs and their platforms continue beyond the nearby
-     * chunk area instead of every remaining type being discarded at the first distant cell.
+     * An accepted distant spawn does not require immediate UUID lookup visibility. In game: stand
+     * over air and run {@code /sg spawnall minecraft}; mobs and their platforms continue beyond the
+     * nearby chunk area instead of every remaining type being discarded at the first distant cell.
      */
-    public static void bulkSpawnContinuesBeyondNearbyChunks(GameTestHelper helper, ServerPlayer player) {
+    public static void bulkSpawnContinuesBeyondNearbyChunks(
+            GameTestHelper helper, ServerPlayer player) {
         var originalPosition = player.position();
         float originalYaw = player.getYRot();
         float originalPitch = player.getXRot();
@@ -56,31 +62,45 @@ public final class PickerSpawnServiceGameTestsLogic {
             });
             ServerConfig.SPAWN_EXCLUDED_ENTITIES.set(otherTypes);
             ServerConfig.SPAWN_EXCLUDED_MODS.set(List.of());
-            // The distant position is outside the empty structure; establish platform mode explicitly.
+            // The distant position is outside the empty structure; establish platform mode
+            // explicitly.
             helper.getLevel().setBlockAndUpdate(origin.below(), Blocks.AIR.defaultBlockState());
-            // Move the command's player reference, without a connected player loading this distant area.
+            // Move the command's player reference, without a connected player loading this distant
+            // area.
             player.moveTo(origin.getX() + 0.5, origin.getY(), origin.getZ() + 0.5, 0F, 0F);
-            helper.assertTrue(helper.getLevel().getBlockState(origin.below()).isAir(),
+            helper.assertTrue(
+                    helper.getLevel().getBlockState(origin.below()).isAir(),
                     "the distant command origin must select platform mode");
-            int spawned = PickerSpawnService.spawn(player.createCommandSourceStack(), player, "minecraft");
-            helper.assertTrue(spawned == 3, "all three distant candidates must be accepted, got " + spawned);
-            for (int distance : new int[]{3, 8, 13}) {
-                BlockPos floor = new BlockPos(origin.getX(), origin.getY() - 1, origin.getZ() + distance);
-                helper.assertTrue(helper.getLevel().getBlockState(floor).is(Blocks.SANDSTONE),
+            int spawned =
+                    PickerSpawnService.spawn(
+                            player.createCommandSourceStack(), player, "minecraft");
+            helper.assertTrue(
+                    spawned == 3, "all three distant candidates must be accepted, got " + spawned);
+            for (int distance : new int[] {3, 8, 13}) {
+                BlockPos floor =
+                        new BlockPos(origin.getX(), origin.getY() - 1, origin.getZ() + distance);
+                helper.assertTrue(
+                        helper.getLevel().getBlockState(floor).is(Blocks.SANDSTONE),
                         "each accepted candidate must receive its own platform at " + floor);
             }
         } finally {
             helper.getLevel().setBlockAndUpdate(origin.below(), originalSupport);
             ServerConfig.SPAWN_EXCLUDED_ENTITIES.set(excluded);
             ServerConfig.SPAWN_EXCLUDED_MODS.set(excludedMods);
-            player.moveTo(originalPosition.x, originalPosition.y, originalPosition.z, originalYaw, originalPitch);
+            player.moveTo(
+                    originalPosition.x,
+                    originalPosition.y,
+                    originalPosition.z,
+                    originalYaw,
+                    originalPitch);
         }
         helper.succeed();
     }
 
     /**
-     * Extended entity targeting stops at blocks. In game: stand behind a wall from an eyed cow and aim at
-     * it with an eye item or an admin command; neither inspection nor editing selects it through the wall.
+     * Extended entity targeting stops at blocks. In game: stand behind a wall from an eyed cow and
+     * aim at it with an eye item or an admin command; neither inspection nor editing selects it
+     * through the wall.
      */
     public static void entityTargetingStopsAtWalls(GameTestHelper helper, ServerPlayer player) {
         var originalPosition = player.position();
@@ -92,21 +112,28 @@ public final class PickerSpawnServiceGameTestsLogic {
             helper.setBlock(new BlockPos(2, 2, 1), Blocks.AIR);
             helper.setBlock(new BlockPos(2, 2, 2), Blocks.AIR);
             Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 3));
-            helper.assertTrue(LookTarget.livingInCrosshair(player, LookTarget.DEFAULT_REACH) == cow,
+            helper.assertTrue(
+                    LookTarget.livingInCrosshair(player, LookTarget.DEFAULT_REACH) == cow,
                     "the unobstructed cow is selected by the extended ray");
             helper.setBlock(new BlockPos(2, 2, 2), Blocks.STONE);
-            helper.assertTrue(LookTarget.livingInCrosshair(player, LookTarget.DEFAULT_REACH) == null,
+            helper.assertTrue(
+                    LookTarget.livingInCrosshair(player, LookTarget.DEFAULT_REACH) == null,
                     "an intervening wall prevents selecting the hidden cow");
         } finally {
-            player.moveTo(originalPosition.x, originalPosition.y, originalPosition.z, originalYaw, originalPitch);
+            player.moveTo(
+                    originalPosition.x,
+                    originalPosition.y,
+                    originalPosition.z,
+                    originalYaw,
+                    originalPitch);
         }
         helper.succeed();
     }
 
     /**
-     * A native finalization or insertion refusal leaves planned floors, water basins, and roofs untouched.
-     * The loader wrapper installs the refusing listener. No in-game form without a mod that refuses spawns;
-     * guards that a refused spawn leaves terrain and head data as they were.
+     * A native finalization or insertion refusal leaves planned floors, water basins, and roofs
+     * untouched. The loader wrapper installs the refusing listener. No in-game form without a mod
+     * that refuses spawns; guards that a refused spawn leaves terrain and head data as they were.
      */
     public static void refusedBulkSpawnLeavesTerrain(GameTestHelper helper, ServerPlayer player) {
         var originalPosition = player.position();
@@ -127,7 +154,8 @@ public final class PickerSpawnServiceGameTestsLogic {
             player.moveTo(origin.getX() + 0.5, origin.getY(), origin.getZ() + 0.5, 0F, 0F);
             helper.setBlock(new BlockPos(2, 2, 0), Blocks.AIR);
             helper.setBlock(new BlockPos(2, 2, 3), Blocks.SKELETON_SKULL);
-            SkullBlockEntity skull = (SkullBlockEntity) helper.getBlockEntity(new BlockPos(2, 2, 3));
+            SkullBlockEntity skull =
+                    (SkullBlockEntity) helper.getBlockEntity(new BlockPos(2, 2, 3));
             EyeState.Snapshot eyes = new EyeState.Snapshot(true, 0.5F, AppearanceOverride.EMPTY);
             SkullEyeState.set(skull, eyes);
             Map<BlockPos, BlockState> before = new LinkedHashMap<>();
@@ -140,35 +168,50 @@ public final class PickerSpawnServiceGameTestsLogic {
                 }
             }
             PickerSpawnService.spawn(player.createCommandSourceStack(), player, "minecraft");
-            before.forEach((pos, state) -> helper.assertTrue(helper.getLevel().getBlockState(pos).equals(state),
-                    "refused bulk spawn must leave terrain unchanged at " + pos));
-            helper.assertTrue(helper.getLevel().getBlockEntity(skull.getBlockPos()) == skull
+            before.forEach((pos, state) ->
+                    helper.assertTrue(
+                            helper.getLevel().getBlockState(pos).equals(state),
+                            "refused bulk spawn must leave terrain unchanged at " + pos));
+            helper.assertTrue(
+                    helper.getLevel().getBlockEntity(skull.getBlockPos()) == skull
                             && SkullEyeState.snapshot(skull).equals(eyes),
                     "refused terrain edits preserve the original block entity and its eye data");
         } finally {
             ServerConfig.SPAWN_EXCLUDED_ENTITIES.set(excluded);
             ServerConfig.SPAWN_EXCLUDED_MODS.set(excludedMods);
-            player.moveTo(originalPosition.x, originalPosition.y, originalPosition.z, originalYaw, originalPitch);
+            player.moveTo(
+                    originalPosition.x,
+                    originalPosition.y,
+                    originalPosition.z,
+                    originalYaw,
+                    originalPitch);
         }
     }
 
     /**
-     * {@code /sg spawn} and {@code /sg spawnall} refuse the ender dragon, players, and config-excluded types,
-     * and {@code /sg spawn} suggests only types it accepts. In game: type {@code /sg spawn minecraft:ender}
-     * and see no ender dragon offered; add {@code "minecraft:cow"} to {@code spawnExcludedEntities}, then
-     * {@code /sg spawn minecraft:cow} reports the cow as excluded and it is no longer suggested.
+     * {@code /sg spawn} and {@code /sg spawnall} refuse the ender dragon, players, and
+     * config-excluded types, and {@code /sg spawn} suggests only types it accepts. In game: type
+     * {@code /sg spawn minecraft:ender} and see no ender dragon offered; add {@code
+     * "minecraft:cow"} to {@code spawnExcludedEntities}, then {@code /sg spawn minecraft:cow}
+     * reports the cow as excluded and it is no longer suggested.
      */
     public static void spawnCommandsRefuseDragonPlayersAndExcludedTypes(GameTestHelper helper) {
         List<String> original = ServerConfig.SPAWN_EXCLUDED_ENTITIES.get();
         try {
-            helper.assertTrue(PickerSpawnService.refusal(EntityType.ENDER_DRAGON) == SpawnRefusal.ENDER_DRAGON,
+            helper.assertTrue(
+                    PickerSpawnService.refusal(EntityType.ENDER_DRAGON)
+                            == SpawnRefusal.ENDER_DRAGON,
                     "The ender dragon must be refused");
-            helper.assertTrue(PickerSpawnService.refusal(EntityType.PLAYER) == SpawnRefusal.NOT_SUMMONABLE,
+            helper.assertTrue(
+                    PickerSpawnService.refusal(EntityType.PLAYER) == SpawnRefusal.NOT_SUMMONABLE,
                     "Players must be refused as not summonable");
-            helper.assertTrue(PickerSpawnService.isSpawnable(EntityType.COW), "A cow must be spawnable by default");
+            helper.assertTrue(
+                    PickerSpawnService.isSpawnable(EntityType.COW),
+                    "A cow must be spawnable by default");
 
             ServerConfig.SPAWN_EXCLUDED_ENTITIES.set(List.of("minecraft:cow"));
-            helper.assertTrue(PickerSpawnService.refusal(EntityType.COW) == SpawnRefusal.EXCLUDED,
+            helper.assertTrue(
+                    PickerSpawnService.refusal(EntityType.COW) == SpawnRefusal.EXCLUDED,
                     "A config-excluded type must be refused");
         } finally {
             ServerConfig.SPAWN_EXCLUDED_ENTITIES.set(original);
@@ -177,32 +220,42 @@ public final class PickerSpawnServiceGameTestsLogic {
     }
 
     /**
-     * A command-spawned mob finishes its normal spawn before the picker freezes, persists, and turns it. In
-     * game: as a creative operator, {@code /sg spawn minecraft:zombie} at a block; the zombie appears frozen,
-     * facing you, with the equipment and variants a {@code /summon} zombie gets, and it is still
-     * there after the world is saved and reopened.
+     * A command-spawned mob finishes its normal spawn before the picker freezes, persists, and
+     * turns it. In game: as a creative operator, {@code /sg spawn minecraft:zombie} at a block; the
+     * zombie appears frozen, facing you, with the equipment and variants a {@code /summon} zombie
+     * gets, and it is still there after the world is saved and reopened.
      */
     public static void commandSpawnFinalizesBeforeApplyingPickerState(GameTestHelper helper) {
         TrackingCow cow = new TrackingCow(helper.getLevel());
         BlockPos destination = helper.absolutePos(new BlockPos(2, 2, 2));
         float yaw = 37.0F;
 
-        boolean finalized = PickerSpawnService.prepareForCommandSpawn(
-                helper.getLevel(), cow,
-                destination.getX() + 0.5, destination.getY(), destination.getZ() + 0.5,
-                yaw);
+        boolean finalized =
+                PickerSpawnService.prepareForCommandSpawn(
+                        helper.getLevel(),
+                        cow,
+                        destination.getX() + 0.5,
+                        destination.getY(),
+                        destination.getZ() + 0.5,
+                        yaw);
 
-        helper.assertTrue(finalized, "An uncancelled command spawn must report successful finalization");
-        helper.assertTrue(cow.finalizeCalls == 1, "Command-spawn preparation must finalize a mob exactly once");
-        helper.assertTrue(cow.spawnType == MobSpawnType.COMMAND,
+        helper.assertTrue(
+                finalized, "An uncancelled command spawn must report successful finalization");
+        helper.assertTrue(
+                cow.finalizeCalls == 1,
+                "Command-spawn preparation must finalize a mob exactly once");
+        helper.assertTrue(
+                cow.spawnType == MobSpawnType.COMMAND,
                 "Command-spawn preparation must use the command spawn reason");
-        helper.assertTrue(destination.equals(cow.positionAtFinalize),
+        helper.assertTrue(
+                destination.equals(cow.positionAtFinalize),
                 "Mob finalization must see the entity's destination");
-        helper.assertTrue(!cow.noAiAtFinalize,
-                "Picker NoAi must be applied after normal spawn finalization");
+        helper.assertTrue(
+                !cow.noAiAtFinalize, "Picker NoAi must be applied after normal spawn finalization");
         helper.assertTrue(cow.isNoAi(), "A picker-spawned mob must have NoAi");
         helper.assertTrue(cow.isPersistenceRequired(), "A picker-spawned mob must be persistent");
-        helper.assertTrue(cow.getYRot() == yaw && cow.getYHeadRot() == yaw && cow.yBodyRot == yaw,
+        helper.assertTrue(
+                cow.getYRot() == yaw && cow.getYHeadRot() == yaw && cow.yBodyRot == yaw,
                 "Picker facing must override rotations assigned during spawn finalization");
 
         CompoundTag saved = cow.saveWithoutId(new CompoundTag());

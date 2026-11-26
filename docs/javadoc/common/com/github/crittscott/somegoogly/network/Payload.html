@@ -78,13 +78,12 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">Payload</span></div>
 <div class="block">One of the mod's payloads: its id and its body. Each payload class pairs this with a static
- <code>read(FriendlyByteBuf)</code> that validates on decode; the loader bridges
- <a href="../platform/Networking.html" title="class in com.github.crittscott.somegoogly.platform"><code>Networking</code></a> and
- <a href="../client/platform/ClientNetworking.html" title="class in com.github.crittscott.somegoogly.client.platform"><code>ClientNetworking</code></a> send it on that id.
+ <code>read(FriendlyByteBuf)</code> that validates on decode; the loader bridges <a href="../platform/Networking.html" title="class in com.github.crittscott.somegoogly.platform"><code>Networking</code></a> and <a href="../client/platform/ClientNetworking.html" title="class in com.github.crittscott.somegoogly.client.platform"><code>ClientNetworking</code></a> send it on that id.
 
- <p><a href="#CLIENTBOUND"><code>CLIENTBOUND</code></a> and <a href="#SERVERBOUND"><code>SERVERBOUND</code></a> are the one declaration of every payload, its direction, and
- what handles it on arrival; each loader registers from them. Clientbound handlers reach
- <a href="../client/ClientNetworkHandler.html" title="class in com.github.crittscott.somegoogly.client"><code>ClientNetworkHandler</code></a> only inside lambda bodies, so a dedicated server never links it.</div>
+ <p><a href="#CLIENTBOUND"><code>CLIENTBOUND</code></a> and <a href="#SERVERBOUND"><code>SERVERBOUND</code></a> are the one declaration of every payload, its
+ direction, and what handles it on arrival; each loader registers from them. Clientbound handlers
+ reach <a href="../client/ClientNetworkHandler.html" title="class in com.github.crittscott.somegoogly.client"><code>ClientNetworkHandler</code></a> only inside lambda bodies, so a dedicated server never links
+ it.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -127,7 +126,8 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="Payload.Serverbound.html" title="class in com.github.crittscott.somegoogly.network">Payload.Serverbound</a>&lt;?&gt;&gt;</code></div>
 <div class="col-second odd-row-color"><code><a href="#SERVERBOUND" class="member-name-link">SERVERBOUND</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block">Every payload a client sends, with its server-thread handler, which re-checks the sender's authority.</div>
+<div class="block">Every payload a client sends, with its server-thread handler, which re-checks the sender's
+ authority.</div>
 </div>
 </div>
 </section>
@@ -178,7 +178,8 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="SERVERBOUND">
 <h3>SERVERBOUND</h3>
 <div class="member-signature"><span class="modifiers">static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="Payload.Serverbound.html" title="class in com.github.crittscott.somegoogly.network">Payload.Serverbound</a>&lt;?&gt;&gt;</span>&nbsp;<span class="element-name">SERVERBOUND</span></div>
-<div class="block">Every payload a client sends, with its server-thread handler, which re-checks the sender's authority.</div>
+<div class="block">Every payload a client sends, with its server-thread handler, which re-checks the sender's
+ authority.</div>
 </section>
 </li>
 </ul>

@@ -84,9 +84,9 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public record </span><span class="element-name type-name-label">EyeSettingsPacket</span>(boolean&nbsp;googlyEyesEnabled, <a href="../eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a>&nbsp;behaviors)
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a>
 implements <a href="Payload.html" title="interface in com.github.crittscott.somegoogly.network">Payload</a></span></div>
-<div class="block">Server → client: the <code>googlyEyesEnabled</code> master switch and the behavior settings clients run behaviors
- from. Sent to a joining player and to everyone when either changes. Clients read both afresh every tick, so
- applying them leaves running eye motion alone.</div>
+<div class="block">Server → client: the <code>googlyEyesEnabled</code> master switch and the behavior settings clients
+ run behaviors from. Sent to a joining player and to everyone when either changes. Clients read
+ both afresh every tick, so applying them leaves running eye motion alone.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">

@@ -4,17 +4,19 @@ import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
-import java.util.List;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.List;
+
 /**
- * The appearance carried by an eye-bearing item, stored as the {@value #TAG_EYE_PROPERTIES} stack NBT
- * compound. Shared by {@link GooglyEyeItem}
- * and {@link SlimyEyeItem} so the eye's look survives unchanged as it is crafted from one into the
- * other and finally applied to a mob. Item-to-mob transfer is a straight immutable value copy.
+ * The appearance carried by an eye-bearing item, stored as the {@value #TAG_EYE_PROPERTIES} stack
+ * NBT compound. Shared by {@link GooglyEyeItem} and {@link SlimyEyeItem} so the eye's look survives
+ * unchanged as it is crafted from one into the other and finally applied to a mob. Item-to-mob
+ * transfer is a straight immutable value copy.
  */
 public final class EyeItemProperties {
 
@@ -26,8 +28,7 @@ public final class EyeItemProperties {
 
     public static final String TAG_EYE_PROPERTIES = "EyeProperties";
 
-    private EyeItemProperties() {
-    }
+    private EyeItemProperties() {}
 
     /**
      * The Slimy Eye {@code ItemColor} body shared by both loaders: the stored iris color for the
@@ -40,13 +41,15 @@ public final class EyeItemProperties {
     }
 
     /**
-     * The tooltip lines of a mob head item that carries googly eyes, appended in place: a marker line, then the
-     * eyes' appearance. A head without eyes gets none.
+     * The tooltip lines of a mob head item that carries googly eyes, appended in place: a marker
+     * line, then the eyes' appearance. A head without eyes gets none.
      */
     public static void appendHeadTooltip(ItemStack stack, List<Component> tooltip) {
         EyeState.Snapshot eyes = SkullEyeState.itemSnapshot(stack);
         if (eyes != null) {
-            tooltip.add(Component.translatable("somegoogly.tooltip.head_eyes").withStyle(ChatFormatting.GRAY));
+            tooltip.add(
+                    Component.translatable("somegoogly.tooltip.head_eyes")
+                            .withStyle(ChatFormatting.GRAY));
             appendTooltip(eyes.properties(), tooltip);
         }
     }
@@ -57,14 +60,26 @@ public final class EyeItemProperties {
     }
 
     private static void appendTooltip(AppearanceOverride props, List<Component> tooltip) {
-        props.iris().ifPresent(color ->
-                tooltip.add(Component.translatable("somegoogly.tooltip.iris", color.toHex()).withStyle(ChatFormatting.GRAY)));
-        props.cornea().ifPresent(color ->
-                tooltip.add(Component.translatable("somegoogly.tooltip.cornea", color.toHex()).withStyle(ChatFormatting.GRAY)));
-        props.glow().ifPresent(glow ->
-                tooltip.add(Component.translatable("somegoogly.tooltip.glow",
-                        Component.translatable(glow ? "somegoogly.value.on" : "somegoogly.value.off"))
-                        .withStyle(ChatFormatting.GRAY)));
+        props.iris()
+                .ifPresent(color ->
+                        tooltip.add(
+                                Component.translatable("somegoogly.tooltip.iris", color.toHex())
+                                        .withStyle(ChatFormatting.GRAY)));
+        props.cornea()
+                .ifPresent(color ->
+                        tooltip.add(
+                                Component.translatable("somegoogly.tooltip.cornea", color.toHex())
+                                        .withStyle(ChatFormatting.GRAY)));
+        props.glow()
+                .ifPresent(glow ->
+                        tooltip.add(
+                                Component.translatable(
+                                                "somegoogly.tooltip.glow",
+                                                Component.translatable(
+                                                        glow
+                                                                ? "somegoogly.value.on"
+                                                                : "somegoogly.value.off"))
+                                        .withStyle(ChatFormatting.GRAY)));
     }
 
     /** The stack's appearance override, or {@link AppearanceOverride#EMPTY} when it has none. */
@@ -73,8 +88,9 @@ public final class EyeItemProperties {
     }
 
     /**
-     * Store {@code properties} on the stack; an empty override removes the compound, and the stack's tag too when
-     * nothing else is left in it, so the eye stacks with one that never had an appearance.
+     * Store {@code properties} on the stack; an empty override removes the compound, and the
+     * stack's tag too when nothing else is left in it, so the eye stacks with one that never had an
+     * appearance.
      */
     public static void set(ItemStack stack, AppearanceOverride properties) {
         if (properties.isEmpty()) {

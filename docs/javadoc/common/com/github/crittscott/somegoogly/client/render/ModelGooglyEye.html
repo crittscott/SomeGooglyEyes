@@ -79,11 +79,11 @@ loadScripts(document, 'script');</script>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Closed, faceted eye geometry used by mob eyes, picker previews, and eye items.
 
- <p>The cornea and iris are two shallow cylinders. The iris stays physically in front of the cornea,
- so their surfaces never overlap or need z-fighting offsets; its rear cap would face only the cornea's
- front cap, so it is not drawn. The 16-sided rim reads as round at item scale while remaining
- inexpensive, and each cap is drawn as a fan of quads over its ring. A mob eye may also draw upper and
- lower eyelids in front of both.</div>
+ <p>The cornea and iris are two shallow cylinders. The iris stays physically in front of the
+ cornea, so their surfaces never overlap or need z-fighting offsets; its rear cap would face only
+ the cornea's front cap, so it is not drawn. The 16-sided rim reads as round at item scale while
+ remaining inexpensive, and each cap is drawn as a fan of quads over its ring. A mob eye may also
+ draw upper and lower eyelids in front of both.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -104,8 +104,8 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color"><code>static final float</code></div>
 <div class="col-second odd-row-color"><code><a href="#MAX_PUPIL_SIZE" class="member-name-link">MAX_PUPIL_SIZE</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block">The largest pupil size (iris scale) that still fits inside the cornea, where the iris rim meets the
- cornea rim and the pupil has no room left to travel.</div>
+<div class="block">The largest pupil size (iris scale) that still fits inside the cornea, where the iris rim
+ meets the cornea rim and the pupil has no room left to travel.</div>
 </div>
 </div>
 </section>
@@ -140,8 +140,8 @@ loadScripts(document, 'script');</script>
  float&nbsp;pupilSize)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Position the iris from a unit-disk pupil position <code>(normX, normY)</code> in [-1,1], mapped
- linearly onto the full travel circle so the iris edge just kisses the cornea rim at
- <code>|norm| = 1</code>.</div>
+ linearly onto the full travel circle so the iris edge just kisses the cornea rim at <code>
+ |norm| = 1</code>.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#renderCornea(com.mojang.blaze3d.vertex.PoseStack,com.mojang.blaze3d.vertex.VertexConsumer,int,int,float,float,float,float)" class="member-name-link">renderCornea</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;poseStack,
@@ -178,8 +178,8 @@ loadScripts(document, 'script');</script>
  float&nbsp;alpha,
  float&nbsp;coverage)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Draw an upper and a lower eyelid, each closed until it covers <code>coverage</code> of the eye's height
- (0 none, at most half), in the given color.</div>
+<div class="block">Draw an upper and a lower eyelid, each closed until it covers <code>coverage</code> of the eye's
+ height (0 none, at most half), in the given color.</div>
 </div>
 </div>
 </div>
@@ -202,10 +202,11 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="BASE_DEPTH">
 <h3>BASE_DEPTH</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">BASE_DEPTH</span></div>
-<div class="block">The Z pose-scale that gives the eye its standard thickness (relative to its width). Every render
- site multiplies this by the eye's own <code>depth</code> multiplier (1 = standard); the geometry below
- stays fixed. The model extends toward -Z from its origin (the back face sits at Z = 0), so a
- larger depth pushes the front face further out of the model without moving the attach point.</div>
+<div class="block">The Z pose-scale that gives the eye its standard thickness (relative to its width). Every
+ render site multiplies this by the eye's own <code>depth</code> multiplier (1 = standard); the
+ geometry below stays fixed. The model extends toward -Z from its origin (the back face sits
+ at Z = 0), so a larger depth pushes the front face further out of the model without moving
+ the attach point.</div>
 <dl class="notes">
 <dt>See Also:</dt>
 <dd>
@@ -220,8 +221,8 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="MAX_PUPIL_SIZE">
 <h3>MAX_PUPIL_SIZE</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">MAX_PUPIL_SIZE</span></div>
-<div class="block">The largest pupil size (iris scale) that still fits inside the cornea, where the iris rim meets the
- cornea rim and the pupil has no room left to travel.</div>
+<div class="block">The largest pupil size (iris scale) that still fits inside the cornea, where the iris rim
+ meets the cornea rim and the pupil has no room left to travel.</div>
 <dl class="notes">
 <dt>See Also:</dt>
 <dd>
@@ -261,8 +262,8 @@ loadScripts(document, 'script');</script>
  float&nbsp;normY,
  float&nbsp;pupilSize)</span></div>
 <div class="block">Position the iris from a unit-disk pupil position <code>(normX, normY)</code> in [-1,1], mapped
- linearly onto the full travel circle so the iris edge just kisses the cornea rim at
- <code>|norm| = 1</code>. The renderer applies the <code>pupilSize</code> (irisScale) on the pose, so the
+ linearly onto the full travel circle so the iris edge just kisses the cornea rim at <code>
+ |norm| = 1</code>. The renderer applies the <code>pupilSize</code> (irisScale) on the pose, so the
  offset is expressed in the iris's own pre-scale units (hence the <code>/ pupilSize</code>).</div>
 </section>
 </li>
@@ -306,11 +307,11 @@ loadScripts(document, 'script');</script>
  float&nbsp;blue,
  float&nbsp;alpha,
  float&nbsp;coverage)</span></div>
-<div class="block">Draw an upper and a lower eyelid, each closed until it covers <code>coverage</code> of the eye's height
- (0 none, at most half), in the given color. Each lid is the part of a disk a little wider than the
- cornea beyond a horizontal edge, as deep as the whole eye, so it caps the cornea from the front and
- side; its front face sits ahead of the iris, which shows only between the two edges. Neither has a
- back face, which would face only the head.</div>
+<div class="block">Draw an upper and a lower eyelid, each closed until it covers <code>coverage</code> of the eye's
+ height (0 none, at most half), in the given color. Each lid is the part of a disk a little
+ wider than the cornea beyond a horizontal edge, as deep as the whole eye, so it caps the
+ cornea from the front and side; its front face sits ahead of the iris, which shows only
+ between the two edges. Neither has a back face, which would face only the head.</div>
 </section>
 </li>
 </ul>
