@@ -1,8 +1,8 @@
 # Eye drafts from the asset dump
 
-The 991 entity geometry files in `othersource/myassets` each have a corresponding bundled definition at `common/src/main/resources/data/<namespace>/eyes/<entity>.json`. These are geometry-based starting points for in-game editing. They include effects, traps, and other unusual models present in the dump; an exported model alone does not establish that its entity is a living, supported eye target.
+The 991 entity geometry files in `othersource/myassets` supplied drafts at `common/src/main/resources/data/<namespace>/eyes/<entity>.json`; the bundled set includes subsequent edits, replacements, and removals. These are geometry-based starting points for in-game editing. They include effects, traps, and other unusual models present in the dump; an exported model alone does not establish that its entity is a living, supported eye target.
 
-Every definition has one enabled, age-independent arrangement. The default draft has four eyes, in this order:
+The converter starts each definition with one enabled, age-independent arrangement. Its default draft has four eyes, in this order:
 
 1. Face eye toward the negative-X side.
 2. Face eye toward the positive-X side.
@@ -39,7 +39,7 @@ The dump has no installed mod-version metadata, so entries use the unbounded ver
 
 [dumped-eyes-review.csv](dumped-eyes-review.csv) lists every entity, selection rule, original part path, attachment token, surface part and box coordinates, model class, and review notes. Each row records a comparison of every part in that entity's geometry, skeleton, and Blockbench trees. All 991 trees agree across the three exports. Filter `attachment_check` for positional roots and duplicate names, `selection` for guesses, and `review` for root-token, animation, or flat-geometry concerns. Every face direction remains a guess until inspected in game.
 
-| Namespace | Definitions |
+| Namespace | Original dumped definitions |
 | --- | ---: |
 | alexscaves | 43 |
 | animania | 387 |
@@ -61,7 +61,7 @@ The dump has no installed mod-version metadata, so entries use the unbounded ver
 | undermod | 2 |
 | zombie_extreme | 26 |
 
-The dumped-model definitions contain 3,202 eyes. Together with the bundled Minecraft 1.20.1 entries, the set contains 3,398 eyes. The shared sync limits allow 8,192 eyes and 2 MiB of decoded data. Eye definitions are GZIP-compressed before transmission, with a separate 900 KiB wire cap retained for both loaders. Reload and picker export check both size budgets, and the client bounds decompression before parsing. Network protocol 19 requires matching clients and servers. Configurations exceeding a count or byte cap cause reload to retain the previous set.
+The shared sync limits allow 8,192 eyes and 2 MiB of decoded data. Eye definitions are GZIP-compressed before transmission, with a separate 900 KiB wire cap retained for both loaders. Reload and picker export check both size budgets, and the client bounds decompression before parsing. Network protocol 21 requires matching clients and servers. Configurations exceeding a count or byte cap cause reload to retain the previous set.
 
 ## Editing and regeneration
 

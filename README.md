@@ -18,13 +18,13 @@ Includes attachment support for GeckoLib-, Citadel-, and Uranus-based mobs, as w
 
 **Dispatch the mob with a direct shears blow**: there's a chance to drop a googly eye.
 
-**Find the Optometrist enchantment**: put it on shears; then right-clicking an eyed mob plucks the eye off without harming the mob.
+**Find the Optometrist enchantment**: put it on shears; then right-clicking an eyed mob/head/boat plucks the eye off without harming the mob.
 
 **Customize it in a crafting grid**: eye + any dye sets the iris color, + glowstone dust makes it visible in darkness, + redstone turns glow off, + cobweb strips it back to default.
 
 **Set it in slime**: googly eye + slimeball → a **Slimy Eye**, which inherits the eye's colors.
 
-**Apply it**: right-click a mob with the slimy eye to give it eyes, or sneak and use it to grow your own. Each application picks the mob's eye arrangement anew. A mob that already has eyes refuses it. Pluck them off first to restyle.
+**Apply it**: right-click a mob/head/boat with the slimy eye to give it eyes, or sneak and use it to grow your own. Each application picks the mob's eye arrangement anew. A mob that already has eyes refuses it. Pluck them off first to restyle.
 
 **Decorate with heads**: placed mob heads can have googly eyes too. An eyed skeleton's dropped skull keeps its eyes; a slimy eye gives any skeleton, wither skeleton, zombie, creeper, piglin, or player head a pair, and Optometrist shears pluck them back off. Eyed heads keep their eyes when broken and placed again. With the Heads mod installed (1.20.1 on Forge, 1.21.1, 1.21.11, and 26.1.2 on NeoForge), most of its mob heads work the same way.
 
@@ -54,43 +54,32 @@ Ships with predefined eye configs for:
 
 | | | |
 |---|---|---|
-| Minecraft | Farming for Blockheads | Occultism |
-| Abnormals Autumnity | Forbidden Arcanus | Oh The Biomes We've Gone |
-| Abnormals Caverns & Chasms | Friends & Foes | Productive Bees |
-| Abnormals Environmental | Hamsters Plus Lite | Regions Unexplored |
-| Abnormals Upgrade Aquatic | Ice and Fire Community Edition | Rotten Creatures |
-| Ad Astra | Illager Invasion | Shiny |
-| Adorable Hamster Pets | Immersive Engineering | Simply Cats |
-| AdventureZ | Let's Do Alpine Whispers | Supplementaries |
-| Alex's Mobs | Let's Do Brewery | Sushi Go Crafting |
-| Ars Elemental | Let's Do Furniture | The Aether |
-| Ars Nouveau | Let's Do Meadow | The Bumblezone |
-| Artifacts | Let's Do Vinery | Tiny Skeletons |
-| Critters and Companions | Living Things | Twilight Forest |
-| Ecologics | MmmMmmMmmMmm | Variants & Ventures |
-| EvilCraft | Mowzie's Mobs | WilderNature |
-| Exotic Birds | Naturalist |  |
+| Minecraft | Friends & Foes | Realm RPG: Imps & Demons |
+| Abnormals Autumnity | Guard Villagers | Regions Unexplored |
+| Abnormals Caverns & Chasms | Hamsters Plus Lite | Rotten Creatures |
+| Abnormals Environmental | Ice and Fire / Community Edition | Shiny |
+| Abnormals Upgrade Aquatic | Illager Invasion | Simply Cats |
+| Ad Astra | Immersive Engineering | Species |
+| Adorable Hamster Pets | Iron's Spells 'n Spellbooks | Spore |
+| AdventureZ | Just Another Witchery Remake | Supplementaries |
+| Alex's Caves | Legendary Monsters | Sushi Go Crafting |
+| Alex's Mobs | Let's Do Alpine Whispers | Thaumaturge |
+| Ancient Warfare | Let's Do Brewery | The Aether |
+| Animania | Let's Do Furniture | The Aether II |
+| Ars Elemental | Let's Do Meadow | The Bumblezone |
+| Ars Magica: Legacy | Let's Do Vinery | The Graveyard |
+| Ars Nouveau | Living Things | The Undergarden |
+| Artifacts | MmmMmmMmmMmm | Tiny Skeletons |
+| Creatures and Beasts | MobZ | Twilight Forest |
+| Critters and Companions | Mowzie's Mobs | Undermod |
+| Ecologics | Mutants and Zombies | Variants & Ventures |
+| Enemy Expansion | Naturalist | Villager Recruits |
+| EvilCraft | Occultism | WilderNature |
+| Exotic Birds | Oh The Biomes We've Gone | Zombie Extreme |
+| Farming for Blockheads | Productive Bees |  |
+| Forbidden Arcanus | Realm RPG: Dragon Wyrms |  |
 
 Use the in-game eye config system to generate custom datapacks. Submissions for future releases appreciated! Find a mob that doesn't behave? [Open an issue](../../issues).
-
-## Releases
-
-Each release is built from the branch named for its Minecraft version.
-
-| Minecraft | Loaders | Notes |
-| --- | --- | --- |
-| [1.20.1](../../tree/1.20.1) | Fabric, Forge | No NeoForge build. Heads mod support on Forge. |
-| [1.21.1](../../tree/1.21.1) | Fabric, NeoForge, Forge | Heads mod support on NeoForge. |
-| [1.21.4](../../tree/1.21.4) | Fabric, NeoForge, Forge |  |
-| [1.21.8](../../tree/1.21.8) | Fabric, NeoForge, Forge |  |
-| [1.21.11](../../tree/1.21.11) | Fabric, NeoForge, Forge | Heads mod support on NeoForge. |
-| [26.1](../../tree/26.1) | Fabric, NeoForge, Forge | No GeckoLib integration on Forge. |
-| [26.1.1](../../tree/26.1.1) | Fabric, NeoForge, Forge | No GeckoLib integration on Forge. |
-| [26.1.2](../../tree/26.1.2) | Fabric, NeoForge, Forge | Heads mod support on NeoForge. |
-| [26.2](../../tree/26.2) | Fabric, NeoForge, Forge |  |
-| [26.3](../../tree/26.3) | Fabric, NeoForge, Forge |  |
-
-GeckoLib is optional on every loader. Each Minecraft version's build migrates worlds saved by the release before it in this table; skip no release when updating a world.
 
 ## Credits and license
 
