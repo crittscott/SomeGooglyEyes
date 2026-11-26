@@ -36,11 +36,11 @@ Everything beyond part navigation is done through the `/sg` chat commands:
 6. **Variants** (optional alternative arrangements, weighted at spawn): `/sg variant new`, `/sg variant <n>` to switch, `/sg variant weight <w>`, `/sg variant del <n>`, `/sg list variants`.
 7. **Export**:
    - `/sg export` sends the chosen mob's config to the server, which writes it into the world's datapack (`<world>/datapacks/somegoogly-picker/...`) and reloads, so it takes effect immediately and persists with the world. The written entry is tagged with whichever age the mob shows in the HUD (adult or baby) — it replaces only that age's entry for the mob, so an already-configured other age (or an `any` entry) is carried forward unchanged rather than overwritten. Rate-limited to one export per 10 seconds (each one is a full datapack reload).
-   - `/sg exportall` dumps *every* known config — the loaded ones plus your session's drafts — to `<game dir>/somegoogly-export/`, ready to copy into a mod or datapack.
+   - `/sg exportall` dumps *every* known config — the loaded ones plus your session's drafts — to `<game dir>/somegoogly-export/` on the client, ready to copy into a mod or datapack. Drafts replace only their authored ages; untouched age entries, including disabled ones, are preserved.
 
 **If you switch away from an edited eye before saving, your changes will be lost.**
 
-Changes saved but not exported are kept per mob type for the current session, so you can hop between several mobs and `exportall` at the end. Choosing a mob that already has a config seeds the draft from it, so you edit existing placements rather than starting blank.
+Changes saved but not exported are kept per mob type and age for the current session, so you can hop between several mobs and `exportall` at the end. Choosing a mob that already has a config seeds the draft from it, so you edit existing placements rather than starting blank.
 
 `/sg unchoose` (or `V` again) releases the mob; `K` exits the picker.
 
@@ -63,9 +63,9 @@ Each mob and passenger is inserted individually, with the insertion call's resul
 
 `/sg spawnall [mod]` **spawns one of every summonable living mob in a tidy grid**, grouped by mod, AI off, facing you, so you can audit or author eyes for many mobs at once. **There is no undo.** The optional mod argument narrows it to one namespace and reports any mobs that couldn't be spawned. If you run it standing over the void, it builds sandstone display platforms (with water basins for aquatic mobs). **Only run this on a test or throwaway world.** It freely overwrites blocks, and forcing a mob to spawn outside its mod's normal context — MineColonies' and Create's mobs are known cases — can corrupt or destabilize the world. Never run it on a shared or otherwise valuable server.
 
-Spawnall is **disabled by default**: an admin must consciously set `allowSpawnAll = true` in the server config (`<world>/serverconfig/somegoogly-server.toml`, `picker` section) to enable it. The check is server-side, so a modified client can't bypass it. Set it back to `false` (or restart without it) once you're done auditing.
+Spawnall is **disabled by default**: an admin must consciously set `allowSpawnAll = true` in the server config (see [configuration.md](configuration.md), `Picker` section) to enable it. The check is server-side, so a modified client can't bypass it. Set it back to `false` (or restart without it) once you're done auditing.
 
-To keep junk entities out of the grid, list namespaces in `spawnExcludedMods` or specific ids in `spawnExcludedEntities` (same `picker` section). Both `/sg spawn` and `/sg spawnall` skip anything they match; a namespace-scoped `spawnall` run reports each skipped id so you can see why it's missing. `spawnExcludedMods` ships with `minecolonies` and `create` excluded by default for the world-corruption reason above — only remove either entry on a world you're prepared to lose.
+To keep junk entities out of the grid, list namespaces in `spawnExcludedMods` or specific ids in `spawnExcludedEntities` (same `Picker` section). Both `/sg spawn` and `/sg spawnall` skip anything they match; a namespace-scoped `spawnall` run reports each skipped id so you can see why it's missing. `spawnExcludedMods` ships with `minecolonies` and `create` excluded by default for the world-corruption reason above — only remove either entry on a world you're prepared to lose.
 
 ## Admin commands
 
