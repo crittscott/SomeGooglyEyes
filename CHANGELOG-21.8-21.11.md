@@ -3,7 +3,7 @@
 1.21.11 support, for Fabric, NeoForge, and Forge. The 1.20.1, 1.21.1, 1.21.4, and 1.21.8 builds remain supported.
 
 ### Added
-- Minecraft 1.21.11 builds: Fabric (Loader 0.18.4+, Fabric API 0.141.6+), NeoForge 21.11.48+, and Forge 61.1.5+. GeckoLib 5.4.5+ remains optional.
+- Minecraft 1.21.11 builds: Fabric (Loader 0.18.1+, Fabric API 0.141.6+), NeoForge 21.11.42+, and Forge 61.1.0+. GeckoLib 5.4.5+ remains optional.
 - Eye definitions for the camel husk, mannequin, and parched, matching the camel, player, and skeleton placements, and for the copper golem, nautilus (adult and baby), and zombie nautilus.
 - Eyes on a sheep's rear move in to the bare body when it is sheared and back out when the wool regrows.
 

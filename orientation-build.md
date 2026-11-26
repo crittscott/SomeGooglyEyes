@@ -59,9 +59,9 @@ The root `collectJars` task copies each enabled loader's already-built productio
 | Minecraft | `1.21.11` | Compile and runtime target |
 | Mojang mappings | Official mappings for `1.21.11` | Base mapping layer; no separate mapping version is declared |
 | Parchment mappings | `org.parchmentmc.data:parchment-1.21.11:2025.12.20@zip` | Layer over the official mappings |
-| Forge | `net.minecraftforge:forge:1.21.11-61.1.5` | Exact Forge compile and development-run baseline |
-| NeoForge | `net.neoforged:neoforge:21.11.48` | Exact NeoForge compile and development-run baseline |
-| Fabric Loader | `net.fabricmc:fabric-loader:0.18.4` | Fabric loader dependency; also supplies the common annotation dependency |
+| Forge | `net.minecraftforge:forge:1.21.11-61.1.0` | Exact Forge compile and development-run baseline |
+| NeoForge | `net.neoforged:neoforge:21.11.42` | Exact NeoForge compile and development-run baseline |
+| Fabric Loader | `net.fabricmc:fabric-loader:0.18.1` | Fabric loader dependency; also supplies the common annotation dependency |
 | Fabric API | `net.fabricmc.fabric-api:fabric-api:0.141.6+1.21.11` | Fabric runtime and development API |
 | GeckoLib | `software.bernie.geckolib:geckolib-{common,fabric,forge,neoforge}-1.21.11:5.4.5` | Compile-only optional render integration in common and each loader; built for Minecraft 1.21.11; development runs also load the loader artifacts (`modLocalRuntime`), never published |
 | Heads | `maven.modrinth:heads:6ZDftaxE` (Heads 3.1.0) | NeoForge development runs and GameTests only (`modLocalRuntime`); never bundled |
@@ -81,11 +81,11 @@ Each loader expands its metadata (`fabric.mod.json`, `META-INF/mods.toml`, `META
 | Some Googly Eyes artifact | `0.8.3` |
 | Fabric, Forge, and NeoForge GameTest support mods | `0.8.3` |
 | Minecraft compatibility | exactly `1.21.11`; Forge and NeoForge syntax `[1.21.11]`, Fabric syntax `=1.21.11` |
-| Forge compatibility | `[61.1.5,62)` |
+| Forge compatibility | `[61.1.0,62)` |
 | Forge JavaFML loader compatibility | `[61,62)` |
-| NeoForge compatibility | `[21.11.48,21.12)` |
+| NeoForge compatibility | `[21.11.42,21.12)` |
 | NeoForge JavaFML loader compatibility | `[1,)` |
-| Fabric Loader compatibility | `>=0.18.4` |
+| Fabric Loader compatibility | `>=0.18.1` |
 | Fabric Java compatibility | `>=21` |
 | Fabric API runtime declaration | `>=0.141.6+1.21.11`; compilation uses `0.141.6+1.21.11` |
 | GeckoLib | optional on every loader; `5.4.5` or newer when present |
