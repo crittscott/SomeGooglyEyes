@@ -58,8 +58,8 @@ The root `collectJars` task copies each enabled loader's already-built productio
 | Minecraft | `1.21.8` | Compile and runtime target |
 | Mojang mappings | Official mappings for `1.21.8` | Base mapping layer; no separate mapping version is declared |
 | Parchment mappings | `org.parchmentmc.data:parchment-1.21.8:2025.09.14@zip` | Layer over the official mappings |
-| Forge | `net.minecraftforge:forge:1.21.8-58.1.26` | Exact Forge compile and development-run baseline |
-| NeoForge | `net.neoforged:neoforge:21.8.57` | Exact NeoForge compile and development-run baseline |
+| Forge | `net.minecraftforge:forge:1.21.8-58.1.0` | Exact Forge compile and development-run baseline |
+| NeoForge | `net.neoforged:neoforge:21.8.20` | Exact NeoForge compile and development-run baseline |
 | Fabric Loader | `net.fabricmc:fabric-loader:0.16.14` | Fabric loader dependency; also supplies the common annotation dependency |
 | Fabric API | `net.fabricmc.fabric-api:fabric-api:0.136.1+1.21.8` | Fabric runtime and development API |
 | GeckoLib | `software.bernie.geckolib:geckolib-{common,fabric,forge,neoforge}-1.21.8:5.2.2` | Compile-only optional render integration in common and each loader; development runs also load the loader artifacts (`modLocalRuntime`), plus `mixinextras-forge` (`localRuntime`) for GeckoLib's Mixins on Forge, never published |
@@ -80,9 +80,9 @@ Each loader expands its metadata (`fabric.mod.json`, `META-INF/mods.toml`, `META
 | Some Googly Eyes artifact | `0.8.3` |
 | Fabric, Forge, and NeoForge GameTest support mods | `0.8.3` |
 | Minecraft compatibility | exactly `1.21.8`; Forge and NeoForge syntax `[1.21.8]`, Fabric syntax `=1.21.8` |
-| Forge compatibility | `[58.1.26,59)` |
+| Forge compatibility | `[58.1.0,59)` |
 | Forge JavaFML loader compatibility | `[58,59)` |
-| NeoForge compatibility | `[21.8.57,21.9)` |
+| NeoForge compatibility | `[21.8.20,21.9)` |
 | NeoForge JavaFML loader compatibility | `[1,)` |
 | Fabric Loader compatibility | `>=0.16.14` |
 | Fabric Java compatibility | `>=21` |

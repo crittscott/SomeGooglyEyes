@@ -3,7 +3,7 @@
 1.21.8 support, for Fabric, NeoForge, and Forge. The 1.20.1, 1.21.1, and 1.21.4 builds remain supported.
 
 ### Added
-- Minecraft 1.21.8 builds: Fabric (Loader 0.16.14+, Fabric API 0.136.1+), NeoForge 21.8.57+, and Forge 58.1.26+. GeckoLib 5.2.2+ remains optional.
+- Minecraft 1.21.8 builds: Fabric (Loader 0.16.14+, Fabric API 0.136.1+), NeoForge 21.8.20+, and Forge 58.1.0+. GeckoLib 5.2.2+ remains optional.
 - Eye definition for the happy ghast, matching the ghast's placement.
 - Eyes on a sheep's rear move in to the bare body when it is sheared and back out when the wool regrows.
 
