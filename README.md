@@ -1,14 +1,18 @@
 # Some Googly Eyes
 
-A complete rewrite and expansion of [iChun's Googly Eyes](https://www.curseforge.com/minecraft/mc-mods/googlyeyes). (Also look to [Regoogly Eyes](https://www.curseforge.com/minecraft/mc-mods/regoogly-eyes) by EmeryTheModder if you want a pure port of the original.)
+A complete rewrite and expansion of [iChun's Googly Eyes](https://www.curseforge.com/minecraft/mc-mods/googlyeyes).
 
 Now with multiple behaviors: mobs blink, stare, go cross-eyed, side-eye you, and more.
 
 Eyes are a collectible resource: harvest them, recolor them, set them in a slimeball, and stick them on other mobs, or yourself.
 
-Now with item frame, skull, head, and boat support. Eyed mobs drop eyed heads. Add eyes to skulls and boats. Supports [Heads by Mrbysco](https://www.curseforge.com/minecraft/mc-mods/heads).
+**0.8.3 The More Update:**
 
-Includes attachment support for GeckoLib-, Citadel-, and Uranus-based mobs, as well as those using LLibrary. Datapack-aware: in-game configuration tool for adding and configuring eyes and exporting as a datapack.
+- **Not just mobs: Item frame, skull, head, and boat support.** Eyed mobs drop eyed heads. Add eyes to skulls and boats. Supports [Heads by Mrbysco](https://www.curseforge.com/minecraft/mc-mods/heads).
+- **More versions.** Added support for 1.21.8/11 and all of 26.\*.
+- **More mods.** Added Alex’s Caves, Ancient Warfare 2: Remastered, Animania Reborn, Ars Magica: Legacy, Creatures and Beasts, Enemy Expansion, Guard Villagers, Iron’s Spells ’n Spellbooks, Just Another Witchery Remake, Legendary Monsters, MobZ, Mutants and Zombies, Realm RPG: Dragon Wyrms, Realm RPG: Imps & Demons, Species, Spore, Thaumaturge, The Aether II, The Graveyard, The Undergarden, Undermod, Villager Recruits, and Zombie Extreme.
+
+Includes attachment support for GeckoLib-, Citadel-, LLibrary, and Uranus-based mobs. Datapack-aware: in-game configuration tool for adding and configuring eyes and exporting as a datapack.
 
 ![Googly Eyes splash](docs/googlyeyes-splash-0.8.2.png)
 
@@ -64,8 +68,8 @@ Ships with predefined eye configs for:
 | AdventureZ | Just Another Witchery Remake | Supplementaries |
 | Alex's Caves | Legendary Monsters | Sushi Go Crafting |
 | Alex's Mobs | Let's Do Alpine Whispers | Thaumaturge |
-| Ancient Warfare | Let's Do Brewery | The Aether |
-| Animania | Let's Do Furniture | The Aether II |
+| Ancient Warfare 2: Remastered | Let's Do Brewery | The Aether |
+| Animania Reborn | Let's Do Furniture | The Aether II |
 | Ars Elemental | Let's Do Meadow | The Bumblezone |
 | Ars Magica: Legacy | Let's Do Vinery | The Graveyard |
 | Ars Nouveau | Living Things | The Undergarden |
