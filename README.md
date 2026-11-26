@@ -64,8 +64,8 @@ Ships with predefined eye configs for:
 | AdventureZ | Just Another Witchery Remake | Supplementaries |
 | Alex's Caves | Legendary Monsters | Sushi Go Crafting |
 | Alex's Mobs | Let's Do Alpine Whispers | Thaumaturge |
-| Ancient Warfare | Let's Do Brewery | The Aether |
-| Animania | Let's Do Furniture | The Aether II |
+| Ancient Warfare 2: Remastered | Let's Do Brewery | The Aether |
+| Animania Reborn | Let's Do Furniture | The Aether II |
 | Ars Elemental | Let's Do Meadow | The Bumblezone |
 | Ars Magica: Legacy | Let's Do Vinery | The Graveyard |
 | Ars Nouveau | Living Things | The Undergarden |
