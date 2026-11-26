@@ -3,7 +3,7 @@
 26.1 support, for Fabric, NeoForge, and Forge. The 1.20.1, 1.21.1, 1.21.4, 1.21.8, and 1.21.11 builds remain supported.
 
 ### Added
-- Minecraft 26.1 builds: Fabric (Loader 0.19.5+, Fabric API 0.145.1+), NeoForge 26.1.0.19-beta+, and Forge 62.0.9+. GeckoLib 5.5+ remains optional on Fabric and NeoForge.
+- Minecraft 26.1 builds: Fabric (Loader 0.18.4+, Fabric API 0.145.1+), NeoForge 26.1.0.19-beta+, and Forge 62.0.9+. GeckoLib 5.5+ remains optional on Fabric and NeoForge.
 - Eyes on a sheep's rear move in to the bare body when it is sheared and back out when the wool regrows.
 
 ### Changed
