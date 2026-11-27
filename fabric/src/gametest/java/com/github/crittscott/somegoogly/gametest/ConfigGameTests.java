@@ -10,6 +10,7 @@ import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,6 +25,25 @@ import java.util.Map;
 public final class ConfigGameTests implements FabricGameTest {
 
     private static final String TEMPLATE = "somegoogly:empty";
+
+    /** Disposable config files whose cleanup failures are suppressed behind any test failure. */
+    private static final class TomlFixture implements Closeable {
+        final Path directory;
+        final Path file;
+
+        TomlFixture() throws IOException {
+            directory = Files.createTempDirectory("somegoogly-toml-test");
+            file = directory.resolve("server.toml");
+        }
+
+        @Override
+        public void close() throws IOException {
+            Files.deleteIfExists(directory.resolve("server.toml.bak"));
+            Files.deleteIfExists(directory.resolve("server.toml.0.8.2.bak"));
+            Files.deleteIfExists(file);
+            Files.deleteIfExists(directory);
+        }
+    }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
     public static void percentForResolvesExactBeforeWildcard(GameTestHelper helper) {
@@ -103,50 +123,41 @@ public final class ConfigGameTests implements FabricGameTest {
                     "*:*_horse,50"
                 ]
                 """;
-        try {
-            Path dir = Files.createTempDirectory("somegoogly-toml-test");
-            Path file = dir.resolve("server.toml");
-            try {
-                Map<String, Object> written =
-                        TomlConfig.section(TomlConfig.readOrCreate(file, defaults), "server");
-                helper.assertTrue(
-                        Files.exists(file),
-                        "readOrCreate writes the defaults when the file is absent");
-                helper.assertTrue(
-                        !TomlConfig.bool(written, "googlyEyesEnabled", true),
-                        "a boolean round-trips");
-                helper.assertTrue(
-                        TomlConfig.integer(written, "globalPercent", 5) == 17,
-                        "an integer round-trips");
-                helper.assertTrue(
-                        TomlConfig.strings(written, "entityOverrides", List.of())
-                                .equals(List.of("minecraft:zombie,100", "*:*_horse,50")),
-                        "a quoted string list round-trips with colons and wildcards intact");
+        try (TomlFixture fixture = new TomlFixture()) {
+            Path file = fixture.file;
+            Map<String, Object> written =
+                    TomlConfig.section(TomlConfig.readOrCreate(file, defaults), "server");
+            helper.assertTrue(
+                    Files.exists(file), "readOrCreate writes the defaults when the file is absent");
+            helper.assertTrue(
+                    !TomlConfig.bool(written, "googlyEyesEnabled", true), "a boolean round-trips");
+            helper.assertTrue(
+                    TomlConfig.integer(written, "globalPercent", 5) == 17,
+                    "an integer round-trips");
+            helper.assertTrue(
+                    TomlConfig.strings(written, "entityOverrides", List.of())
+                            .equals(List.of("minecraft:zombie,100", "*:*_horse,50")),
+                    "a quoted string list round-trips with colons and wildcards intact");
 
-                Files.writeString(
-                        file,
-                        """
-                        [server]
-                        googlyEyesEnabled = true
-                        globalPercent = 3
-                        entityOverrides = []
-                        """);
-                Map<String, Object> reread =
-                        TomlConfig.section(TomlConfig.readOrCreate(file, defaults), "server");
-                helper.assertTrue(
-                        TomlConfig.bool(reread, "googlyEyesEnabled", false),
-                        "an existing file is re-read, not overwritten by the defaults");
-                helper.assertTrue(
-                        TomlConfig.integer(reread, "globalPercent", 5) == 3,
-                        "the re-read picks up the edited value");
-                helper.assertTrue(
-                        TomlConfig.strings(reread, "entityOverrides", List.of("x")).isEmpty(),
-                        "an empty list parses as empty");
-            } finally {
-                Files.deleteIfExists(file.resolveSibling(file.getFileName() + ".bak"));
-                Files.deleteIfExists(file);
-                Files.deleteIfExists(dir);
-            }
+            Files.writeString(
+                    file,
+                    """
+                    [server]
+                    googlyEyesEnabled = true
+                    globalPercent = 3
+                    entityOverrides = []
+                    """);
+            Map<String, Object> reread =
+                    TomlConfig.section(TomlConfig.readOrCreate(file, defaults), "server");
+            helper.assertTrue(
+                    TomlConfig.bool(reread, "googlyEyesEnabled", false),
+                    "an existing file is re-read, not overwritten by the defaults");
+            helper.assertTrue(
+                    TomlConfig.integer(reread, "globalPercent", 5) == 3,
+                    "the re-read picks up the edited value");
+            helper.assertTrue(
+                    TomlConfig.strings(reread, "entityOverrides", List.of("x")).isEmpty(),
+                    "an empty list parses as empty");
         } catch (IOException e) {
             throw new RuntimeException("TOML round-trip raised an IOException", e);
         }
@@ -185,9 +196,8 @@ public final class ConfigGameTests implements FabricGameTest {
                 [Picker]
                 allowSpawnAll = false
                 """;
-        try {
-            Path dir = Files.createTempDirectory("somegoogly-toml-test");
-            Path file = dir.resolve("server.toml");
+        try (TomlFixture fixture = new TomlFixture()) {
+            Path file = fixture.file;
             try {
                 Files.writeString(file, released);
                 FabricServerConfig.load(file);
@@ -230,10 +240,6 @@ public final class ConfigGameTests implements FabricGameTest {
                         "the completed file loads the same values");
             } finally {
                 restore.forEach(Runnable::run);
-                Files.deleteIfExists(file.resolveSibling(file.getFileName() + ".bak"));
-                Files.deleteIfExists(file.resolveSibling(file.getFileName() + ".0.8.2.bak"));
-                Files.deleteIfExists(file);
-                Files.deleteIfExists(dir);
             }
         } catch (IOException e) {
             throw new RuntimeException("Released TOML load raised an IOException", e);
@@ -258,31 +264,23 @@ public final class ConfigGameTests implements FabricGameTest {
                 [server]
                 globalPercent = 5.0
                 """;
-        try {
-            Path dir = Files.createTempDirectory("somegoogly-toml-test");
-            Path file = dir.resolve("server.toml");
-            try {
-                Files.writeString(file, source);
-                CommentedConfig document = TomlConfig.readOrCreate(file, "");
-                Map<String, Object> values = TomlConfig.section(document, "picker");
-                helper.assertTrue(
-                        TomlConfig.strings(values, "spawnExcludedMods", List.of())
-                                .equals(List.of("minecolonies", "create")),
-                        "literal and basic strings mix in one array");
-                helper.assertTrue(
-                        TomlConfig.strings(values, "spawnExcludedEntities", List.of())
-                                .equals(List.of("mod:a#b", "mod:c]d")),
-                        "a literal string keeps # and ] and a trailing comment is stripped");
-                helper.assertTrue(
-                        TomlConfig.integer(
-                                        TomlConfig.section(document, "server"), "globalPercent", 7)
-                                == 7,
-                        "a floating-point value uses the integer default");
-            } finally {
-                Files.deleteIfExists(file.resolveSibling(file.getFileName() + ".bak"));
-                Files.deleteIfExists(file);
-                Files.deleteIfExists(dir);
-            }
+        try (TomlFixture fixture = new TomlFixture()) {
+            Path file = fixture.file;
+            Files.writeString(file, source);
+            CommentedConfig document = TomlConfig.readOrCreate(file, "");
+            Map<String, Object> values = TomlConfig.section(document, "picker");
+            helper.assertTrue(
+                    TomlConfig.strings(values, "spawnExcludedMods", List.of())
+                            .equals(List.of("minecolonies", "create")),
+                    "literal and basic strings mix in one array");
+            helper.assertTrue(
+                    TomlConfig.strings(values, "spawnExcludedEntities", List.of())
+                            .equals(List.of("mod:a#b", "mod:c]d")),
+                    "a literal string keeps # and ] and a trailing comment is stripped");
+            helper.assertTrue(
+                    TomlConfig.integer(TomlConfig.section(document, "server"), "globalPercent", 7)
+                            == 7,
+                    "a floating-point value uses the integer default");
         } catch (IOException e) {
             throw new RuntimeException("TOML literal-string read raised an IOException", e);
         }
@@ -297,10 +295,8 @@ public final class ConfigGameTests implements FabricGameTest {
      */
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
     public static void tomlCompletionPreservesAuthoredContent(GameTestHelper helper) {
-        Path dir = null;
-        try {
-            dir = Files.createTempDirectory("somegoogly-toml-completion");
-            Path file = dir.resolve("server.toml");
+        try (TomlFixture fixture = new TomlFixture()) {
+            Path file = fixture.file;
             String source =
                     """
                     ["Server Settings"]
@@ -356,16 +352,6 @@ public final class ConfigGameTests implements FabricGameTest {
                     "syntax failure preserves the administrator's file");
         } catch (IOException e) {
             throw new RuntimeException(e);
-        } finally {
-            if (dir != null) {
-                try {
-                    Files.deleteIfExists(dir.resolve("server.toml.bak"));
-                    Files.deleteIfExists(dir.resolve("server.toml"));
-                    Files.deleteIfExists(dir);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
         }
         helper.succeed();
     }

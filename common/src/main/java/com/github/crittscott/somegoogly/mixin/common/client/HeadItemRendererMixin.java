@@ -22,6 +22,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(BlockEntityWithoutLevelRenderer.class)
 abstract class HeadItemRendererMixin {
 
+    // Mixin invokes this handler; unused parameters preserve its injection signature.
+    @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
     @Inject(method = "renderByItem", at = @At("HEAD"))
     private void somegoogly$beginItem(
             ItemStack stack,
@@ -34,6 +36,8 @@ abstract class HeadItemRendererMixin {
         ClientEyeRuntime.beginHeadItem(stack);
     }
 
+    // Mixin invokes this handler; unused parameters preserve its injection signature.
+    @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
     @Inject(method = "renderByItem", at = @At("RETURN"))
     private void somegoogly$endItem(
             ItemStack stack,

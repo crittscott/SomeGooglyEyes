@@ -24,6 +24,8 @@ import java.util.List;
 @Mixin(EnchantmentHelper.class)
 abstract class EnchantmentResultsMixin {
 
+    // Mixin invokes this handler; unused parameters preserve its injection signature.
+    @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
     @Inject(method = "getAvailableEnchantmentResults", at = @At("RETURN"))
     private static void somegoogly$narrowOptometrist(
             int level,

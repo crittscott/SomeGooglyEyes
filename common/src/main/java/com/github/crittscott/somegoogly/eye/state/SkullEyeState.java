@@ -151,10 +151,10 @@ public final class SkullEyeState {
      */
     private static final class HeadBlocks {
 
-        static final Map<Block, ResourceLocation> ENTITIES = build();
+        static final IdentityHashMap<Block, ResourceLocation> ENTITIES = build();
 
-        private static Map<Block, ResourceLocation> build() {
-            Map<Block, ResourceLocation> entities = new IdentityHashMap<>();
+        private static IdentityHashMap<Block, ResourceLocation> build() {
+            IdentityHashMap<Block, ResourceLocation> entities = new IdentityHashMap<>();
             for (Block block : BuiltInRegistries.BLOCK) {
                 ResourceLocation entity = headEntity(block);
                 if (entity != null) {

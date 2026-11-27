@@ -54,8 +54,8 @@ public enum OngoingBehavior {
             }
             Item weapon = entity.getUseItem().getItem();
             return on(
-                    entity instanceof AbstractSkeleton && weapon instanceof ProjectileWeaponItem
-                            || entity instanceof Player && weapon instanceof BowItem);
+                    (entity instanceof AbstractSkeleton && weapon instanceof ProjectileWeaponItem)
+                            || (entity instanceof Player && weapon instanceof BowItem));
         }
     },
 
@@ -111,7 +111,12 @@ public enum OngoingBehavior {
         }
     }
 
+    // These exact ResourceLocation instances contain only final namespace/path strings.
+    @SuppressWarnings("ImmutableEnumChecker")
     private final ResourceLocation id;
+
+    // A reference to central live configuration, not mutable state owned by this enum constant.
+    @SuppressWarnings("ImmutableEnumChecker")
     private final ConfigValue<Boolean> setting;
 
     OngoingBehavior(String name, ConfigValue<Boolean> setting) {

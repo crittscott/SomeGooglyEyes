@@ -17,6 +17,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(AbstractVillager.class)
 abstract class AbstractVillagerTradeMixin {
 
+    // Mixin invokes this handler; unused parameters preserve its injection signature.
+    @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
     @Inject(method = "notifyTrade", at = @At("TAIL"))
     private void somegoogly$afterTrade(MerchantOffer offer, CallbackInfo callback) {
         ServerBehaviorScheduler.onTrade((AbstractVillager) (Object) this);

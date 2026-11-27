@@ -127,9 +127,10 @@ public final class GooglyEyeRenderer {
         float irisTintAmount =
                 Mth.lerp(partialTicks, eyeInfo.prevIrisTintAmount, eyeInfo.irisTintAmount);
         if (irisTintAmount > 0F) {
-            for (int c = 0; c < 3; c++) {
-                IRIS[c] = Mth.lerp(irisTintAmount, IRIS[c], GooglyTracker.ANGER_IRIS_COLOR[c]);
-            }
+            EyeColor angry = GooglyTracker.ANGER_IRIS_COLOR;
+            IRIS[0] = Mth.lerp(irisTintAmount, IRIS[0], angry.r());
+            IRIS[1] = Mth.lerp(irisTintAmount, IRIS[1], angry.g());
+            IRIS[2] = Mth.lerp(irisTintAmount, IRIS[2], angry.b());
         }
 
         // Pupil position: the physics delta, which already includes any behavior spring. The
@@ -160,15 +161,15 @@ public final class GooglyEyeRenderer {
         // drawn only in the cutout pass, they hide the glow behind them by depth.
         float lid = Mth.lerp(partialTicks, eyeInfo.prevLid, eyeInfo.lid);
         if (lid > 0F) {
-            float[] lidColor = GooglyTracker.SLEEP_LID_COLOR;
+            EyeColor lidColor = GooglyTracker.SLEEP_LID_COLOR;
             MODEL.renderLids(
                     pose,
                     bufferSource.getBuffer(RENDER_TYPE),
                     packedLight,
                     overlay,
-                    lidColor[0],
-                    lidColor[1],
-                    lidColor[2],
+                    lidColor.r(),
+                    lidColor.g(),
+                    lidColor.b(),
                     1F,
                     lid);
         }

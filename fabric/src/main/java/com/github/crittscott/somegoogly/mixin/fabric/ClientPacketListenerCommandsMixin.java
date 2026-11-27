@@ -24,6 +24,8 @@ abstract class ClientPacketListenerCommandsMixin {
     @Shadow
     public abstract CommandDispatcher<SharedSuggestionProvider> getCommands();
 
+    // Mixin invokes this handler; unused parameters preserve its injection signature.
+    @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
     @Inject(method = "handleCommands", at = @At("RETURN"))
     private void somegoogly$addPickerCommands(CallbackInfo callback) {
         FabricClientCommands.addPickerToServerTree(getCommands());

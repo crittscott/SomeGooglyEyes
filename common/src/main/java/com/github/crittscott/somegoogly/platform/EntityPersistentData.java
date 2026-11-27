@@ -19,6 +19,8 @@ public final class EntityPersistentData {
      * The entity's compound for reading, or {@code null} if it has none. Forge has no read that
      * doesn't create it, so only Fabric returns {@code null}.
      */
+    // Architectury replaces this stub body with the loader implementation.
+    @SuppressWarnings("DoNotCallSuggester")
     @ExpectPlatform
     @Nullable
     public static CompoundTag find(Entity entity) {
@@ -26,6 +28,8 @@ public final class EntityPersistentData {
     }
 
     /** The entity's live, mutable persistent compound; never null, and written in place. */
+    // Architectury replaces this stub body with the loader implementation.
+    @SuppressWarnings("DoNotCallSuggester")
     @ExpectPlatform
     public static CompoundTag get(Entity entity) {
         throw new AssertionError();

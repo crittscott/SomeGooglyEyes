@@ -29,6 +29,8 @@ abstract class ItemFrameRendererMixin {
             "render(Lnet/minecraft/world/entity/decoration/ItemFrame;FF"
                     + "Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V";
 
+    // Mixin invokes this handler; unused parameters preserve its injection signature.
+    @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
     @Inject(method = RENDER, at = @At(value = "INVOKE", target = DRAW_ITEM))
     private void somegoogly$beginFrame(
             ItemFrame frame,
@@ -41,6 +43,8 @@ abstract class ItemFrameRendererMixin {
         ClientEyeRuntime.beginFrame(frame, partialTick);
     }
 
+    // Mixin invokes this handler; unused parameters preserve its injection signature.
+    @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
     @Inject(method = RENDER, at = @At(value = "INVOKE", target = DRAW_ITEM, shift = At.Shift.AFTER))
     private void somegoogly$endFrame(
             ItemFrame frame,

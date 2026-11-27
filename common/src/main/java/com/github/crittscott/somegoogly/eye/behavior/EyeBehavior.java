@@ -289,7 +289,10 @@ public enum EyeBehavior {
         }
     }
 
+    // These exact ResourceLocation instances contain only final namespace/path strings.
+    @SuppressWarnings("ImmutableEnumChecker")
     private final ResourceLocation id;
+
     private final int defaultDuration;
     private final int wireId;
 

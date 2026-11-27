@@ -14,12 +14,16 @@ public final class Networking {
     private Networking() {}
 
     /** Send a clientbound payload to every player on {@code server}, encoding it once. */
+    // Architectury replaces this stub body with the loader implementation.
+    @SuppressWarnings("DoNotCallSuggester")
     @ExpectPlatform
     public static void sendToAll(MinecraftServer server, Payload payload) {
         throw new AssertionError();
     }
 
     /** Send a clientbound payload to one player. */
+    // Architectury replaces this stub body with the loader implementation.
+    @SuppressWarnings("DoNotCallSuggester")
     @ExpectPlatform
     public static void sendToPlayer(ServerPlayer player, Payload payload) {
         throw new AssertionError();
@@ -29,6 +33,8 @@ public final class Networking {
      * Send a clientbound payload to every player tracking {@code entity} and, when the entity is
      * itself a server player, to that player too.
      */
+    // Architectury replaces this stub body with the loader implementation.
+    @SuppressWarnings("DoNotCallSuggester")
     @ExpectPlatform
     public static void sendTrackingAndSelf(Entity entity, Payload payload) {
         throw new AssertionError();

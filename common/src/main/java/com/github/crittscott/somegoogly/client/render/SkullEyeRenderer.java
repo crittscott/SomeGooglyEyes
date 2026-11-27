@@ -69,7 +69,7 @@ public final class SkullEyeRenderer {
     private static final float PIXELS_PER_BLOCK = 16F;
 
     /** Fitted placements by head model and eye attach token; empty where fitting failed. */
-    private static final Map<Model, Map<String, Optional<Placement>>> PLACEMENTS =
+    private static final IdentityHashMap<Model, Map<String, Optional<Placement>>> PLACEMENTS =
             new IdentityHashMap<>();
 
     /** Twilight Forest trophy identities and the model part each exposes as its face. */
@@ -82,6 +82,8 @@ public final class SkullEyeRenderer {
     private SkullEyeRenderer() {}
 
     /** A cube and the parts below a searched part that lead to it, outermost first. */
+    // This private search result owns its read-only chain and is never compared by value.
+    @SuppressWarnings("ArrayRecordComponent")
     private record FoundCube(ModelPart.Cube cube, ModelPart[] chain) {
 
         float depth() {
@@ -107,6 +109,8 @@ public final class SkullEyeRenderer {
      * (front-face centers matched, scaled by the smaller of the width and height ratios), then back
      * up {@code mobChain} to the mob's eye part.
      */
+    // These private, read-only chains replay live model transforms; placement equality is unused.
+    @SuppressWarnings("ArrayRecordComponent")
     private record Placement(
             ModelPart[] headsChain,
             float headsX,
@@ -141,14 +145,6 @@ public final class SkullEyeRenderer {
         }
     }
 
-    /** A placed head's draw starts. */
-
-    /**
-     * An item's draw starts; only a head item's is recorded, since no other reaches {@link
-     * #render}. Other mods' built-in item renderers may end the draw early without its matching
-     * {@link ClientEyeRuntime#endHeadItem}, so an unrecorded item must leave nothing behind.
-     */
-
     /**
      * Drop the fitted placements; called on every renderer rebuild, which replaces the head and mob
      * models.
@@ -156,13 +152,6 @@ public final class SkullEyeRenderer {
     public static void clearCaches() {
         PLACEMENTS.clear();
     }
-
-    /** The placed head's draw ends. */
-
-    /**
-     * The draw {@link ClientEyeRuntime#beginHeadItem} began for {@code stack} ends; it recorded
-     * nothing for any item but a head.
-     */
 
     /**
      * Fit eyes authored on {@code entity}'s part {@code token} to the Heads-mod head part {@code

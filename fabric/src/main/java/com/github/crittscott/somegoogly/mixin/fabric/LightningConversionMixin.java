@@ -20,6 +20,8 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 @Mixin({Pig.class, Villager.class})
 abstract class LightningConversionMixin {
 
+    // Mixin invokes this handler.
+    @SuppressWarnings("UnusedMethod")
     @ModifyArg(
             method = "thunderHit",
             require = 0,
@@ -33,6 +35,8 @@ abstract class LightningConversionMixin {
         return converted;
     }
 
+    // Mixin invokes this handler.
+    @SuppressWarnings("UnusedMethod")
     @ModifyArg(
             method = "thunderHit",
             require = 0,

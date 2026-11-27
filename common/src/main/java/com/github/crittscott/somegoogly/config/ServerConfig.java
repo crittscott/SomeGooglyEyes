@@ -87,11 +87,8 @@ public class ServerConfig {
                             Chance (0-100) that killing an eyed mob with a direct melee blow from shears drops a Googly Eye.\
                             """));
 
-    /**
-     * Per-entity spawn chances as {@code "entity-pattern,percent"} lines; read through {@link
-     * #percentFor}.
-     */
-    public static final ConfigValue.Parsed<List<SpawnOverride>> ENTITY_OVERRIDES =
+    // Precedes the public raw setting, which exposes this same object without its private view.
+    private static final ConfigValue.Parsed<List<SpawnOverride>> PARSED_ENTITY_OVERRIDES =
             add(
                     ConfigValue.parsedStrings(
                             SECTION_SERVER,
@@ -107,6 +104,12 @@ public class ServerConfig {
                             entity/pattern from rolling eyes; it does not remove eyes already granted, and a player can
                             still give the entity eyes by hand with a Slimy Eye.\
                             """));
+
+    /**
+     * Per-entity spawn chances as {@code "entity-pattern,percent"} lines; read through {@link
+     * #percentFor}.
+     */
+    public static final ConfigValue<List<String>> ENTITY_OVERRIDES = PARSED_ENTITY_OVERRIDES;
 
     /** Whether eyed mobs play idle expressions. */
     public static final ConfigValue<Boolean> AMBIENT_BEHAVIORS =
@@ -421,7 +424,7 @@ public class ServerConfig {
      */
     @Nullable
     private static SpawnOverride parse(String entry) {
-        String[] split = entry.split(",");
+        String[] split = entry.split(",", -1);
         if (split.length != 2) {
             return null;
         }
@@ -470,7 +473,7 @@ public class ServerConfig {
     public static int percentFor(ResourceLocation entityType) {
         String id = entityType.toString();
         SpawnOverride firstWildcard = null;
-        for (SpawnOverride o : ENTITY_OVERRIDES.parsed()) {
+        for (SpawnOverride o : PARSED_ENTITY_OVERRIDES.parsed()) {
             if (o.exact) {
                 if (o.literalId.equals(id)) {
                     return o.percent; // exact match beats any wildcard, regardless of list order

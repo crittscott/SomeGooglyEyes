@@ -18,6 +18,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  * and its skull candle builds its own update tag, which leaves out the eye data {@code
  * SkullBlockEntityDataMixin} saves.
  */
+// Mixin invokes this handler.
+@SuppressWarnings("UnusedMethod")
 @Pseudo
 @Mixin(targets = "twilightforest.block.entity.SkullCandleBlockEntity", remap = false)
 abstract class TwilightSkullCandleDataMixin {

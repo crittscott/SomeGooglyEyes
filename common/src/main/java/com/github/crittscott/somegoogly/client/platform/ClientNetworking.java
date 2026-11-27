@@ -9,6 +9,8 @@ public final class ClientNetworking {
 
     private ClientNetworking() {}
 
+    // Architectury replaces this stub body with the loader implementation.
+    @SuppressWarnings("DoNotCallSuggester")
     @ExpectPlatform
     public static void sendToServer(Payload payload) {
         throw new AssertionError();

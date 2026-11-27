@@ -17,6 +17,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Entity.class)
 abstract class EntityPersistentDataMigrationMixin {
 
+    // Mixin invokes this handler; unused parameters preserve its injection signature.
+    @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
     @Inject(method = "load", at = @At("TAIL"))
     private void somegoogly$migratePersistentData(CompoundTag tag, CallbackInfo callback) {
         FabricMigration.migrateEntity((Entity) (Object) this, tag);

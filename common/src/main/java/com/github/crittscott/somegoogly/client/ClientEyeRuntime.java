@@ -132,6 +132,8 @@ public final class ClientEyeRuntime {
      * A resting head item's decoded eyes: its state, its layout, and the layout's heads shown on
      * the item.
      */
+    // Cached draw indices are read-only; drawing consumes the array directly, not value equality.
+    @SuppressWarnings("ArrayRecordComponent")
     public record RestingHead(Snapshot snapshot, @Nullable HeadInfo helper, int[] parts) {}
 
     private static final class BoatEntry {

@@ -39,7 +39,9 @@ public final class ConfigGameTestsLogic {
      * An exact {@code entityOverrides} id wins over a wildcard, and an unmatched id uses {@code
      * globalPercent}. In game: set {@code globalPercent = 2} and {@code entityOverrides =
      * ["minecraft:zombie,100", "minecraft:*,50"]} in the server config, then spawn mobs from eggs:
-     * every zombie has eyes, about half of the cows do, and only the occasional modded mob.
+     * every zombie has eyes, about half of the cows do, and only the occasional modded mob. Add
+     * malformed entries such as {@code "minecraft:cow,100,"}; they are rejected without changing
+     * the valid overrides.
      */
     public static void percentForResolvesExactBeforeWildcard(GameTestHelper helper) {
         int originalGlobal = ServerConfig.GLOBAL_PERCENT.get();
@@ -48,7 +50,19 @@ public final class ConfigGameTestsLogic {
             ServerConfig.GLOBAL_PERCENT.set(2);
             // List an exact id and a broad wildcard; the exact id must win regardless of list
             // order, and an unmatched id must fall through to globalPercent.
-            ServerConfig.ENTITY_OVERRIDES.set(List.of("minecraft:zombie,100", "minecraft:*,50"));
+            ServerConfig.ENTITY_OVERRIDES.set(
+                    List.of(
+                            "minecraft:cow,100,",
+                            "minecraft:pig,100,,",
+                            "minecraft:sheep,",
+                            ",100",
+                            "minecraft:zombie,100",
+                            "minecraft:*,50"));
+            helper.assertTrue(
+                    ServerConfig.ENTITY_OVERRIDES
+                            .get()
+                            .equals(List.of("minecraft:zombie,100", "minecraft:*,50")),
+                    "malformed override fields are rejected while valid entries remain");
 
             // Retain 1.20.1 identifier constructors; Forge's warning concerns porting to 1.21.
             @SuppressWarnings("removal")

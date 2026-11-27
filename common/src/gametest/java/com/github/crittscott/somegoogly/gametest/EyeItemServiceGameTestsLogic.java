@@ -72,7 +72,7 @@ public final class EyeItemServiceGameTestsLogic {
         Vec3 at = helper.absoluteVec(new Vec3(2.5, 2.0, 2.5));
         // A player without a connection can't take moveTo, which resets the connection's position.
         victim.setPos(at.x, at.y, at.z);
-        ItemStack shears = optometristShears(helper);
+        ItemStack shears = optometristShears();
         ItemStack slimy = new ItemStack(ModContent.SLIMY_EYE.get());
         Runnable refused =
                 () -> {
@@ -136,7 +136,7 @@ public final class EyeItemServiceGameTestsLogic {
         helper.succeed();
     }
 
-    private static ItemStack optometristShears(GameTestHelper helper) {
+    private static ItemStack optometristShears() {
         ItemStack shears = new ItemStack(Items.SHEARS);
         shears.enchant(ModContent.OPTOMETRIST.get(), 1);
         return shears;
@@ -167,7 +167,7 @@ public final class EyeItemServiceGameTestsLogic {
         EyeState.setHasEyes(cow, true);
         EyeState.setIrisTint(cow, iris);
 
-        ItemStack shears = optometristShears(helper);
+        ItemStack shears = optometristShears();
         player.setItemInHand(InteractionHand.MAIN_HAND, shears);
 
         InteractionResult result =
@@ -216,7 +216,7 @@ public final class EyeItemServiceGameTestsLogic {
                         == InteractionResult.PASS,
                 "plain shears pass — right-click harvest needs Optometrist");
 
-        ItemStack shears = optometristShears(helper);
+        ItemStack shears = optometristShears();
         player.setItemInHand(InteractionHand.MAIN_HAND, shears);
         EyeState.setHasEyes(cow, false);
         helper.assertTrue(
@@ -315,7 +315,7 @@ public final class EyeItemServiceGameTestsLogic {
         EyeColor iris = new EyeColor(0.1F, 0.2F, 0.3F);
         EyeState.setIrisTint(player, iris);
 
-        ItemStack opto = optometristShears(helper);
+        ItemStack opto = optometristShears();
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.SHEARS));
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 4));
         player.lookAt(EntityAnchorArgument.Anchor.EYES, cow.getBoundingBox().getCenter());

@@ -17,6 +17,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Sheep.class)
 abstract class ShearingMixin {
 
+    // Mixin invokes this handler; unused parameters preserve its injection signature.
+    @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
     @Inject(method = "setSheared", at = @At("HEAD"))
     private void somegoogly$onSheared(boolean sheared, CallbackInfo callback) {
         Sheep self = (Sheep) (Object) this;

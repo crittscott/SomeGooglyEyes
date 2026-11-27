@@ -104,7 +104,7 @@ public final class EyeState {
      */
     public static void copy(LivingEntity source, LivingEntity target) {
         if (!isInitialized(source)
-                || isDefaultState(source) && !ServerEyeConfigs.canEverWearEyes(source)) {
+                || (isDefaultState(source) && !ServerEyeConfigs.canEverWearEyes(source))) {
             return;
         }
         snapshot(source).write(EntityPersistentData.get(target));

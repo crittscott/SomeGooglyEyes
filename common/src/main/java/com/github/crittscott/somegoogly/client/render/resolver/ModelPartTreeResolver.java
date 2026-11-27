@@ -61,6 +61,9 @@ abstract class ModelPartTreeResolver implements EyeAttachmentResolver {
      * The parts from a subtree root down to the attach part, inclusive, in the order they
      * transform.
      */
+    // This private attachment owns its read-only chain; rendering never compares attachments by
+    // value.
+    @SuppressWarnings("ArrayRecordComponent")
     private record PartChain(@Nullable Consumer<PoseStack> preTransform, ModelPart[] chain)
             implements Attachment {
         @Override
@@ -115,7 +118,7 @@ abstract class ModelPartTreeResolver implements EyeAttachmentResolver {
         return out;
     }
 
-    /** Name a part group {@code base}, {@code base1}, {@code base2}, … in iteration order. */
+    /** Name a part group with {@code base}, then successive numeric suffixes in iteration order. */
     protected static void index(
             List<NamedRoot> roots,
             String base,

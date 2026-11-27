@@ -26,6 +26,8 @@ import javax.annotation.Nullable;
 @Mixin(SkullBlockRenderer.class)
 abstract class SkullBlockRendererMixin {
 
+    // Mixin invokes this handler; unused parameters preserve its injection signature.
+    @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
     @Inject(
             method =
                     "render(Lnet/minecraft/world/level/block/entity/SkullBlockEntity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;II)V",
@@ -41,6 +43,8 @@ abstract class SkullBlockRendererMixin {
         ClientEyeRuntime.beginHead(skull, partialTick);
     }
 
+    // Mixin invokes this handler; unused parameters preserve its injection signature.
+    @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
     @Inject(
             method = "renderSkull",
             at =
@@ -62,6 +66,8 @@ abstract class SkullBlockRendererMixin {
         SkullEyeRenderer.render(pose, bufferSource, packedLight, model);
     }
 
+    // Mixin invokes this handler; unused parameters preserve its injection signature.
+    @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
     @Inject(
             method =
                     "render(Lnet/minecraft/world/level/block/entity/SkullBlockEntity;FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;II)V",

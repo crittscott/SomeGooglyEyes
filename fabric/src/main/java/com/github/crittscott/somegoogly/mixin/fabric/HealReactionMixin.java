@@ -13,6 +13,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(LivingEntity.class)
 abstract class HealReactionMixin {
 
+    // Mixin invokes this handler; unused parameters preserve its injection signature.
+    @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
     @Inject(method = "heal", at = @At("HEAD"))
     private void somegoogly$beforeHeal(float amount, CallbackInfo callback) {
         LivingEntity self = (LivingEntity) (Object) this;

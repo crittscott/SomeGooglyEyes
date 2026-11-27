@@ -40,16 +40,22 @@ abstract class SkullBlockEntityDataMixin implements SkullEyeState.Holder {
         return somegoogly$data;
     }
 
+    // Mixin invokes this handler; unused parameters preserve its injection signature.
+    @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
     @Inject(method = "load", at = @At("TAIL"))
     private void somegoogly$load(CompoundTag tag, CallbackInfo callback) {
         somegoogly$data = SkullEyeState.loadedData(tag);
     }
 
+    // Mixin invokes this handler; unused parameters preserve its injection signature.
+    @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
     @Inject(method = "saveAdditional", at = @At("TAIL"))
     private void somegoogly$save(CompoundTag tag, CallbackInfo callback) {
         somegoogly$saveEyes(tag);
     }
 
+    // Mixin invokes this handler.
+    @SuppressWarnings("UnusedMethod")
     @Inject(method = "getUpdateTag", at = @At("RETURN"))
     private void somegoogly$updateTag(CallbackInfoReturnable<CompoundTag> callback) {
         somegoogly$syncEyes(callback.getReturnValue());

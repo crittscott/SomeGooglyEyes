@@ -1028,7 +1028,6 @@ public final class BehaviorSchedulerGameTestsLogic {
         }
     }
 
-    /** Ticks {@code goat} and its tracker together, so its lowered head moves. */
     /**
      * Start {@code behavior} on a standalone tracker, as a trigger the server sent would on a drawn
      * entity.

@@ -7,6 +7,7 @@ import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.github.crittscott.somegoogly.eye.behavior.EyeInfluence;
 import com.github.crittscott.somegoogly.eye.behavior.OngoingBehavior;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
+import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 
 import net.minecraft.SharedConstants;
@@ -65,7 +66,7 @@ public final class GooglyTracker {
     public static final int SLEEP_LID_EASE_TICKS = 20;
 
     /** Sleeping villager eyelid color. */
-    public static final float[] SLEEP_LID_COLOR = {0.82F, 0.68F, 0.52F};
+    public static final EyeColor SLEEP_LID_COLOR = new EyeColor(0.82F, 0.68F, 0.52F);
 
     /** Off-hand eye height multiplier while fully aiming. */
     public static final float AIM_SQUASH_Y = 0.15F;
@@ -76,7 +77,7 @@ public final class GooglyTracker {
     public static final int AIM_EASE_TICKS = 4;
 
     /** Pupil color while fully angry. */
-    public static final float[] ANGER_IRIS_COLOR = {0.9F, 0.05F, 0.05F};
+    public static final EyeColor ANGER_IRIS_COLOR = new EyeColor(0.9F, 0.05F, 0.05F);
 
     /** Ticks to ease fully into or out of angry red pupils. */
     public static final int ANGER_EASE_TICKS = 10;
@@ -689,7 +690,7 @@ public final class GooglyTracker {
      */
     private boolean isAngry(BehaviorSettings settings) {
         return level(OngoingBehavior.ANGER, settings) > 0F
-                || angry && settings.enabled(OngoingBehavior.ANGER);
+                || (angry && settings.enabled(OngoingBehavior.ANGER));
     }
 
     /**
@@ -705,7 +706,7 @@ public final class GooglyTracker {
      * its head lowered to ram, each while its switch is on.
      */
     private boolean isSquinting(BehaviorSettings settings) {
-        return !(parent instanceof Villager) && level(OngoingBehavior.SLEEP_SQUINT, settings) > 0F
+        return (!(parent instanceof Villager) && level(OngoingBehavior.SLEEP_SQUINT, settings) > 0F)
                 || level(OngoingBehavior.RAM_SQUINT, settings) > 0F;
     }
 

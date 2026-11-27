@@ -17,12 +17,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Gui.class)
 abstract class HotbarItemEyesMixin {
 
+    // Mixin invokes this handler; unused parameters preserve its injection signature.
+    @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
     @Inject(method = "renderHotbar", at = @At("HEAD"))
     private void somegoogly$beginHotbar(CallbackInfo callback) {
         ClientEyeRuntime.beginGuiPresentation(
                 ClientEyeRuntime.HUD, ClientEyeRuntime.GuiKind.HOTBAR, 0, null);
     }
 
+    // Mixin invokes this handler; unused parameters preserve its injection signature.
+    @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
     @Inject(method = "renderHotbar", at = @At("RETURN"))
     private void somegoogly$endHotbar(CallbackInfo callback) {
         ClientEyeRuntime.endItemDraw();

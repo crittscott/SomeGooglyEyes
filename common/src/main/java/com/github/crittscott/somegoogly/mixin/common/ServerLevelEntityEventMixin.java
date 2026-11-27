@@ -18,6 +18,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ServerLevel.class)
 abstract class ServerLevelEntityEventMixin {
 
+    // Mixin invokes this handler; unused parameters preserve its injection signature.
+    @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
     @Inject(method = "broadcastEntityEvent", at = @At("HEAD"))
     private void somegoogly$onEntityEvent(Entity entity, byte eventId, CallbackInfo callback) {
         ServerBehaviorScheduler.onEntityEvent(entity, eventId);

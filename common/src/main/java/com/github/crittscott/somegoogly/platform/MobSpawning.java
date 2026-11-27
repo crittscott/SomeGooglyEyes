@@ -17,6 +17,8 @@ public final class MobSpawning {
     private MobSpawning() {}
 
     /** Finalize {@code mob} at its current position; false when a listener cancelled the spawn. */
+    // Architectury replaces this stub body with the loader implementation.
+    @SuppressWarnings("DoNotCallSuggester")
     @ExpectPlatform
     public static boolean finalizeSpawn(Mob mob, ServerLevel level, MobSpawnType reason) {
         throw new AssertionError();

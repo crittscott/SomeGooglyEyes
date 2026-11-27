@@ -167,7 +167,7 @@ public final class SerializationGameTestsLogic {
                 }
             }
             for (int elapsed : new int[] {-1, behavior.defaultDuration() + 1}) {
-                FriendlyByteBuf invalid = buffer(helper);
+                FriendlyByteBuf invalid = buffer();
                 try {
                     new EyeBehaviorTriggerPacket(
                                     7,
@@ -184,7 +184,7 @@ public final class SerializationGameTestsLogic {
                 }
             }
         }
-        FriendlyByteBuf unknown = buffer(helper);
+        FriendlyByteBuf unknown = buffer();
         unknown.writeVarInt(7);
         unknown.writeVarInt(0);
         unknown.writeVarInt(EyeBehavior.values().length);
@@ -198,7 +198,7 @@ public final class SerializationGameTestsLogic {
         }
         helper.assertTrue(
                 rejected, "a trigger with an unassigned behavior number should fail to decode");
-        FriendlyByteBuf invalidHand = buffer(helper);
+        FriendlyByteBuf invalidHand = buffer();
         try {
             new EyeBehaviorTriggerPacket(
                             7, EyeBehaviorTriggerPacket.Target.MAIN_HAND, EyeBehavior.BLINK, 42L, 0)
@@ -209,7 +209,7 @@ public final class SerializationGameTestsLogic {
         } finally {
             invalidHand.release();
         }
-        FriendlyByteBuf badScope = buffer(helper);
+        FriendlyByteBuf badScope = buffer();
         try {
             badScope.writeVarInt(7);
             badScope.writeVarInt(99);
@@ -225,12 +225,12 @@ public final class SerializationGameTestsLogic {
         helper.succeed();
     }
 
-    private static FriendlyByteBuf buffer(GameTestHelper helper) {
+    private static FriendlyByteBuf buffer() {
         return new FriendlyByteBuf(Unpooled.buffer());
     }
 
-    private static byte[] bytes(GameTestHelper helper, Payload packet) {
-        FriendlyByteBuf buffer = buffer(helper);
+    private static byte[] bytes(Payload packet) {
+        FriendlyByteBuf buffer = buffer();
         packet.write(buffer);
         byte[] out = new byte[buffer.readableBytes()];
         buffer.getBytes(buffer.readerIndex(), out);
@@ -238,7 +238,7 @@ public final class SerializationGameTestsLogic {
     }
 
     /** Compress an independently authored wire body, releasing the original buffer. */
-    private static FriendlyByteBuf compressedPayload(GameTestHelper helper, FriendlyByteBuf raw) {
+    private static FriendlyByteBuf compressedPayload(FriendlyByteBuf raw) {
         byte[] bytes = new byte[raw.readableBytes()];
         raw.readBytes(bytes);
         raw.release();
@@ -248,7 +248,7 @@ public final class SerializationGameTestsLogic {
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
-        FriendlyByteBuf compressed = buffer(helper);
+        FriendlyByteBuf compressed = buffer();
         compressed.writeBytes(output.toByteArray());
         return compressed;
     }
@@ -267,7 +267,7 @@ public final class SerializationGameTestsLogic {
         EyeConfigSyncPacket packet = new EyeConfigSyncPacket(configs, encoded);
         EyeConfigSyncPacket decoded =
                 EyeConfigSyncPacket.read(
-                        new FriendlyByteBuf(Unpooled.wrappedBuffer(bytes(helper, packet))));
+                        new FriendlyByteBuf(Unpooled.wrappedBuffer(bytes(packet))));
         helper.assertTrue(
                 ServerEyeConfigs.encode(decoded.configs()).equals(encoded),
                 "the definitions should survive the round-trip");
@@ -287,7 +287,7 @@ public final class SerializationGameTestsLogic {
         helper.assertTrue(
                 largePacket.refusal() == null,
                 "a full modpack's definitions must fit the decoded and compressed size budgets");
-        FriendlyByteBuf largeWire = buffer(helper);
+        FriendlyByteBuf largeWire = buffer();
         try {
             largePacket.write(largeWire);
             EyeConfigSyncPacket largeDecoded = EyeConfigSyncPacket.read(largeWire);
@@ -311,7 +311,7 @@ public final class SerializationGameTestsLogic {
      * malicious server.
      */
     public static void configSyncRejectsOversizedAndUnsafePayloads(GameTestHelper helper) {
-        FriendlyByteBuf safe = singleConfigPayload(helper, sampleConfigSet());
+        FriendlyByteBuf safe = singleConfigPayload(sampleConfigSet());
         try {
             helper.assertTrue(
                     EyeConfigSyncPacket.read(safe).configs().size() == 1
@@ -320,27 +320,26 @@ public final class SerializationGameTestsLogic {
         } finally {
             safe.release();
         }
-        FriendlyByteBuf oversized = buffer(helper);
+        FriendlyByteBuf oversized = buffer();
         oversized.writeVarInt(EyeConfigLimits.MAX_CONFIGS_PER_SYNC + 1);
         helper.assertTrue(
                 rejectsConfig(
-                        compressedPayload(helper, oversized),
-                        "Eye config count exceeds network limit"),
+                        compressedPayload(oversized), "Eye config count exceeds network limit"),
                 "config sync must reject an oversized outer count before allocating entries");
 
-        FriendlyByteBuf expanded = buffer(helper);
+        FriendlyByteBuf expanded = buffer();
         expanded.writeBytes(new byte[EyeConfigSyncPacket.MAX_PAYLOAD_BYTES + 1]);
         helper.assertTrue(
                 rejectsConfig(
-                        compressedPayload(helper, expanded),
+                        compressedPayload(expanded),
                         "Decoded eye config sync exceeds network limit"),
                 "a small compressed payload must not expand beyond the decoded byte cap");
-        FriendlyByteBuf tooManyBytes = buffer(helper);
+        FriendlyByteBuf tooManyBytes = buffer();
         tooManyBytes.writeBytes(new byte[EyeConfigSyncPacket.MAX_COMPRESSED_BYTES + 1]);
         helper.assertTrue(
                 rejectsConfig(tooManyBytes, "Eye config sync payload exceeds network limit"),
                 "an oversized wire payload must be refused before decompression");
-        FriendlyByteBuf malformed = buffer(helper);
+        FriendlyByteBuf malformed = buffer();
         malformed.writeByte(0);
         helper.assertTrue(
                 rejectsConfig(malformed, "Malformed compressed eye config sync"),
@@ -351,7 +350,7 @@ public final class SerializationGameTestsLogic {
                 Collections.nCopies(
                         EyeConfigLimits.MAX_VARIANTS_PER_CONFIG + 1,
                         tooManyVariants.any.variants.get(0));
-        FriendlyByteBuf counted = singleConfigPayload(helper, tooManyVariants);
+        FriendlyByteBuf counted = singleConfigPayload(tooManyVariants);
         helper.assertTrue(
                 rejectsConfig(counted, "variant count"),
                 "config sync must reject a config over the variant limit");
@@ -370,7 +369,7 @@ public final class SerializationGameTestsLogic {
                                         0.0F,
                                         EyePlacement.NO_CROSS_TARGET),
                                 EyeAppearance.DEFAULT));
-        FriendlyByteBuf numeric = singleConfigPayload(helper, unsafe);
+        FriendlyByteBuf numeric = singleConfigPayload(unsafe);
         helper.assertTrue(
                 rejectsConfig(numeric, "position is not finite"),
                 "config sync must reject non-finite placement values");
@@ -392,7 +391,7 @@ public final class SerializationGameTestsLogic {
                     EyeColor.CODEC.parse(JsonOps.INSTANCE, channels).result().isEmpty(),
                     "codec must reject channel " + bad);
 
-            FriendlyByteBuf buffer = buffer(helper);
+            FriendlyByteBuf buffer = buffer();
             buffer.writeFloat(bad);
             buffer.writeFloat(0.5F);
             buffer.writeFloat(0.5F);
@@ -476,7 +475,7 @@ public final class SerializationGameTestsLogic {
      */
     public static void eyeStatePacketRejectsNonFiniteValues(GameTestHelper helper) {
         for (float roll : new float[] {Float.NaN, -0.5F, 1.5F}) {
-            FriendlyByteBuf invalid = buffer(helper);
+            FriendlyByteBuf invalid = buffer();
             invalid.writeVarInt(42);
             invalid.writeBoolean(true);
             invalid.writeFloat(roll);
@@ -564,7 +563,7 @@ public final class SerializationGameTestsLogic {
                     "PickerExportPacket with a config");
         }
         for (String age : List.of("", "any", "Adult", "unknown")) {
-            FriendlyByteBuf invalidAge = buffer(helper);
+            FriendlyByteBuf invalidAge = buffer();
             try {
                 new PickerExportPacket(new ResourceLocation("minecraft", "cow"), age, config)
                         .write(invalidAge);
@@ -576,7 +575,7 @@ public final class SerializationGameTestsLogic {
             }
         }
 
-        FriendlyByteBuf noConfig = buffer(helper);
+        FriendlyByteBuf noConfig = buffer();
         noConfig.writeResourceLocation(new ResourceLocation("minecraft", "cow"));
         noConfig.writeUtf(AGE_ADULT);
         noConfig.writeNbt(null);
@@ -648,9 +647,9 @@ public final class SerializationGameTestsLogic {
             Function<FriendlyByteBuf, T> reader,
             T packet,
             String description) {
-        byte[] first = bytes(helper, packet);
+        byte[] first = bytes(packet);
         T decoded = reader.apply(new FriendlyByteBuf(Unpooled.wrappedBuffer(first)));
-        byte[] second = bytes(helper, decoded);
+        byte[] second = bytes(decoded);
         helper.assertTrue(
                 Arrays.equals(first, second), description + " should survive a wire round-trip");
         return decoded;
@@ -705,9 +704,8 @@ public final class SerializationGameTestsLogic {
     /** A compressed config-sync fixture carrying {@code set} for one entity. */
     // Retain 1.20.1 identifier constructors; Forge's warning concerns porting to 1.21.
     @SuppressWarnings("removal")
-    private static FriendlyByteBuf singleConfigPayload(
-            GameTestHelper helper, RuntimeConfigSet set) {
-        FriendlyByteBuf buffer = buffer(helper);
+    private static FriendlyByteBuf singleConfigPayload(RuntimeConfigSet set) {
+        FriendlyByteBuf buffer = buffer();
         buffer.writeVarInt(1);
         buffer.writeResourceLocation(new ResourceLocation("minecraft", "cow"));
         buffer.writeNbt(
@@ -716,7 +714,7 @@ public final class SerializationGameTestsLogic {
                                 .encodeStart(NbtOps.INSTANCE, set)
                                 .result()
                                 .orElseThrow());
-        return compressedPayload(helper, buffer);
+        return compressedPayload(buffer);
     }
 
     private static boolean throwsRuntime(Runnable action) {

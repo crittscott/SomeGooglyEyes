@@ -90,16 +90,12 @@ public final class Resolvers {
         }
     }
 
-    /**
-     * @return the specialized resolver for this model, or the child-map fallback.
-     */
+    /** The specialized resolver for this model, or the child-map fallback. */
     public static EyeAttachmentResolver forModel(EntityModel<?> model) {
         return BY_MODEL.computeIfAbsent(model, Resolvers::bind).resolver();
     }
 
-    /**
-     * @return the whole-model transform this model applies outside its part tree, or {@code null}.
-     */
+    /** The whole-model transform outside this model's part tree, or {@code null}. */
     @Nullable
     public static ThirdPartyModelWraps.Entry wholeModelWrap(EntityModel<?> model) {
         return BY_MODEL.computeIfAbsent(model, Resolvers::bind).wholeModel();

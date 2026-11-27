@@ -194,7 +194,7 @@ public final class PresentationEyes {
     /** Whether this item carries a loose eye or an eligible head-eye snapshot. */
     public static boolean supports(ItemStack stack) {
         return stack.is(ModContent.GOOGLY_EYE.get())
-                || SkullEyeState.itemHasEyes(stack) && SkullEyeState.entityFor(stack) != null;
+                || (SkullEyeState.itemHasEyes(stack) && SkullEyeState.entityFor(stack) != null);
     }
 
     /**

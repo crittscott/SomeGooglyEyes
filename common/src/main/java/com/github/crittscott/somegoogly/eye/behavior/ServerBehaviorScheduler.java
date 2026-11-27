@@ -383,9 +383,9 @@ public final class ServerBehaviorScheduler {
             if (time < state.readyAt
                     || settings.handAmbientBusy(
                             holder.getUUID(), hand, holder.level().getGameTime())
-                    || behavior == EyeBehavior.SWIRL
-                            && !settings.canSwirlOnHeal(time, state.healReadyAt)
-                    || behavior == EyeBehavior.GROW && !settings.rollGrowOnHit(RANDOM)) continue;
+                    || (behavior == EyeBehavior.SWIRL
+                            && !settings.canSwirlOnHeal(time, state.healReadyAt))
+                    || (behavior == EyeBehavior.GROW && !settings.rollGrowOnHit(RANDOM))) continue;
             state.behavior = behavior;
             state.seed = RANDOM.nextLong();
             state.startedAt = time;
@@ -477,7 +477,8 @@ public final class ServerBehaviorScheduler {
             // Resuming, a viewer added while disabled still needs to hear of anger that didn't
             // change.
             boolean angry = OngoingBehavior.ANGER.serverAngry(mob);
-            if ((angry != state.angry || resuming && angry) && (!angry || EyeState.hasEyes(mob))) {
+            if ((angry != state.angry || (resuming && angry))
+                    && (!angry || EyeState.hasEyes(mob))) {
                 state.angry = angry;
                 Networking.sendTrackingAndSelf(mob, new EyeAngerPacket(mob.getId(), angry));
             }
@@ -492,7 +493,7 @@ public final class ServerBehaviorScheduler {
             LivingEntity mob, MobState state, EyeBehavior behavior, long seed) {
         // Already playing something, or asleep (the client holds a squint instead): drop the
         // trigger.
-        if (state.busyUntil != 0 && clock(mob) < state.busyUntil || mob.isSleeping()) {
+        if ((state.busyUntil != 0 && clock(mob) < state.busyUntil) || mob.isSleeping()) {
             return false;
         }
         state.activeBehavior = behavior;

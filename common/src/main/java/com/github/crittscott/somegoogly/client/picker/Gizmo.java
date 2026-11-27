@@ -136,6 +136,8 @@ public final class Gizmo {
                                 .setWriteMaskState(COLOR_DEPTH_WRITE)
                                 .createCompositeState(false));
 
+        // This RenderType subclass exposes protected states and is never instantiated.
+        @SuppressWarnings("UnusedMethod")
         private LinesNoDepth(
                 String name,
                 VertexFormat format,

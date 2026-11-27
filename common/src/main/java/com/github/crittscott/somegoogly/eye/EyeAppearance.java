@@ -11,8 +11,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
  * glows. Always has values (a datapack eye, or {@link #DEFAULT}); the sparse override that layers
  * on top is {@link AppearanceOverride}.
  *
- * <p>Serialized with the datapack JSON's flat field names ({@code corneaColors}, {@code
- * irisColors}, {@code glows}), so it embeds directly into {@link
+ * <p>Serialized with the datapack JSON's flat field names ({@code "corneaColors"}, {@code
+ * "irisColors"}, {@code "glows"}), so it embeds directly into {@link
  * com.github.crittscott.somegoogly.eye.EyeDefinition}.
  */
 public record EyeAppearance(EyeColor cornea, EyeColor iris, boolean glow) {

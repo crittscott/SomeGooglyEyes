@@ -20,6 +20,8 @@ public final class ItemDestruction {
      * {@code player} broke the tool {@code original}, a copy of the stack, in {@code hand} by
      * wearing it out.
      */
+    // Architectury replaces this stub body with the loader implementation.
+    @SuppressWarnings("DoNotCallSuggester")
     @ExpectPlatform
     public static void reportBroken(Player player, ItemStack original, InteractionHand hand) {
         throw new AssertionError();
@@ -28,6 +30,8 @@ public final class ItemDestruction {
     /**
      * {@code player} used up the last of {@code original}, a copy of the stack, in {@code hand}.
      */
+    // Architectury replaces this stub body with the loader implementation.
+    @SuppressWarnings("DoNotCallSuggester")
     @ExpectPlatform
     public static void reportConsumed(Player player, ItemStack original, InteractionHand hand) {
         throw new AssertionError();

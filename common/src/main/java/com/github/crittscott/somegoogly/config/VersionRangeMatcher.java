@@ -32,7 +32,7 @@ public final class VersionRangeMatcher {
      * exports use the exact supported game version. Falls back to an exact match if parsing fails.
      */
     public static String rangeFor(String loaded) {
-        String[] parts = loaded.split("\\.");
+        String[] parts = loaded.split("\\.", -1);
         if (parts.length >= 2) {
             try {
                 int major = Integer.parseInt(parts[0]);
@@ -211,7 +211,7 @@ public final class VersionRangeMatcher {
 
     private static List<Token> tokenize(String version) {
         List<Token> tokens = new ArrayList<>();
-        for (String part : version.toLowerCase(Locale.ROOT).split("[^a-z0-9]+")) {
+        for (String part : version.toLowerCase(Locale.ROOT).split("[^a-z0-9]+", -1)) {
             if (!part.isEmpty() && !LOADER_NAMES.contains(part)) {
                 tokens.add(Token.of(part));
             }

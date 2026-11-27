@@ -24,14 +24,12 @@ public final class ModelMemo<K, V> {
     /** Computes the value for a (model, token) pair. Called only on a miss. */
     @FunctionalInterface
     public interface Resolver<K, V> {
-        /**
-         * @return the resolved value, or {@code null} when the token names nothing in the model.
-         */
+        /** Resolve a token, or return {@code null} when it names nothing in the model. */
         @Nullable
         V resolve(K model, String token);
     }
 
-    private final Map<K, Map<String, V>> byModel = new IdentityHashMap<>();
+    private final IdentityHashMap<K, Map<String, V>> byModel = new IdentityHashMap<>();
 
     /** Drop every entry. Called when the models being keyed on are replaced wholesale. */
     public void clear() {

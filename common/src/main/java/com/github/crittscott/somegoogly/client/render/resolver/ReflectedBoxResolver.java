@@ -160,7 +160,7 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
         if (parts.isEmpty()) {
             return ModelIndex.EMPTY;
         }
-        Map<Object, String> fallbackNames = fallbackNames(model, parts);
+        IdentityHashMap<Object, String> fallbackNames = fallbackNames(model, parts);
         List<String> paths = new ArrayList<>(parts.size());
         for (Object part : parts) {
             paths.add(pathOf(model, part, fallbackNames));
@@ -177,8 +177,9 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
      * else the box's positional {@code #N}. An unlisted, unnamed, field-less box (a stray ancestor)
      * has no entry and is skipped when it appears mid-path.
      */
-    private Map<Object, String> fallbackNames(EntityModel<?> model, List<Object> parts) {
-        Map<Object, String> names = new IdentityHashMap<>();
+    private IdentityHashMap<Object, String> fallbackNames(
+            EntityModel<?> model, List<Object> parts) {
+        IdentityHashMap<Object, String> names = new IdentityHashMap<>();
         for (int i = 0; i < parts.size(); i++) {
             names.put(parts.get(i), EyeConfigModel.attachmentIndex(i));
         }
@@ -230,7 +231,8 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
      * fallback (field name / {@code #N}); ancestors with neither are skipped. The part itself is
      * always listed, so its own segment — and hence the path — is never empty.
      */
-    private String pathOf(EntityModel<?> model, Object part, Map<Object, String> fallbackNames) {
+    private String pathOf(
+            EntityModel<?> model, Object part, IdentityHashMap<Object, String> fallbackNames) {
         ArrayDeque<String> segments = new ArrayDeque<>();
         for (Object box = part; box != null; box = parentOf(model, box)) {
             String segment = segmentName(box, fallbackNames);
@@ -241,7 +243,7 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
         return EyeConfigModel.attachmentPath(segments);
     }
 
-    private String segmentName(Object box, Map<Object, String> fallbackNames) {
+    private String segmentName(Object box, IdentityHashMap<Object, String> fallbackNames) {
         String named = intrinsicName(box);
         if (!EyeAttachmentResolver.normalize(named).isEmpty()) {
             return named;

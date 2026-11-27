@@ -32,6 +32,8 @@ abstract class TwilightSkullCandleRendererMixin {
             "render(Ltwilightforest/block/entity/SkullCandleBlockEntity;"
                     + "FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;II)V";
 
+    // Mixin invokes this handler; unused parameters preserve its injection signature.
+    @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
     @Inject(method = PLACED_RENDER, at = @At("HEAD"))
     private void somegoogly$begin(
             @Coerce BlockEntity entity,
@@ -44,11 +46,15 @@ abstract class TwilightSkullCandleRendererMixin {
         ClientEyeRuntime.beginHead(entity, partialTick);
     }
 
+    // Mixin invokes this handler; unused parameters preserve its injection signature.
+    @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
     @Inject(method = PLACED_RENDER, at = @At("RETURN"))
     private void somegoogly$end(CallbackInfo callback) {
         ClientEyeRuntime.endItemDraw();
     }
 
+    // Mixin invokes this handler; unused parameters preserve its injection signature.
+    @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
     @Inject(
             method = "renderSkull",
             at =

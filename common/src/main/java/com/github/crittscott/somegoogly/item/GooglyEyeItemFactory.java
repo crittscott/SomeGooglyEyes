@@ -15,6 +15,8 @@ public final class GooglyEyeItemFactory {
 
     private GooglyEyeItemFactory() {}
 
+    // Architectury replaces this stub body with the loader implementation.
+    @SuppressWarnings("DoNotCallSuggester")
     @ExpectPlatform
     public static GooglyEyeItem create(Item.Properties properties) {
         throw new AssertionError();

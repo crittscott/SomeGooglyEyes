@@ -24,6 +24,8 @@ public final class ModVersionLookup {
     }
 
     /** The version of the loaded mod {@code modId}, or empty when it is not loaded. */
+    // Architectury replaces this stub body with the loader implementation.
+    @SuppressWarnings("DoNotCallSuggester")
     @ExpectPlatform
     public static Optional<String> modVersion(String modId) {
         throw new AssertionError();

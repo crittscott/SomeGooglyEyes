@@ -261,10 +261,10 @@ public final class FramedEyeGameTestsLogic {
             second.tick(tick, settings);
             differed |=
                     (first.active == null) != (second.active == null)
-                            || first.active != null
+                            || (first.active != null
                                     && second.active != null
                                     && (first.active.behavior != second.active.behavior
-                                            || first.active.age != second.active.age);
+                                            || first.active.age != second.active.age));
         }
         helper.assertTrue(differed, "neighboring frames do not share one global animation");
         helper.succeed();

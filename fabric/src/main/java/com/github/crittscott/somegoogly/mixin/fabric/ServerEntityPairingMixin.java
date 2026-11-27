@@ -24,6 +24,8 @@ abstract class ServerEntityPairingMixin {
 
     @Shadow @Final private Entity entity;
 
+    // Mixin invokes this handler; unused parameters preserve its injection signature.
+    @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
     @Inject(method = "addPairing", at = @At("TAIL"))
     private void somegoogly$afterAddPairing(ServerPlayer player, CallbackInfo callback) {
         ServerServices.onStartTracking(entity, player);

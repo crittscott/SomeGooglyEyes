@@ -22,6 +22,8 @@ public final class Registration {
     private Registration() {}
 
     /** Register a creative tab built from {@code title}, {@code icon}, and {@code displayItems}. */
+    // Architectury replaces this stub body with the loader implementation.
+    @SuppressWarnings("DoNotCallSuggester")
     @ExpectPlatform
     public static Supplier<CreativeModeTab> creativeTab(
             String name,
@@ -32,6 +34,8 @@ public final class Registration {
     }
 
     /** Register an enchantment. */
+    // Architectury replaces this stub body with the loader implementation.
+    @SuppressWarnings("DoNotCallSuggester")
     @ExpectPlatform
     public static <T extends Enchantment> Supplier<T> enchantment(
             String name, Supplier<T> factory) {
@@ -39,6 +43,8 @@ public final class Registration {
     }
 
     /** Register an item; the factory receives fresh item properties. */
+    // Architectury replaces this stub body with the loader implementation.
+    @SuppressWarnings("DoNotCallSuggester")
     @ExpectPlatform
     public static <T extends Item> Supplier<T> item(
             String name, Function<Item.Properties, T> factory) {
@@ -46,6 +52,8 @@ public final class Registration {
     }
 
     /** Register a recipe serializer. */
+    // Architectury replaces this stub body with the loader implementation.
+    @SuppressWarnings("DoNotCallSuggester")
     @ExpectPlatform
     public static <T extends RecipeSerializer<?>> Supplier<T> recipeSerializer(
             String name, Supplier<T> factory) {

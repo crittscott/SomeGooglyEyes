@@ -21,6 +21,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin({LivingEntity.class, Player.class})
 abstract class HurtReactionMixin {
 
+    // Mixin invokes this handler; unused parameters preserve its injection signature.
+    @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
     @Inject(method = "actuallyHurt", at = @At("TAIL"))
     private void somegoogly$afterHurt(DamageSource source, float amount, CallbackInfo callback) {
         if (amount > 0.0F) {

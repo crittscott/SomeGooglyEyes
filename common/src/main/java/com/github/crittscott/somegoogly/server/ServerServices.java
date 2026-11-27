@@ -154,7 +154,7 @@ public final class ServerServices {
                         .formatted(
                                 ServerConfig.GOOGLY_EYES_ENABLED.get(),
                                 ServerConfig.GLOBAL_PERCENT.get(),
-                                ServerConfig.ENTITY_OVERRIDES.parsed().size(),
+                                ServerConfig.ENTITY_OVERRIDES.get().size(),
                                 behaviorsOff);
         if (!applied.equals(loggedConfig)) {
             SomeGooglyCommon.LOGGER.info("Server configuration applied ({})", applied);

@@ -20,6 +20,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  * Twilight Forest is an optional mod with no API for this, and its items draw through its own
  * renderer rather than vanilla's head item path.
  */
+// Mixin invokes this handler; unused parameters preserve its injection signature.
+@SuppressWarnings({"UnusedMethod", "UnusedVariable"})
 @Pseudo
 @Mixin(targets = "twilightforest.client.ISTER", remap = false)
 abstract class TwilightHeadItemRendererMixin {
@@ -37,6 +39,8 @@ abstract class TwilightHeadItemRendererMixin {
         ClientEyeRuntime.beginHeadItem(stack);
     }
 
+    // Mixin invokes this handler; unused parameters preserve its injection signature.
+    @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
     @Inject(
             method = {"renderByItem", "m_108829_"},
             at = @At("RETURN"))

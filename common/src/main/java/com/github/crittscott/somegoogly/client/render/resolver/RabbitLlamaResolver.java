@@ -73,8 +73,8 @@ public class RabbitLlamaResolver extends ModelPartTreeResolver {
 
     @Override
     protected List<NamedRoot> roots(EntityModel<?> model) {
-        if (model instanceof RabbitModel) {
-            return rabbitRoots((RabbitModel<?>) model);
+        if (model instanceof RabbitModel<?> rabbit) {
+            return rabbitRoots(rabbit);
         }
         return llamaRoots((LlamaModel<?>) model);
     }

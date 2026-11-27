@@ -19,6 +19,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(LivingEntity.class)
 abstract class LivingEntityDeathLootMixin {
 
+    // Mixin invokes this handler; unused parameters preserve its injection signature.
+    @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
     @Inject(method = "dropAllDeathLoot", at = @At("TAIL"))
     private void somegoogly$harvestEyeOnKill(DamageSource damageSource, CallbackInfo callback) {
         LivingEntity self = (LivingEntity) (Object) this;

@@ -16,6 +16,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Minecraft.class)
 abstract class MinecraftLevelMixin {
 
+    // Mixin invokes this handler; unused parameters preserve its injection signature.
+    @SuppressWarnings({"UnusedMethod", "UnusedVariable"})
     @Inject(method = "setLevel", at = @At("HEAD"))
     private void somegoogly$onLevelChanged(CallbackInfo callback) {
         ClientEyeRuntime.onLevelChanged();

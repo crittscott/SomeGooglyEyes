@@ -14,19 +14,18 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
  * Shearing a mooshroom builds its replacement cow by hand rather than through {@code
  * Mob#convertTo}, so neither loader's mob-conversion event fires for it. This hands the mooshroom's
  * eyes (and any picker freeze) to that cow as it is added to the level, as the conversion listeners
- * do for every other conversion. Forge's 1.20.1 patch puts cow creation in its {@code shearInternal}
- * helper, while Fabric uses {@code shear}, so both are targeted.
+ * do for every other conversion. Forge's 1.20.1 patch puts cow creation in its {@code
+ * shearInternal} helper, while Fabric uses {@code shear}, so both are targeted.
  */
 @Mixin(MushroomCow.class)
 abstract class MushroomCowShearMixin {
 
     // Forge's 1.20.1 patch defines this helper, but common's compile target does not contain it.
     // The verified descriptor supplies the type information the processor cannot infer.
-    @SuppressWarnings("target")
+    // Mixin invokes this handler.
+    @SuppressWarnings({"target", "UnusedMethod"})
     @ModifyArg(
-            method = {
-                "shear", "shearInternal(Lnet/minecraft/sounds/SoundSource;)Ljava/util/List;"
-            },
+            method = {"shear", "shearInternal(Lnet/minecraft/sounds/SoundSource;)Ljava/util/List;"},
             at =
                     @At(
                             value = "INVOKE",

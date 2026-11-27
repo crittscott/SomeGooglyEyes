@@ -15,6 +15,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 
@@ -135,7 +136,9 @@ public final class PickerFreezeService {
      */
     public static void onConverted(LivingEntity source, LivingEntity target) {
         UUID sourceId = source.getUUID();
-        for (Map.Entry<UUID, FrozenRecord> entry : FROZEN_BY_PLAYER.entrySet()) {
+        Iterator<Map.Entry<UUID, FrozenRecord>> entries = FROZEN_BY_PLAYER.entrySet().iterator();
+        while (entries.hasNext()) {
+            Map.Entry<UUID, FrozenRecord> entry = entries.next();
             FrozenRecord record = entry.getValue();
             if (!record.mobId().equals(sourceId)) {
                 continue;
@@ -145,7 +148,7 @@ public final class PickerFreezeService {
                 mob.setNoAi(true);
                 entry.setValue(new FrozenRecord(mob.getUUID(), record.prevNoAi()));
             } else {
-                FROZEN_BY_PLAYER.remove(entry.getKey());
+                entries.remove();
             }
             return;
         }

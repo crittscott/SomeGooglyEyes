@@ -35,6 +35,8 @@ abstract class TwilightSkullConversionMixin {
     private static final ThreadLocal<Deque<Snapshot>> somegoogly$conversion =
             ThreadLocal.withInitial(ArrayDeque::new);
 
+    // Mixin invokes this handler.
+    @SuppressWarnings("UnusedMethod")
     @Redirect(
             method = {"makeFloorSkull", "makeWallSkull"},
             at =
@@ -53,6 +55,8 @@ abstract class TwilightSkullConversionMixin {
         return replaced;
     }
 
+    // Mixin invokes this handler.
+    @SuppressWarnings("UnusedMethod")
     @Redirect(
             method = {"makeFloorSkull", "makeWallSkull"},
             at =
