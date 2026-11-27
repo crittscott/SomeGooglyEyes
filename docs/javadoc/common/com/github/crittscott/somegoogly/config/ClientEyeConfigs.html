@@ -85,14 +85,14 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">ClientEyeConfigs</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Client-side store of the resolved server eye state: the per-entity eye geometry configs, from
-<code>EyeConfigSyncPacket</code>, and the current <code>googlyEyesEnabled</code> master switch and the behavior settings
-clients run behaviors from, from <code>EyeSettingsPacket</code>. This store also owns the resolved-view cache used
-by renderers.
+<code>EyeConfigSyncPacket</code>, and the current <code>googlyEyesEnabled</code> master switch and the
+behavior settings clients run behaviors from, from <code>EyeSettingsPacket</code>. This store also
+owns the resolved-view cache used by renderers.
 
 <p>Separate from <a href="ServerEyeConfigs.html" title="class in com.github.crittscott.somegoogly.config"><code>ServerEyeConfigs</code></a> to avoid single-player static-state bleed: in SP the
-integrated server fills the server store and the local sync fills this one independently. Installed
-maps are immutable snapshots; their mutable model values are owned by this store and must be treated
-as read-only after installation.</div>
+integrated server fills the server store and the local sync fills this one independently.
+Installed maps are immutable snapshots; their mutable model values are owned by this store and
+must be treated as read-only after installation.</div>
 </div>
 </section>
 <section class="summary">
@@ -132,12 +132,14 @@ as read-only after installation.</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#eyesVisible()" class="member-name-link">eyesVisible</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Whether eyes may show on this client at all: the server's master switch and the player's own setting.</div>
+<div class="block">Whether eyes may show on this client at all: the server's master switch and the player's own
+setting.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#eyesVisible(net.minecraft.resources.Identifier)" class="member-name-link">eyesVisible</a><wbr>(net.minecraft.resources.Identifier&nbsp;entity)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Whether eyes may show on this client on <code>entity</code>'s kind: <a href="#eyesVisible()"><code>eyesVisible()</code></a> and not disabled for it.</div>
+<div class="block">Whether eyes may show on this client on <code>entity</code>'s kind: <a href="#eyesVisible()"><code>eyesVisible()</code></a> and not
+disabled for it.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable <a href="EyeConfigModel.RuntimeConfig.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfig</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#get(net.minecraft.resources.Identifier,boolean)" class="member-name-link">get</a><wbr>(net.minecraft.resources.Identifier&nbsp;entity,
@@ -153,8 +155,8 @@ as read-only after installation.</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#replaceAll(java.util.Map)" class="member-name-link">replaceAll</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.Identifier, <a href="EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;&nbsp;next)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Install an immutable top-level snapshot from server synchronization and invalidate every resolved
-rendering view.</div>
+<div class="block">Install an immutable top-level snapshot from server synchronization and invalidate every
+resolved rendering view.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#resolve(net.minecraft.resources.Identifier,boolean,float)" class="member-name-link">resolve</a><wbr>(net.minecraft.resources.Identifier&nbsp;entity,
@@ -167,8 +169,7 @@ rendering view.</div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#resolveHead(net.minecraft.resources.Identifier,float)" class="member-name-link">resolveHead</a><wbr>(net.minecraft.resources.Identifier&nbsp;entity,
  float&nbsp;variantRoll)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Resolve and cache the variant a placed head of <code>entity</code>'s kind shows
-(<a href="../eye/state/SkullEyeState.html#variantIndex(com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig,float)"><code>SkullEyeState.variantIndex(EyeConfigModel.RuntimeConfig, float)</code></a>), for client rendering.</div>
+<div class="block">Resolve and cache the variant a placed head of <code>entity</code>'s kind shows (<a href="../eye/state/SkullEyeState.html#variantIndex(com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig,float)"><code>SkullEyeState.variantIndex(EyeConfigModel.RuntimeConfig, float)</code></a>), for client rendering.</div>
 </div>
 </div>
 </div>
@@ -192,8 +193,8 @@ rendering view.</div>
 <h3>all</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.Identifier, <a href="EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;</span>&nbsp;<span class="element-name">all</span>()</div>
-<div class="block">The immutable synced map, by entity. Callers may retain the snapshot across replacements but must
-not mutate its <a href="EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config"><code>EyeConfigModel.RuntimeConfigSet</code></a> values.</div>
+<div class="block">The immutable synced map, by entity. Callers may retain the snapshot across replacements but
+must not mutate its <a href="EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config"><code>EyeConfigModel.RuntimeConfigSet</code></a> values.</div>
 </div>
 </section>
 </li>
@@ -230,7 +231,8 @@ not mutate its <a href="EyeConfigModel.RuntimeConfigSet.html" title="class in co
 <h3>eyesVisible</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">eyesVisible</span>()</div>
-<div class="block">Whether eyes may show on this client at all: the server's master switch and the player's own setting.</div>
+<div class="block">Whether eyes may show on this client at all: the server's master switch and the player's own
+setting.</div>
 </div>
 </section>
 </li>
@@ -239,7 +241,8 @@ not mutate its <a href="EyeConfigModel.RuntimeConfigSet.html" title="class in co
 <h3>eyesVisible</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">eyesVisible</span><wbr><span class="parameters">(net.minecraft.resources.Identifier&nbsp;entity)</span></div>
-<div class="block">Whether eyes may show on this client on <code>entity</code>'s kind: <a href="#eyesVisible()"><code>eyesVisible()</code></a> and not disabled for it.</div>
+<div class="block">Whether eyes may show on this client on <code>entity</code>'s kind: <a href="#eyesVisible()"><code>eyesVisible()</code></a> and not
+disabled for it.</div>
 </div>
 </section>
 </li>
@@ -279,8 +282,7 @@ not mutate its <a href="EyeConfigModel.RuntimeConfigSet.html" title="class in co
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a></span>&nbsp;<span class="element-name">resolveHead</span><wbr><span class="parameters">(net.minecraft.resources.Identifier&nbsp;entity,
  float&nbsp;variantRoll)</span></div>
-<div class="block">Resolve and cache the variant a placed head of <code>entity</code>'s kind shows
-(<a href="../eye/state/SkullEyeState.html#variantIndex(com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig,float)"><code>SkullEyeState.variantIndex(EyeConfigModel.RuntimeConfig, float)</code></a>), for client rendering.</div>
+<div class="block">Resolve and cache the variant a placed head of <code>entity</code>'s kind shows (<a href="../eye/state/SkullEyeState.html#variantIndex(com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig,float)"><code>SkullEyeState.variantIndex(EyeConfigModel.RuntimeConfig, float)</code></a>), for client rendering.</div>
 </div>
 </section>
 </li>
@@ -289,8 +291,9 @@ not mutate its <a href="EyeConfigModel.RuntimeConfigSet.html" title="class in co
 <h3>replaceAll</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">replaceAll</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;net.minecraft.resources.Identifier, <a href="EyeConfigModel.RuntimeConfigSet.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfigSet</a>&gt;&nbsp;next)</span></div>
-<div class="block">Install an immutable top-level snapshot from server synchronization and invalidate every resolved
-rendering view. The supplied model values become store-owned and must not be mutated afterward.</div>
+<div class="block">Install an immutable top-level snapshot from server synchronization and invalidate every
+resolved rendering view. The supplied model values become store-owned and must not be mutated
+afterward.</div>
 </div>
 </section>
 </li>

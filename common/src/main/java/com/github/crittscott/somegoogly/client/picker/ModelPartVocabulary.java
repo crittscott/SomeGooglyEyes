@@ -4,6 +4,7 @@ import com.github.crittscott.somegoogly.client.compat.ClientIntegrationFailures;
 import com.github.crittscott.somegoogly.client.compat.GeckoCompat;
 import com.github.crittscott.somegoogly.client.render.resolver.EyeAttachmentResolver;
 import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -17,6 +18,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 
 import org.jspecify.annotations.Nullable;
+
 import java.util.List;
 import java.util.function.UnaryOperator;
 
@@ -36,39 +38,46 @@ public final class ModelPartVocabulary {
     }
 
     /**
-     * The attachable part vocabulary of {@code living}'s current model, from its vanilla-style model parts
-     * or else its GeckoLib bones, or {@code null} when neither yields any.
+     * The attachable part vocabulary of {@code living}'s current model, from its vanilla-style
+     * model parts or else its GeckoLib bones, or {@code null} when neither yields any.
      */
     @Nullable
     public static ModelPartVocabulary forEntity(LivingEntity living) {
-        EntityRenderer<?, ?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(living);
+        EntityRenderer<?, ?> renderer =
+                Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(living);
         if (renderer instanceof LivingEntityRenderer<?, ?, ?> livingRenderer) {
             EntityModel<?> model = modelFor(livingRenderer, living);
             EyeAttachmentResolver resolver = Resolvers.forModel(model);
             List<String> tokens = resolver.enumerateParts(model);
             if (!tokens.isEmpty()) {
-                return new ModelPartVocabulary(tokens, token -> resolver.canonicalToken(model, token));
+                return new ModelPartVocabulary(
+                        tokens, token -> resolver.canonicalToken(model, token));
             }
         }
 
         List<String> bones = List.copyOf(GeckoCompat.enumerate(renderer, living));
-        return bones.isEmpty() ? null
+        return bones.isEmpty()
+                ? null
                 : new ModelPartVocabulary(bones, token -> canonicalizeEnumerated(bones, token));
     }
 
     /**
-     * The model {@code renderer} draws {@code living} with. An age-swapping renderer holds separate adult
-     * and baby models and only selects one while rendering, so its current model reflects whichever
-     * entity it drew last.
+     * The model {@code renderer} draws {@code living} with. An age-swapping renderer holds separate
+     * adult and baby models and only selects one while rendering, so its current model reflects
+     * whichever entity it drew last.
      */
-    private static EntityModel<?> modelFor(LivingEntityRenderer<?, ?, ?> renderer, LivingEntity living) {
+    private static EntityModel<?> modelFor(
+            LivingEntityRenderer<?, ?, ?> renderer, LivingEntity living) {
         if (renderer instanceof AgeableMobRenderer<?, ?, ?> ageable) {
             return living.isBaby() ? ageable.babyModel : ageable.adultModel;
         }
         return renderer.getModel();
     }
 
-    /** Resolve a type through a throwaway client entity so export-all does not depend on nearby mobs. */
+    /**
+     * Resolve a type through a throwaway client entity so export-all does not depend on nearby
+     * mobs.
+     */
     @Nullable
     public static ModelPartVocabulary forType(Identifier id) {
         LivingEntity sample = sampleFor(id);
@@ -107,7 +116,8 @@ public final class ModelPartVocabulary {
     @Nullable
     private static LivingEntity sampleFor(Identifier id) {
         Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.player != null && id.equals(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.PLAYER))) {
+        if (minecraft.player != null
+                && id.equals(BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.PLAYER))) {
             return minecraft.player;
         }
         ClientLevel level = minecraft.level;
@@ -116,7 +126,9 @@ public final class ModelPartVocabulary {
         }
         EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.getValue(id);
         try {
-            return type.create(level, EntitySpawnReason.COMMAND) instanceof LivingEntity living ? living : null;
+            return type.create(level, EntitySpawnReason.COMMAND) instanceof LivingEntity living
+                    ? living
+                    : null;
         } catch (RuntimeException | LinkageError constructionFailed) {
             ClientIntegrationFailures.warnOnce(
                     "entity factory", "sample construction", id.toString(), constructionFailed);

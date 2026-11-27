@@ -8,8 +8,7 @@ import com.github.crittscott.somegoogly.eye.behavior.EyeInfluence;
 import com.github.crittscott.somegoogly.eye.behavior.OngoingBehavior;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
+
 import net.minecraft.SharedConstants;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -17,75 +16,98 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.npc.villager.Villager;
+
 import org.joml.Matrix3f;
 import org.joml.Matrix3fc;
 import org.joml.Vector3f;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
- * Per-entity client-side eye state: the {@link EyeInfo} pupil-physics simulator for every configured
- * eye, plus which {@link BehaviorInstance} (if any) is currently playing on that entity.
+ * Per-entity client-side eye state: the {@link EyeInfo} pupil-physics simulator for every
+ * configured eye, plus which {@link BehaviorInstance} (if any) is currently playing on that entity.
  *
  * <p>One tracker is kept per tracked {@link LivingEntity} (see {@link ClientEyeRuntime}), matched
- * against the entity's current placement via {@link #matches}. {@link #update} steps every eye's physics once
- * per client tick under the {@link #active} behavior, which {@link ClientEyeRuntime} installs from the server's
- * trigger and ages by its own clock, so an expression keeps time while the entity is not drawn.
+ * against the entity's current placement via {@link #matches}. {@link #update} steps every eye's
+ * physics once per client tick under the {@link #active} behavior, which {@link ClientEyeRuntime}
+ * installs from the server's trigger and ages by its own clock, so an expression keeps time while
+ * the entity is not drawn.
  *
- * <p>Each tick also folds in the {@link OngoingBehavior}s whose server switches are on, easing each one in or
- * out over a few ticks: the sleeping squint, or a sleeping villager's lids closing to a slit; the ramming
- * goat's squint; the archer's one-eyed aim, closing the eye away from the arm holding the weapon; the swelling
- * creeper's rattle, kicking its pupils back into flight in proportion to the swell; red pupils for an attacking
- * mob or one the server reports {@link #angry}; and the creepy enderman's pupil pulse, at a frequency of its
- * own. None of these blocks a behavior: each sits on top of whatever plays. A sleeping entity starts no new
- * behavior whether or not its squint is on.
+ * <p>Each tick also folds in the {@link OngoingBehavior}s whose server switches are on, easing each
+ * one in or out over a few ticks: the sleeping squint, or a sleeping villager's lids closing to a
+ * slit; the ramming goat's squint; the archer's one-eyed aim, closing the eye away from the arm
+ * holding the weapon; the swelling creeper's rattle, kicking its pupils back into flight in
+ * proportion to the swell; red pupils for an attacking mob or one the server reports {@link
+ * #angry}; and the creepy enderman's pupil pulse, at a frequency of its own. None of these blocks a
+ * behavior: each sits on top of whatever plays. A sleeping entity starts no new behavior whether or
+ * not its squint is on.
  */
 public class GooglyTracker {
-    // Reused each tick on the single client tick thread (one tracker updated at a time), so folding the
-    // active behavior into the simulation allocates nothing per tick.
+    // Reused each tick on the single client tick thread (one tracker updated at a time), so folding
+    // the active behavior into the simulation allocates nothing per tick.
     private static final EyeInfluence INFLUENCE = new EyeInfluence();
 
     /** Eye height multiplier while fully squinting (asleep or ramming). */
     public static final float SLEEP_SQUASH_Y = 0.3F;
+
     /** Ticks to ease fully into or out of the squint. */
     public static final int SLEEP_EASE_TICKS = 10;
+
     /**
-     * How much of the eye each of a sleeping villager's lids covers when fully closed, leaving a slit
-     * between them across the middle.
+     * How much of the eye each of a sleeping villager's lids covers when fully closed, leaving a
+     * slit between them across the middle.
      */
     public static final float SLEEP_LID_COVERAGE = 0.45F;
+
     /** Ticks for a villager's lids to slide fully down or back up. */
     public static final int SLEEP_LID_EASE_TICKS = 20;
+
     /** Sleeping villager eyelid color. */
     public static final float[] SLEEP_LID_COLOR = {0.82F, 0.68F, 0.52F};
+
     /** Off-hand eye height multiplier while fully aiming. */
     public static final float AIM_SQUASH_Y = 0.15F;
-    /** Ticks to ease fully into or out of the aiming squint; a skeleton draws its bow for about 20. */
+
+    /**
+     * Ticks to ease fully into or out of the aiming squint; a skeleton draws its bow for about 20.
+     */
     public static final int AIM_EASE_TICKS = 4;
+
     /** Pupil color while fully angry. */
     public static final float[] ANGER_IRIS_COLOR = {0.9F, 0.05F, 0.05F};
+
     /** Ticks to ease fully into or out of angry red pupils. */
     public static final int ANGER_EASE_TICKS = 10;
+
     /** Slowest and fastest creepy-enderman pupil pulse, in cycles per second. */
     public static final float CREEPY_MIN_HZ = 0.5F;
+
     public static final float CREEPY_MAX_HZ = 2F;
+
     /** Range of each eye's offset into the creepy pulse, in radians. */
     public static final float CREEPY_MIN_PHASE_OFFSET = Mth.HALF_PI;
+
     public static final float CREEPY_MAX_PHASE_OFFSET = 3F * Mth.HALF_PI;
+
     /** How far a creepy enderman's pupils swell and shrink around their size (fraction of it). */
     public static final float CREEPY_PULSE_AMPLITUDE = 0.35F;
+
     /** Ticks to ease fully into or out of the creepy pulse. */
     public static final int CREEPY_EASE_TICKS = 10;
 
     /** The placement this tracker's eyes were built for. */
     public final HeadInfo helper;
+
     /** The entity whose eyes this tracker simulates. */
     public final LivingEntity parent;
+
     /** Per-entity randomness for pupil jitter, seeded from the entity's UUID. */
     public final RandomSource rand;
 
     /**
-     * The client tick during which this tracker was last rendered. {@link ClientEyeRuntime} evicts the
-     * tracker once this goes stale and simulates it only while it is being rendered, so off-screen eyes
-     * freeze instead of wobbling unseen.
+     * The client tick during which this tracker was last rendered. {@link ClientEyeRuntime} evicts
+     * the tracker once this goes stale and simulates it only while it is being rendered, so
+     * off-screen eyes freeze instead of wobbling unseen.
      */
     public int lastRenderTick;
 
@@ -95,18 +117,17 @@ public class GooglyTracker {
     public EyeInfo[][] eyes;
 
     /**
-     * The entity's current appearance override, mirrored from {@code EyeStatePacket} so render layers
-     * don't re-read it from NBT every frame. Seeded from NBT at construction and kept current by
-     * {@link ClientNetworkHandler#handleEyeState}.
+     * The entity's current appearance override, mirrored from {@code EyeStatePacket} so render
+     * layers don't re-read it from NBT every frame. Seeded from NBT at construction and kept
+     * current by {@link ClientNetworkHandler#handleEyeState}.
      */
     public AppearanceOverride overrides;
 
     /**
-     * The behavior playing on this entity, or {@code null}. Advanced each tick and interpolated at render;
-     * client-only, since the server sends only the trigger.
+     * The behavior playing on this entity, or {@code null}. Advanced each tick and interpolated at
+     * render; client-only, since the server sends only the trigger.
      */
-    @Nullable
-    public BehaviorInstance active;
+    @Nullable public BehaviorInstance active;
 
     /** The server expression this disposable simulation has initialized, if any. */
     ClientEyeRuntime.@Nullable ReceivedBehavior receivedBehavior;
@@ -119,37 +140,48 @@ public class GooglyTracker {
 
     /** How far into the squint (sleeping or ramming) the eyes are: 0 open, 1 fully squinted. */
     private float squint;
+
     /** How far a sleeping villager's lids are closed: 0 out of sight, 1 down to the slit. */
     private float lid;
+
     /** How far the off-hand eye is squinted for aiming: 0 open, 1 fully squinted. */
     private float aim;
+
     /**
-     * Per head, the index of the eye farthest to the entity's left and to its right, or -1 for both when
-     * the head has no eye off to one side. Eye positions are in head model space, where +X is the entity's
-     * right.
+     * Per head, the index of the eye farthest to the entity's left and to its right, or -1 for both
+     * when the head has no eye off to one side. Eye positions are in head model space, where +X is
+     * the entity's right.
      */
     private final int[] leftEye;
+
     private final int[] rightEye;
+
     /** How red the pupils are: 0 calm, 1 fully angry. */
     private float anger;
+
     /** How strongly the creepy pulse plays: 0 not creepy, 1 full pulse. */
     private float creepiness;
+
     /** Creepy pulse phase in radians, and how far it advances each tick. */
     private float creepyPhase;
+
     private final float creepyStep;
 
     /**
-     * Build the tracker. {@code angry} is the server-reported anger already known for this entity, so a
-     * tracker built for an angry mob starts red, as one built for a sleeping mob starts squinted or lidded;
-     * {@code settings} says which ongoing behaviors are on.
+     * Build the tracker. {@code angry} is the server-reported anger already known for this entity,
+     * so a tracker built for an angry mob starts red, as one built for a sleeping mob starts
+     * squinted or lidded; {@code settings} says which ongoing behaviors are on.
      */
-    public GooglyTracker(@NonNull LivingEntity parent, @NonNull HeadInfo helper, boolean angry,
-                         @NonNull BehaviorSettings settings) {
+    public GooglyTracker(
+            @NonNull LivingEntity parent,
+            @NonNull HeadInfo helper,
+            boolean angry,
+            @NonNull BehaviorSettings settings) {
         this.parent = parent;
         this.helper = helper;
         this.rand = RandomSource.create(parent.getUUID().getLeastSignificantBits());
-        // Drawn from the UUID-seeded source, so every viewer sees the same enderman pulse at the same rate,
-        // and each eye at the same offset within it.
+        // Drawn from the UUID-seeded source, so every viewer sees the same enderman pulse at the
+        // same rate, and each eye at the same offset within it.
         float hz = Mth.lerp(rand.nextFloat(), CREEPY_MIN_HZ, CREEPY_MAX_HZ);
         this.creepyStep = Mth.TWO_PI * hz / SharedConstants.TICKS_PER_SECOND;
         this.angry = angry;
@@ -165,7 +197,8 @@ public class GooglyTracker {
             for (int i1 = 0; i1 < this.eyes[i].length; i1++) {
                 this.eyes[i][i1] = new EyeInfo();
                 this.eyes[i][i1].creepyPhaseOffset =
-                        Mth.lerp(rand.nextFloat(), CREEPY_MIN_PHASE_OFFSET, CREEPY_MAX_PHASE_OFFSET);
+                        Mth.lerp(
+                                rand.nextFloat(), CREEPY_MIN_PHASE_OFFSET, CREEPY_MAX_PHASE_OFFSET);
                 double x = helper.placementAt(i, i1).position().x;
                 if (x < helper.placementAt(i, left).position().x) {
                     left = i1;
@@ -183,7 +216,8 @@ public class GooglyTracker {
         this.prevX = parent.getX();
         this.prevY = parent.getY();
         this.prevZ = parent.getZ();
-        // A tracker built for an entity already in an ongoing state starts in it rather than easing in.
+        // A tracker built for an entity already in an ongoing state starts in it rather than easing
+        // in.
         this.squint = isSquinting(settings) ? 1F : 0F;
         this.lid = isLidded(settings) ? 1F : 0F;
         this.aim = level(OngoingBehavior.AIM_WINK, settings);
@@ -201,99 +235,147 @@ public class GooglyTracker {
 
     /**
      * Physics state for one pupil: its position and velocity in the eye's unit disk, the head
-     * orientation used to derive angular forcing, and the non-physical overlay values (grow/blink/tint)
-     * an active behavior writes each tick. {@link #update} steps all of it by one tick.
+     * orientation used to derive angular forcing, and the non-physical overlay values
+     * (grow/blink/tint) an active behavior writes each tick. {@link #update} steps all of it by one
+     * tick.
      */
     public static class EyeInfo {
-        // --- tuning (normalized units; boundary radius = 1) ---------------------------------------
-        private static final float R_AIR = 1.0f;               // free-flight velocity damping per tick (1 = none)
-        private static final float R_FORCE_CLAMP = 0.96f;      // cap any single tick's forcing (jump spikes)
-        private static final float R_GRAVITY = 0.03f;          // constant downward pull (units/tick^2)
-        private static final float R_K_LIN = 12.0f;            // mob horizontal accel -> sideways kick (per blk/tick^2)
-        private static final float R_K_PITCH = 0.012f;         // head pitch accel -> vertical kick
-        private static final float R_K_VERT = 4.0f;            // mob vertical accel -> vertical kick
-        private static final float R_K_YAW = 0.012f;           // head yaw accel -> sideways kick (per deg/tick^2)
-        private static final float R_NOISE = 0.0005f;           // tiny per-eye jitter so eyes don't lock-step
-        // R_REST_CUTOFF must stay above the resting rebound (R_RESTITUTION * R_GRAVITY) or the pupil
-        // jitters on the rim forever; below it and it parks. With 0.8*0.03=0.024, 0.028 is safe.
-        private static final float R_REST_CUTOFF = 0.028f;     // kill rebounds slower than this (stop bouncing)
-        private static final float R_RESTITUTION = 0.8f;       // bounce energy kept (0..1); higher = livelier
-        private static final float R_SETTLE_MIN_GRAVITY = 0.01f; // in-plane gravity below this leaves a new pupil in place
-        private static final float R_SLIDE_CUTOFF = 0.004f;    // park a slow pupil sitting on the rim
-        private static final float R_TANGENT_FRICTION = 0.03f; // tangential energy lost per wall contact
-        private static final float R_AGITATED_MIN_SPEED = 1.5f;  // speed floor at full agitation (units/tick)
-        private static final float R_AGITATED_KICK = 1.6f;       // random-direction kick at full agitation when below the floor
+        // --- tuning (normalized units; boundary radius = 1)
+        // ---------------------------------------
+        private static final float R_AIR = 1.0f; // free-flight velocity damping per tick (1 = none)
+        private static final float R_FORCE_CLAMP =
+                0.96f; // cap any single tick's forcing (jump spikes)
+        private static final float R_GRAVITY = 0.03f; // constant downward pull (units/tick^2)
+        private static final float R_K_LIN =
+                12.0f; // mob horizontal accel -> sideways kick (per blk/tick^2)
+        private static final float R_K_PITCH = 0.012f; // head pitch accel -> vertical kick
+        private static final float R_K_VERT = 4.0f; // mob vertical accel -> vertical kick
+        private static final float R_K_YAW =
+                0.012f; // head yaw accel -> sideways kick (per deg/tick^2)
+        private static final float R_NOISE = 0.0005f; // tiny per-eye jitter so eyes don't lock-step
+        // R_REST_CUTOFF must stay above the resting rebound (R_RESTITUTION * R_GRAVITY) or the
+        // pupil jitters on the rim forever; below it and it parks. With 0.8*0.03=0.024, 0.028 is
+        // safe.
+        private static final float R_REST_CUTOFF =
+                0.028f; // kill rebounds slower than this (stop bouncing)
+        private static final float R_RESTITUTION =
+                0.8f; // bounce energy kept (0..1); higher = livelier
+        private static final float R_SETTLE_MIN_GRAVITY =
+                0.01f; // in-plane gravity below this leaves a new pupil in place
+        private static final float R_SLIDE_CUTOFF = 0.004f; // park a slow pupil sitting on the rim
+        private static final float R_TANGENT_FRICTION =
+                0.03f; // tangential energy lost per wall contact
+        private static final float R_AGITATED_MIN_SPEED =
+                1.5f; // speed floor at full agitation (units/tick)
+        private static final float R_AGITATED_KICK =
+                1.6f; // random-direction kick at full agitation when below the floor
 
-        /** Head orientation, kept across ticks to differentiate into angular velocity and acceleration. */
+        /**
+         * Head orientation, kept across ticks to differentiate into angular velocity and
+         * acceleration.
+         */
         public float prevRotationPitch;
+
         /** See {@link #prevRotationPitch}. */
         public float prevRotationYaw;
+
         /** See {@link #prevRotationPitch}. */
         public float rotationPitch;
+
         /** See {@link #prevRotationPitch}. */
         public float rotationYaw;
 
-        /** Pupil position in the unit disk ({@code |p| <= 1}), mapped onto the full cornea circle. */
+        /**
+         * Pupil position in the unit disk ({@code |p| <= 1}), mapped onto the full cornea circle.
+         */
         public float deltaX;
+
         /** See {@link #deltaX}. */
         public float deltaY;
+
         /** Pupil position at the previous tick, for render interpolation. */
         public float prevDeltaX;
+
         /** See {@link #prevDeltaX}. */
         public float prevDeltaY;
+
         /** Pupil velocity per tick. */
         public float momentumX;
+
         /** See {@link #momentumX}. */
         public float momentumY;
 
         /**
          * World-down projected into this eye's pupil plane, in the ({@code deltaX}, {@code deltaY})
-         * convention. Refreshed each render by {@code GooglyEyeRenderer} from the eye's animated world
-         * orientation, so the pupil sags toward true down; {@code (0, -1)}, eye-local down, until the
-         * first render.
+         * convention. Refreshed each render by {@code GooglyEyeRenderer} from the eye's animated
+         * world orientation, so the pupil sags toward true down; {@code (0, -1)}, eye-local down,
+         * until the first render.
          */
         public float gravX = 0F;
+
         /** See {@link #gravX}. */
         public float gravY = -1F;
 
-        /** World item and boat eyes remove display scale and project owner acceleration through their captured pose. */
+        /**
+         * World item and boat eyes remove display scale and project owner acceleration through
+         * their captured pose.
+         */
         public boolean itemGravity;
 
-        /** GUI coordinates grow downward; captured gravity follows the icon instead of the world. */
+        /**
+         * GUI coordinates grow downward; captured gravity follows the icon instead of the world.
+         */
         public boolean guiGravity;
 
         /**
-         * Non-physical behavior overlays, written each tick by the active behavior (neutral when none)
-         * and interpolated at render. Kept per eye so the blink mask varies by eye. This one is the
-         * grow scale; {@link #irisScaleMul} is the love pupil size, {@link #squashY} the blink,
-         * {@link #tintAmount} the color-change blend, and {@link #tintColor} the color-change target (set
-         * instantly, not interpolated).
+         * Non-physical behavior overlays, written each tick by the active behavior (neutral when
+         * none) and interpolated at render. Kept per eye so the blink mask varies by eye. This one
+         * is the grow scale; {@link #irisScaleMul} is the love pupil size, {@link #squashY} the
+         * blink, {@link #tintAmount} the color-change blend, and {@link #tintColor} the
+         * color-change target (set instantly, not interpolated).
          */
         public float scaleMul = 1F, prevScaleMul = 1F;
+
         /** Love pupil size times the creepy pulse; see {@link #scaleMul}. */
         public float irisScaleMul = 1F, prevIrisScaleMul = 1F;
+
         /** Blink squash times the sleeping squint; see {@link #scaleMul}. */
         public float squashY = 1F, prevSquashY = 1F;
-        /** How much of the eye each of a sleeping villager's lids covers (0 none); see {@link #scaleMul}. */
+
+        /**
+         * How much of the eye each of a sleeping villager's lids covers (0 none); see {@link
+         * #scaleMul}.
+         */
         public float lid, prevLid;
+
         /** Color-change blend amount; see {@link #scaleMul}. */
         public float tintAmount, prevTintAmount;
+
         /** Color-change target color; see {@link #scaleMul}. */
         public float[] tintColor;
+
         /** How far the pupil is blended toward {@link #ANGER_IRIS_COLOR}; see {@link #scaleMul}. */
         public float irisTintAmount, prevIrisTintAmount;
-        /** This eye's offset into the creepy pulse, in radians, so an enderman's eyes don't throb in step. */
+
+        /**
+         * This eye's offset into the creepy pulse, in radians, so an enderman's eyes don't throb in
+         * step.
+         */
         public float creepyPhaseOffset;
 
         private boolean capturedPose;
         private final Matrix3f inversePose = new Matrix3f();
+
         /** Whether physics has stepped since the last pose capture. */
         public boolean poseStale = true;
+
         /** Rows of world-to-eye rotation; pupil displacement renders with the opposite sign. */
         private final Vector3f worldRight = new Vector3f();
+
         private final Vector3f worldUp = new Vector3f();
 
-        // Input differentiation state, primed on the first tick to avoid a spike from zero baselines.
+        // Input differentiation state, primed on the first tick to avoid a spike from zero
+        // baselines.
         private double prevMotionX;
         private double prevMotionY;
         private double prevMotionZ;
@@ -306,17 +388,19 @@ public class GooglyTracker {
         }
 
         /**
-         * Fold this tick's non-physical overlays into the eye's render state, keeping last tick's values for
-         * lerping: the active behavior's {@code influence} (neutral when none), with the ongoing states the
-         * caller derives on top of it.
+         * Fold this tick's non-physical overlays into the eye's render state, keeping last tick's
+         * values for lerping: the active behavior's {@code influence} (neutral when none), with the
+         * ongoing states the caller derives on top of it.
          *
-         * @param influence  the behavior's influence on this eye this tick
-         * @param irisPulse  pupil size multiplier from the creepy pulse (1 for none)
-         * @param squash     vertical scale multiplier from the squints (1 for none)
-         * @param lid        how much of the eye each lid covers (0 for none)
-         * @param irisTint   how far the pupil is blended toward {@link #ANGER_IRIS_COLOR} (0 for none)
+         * @param influence the behavior's influence on this eye this tick
+         * @param irisPulse pupil size multiplier from the creepy pulse (1 for none)
+         * @param squash vertical scale multiplier from the squints (1 for none)
+         * @param lid how much of the eye each lid covers (0 for none)
+         * @param irisTint how far the pupil is blended toward {@link #ANGER_IRIS_COLOR} (0 for
+         *     none)
          */
-        public void applyOverlays(EyeInfluence influence, float irisPulse, float squash, float lid, float irisTint) {
+        public void applyOverlays(
+                EyeInfluence influence, float irisPulse, float squash, float lid, float irisTint) {
             prevScaleMul = scaleMul;
             scaleMul = influence.eyeScaleMul;
             prevIrisScaleMul = irisScaleMul;
@@ -333,9 +417,10 @@ public class GooglyTracker {
         }
 
         /**
-         * Capture a draw's pose, whose axes are already world-aligned: the view rotation is applied later through
-         * the model-view matrix, so nothing needs removing. A new simulation's first capture also rests its pupil
-         * on the rim toward gravity, so eyes rebuilt after time offscreen come into view already settled.
+         * Capture a draw's pose, whose axes are already world-aligned: the view rotation is applied
+         * later through the model-view matrix, so nothing needs removing. A new simulation's first
+         * capture also rests its pupil on the rim toward gravity, so eyes rebuilt after time
+         * offscreen come into view already settled.
          */
         public void capturePose(Matrix3fc pose) {
             float determinant = pose.determinant();
@@ -359,7 +444,10 @@ public class GooglyTracker {
             poseStale = false;
         }
 
-        /** Rest the pupil on the rim toward gravity; an eye with almost none in its plane stays where it is. */
+        /**
+         * Rest the pupil on the rim toward gravity; an eye with almost none in its plane stays
+         * where it is.
+         */
         private void settle() {
             float gravity = Mth.sqrt(gravX * gravX + gravY * gravY);
             if (gravity >= R_SETTLE_MIN_GRAVITY) {
@@ -374,45 +462,81 @@ public class GooglyTracker {
         }
 
         /**
-         * One tick of this pupil, eye {@code eye} of head {@code head}: ask the active behavior, if any, for its
-         * influence (spring and overlays), layer the owner's overlays on it, and step the physics with the spring
-         * folded in as a force. {@code influence} is the caller's reusable scratch instance.
+         * One tick of this pupil, eye {@code eye} of head {@code head}: ask the active behavior, if
+         * any, for its influence (spring and overlays), layer the owner's overlays on it, and step
+         * the physics with the spring folded in as a force. {@code influence} is the caller's
+         * reusable scratch instance.
          */
-        public void step(EyeInfluence influence, @Nullable BehaviorInstance active, int head, int eye,
-                         float irisPulse, float squash, float lid, float irisTint,
-                         RandomSource rand, float headYaw, float headPitch,
-                         double motionX, double motionY, double motionZ, float agitation) {
+        public void step(
+                EyeInfluence influence,
+                @Nullable BehaviorInstance active,
+                int head,
+                int eye,
+                float irisPulse,
+                float squash,
+                float lid,
+                float irisTint,
+                RandomSource rand,
+                float headYaw,
+                float headPitch,
+                double motionX,
+                double motionY,
+                double motionZ,
+                float agitation) {
             influence.reset();
             if (active != null) {
                 active.behavior.influence(active, head, eye, influence);
             }
             applyOverlays(influence, irisPulse, squash, lid, irisTint);
-            update(rand, headYaw, headPitch, motionX, motionY, motionZ,
-                    influence.anchorX, influence.anchorY, influence.stiffness, agitation);
+            update(
+                    rand,
+                    headYaw,
+                    headPitch,
+                    motionX,
+                    motionY,
+                    motionZ,
+                    influence.anchorX,
+                    influence.anchorY,
+                    influence.stiffness,
+                    agitation);
         }
 
         /**
-         * Advance the pupil simulation by one tick and update its previous/current render positions.
-         * Pupil positions and behavior anchors use the eye-local unit disk, with +X right and +Y up.
+         * Advance the pupil simulation by one tick and update its previous/current render
+         * positions. Pupil positions and behavior anchors use the eye-local unit disk, with +X
+         * right and +Y up.
          *
-         * @param rand      randomness source (per-tracker / per-held-eye)
-         * @param headYaw   the living holder's head yaw, or the boat's yaw, this tick
+         * @param rand randomness source (per-tracker / per-held-eye)
+         * @param headYaw the living holder's head yaw, or the boat's yaw, this tick
          * @param headPitch the holder's pitch this tick ({@code getXRot})
-         * @param motionX   the holder's X position delta this tick
-         * @param motionY   the holder's Y position delta this tick
-         * @param motionZ   the holder's Z position delta this tick
-         * @param anchorX   the behavior spring's X target in the unit disk (ignored when stiffness is nonpositive)
-         * @param anchorY   the behavior spring's Y target in the unit disk (ignored when stiffness is nonpositive)
+         * @param motionX the holder's X position delta this tick
+         * @param motionY the holder's Y position delta this tick
+         * @param motionZ the holder's Z position delta this tick
+         * @param anchorX the behavior spring's X target in the unit disk (ignored when stiffness is
+         *     nonpositive)
+         * @param anchorY the behavior spring's Y target in the unit disk (ignored when stiffness is
+         *     nonpositive)
          * @param stiffness positive behavior-spring strength; nonpositive values disable the spring
-         * @param agitation 0 to 1; above 0, a pupil slower than its scaled speed floor gets a random kick
+         * @param agitation 0 to 1; above 0, a pupil slower than its scaled speed floor gets a
+         *     random kick
          */
-        private void update(RandomSource rand, float headYaw, float headPitch, double motionX, double motionY, double motionZ,
-                           float anchorX, float anchorY, float stiffness, float agitation) {
+        private void update(
+                RandomSource rand,
+                float headYaw,
+                float headPitch,
+                double motionX,
+                double motionY,
+                double motionZ,
+                float anchorX,
+                float anchorY,
+                float stiffness,
+                float agitation) {
             poseStale = true;
             prevDeltaX = deltaX;
             prevDeltaY = deltaY;
 
-            // Prime the differentiators on the first tick so we don't see a spike from zero baselines.
+            // Prime the differentiators on the first tick so we don't see a spike from zero
+            // baselines.
             if (!primed) {
                 primed = true;
                 rotationYaw = prevRotationYaw = headYaw;
@@ -430,7 +554,8 @@ public class GooglyTracker {
             rotationYaw = headYaw;
             rotationPitch = headPitch;
 
-            // Angular acceleration (deg/tick^2); wrap yaw so the 180/-180 seam doesn't read as a spin.
+            // Angular acceleration (deg/tick^2); wrap yaw so the 180/-180 seam doesn't read as a
+            // spin.
             float yawRate = Mth.wrapDegrees(rotationYaw - prevRotationYaw);
             float pitchRate = rotationPitch - prevRotationPitch;
             float yawAccel = yawRate - prevYawRate;
@@ -438,7 +563,8 @@ public class GooglyTracker {
             prevYawRate = yawRate;
             prevPitchRate = pitchRate;
 
-            // Linear acceleration (blocks/tick^2); project the horizontal part onto the head's right axis.
+            // Linear acceleration (blocks/tick^2); project the horizontal part onto the head's
+            // right axis.
             double laccx = motionX - prevMotionX;
             double laccy = motionY - prevMotionY;
             double laccz = motionZ - prevMotionZ;
@@ -451,22 +577,30 @@ public class GooglyTracker {
             float rightZ = (float) Math.sin(yawRad);
             float horizRight = (float) (laccx * rightX + laccz * rightZ);
 
-            // Pseudo-forces oppose the socket's acceleration. Gravity points along this eye's copy of
-            // world-down (gravX/gravY), captured each render from the eye's animated orientation, so the
-            // pupil rests at true down instead of eye-local down. Its in-plane magnitude naturally shrinks
-            // as the eye turns to face up/down (world-down leaves the pupil plane). The pseudo-forces stay
-            // eye-local — only gravity's resting direction is a world-frame quantity. Default (0, -1) =
-            // eye-local down.
-            float linearX = itemGravity && capturedPose
-                    ? R_K_LIN * worldRight.dot((float) laccx, (float) laccy, (float) laccz)
-                    : -R_K_LIN * horizRight;
-            float linearY = itemGravity && capturedPose
-                    ? R_K_VERT * worldUp.dot((float) laccx, (float) laccy, (float) laccz)
-                    : -R_K_VERT * (float) laccy;
-            float fx = R_GRAVITY * gravX - R_K_YAW * yawAccel + linearX
-                    + (float) rand.nextGaussian() * R_NOISE;
-            float fy = R_GRAVITY * gravY - R_K_PITCH * pitchAccel + linearY
-                    + (float) rand.nextGaussian() * R_NOISE;
+            // Pseudo-forces oppose the socket's acceleration. Gravity points along this eye's copy
+            // of world-down (gravX/gravY), captured each render from the eye's animated
+            // orientation, so the pupil rests at true down instead of eye-local down. Its in-plane
+            // magnitude naturally shrinks as the eye turns to face up/down (world-down leaves the
+            // pupil plane). The pseudo-forces stay eye-local — only gravity's resting direction is
+            // a world-frame quantity. Default (0, -1) = eye-local down.
+            float linearX =
+                    itemGravity && capturedPose
+                            ? R_K_LIN * worldRight.dot((float) laccx, (float) laccy, (float) laccz)
+                            : -R_K_LIN * horizRight;
+            float linearY =
+                    itemGravity && capturedPose
+                            ? R_K_VERT * worldUp.dot((float) laccx, (float) laccy, (float) laccz)
+                            : -R_K_VERT * (float) laccy;
+            float fx =
+                    R_GRAVITY * gravX
+                            - R_K_YAW * yawAccel
+                            + linearX
+                            + (float) rand.nextGaussian() * R_NOISE;
+            float fy =
+                    R_GRAVITY * gravY
+                            - R_K_PITCH * pitchAccel
+                            + linearY
+                            + (float) rand.nextGaussian() * R_NOISE;
             fx = Mth.clamp(fx, -R_FORCE_CLAMP, R_FORCE_CLAMP);
             fy = Mth.clamp(fy, -R_FORCE_CLAMP, R_FORCE_CLAMP);
 
@@ -474,10 +608,11 @@ public class GooglyTracker {
             momentumY += fy;
 
             if (stiffness > 0F) {
-                // Behavior spring (unclamped, so it can overcome gravity): Hooke pull toward the anchor,
-                // plus velocity damping applied implicitly (divide, never multiply) so it stays stable at
-                // any stiffness and settles without ringing. As stiffness fades the damping fades with it,
-                // handing the pupil back to free-flight gravity for a natural drop.
+                // Behavior spring (unclamped, so it can overcome gravity): Hooke pull toward the
+                // anchor, plus velocity damping applied implicitly (divide, never multiply) so it
+                // stays stable at any stiffness and settles without ringing. As stiffness fades the
+                // damping fades with it, handing the pupil back to free-flight gravity for a
+                // natural drop.
                 momentumX += stiffness * (anchorX - deltaX);
                 momentumY += stiffness * (anchorY - deltaY);
                 float keep = 1F / (1F + 2F * (float) Math.sqrt(stiffness));
@@ -488,10 +623,12 @@ public class GooglyTracker {
                 momentumY *= R_AIR;
             }
 
-            // Agitation feeds energy back in: a pupil that has slowed below the floor is kicked in a random
-            // direction, so gravity and the wall bounce keep shaping its flight instead of letting it park.
+            // Agitation feeds energy back in: a pupil that has slowed below the floor is kicked in
+            // a random direction, so gravity and the wall bounce keep shaping its flight instead of
+            // letting it park.
             float minSpeed = agitation * R_AGITATED_MIN_SPEED;
-            if (minSpeed > 0F && momentumX * momentumX + momentumY * momentumY < minSpeed * minSpeed) {
+            if (minSpeed > 0F
+                    && momentumX * momentumX + momentumY * momentumY < minSpeed * minSpeed) {
                 float angle = rand.nextFloat() * Mth.TWO_PI;
                 momentumX += agitation * R_AGITATED_KICK * Mth.cos(angle);
                 momentumY += agitation * R_AGITATED_KICK * Mth.sin(angle);
@@ -500,7 +637,8 @@ public class GooglyTracker {
             deltaX += momentumX;
             deltaY += momentumY;
 
-            // Circular wall: reflect the outward normal component, friction the tangential, project back.
+            // Circular wall: reflect the outward normal component, friction the tangential, project
+            // back.
             float r2 = deltaX * deltaX + deltaY * deltaY;
             if (r2 > 1F) {
                 float r = (float) Math.sqrt(r2);
@@ -530,29 +668,35 @@ public class GooglyTracker {
         }
     }
 
-    /** Step {@code value} one tick toward 1 when {@code on}, else toward 0, taking {@code ticks} to cross. */
+    /**
+     * Step {@code value} one tick toward 1 when {@code on}, else toward 0, taking {@code ticks} to
+     * cross.
+     */
     private static float ease(float value, boolean on, int ticks) {
         float step = 1F / ticks;
         return on ? Math.min(1F, value + step) : Math.max(0F, value - step);
     }
 
     /**
-     * Whether the pupils should be red: anger is on, and the mob is attacking (vanilla-synced) or the server
-     * says it's angry.
+     * Whether the pupils should be red: anger is on, and the mob is attacking (vanilla-synced) or
+     * the server says it's angry.
      */
     private boolean isAngry(BehaviorSettings settings) {
         return level(OngoingBehavior.ANGER, settings) > 0F
                 || angry && settings.enabled(OngoingBehavior.ANGER);
     }
 
-    /** Whether the eyelids should be closed: the sleeping squint is on and the entity is a sleeping villager. */
+    /**
+     * Whether the eyelids should be closed: the sleeping squint is on and the entity is a sleeping
+     * villager.
+     */
     private boolean isLidded(BehaviorSettings settings) {
         return parent instanceof Villager && level(OngoingBehavior.SLEEP_SQUINT, settings) > 0F;
     }
 
     /**
-     * Whether the eyes should squint: the entity sleeps without lids of its own, or is a goat with its head
-     * lowered to ram, each while its switch is on.
+     * Whether the eyes should squint: the entity sleeps without lids of its own, or is a goat with
+     * its head lowered to ram, each while its switch is on.
      */
     private boolean isSquinting(BehaviorSettings settings) {
         return !(parent instanceof Villager) && level(OngoingBehavior.SLEEP_SQUINT, settings) > 0F
@@ -565,8 +709,8 @@ public class GooglyTracker {
     }
 
     /**
-     * Stamp this tracker as rendered during {@code currentClientTick}, the
-     * {@link ClientEyeRuntime#clientTicks()} value (drives eviction and whether to simulate).
+     * Stamp this tracker as rendered during {@code currentClientTick}, the {@link
+     * ClientEyeRuntime#clientTicks()} value (drives eviction and whether to simulate).
      */
     public void markRendered(int currentClientTick) {
         lastRenderTick = currentClientTick;
@@ -574,17 +718,17 @@ public class GooglyTracker {
 
     /** Whether this tracker was built for the same placement variant as {@code helper}. */
     public boolean matches(HeadInfo helper) {
-        // Compare the selected variant's head list, not just the shared config: two mobs of the same
-        // type/age can resolve to different arrangements and must not share a tracker (the eyes[][]
-        // shape is sized from this variant's heads/eyes).
+        // Compare the selected variant's head list, not just the shared config: two mobs of the
+        // same type/age can resolve to different arrangements and must not share a tracker (the
+        // eyes[][] shape is sized from this variant's heads/eyes).
         return this.helper.headsRef() == helper.headsRef();
     }
 
     /**
-     * Play {@code behavior} from {@code age} ticks in, replacing whatever played, unless the entity is asleep:
-     * the client holds a squint instead, as the server drops triggers on a sleeper. The seeded {@code onStart}
-     * plus the age fully determine each behavior's influence, so a viewer who joins mid-effect sees the same
-     * state as everyone else.
+     * Play {@code behavior} from {@code age} ticks in, replacing whatever played, unless the entity
+     * is asleep: the client holds a squint instead, as the server drops triggers on a sleeper. The
+     * seeded {@code onStart} plus the age fully determine each behavior's influence, so a viewer
+     * who joins mid-effect sees the same state as everyone else.
      */
     void install(EyeBehavior behavior, long seed, int age) {
         if (parent.isSleeping()) {
@@ -596,8 +740,8 @@ public class GooglyTracker {
     }
 
     /**
-     * Advance one client tick: sample the entity's motion and step every eye under the active behavior, with
-     * the ongoing behaviors {@code settings} switches on folded in.
+     * Advance one client tick: sample the entity's motion and step every eye under the active
+     * behavior, with the ongoing behaviors {@code settings} switches on folded in.
      */
     public void update(BehaviorSettings settings) {
         double motionX = parent.getX() - prevX;
@@ -608,25 +752,33 @@ public class GooglyTracker {
         prevY = parent.getY();
         prevZ = parent.getZ();
 
-        // Ease toward the squint or back out. A behavior playing under it (one already playing when sleep
-        // begins, or any while a goat rams) multiplies with it in squashY.
+        // Ease toward the squint or back out. A behavior playing under it (one already playing when
+        // sleep begins, or any while a goat rams) multiplies with it in squashY.
         squint = ease(squint, isSquinting(settings), SLEEP_EASE_TICKS);
         float squintSquash = Mth.lerp(squint, 1F, SLEEP_SQUASH_Y);
-        // A sleeping villager lowers its lids instead, leaving its eyes their full shape behind them.
+        // A sleeping villager lowers its lids instead, leaving its eyes their full shape behind
+        // them.
         lid = ease(lid, isLidded(settings), SLEEP_LID_EASE_TICKS);
         float lidCoverage = lid * SLEEP_LID_COVERAGE;
 
-        // Aiming closes only the eye opposite the arm holding the weapon, sighting along it with the other,
-        // and multiplies with the squint and any behavior the same way.
+        // Aiming closes only the eye opposite the arm holding the weapon, sighting along it with
+        // the other, and multiplies with the squint and any behavior the same way.
         aim = ease(aim, level(OngoingBehavior.AIM_WINK, settings) > 0F, AIM_EASE_TICKS);
         float aimSquash = Mth.lerp(aim, 1F, AIM_SQUASH_Y);
-        HumanoidArm weaponArm = parent.getUsedItemHand() == InteractionHand.MAIN_HAND
-                ? parent.getMainArm() : parent.getMainArm().getOpposite();
+        HumanoidArm weaponArm =
+                parent.getUsedItemHand() == InteractionHand.MAIN_HAND
+                        ? parent.getMainArm()
+                        : parent.getMainArm().getOpposite();
         int[] aimClosedEye = weaponArm == HumanoidArm.RIGHT ? leftEye : rightEye;
 
-        // Anger reddens the pupils, and a creepy enderman's pupils pulse; both sit under any behavior.
+        // Anger reddens the pupils, and a creepy enderman's pupils pulse; both sit under any
+        // behavior.
         anger = ease(anger, isAngry(settings), ANGER_EASE_TICKS);
-        creepiness = ease(creepiness, level(OngoingBehavior.CREEPY_PULSE, settings) > 0F, CREEPY_EASE_TICKS);
+        creepiness =
+                ease(
+                        creepiness,
+                        level(OngoingBehavior.CREEPY_PULSE, settings) > 0F,
+                        CREEPY_EASE_TICKS);
         creepyPhase = (creepyPhase + creepyStep) % Mth.TWO_PI;
         float creepyAmplitude = CREEPY_PULSE_AMPLITUDE * creepiness;
 
@@ -639,10 +791,22 @@ public class GooglyTracker {
             for (int i1 = 0; i1 < eyes[i].length; i1++) {
                 EyeInfo info = eyes[i][i1];
 
-                info.step(INFLUENCE, active, i, i1,
+                info.step(
+                        INFLUENCE,
+                        active,
+                        i,
+                        i1,
                         1F + creepyAmplitude * Mth.sin(creepyPhase + info.creepyPhaseOffset),
-                        squintSquash * (i1 == aimClosedEye[i] ? aimSquash : 1F), lidCoverage, anger,
-                        rand, headYaw, headPitch, motionX, motionY, motionZ, agitation);
+                        squintSquash * (i1 == aimClosedEye[i] ? aimSquash : 1F),
+                        lidCoverage,
+                        anger,
+                        rand,
+                        headYaw,
+                        headPitch,
+                        motionX,
+                        motionY,
+                        motionZ,
+                        agitation);
             }
         }
     }

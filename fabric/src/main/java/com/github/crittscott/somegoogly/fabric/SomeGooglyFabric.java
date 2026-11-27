@@ -7,6 +7,7 @@ import com.github.crittscott.somegoogly.network.fabric.FabricNetworkTransport;
 import com.github.crittscott.somegoogly.platform.fabric.EntityPersistentDataImpl;
 import com.github.crittscott.somegoogly.registry.ModContent;
 import com.github.crittscott.somegoogly.server.fabric.FabricServerEvents;
+
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.minecraft.server.packs.PackType;

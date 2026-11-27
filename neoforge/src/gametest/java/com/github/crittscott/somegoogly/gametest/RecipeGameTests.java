@@ -8,8 +8,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
  */
 public final class RecipeGameTests {
 
-    private RecipeGameTests() {
-    }
+    private RecipeGameTests() {}
 
     public static void cobwebClearsAllOverrides(GameTestHelper helper) {
         RecipeGameTestsLogic.cobwebClearsAllOverrides(helper);

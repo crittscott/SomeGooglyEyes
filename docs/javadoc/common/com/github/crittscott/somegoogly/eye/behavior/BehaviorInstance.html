@@ -89,16 +89,16 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">BehaviorInstance</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">The mutable runtime state of the one behavior a mob is currently playing. Behaviors themselves are
-stateless enum constants; all per-play state lives here, on the mob's client
-tracker, so it's transient and per-mob.
+<div class="block">The mutable runtime state of the one behavior a mob is currently playing. Behaviors themselves
+are stateless enum constants; all per-play state lives here, on the mob's client tracker, so it's
+transient and per-mob.
 
-<p>The only animated state is <a href="#age"><code>age</code></a>: each behavior derives its <a href="EyeInfluence.html" title="class in com.github.crittscott.somegoogly.eye.behavior"><code>EyeInfluence</code></a> directly
-from <code>age/duration</code> in <a href="EyeBehavior.html#influence(com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance,int,int,com.github.crittscott.somegoogly.eye.behavior.EyeInfluence)"><code>EyeBehavior.influence(BehaviorInstance, int, int, EyeInfluence)</code></a>, so there are no prev/current scalar pairs
-to keep — the smoothing lives one level down, in the pupil's own physics interpolation and in the
-per-eye overlay state the simulator tracks. The seeded params below are resolved once in
-<a href="EyeBehavior.html#onStart(com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance)"><code>EyeBehavior.onStart(BehaviorInstance)</code></a>; randomness is seeded so every client watching the same mob animates
-identically.</div>
+<p>The only animated state is <a href="#age"><code>age</code></a>: each behavior derives its <a href="EyeInfluence.html" title="class in com.github.crittscott.somegoogly.eye.behavior"><code>EyeInfluence</code></a>
+directly from <code>age/duration</code> in <a href="EyeBehavior.html#influence(com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance,int,int,com.github.crittscott.somegoogly.eye.behavior.EyeInfluence)"><code>EyeBehavior.influence(BehaviorInstance, int, int, EyeInfluence)</code></a>, so there are no prev/current
+scalar pairs to keep — the smoothing lives one level down, in the pupil's own physics
+interpolation and in the per-eye overlay state the simulator tracks. The seeded params below are
+resolved once in <a href="EyeBehavior.html#onStart(com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance)"><code>EyeBehavior.onStart(BehaviorInstance)</code></a>; randomness is seeded so every client watching the
+same mob animates identically.</div>
 </div>
 </section>
 <section class="summary">
@@ -115,7 +115,8 @@ identically.</div>
 <div class="col-first even-row-color"><code>int</code></div>
 <div class="col-second even-row-color"><code><a href="#age" class="member-name-link">age</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">Completed ticks (1-based after the first tick); <code>age/duration</code> is the progress fraction.</div>
+<div class="block">Completed ticks (1-based after the first tick); <code>age/duration</code> is the progress
+fraction.</div>
 </div>
 <div class="col-first odd-row-color"><code>final <a href="EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a></code></div>
 <div class="col-second odd-row-color"><code><a href="#behavior" class="member-name-link">behavior</a></code></div>
@@ -125,8 +126,9 @@ identically.</div>
 <div class="col-first even-row-color"><code>float @Nullable [][][]</code></div>
 <div class="col-second even-row-color"><code><a href="#crossAim" class="member-name-link">crossAim</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">Seeded cross-eye aim indexed by <code>[head][eye]</code>: the unit pupil-plane anchor toward the eye's partner,
-<code>{0, 0}</code> when the partner sits on the pupil axis, or <code>null</code> for an eye with no partner.</div>
+<div class="block">Seeded cross-eye aim indexed by <code>[head][eye]</code>: the unit pupil-plane anchor toward the
+eye's partner, <code>{0, 0}</code> when the partner sits on the pupil axis, or <code>null</code> for an
+eye with no partner.</div>
 </div>
 <div class="col-first odd-row-color"><code>int</code></div>
 <div class="col-second odd-row-color"><code><a href="#dirSign" class="member-name-link">dirSign</a></code></div>
@@ -141,13 +143,14 @@ identically.</div>
 <div class="col-first odd-row-color"><code>final @Nullable <a href="../HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a></code></div>
 <div class="col-second odd-row-color"><code><a href="#helper" class="member-name-link">helper</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block">Placement view whose head and eye indexes define per-eye behavior state, or <code>null</code> for a lone
-eye with no placement (the held Googly Eye), which plays as head 0, eye 0.</div>
+<div class="block">Placement view whose head and eye indexes define per-eye behavior state, or <code>null</code> for
+a lone eye with no placement (the held Googly Eye), which plays as head 0, eye 0.</div>
 </div>
 <div class="col-first even-row-color"><code>boolean @Nullable [][]</code></div>
 <div class="col-second even-row-color"><code><a href="#mask" class="member-name-link">mask</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">Seeded blink participation indexed by <code>[head][eye]</code>, or <code>null</code> for other behaviors.</div>
+<div class="block">Seeded blink participation indexed by <code>[head][eye]</code>, or <code>null</code> for other
+behaviors.</div>
 </div>
 <div class="col-first odd-row-color"><code>final net.minecraft.util.RandomSource</code></div>
 <div class="col-second odd-row-color"><code><a href="#rand" class="member-name-link">rand</a></code></div>
@@ -217,8 +220,8 @@ eye with no placement (the held Googly Eye), which plays as head 0, eye 0.</div>
 <h3>helper</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public final</span>&nbsp;<span class="return-type">@Nullable <a href="../HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a></span>&nbsp;<span class="element-name">helper</span></div>
-<div class="block">Placement view whose head and eye indexes define per-eye behavior state, or <code>null</code> for a lone
-eye with no placement (the held Googly Eye), which plays as head 0, eye 0.</div>
+<div class="block">Placement view whose head and eye indexes define per-eye behavior state, or <code>null</code> for
+a lone eye with no placement (the held Googly Eye), which plays as head 0, eye 0.</div>
 </div>
 </section>
 </li>
@@ -245,7 +248,8 @@ eye with no placement (the held Googly Eye), which plays as head 0, eye 0.</div>
 <h3>age</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">age</span></div>
-<div class="block">Completed ticks (1-based after the first tick); <code>age/duration</code> is the progress fraction.</div>
+<div class="block">Completed ticks (1-based after the first tick); <code>age/duration</code> is the progress
+fraction.</div>
 </div>
 </section>
 </li>
@@ -272,7 +276,8 @@ eye with no placement (the held Googly Eye), which plays as head 0, eye 0.</div>
 <h3>mask</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean @Nullable [][]</span>&nbsp;<span class="element-name">mask</span></div>
-<div class="block">Seeded blink participation indexed by <code>[head][eye]</code>, or <code>null</code> for other behaviors.</div>
+<div class="block">Seeded blink participation indexed by <code>[head][eye]</code>, or <code>null</code> for other
+behaviors.</div>
 </div>
 </section>
 </li>
@@ -281,9 +286,9 @@ eye with no placement (the held Googly Eye), which plays as head 0, eye 0.</div>
 <h3>crossAim</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">float @Nullable [][][]</span>&nbsp;<span class="element-name">crossAim</span></div>
-<div class="block">Seeded cross-eye aim indexed by <code>[head][eye]</code>: the unit pupil-plane anchor toward the eye's partner,
-<code>{0, 0}</code> when the partner sits on the pupil axis, or <code>null</code> for an eye with no partner. The
-whole array is <code>null</code> for other behaviors and for a lone eye.</div>
+<div class="block">Seeded cross-eye aim indexed by <code>[head][eye]</code>: the unit pupil-plane anchor toward the
+eye's partner, <code>{0, 0}</code> when the partner sits on the pupil axis, or <code>null</code> for an
+eye with no partner. The whole array is <code>null</code> for other behaviors and for a lone eye.</div>
 </div>
 </section>
 </li>

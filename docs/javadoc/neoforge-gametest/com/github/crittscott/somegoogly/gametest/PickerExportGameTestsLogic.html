@@ -85,11 +85,12 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">PickerExportGameTestsLogic</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Server-side export rejection, retained picker draft selection, and shared age-overlay JSON assembly.
-Only the <b>rejection</b> paths of the service are exercised — they return before any file is
-written, so nothing touches the test world's datapacks and no <code>/reload</code> fires mid-run (the
-success path, and with it the 10-second cooldown, is covered by manual verification against a real
-server). Each test uses a fresh player id so the all-attempt throttle remains independent.</div>
+<div class="block">Server-side export rejection, retained picker draft selection, and shared age-overlay JSON
+assembly. Only the <b>rejection</b> paths of the service are exercised — they return before any
+file is written, so nothing touches the test world's datapacks and no <code>/reload</code> fires
+mid-run (the success path, and with it the 10-second cooldown, is covered by manual verification
+against a real server). Each test uses a fresh player id so the all-attempt throttle remains
+independent.</div>
 </div>
 </section>
 <section class="summary">
@@ -167,7 +168,8 @@ malformed.</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#exportRejectsWhatTheSyncCouldNotCarry(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">exportRejectsWhatTheSyncCouldNotCarry</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">An export that would push the whole definition set over the sync limits is refused before it is written.</div>
+<div class="block">An export that would push the whole definition set over the sync limits is refused before it
+is written.</div>
 </div>
 </div>
 </div>
@@ -192,10 +194,10 @@ malformed.</div>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">canonicalJsonWritesDefaultValuedFields</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 <div class="block">The written form pins values that equal their defaults rather than eliding them, so a file's
-meaning can't drift with the code. <code>crossTarget</code> sits at its default in most real configs,
-so it's the field checked by name here; that no field is dropped at all is guarded by the value
-round-trip in <code>SerializationGameTests</code>. In game: run <code>/sg exportall</code> and open any
-exported JSON; every eye lists <code>"crossTarget"</code>, including <code>-1</code>.</div>
+meaning can't drift with the code. <code>crossTarget</code> sits at its default in most real
+configs, so it's the field checked by name here; that no field is dropped at all is guarded
+by the value round-trip in <code>SerializationGameTests</code>. In game: run <code>/sg exportall</code>
+and open any exported JSON; every eye lists <code>"crossTarget"</code>, including <code>-1</code>.</div>
 </div>
 </section>
 </li>
@@ -204,9 +206,10 @@ exported JSON; every eye lists <code>"crossTarget"</code>, including <code>-1</c
 <h3>draftsRetainSpeciesAndAge</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">draftsRetainSpeciesAndAge</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Drafts retain independent edits for each species and life stage. In game: choose an adult cow,
-edit and save an eye, then do the same to a baby cow and a sheep. Choose each again; each keeps
-its own placement, and export-all writes the cow's adult and baby arrangements separately.</div>
+<div class="block">Drafts retain independent edits for each species and life stage. In game: choose an adult
+cow, edit and save an eye, then do the same to a baby cow and a sheep. Choose each again;
+each keeps its own placement, and export-all writes the cow's adult and baby arrangements
+separately.</div>
 </div>
 </section>
 </li>
@@ -217,8 +220,8 @@ its own placement, and export-all writes the cow's adult and baby arrangements s
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">exportOverlayCombinesDraftAges</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 <div class="block">Export-all can replace both ages and preserve an empty disabled bucket; a newly configured
 species needs no prior definition. In game: author both ages, export-all, and inspect both
-entries; repeat for a previously unconfigured species. An existing entry with <code>"age": "any"</code> and
-<code>"enabled": false</code> remains in the exported file.</div>
+entries; repeat for a previously unconfigured species. An existing entry with <code>"age":
+"any"</code> and <code>"enabled": false</code> remains in the exported file.</div>
 </div>
 </section>
 </li>
@@ -227,9 +230,10 @@ entries; repeat for a previously unconfigured species. An existing entry with <c
 <h3>exportOverlayPreservesOtherAges</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">exportOverlayPreservesOtherAges</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Both export paths preserve untouched life stages. In game: use definitions with distinct adult,
-baby, and age-independent entries, edit only the adult, then use export and export-all. Both
-written files retain the baby's placement and the fallback, including a disabled fallback.</div>
+<div class="block">Both export paths preserve untouched life stages. In game: use definitions with distinct
+adult, baby, and age-independent entries, edit only the adult, then use export and
+export-all. Both written files retain the baby's placement and the fallback, including a
+disabled fallback.</div>
 </div>
 </section>
 </li>
@@ -238,9 +242,9 @@ written files retain the baby's placement and the fallback, including a disabled
 <h3>exportPacketRefusesOversizedConfig</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">exportPacketRefusesOversizedConfig</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">The client's pre-send size check. In game: author a mob with a very large number of eyes in the
-picker and run <code>/sg export</code>; the client answers "too large to send" instead of the server
-disconnecting you, while an ordinary config exports normally.</div>
+<div class="block">The client's pre-send size check. In game: author a mob with a very large number of eyes in
+the picker and run <code>/sg export</code>; the client answers "too large to send" instead of the
+server disconnecting you, while an ordinary config exports normally.</div>
 </div>
 </section>
 </li>
@@ -249,9 +253,9 @@ disconnecting you, while an ordinary config exports normally.</div>
 <h3>exportRejectsConfigWithNoUsableEyes</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">exportRejectsConfigWithNoUsableEyes</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">A well-formed config that simply carries no eyes is refused by the usable-eyes check. In game:
-choose a mob in the picker, delete every eye with <code>/sg delete</code>, and run <code>/sg export</code>; the
-export is refused because there are no eyes to draw.</div>
+<div class="block">A well-formed config that simply carries no eyes is refused by the usable-eyes check. In
+game: choose a mob in the picker, delete every eye with <code>/sg delete</code>, and run <code>
+/sg export</code>; the export is refused because there are no eyes to draw.</div>
 </div>
 </section>
 </li>
@@ -260,8 +264,8 @@ export is refused because there are no eyes to draw.</div>
 <h3>exportRejectsEmptyPayloadAsMalformed</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">exportRejectsEmptyPayloadAsMalformed</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">An empty compound is missing required fields, so it never reaches the usable-eyes check. No in-game
-form with an unmodified client; guards the server against a forged export packet.</div>
+<div class="block">An empty compound is missing required fields, so it never reaches the usable-eyes check. No
+in-game form with an unmodified client; guards the server against a forged export packet.</div>
 </div>
 </section>
 </li>
@@ -270,8 +274,8 @@ form with an unmodified client; guards the server against a forged export packet
 <h3>exportRejectsEnderDragon</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">exportRejectsEnderDragon</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Export refuses the ender dragon. No in-game form with an unmodified client, which cannot choose the
-dragon in the picker; guards the server against a forged export packet.</div>
+<div class="block">Export refuses the ender dragon. No in-game form with an unmodified client, which cannot
+choose the dragon in the picker; guards the server against a forged export packet.</div>
 </div>
 </section>
 </li>
@@ -282,8 +286,8 @@ dragon in the picker; guards the server against a forged export packet.</div>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">exportRejectsGarbageTypedField</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 <div class="block"><code>RuntimeConfig.CODEC</code>'s fields are required, so a wrong-typed field is a decode failure
 rather than something DFU swallows into a default, and the service refuses the payload as
-malformed. No in-game form with an unmodified client; guards the server against a forged export
-packet.</div>
+malformed. No in-game form with an unmodified client; guards the server against a forged
+export packet.</div>
 </div>
 </section>
 </li>
@@ -292,8 +296,8 @@ packet.</div>
 <h3>exportRejectsUnknownEntityType</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">exportRejectsUnknownEntityType</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Export refuses an entity type the server does not know. No in-game form with an unmodified client, which
-exports only mobs that exist; guards the server against a forged export packet.</div>
+<div class="block">Export refuses an entity type the server does not know. No in-game form with an unmodified
+client, which exports only mobs that exist; guards the server against a forged export packet.</div>
 </div>
 </section>
 </li>
@@ -302,8 +306,9 @@ exports only mobs that exist; guards the server against a forged export packet.<
 <h3>exportRejectsUnsafeNumericConfig</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">exportRejectsUnsafeNumericConfig</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Export refuses geometry outside the validator's limits, such as a non-finite position. No in-game form,
-since picker commands accept only finite numbers; guards the server against a forged export packet.</div>
+<div class="block">Export refuses geometry outside the validator's limits, such as a non-finite position. No
+in-game form, since picker commands accept only finite numbers; guards the server against a
+forged export packet.</div>
 </div>
 </section>
 </li>
@@ -312,9 +317,10 @@ since picker commands accept only finite numbers; guards the server against a fo
 <h3>exportRejectsWhatTheSyncCouldNotCarry</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">exportRejectsWhatTheSyncCouldNotCarry</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">An export that would push the whole definition set over the sync limits is refused before it is written.
-In game: this needs a datapack whose definitions already total 4,096 eyes; then one more exported eye reports
-the unsafe payload in chat, and no file appears in the world's <code>somegoogly-picker</code> pack.</div>
+<div class="block">An export that would push the whole definition set over the sync limits is refused before it
+is written. In game: this needs a datapack whose definitions already total 4,096 eyes; then
+one more exported eye reports the unsafe payload in chat, and no file appears in the world's
+<code>somegoogly-picker</code> pack.</div>
 </div>
 </section>
 </li>

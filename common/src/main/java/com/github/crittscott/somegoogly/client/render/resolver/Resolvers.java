@@ -1,9 +1,11 @@
 package com.github.crittscott.somegoogly.client.render.resolver;
 
 import com.github.crittscott.somegoogly.client.compat.ThirdPartyModelWraps;
+
 import net.minecraft.client.model.EntityModel;
 
 import org.jspecify.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -11,39 +13,44 @@ import java.util.WeakHashMap;
 
 /**
  * Picks the first {@link EyeAttachmentResolver} that handles a given model. Order matters: the
- * third-party box-toolkit resolvers come first (their models keep geometry outside the vanilla part tree),
- * and {@link RootModelResolver} is the catch-all last.
+ * third-party box-toolkit resolvers come first (their models keep geometry outside the vanilla part
+ * tree), and {@link RootModelResolver} is the catch-all last.
  */
 public final class Resolvers {
 
     /**
-     * Attach points resolved once per (model instance, token) and replayed every frame, shared by every
-     * resolver. A datapack reload must <b>not</b> clear this (new configs change which token is asked for,
-     * not what a token names inside a model); {@link #clearCaches} clears it when the models are replaced.
+     * Attach points resolved once per (model instance, token) and replayed every frame, shared by
+     * every resolver. A datapack reload must <b>not</b> clear this (new configs change which token
+     * is asked for, not what a token names inside a model); {@link #clearCaches} clears it when the
+     * models are replaced.
      */
     static final ModelMemo<EntityModel<?>, Attachment> ATTACHMENTS = new ModelMemo<>();
 
-    // Which resolver handles a given model instance, and its whole-model wrap, never change for that instance's
-    // life. The resolvers are stateless singletons and the wraps are plain transforms, neither holding a reference
-    // back to any model, so weak keys alone are enough here (unlike ModelMemo's cached values, nothing in these
-    // values pins a stale model alive).
+    // Which resolver handles a given model instance, and its whole-model wrap, never change for
+    // that instance's life. The resolvers are stateless singletons and the wraps are plain
+    // transforms, neither holding a reference back to any model, so weak keys alone are enough here
+    // (unlike ModelMemo's cached values, nothing in these values pins a stale model alive).
     private static final Map<EntityModel<?>, Binding> BY_MODEL = new WeakHashMap<>();
 
     private static final EyeAttachmentResolver ROOT = new RootModelResolver();
-    private static final List<EyeAttachmentResolver> SPECIALIZED = List.of(
-            AdvancedModelBoxResolver.citadel(),
-            AdvancedModelBoxResolver.uranus(),
-            new LLibraryResolver()
-    );
+    private static final List<EyeAttachmentResolver> SPECIALIZED =
+            List.of(
+                    AdvancedModelBoxResolver.citadel(),
+                    AdvancedModelBoxResolver.uranus(),
+                    new LLibraryResolver());
 
-    private Resolvers() {
-    }
+    private Resolvers() {}
 
-    /** A model instance's resolver and the whole-model transform it applies outside its part tree. */
-    private record Binding(EyeAttachmentResolver resolver, ThirdPartyModelWraps.@Nullable Entry wholeModel) {
-    }
+    /**
+     * A model instance's resolver and the whole-model transform it applies outside its part tree.
+     */
+    private record Binding(
+            EyeAttachmentResolver resolver, ThirdPartyModelWraps.@Nullable Entry wholeModel) {}
 
-    /** The log names of the reflected model families whose library this client found and could bind to. */
+    /**
+     * The log names of the reflected model families whose library this client found and could bind
+     * to.
+     */
     public static List<String> availableFamilies() {
         List<String> families = new ArrayList<>();
         for (EyeAttachmentResolver r : SPECIALIZED) {
@@ -66,10 +73,10 @@ public final class Resolvers {
     }
 
     /**
-     * Drop every model-keyed cache. Call when the models themselves are replaced — a client resource
-     * reload rebuilds each renderer and its model, so every cached part, box, and chain then points into
-     * a dead model. Weak keys alone are not enough: a Citadel/LLibrary box holds its model, so those
-     * entries keep their own key alive (see {@link ModelMemo}).
+     * Drop every model-keyed cache. Call when the models themselves are replaced — a client
+     * resource reload rebuilds each renderer and its model, so every cached part, box, and chain
+     * then points into a dead model. Weak keys alone are not enough: a Citadel/LLibrary box holds
+     * its model, so those entries keep their own key alive (see {@link ModelMemo}).
      */
     public static void clearCaches() {
         ATTACHMENTS.clear();
@@ -80,12 +87,16 @@ public final class Resolvers {
         }
     }
 
-    /** @return the specialized resolver for this model, or the root-model resolver. */
+    /**
+     * @return the specialized resolver for this model, or the root-model resolver.
+     */
     public static EyeAttachmentResolver forModel(EntityModel<?> model) {
         return BY_MODEL.computeIfAbsent(model, Resolvers::bind).resolver();
     }
 
-    /** @return the whole-model transform this model applies outside its part tree, or {@code null}. */
+    /**
+     * @return the whole-model transform this model applies outside its part tree, or {@code null}.
+     */
     public static ThirdPartyModelWraps.@Nullable Entry wholeModelWrap(EntityModel<?> model) {
         return BY_MODEL.computeIfAbsent(model, Resolvers::bind).wholeModel();
     }

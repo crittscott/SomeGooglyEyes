@@ -6,9 +6,7 @@ import net.neoforged.neoforge.common.util.FakePlayerFactory;
 /** Loader entry points for boat state, application, and ambient animation checks. */
 public final class BoatEyeGameTests {
 
-
-    private BoatEyeGameTests() {
-    }
+    private BoatEyeGameTests() {}
 
     public static void boatsBeginEyelessAndSelectGeometry(GameTestHelper helper) {
         BoatEyeGameTestsLogic.boatsBeginEyelessAndSelectGeometry(helper);
@@ -27,7 +25,8 @@ public final class BoatEyeGameTests {
     }
 
     public static void boatsHarvestOneEye(GameTestHelper helper) {
-        BoatEyeGameTestsLogic.boatsHarvestOneEye(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+        BoatEyeGameTestsLogic.boatsHarvestOneEye(
+                helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
     }
 
     public static void boatsHaveIndependentAmbientAndPhysics(GameTestHelper helper) {
@@ -35,15 +34,18 @@ public final class BoatEyeGameTests {
     }
 
     public static void boatsHonorCreativeConsumption(GameTestHelper helper) {
-        BoatEyeGameTestsLogic.boatsHonorCreativeConsumption(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+        BoatEyeGameTestsLogic.boatsHonorCreativeConsumption(
+                helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
     }
 
     public static void boatsHonorInteractionGates(GameTestHelper helper) {
-        BoatEyeGameTestsLogic.boatsHonorInteractionGates(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+        BoatEyeGameTestsLogic.boatsHonorInteractionGates(
+                helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
     }
 
     public static void boatsReceiveAppearanceAndRefuseRestyling(GameTestHelper helper) {
-        BoatEyeGameTestsLogic.boatsReceiveAppearanceAndRefuseRestyling(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+        BoatEyeGameTestsLogic.boatsReceiveAppearanceAndRefuseRestyling(
+                helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
     }
 
     public static void boatsRefuseSpectatorMutation(GameTestHelper helper) {
@@ -61,6 +63,4 @@ public final class BoatEyeGameTests {
     public static void boatsSaveAndSynchronizeSnapshots(GameTestHelper helper) {
         BoatEyeGameTestsLogic.boatsSaveAndSynchronizeSnapshots(helper);
     }
-
-
 }

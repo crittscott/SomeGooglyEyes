@@ -24,8 +24,7 @@ import java.util.Map;
 /** Fabric configuration lifecycle and schema conversions over NightConfig's TOML parser. */
 public final class TomlConfig {
 
-    private TomlConfig() {
-    }
+    private TomlConfig() {}
 
     private static boolean addMissing(CommentedConfig values, CommentedConfig defaults) {
         boolean changed = false;
@@ -37,7 +36,8 @@ public final class TomlConfig {
                 values.set(key, fallback);
                 values.setComment(key, entry.getComment());
                 changed = true;
-            } else if (existing instanceof CommentedConfig table && fallback instanceof CommentedConfig defaultTable) {
+            } else if (existing instanceof CommentedConfig table
+                    && fallback instanceof CommentedConfig defaultTable) {
                 changed |= addMissing(table, defaultTable);
             }
         }
@@ -70,7 +70,8 @@ public final class TomlConfig {
     public static void assign(ConfigValue<Integer> target, String key, int raw) {
         target.set(raw);
         if (target.get() != raw) {
-            SomeGooglyCommon.LOGGER.warn("Config key '{}' value {} is out of range; using {}", key, raw, target.get());
+            SomeGooglyCommon.LOGGER.warn(
+                    "Config key '{}' value {} is out of range; using {}", key, raw, target.get());
         }
     }
 
@@ -82,12 +83,15 @@ public final class TomlConfig {
             if (target.valid().test(entry)) {
                 anyValid = true;
             } else {
-                SomeGooglyCommon.LOGGER.warn("Config key '{}' has an invalid entry '{}'; ignoring it", key, entry);
+                SomeGooglyCommon.LOGGER.warn(
+                        "Config key '{}' has an invalid entry '{}'; ignoring it", key, entry);
             }
         }
         if (!raw.isEmpty() && !anyValid) {
-            SomeGooglyCommon.LOGGER.warn("Config key '{}' has no valid entries; using the default {}",
-                    key, target.get());
+            SomeGooglyCommon.LOGGER.warn(
+                    "Config key '{}' has no valid entries; using the default {}",
+                    key,
+                    target.get());
         }
     }
 
@@ -105,17 +109,23 @@ public final class TomlConfig {
     }
 
     /**
-     * Add only absent schema values, retaining existing values, unknown keys, and parsed comments. The
-     * original text is retained in a sibling {@code .bak} file before completion reformats the document.
+     * Add only absent schema values, retaining existing values, unknown keys, and parsed comments.
+     * The original text is retained in a sibling {@code .bak} file before completion reformats the
+     * document.
      */
-    public static boolean completeIfMissing(Path path, CommentedConfig values, String defaults) throws IOException {
+    public static boolean completeIfMissing(Path path, CommentedConfig values, String defaults)
+            throws IOException {
         if (!addMissing(values, parse(defaults))) {
             return false;
         }
         String completed = new TomlWriter().writeToString(values);
-        Files.copy(path, path.resolveSibling(path.getFileName() + ".bak"), StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(
+                path,
+                path.resolveSibling(path.getFileName() + ".bak"),
+                StandardCopyOption.REPLACE_EXISTING);
         Files.writeString(path, completed, StandardCharsets.UTF_8);
-        SomeGooglyCommon.LOGGER.info("Added missing keys to config file {} (original retained in .bak)", path);
+        SomeGooglyCommon.LOGGER.info(
+                "Added missing keys to config file {} (original retained in .bak)", path);
         return true;
     }
 
@@ -128,7 +138,9 @@ public final class TomlConfig {
         if (value instanceof Integer integer) {
             return integer;
         }
-        if (value instanceof Long integer && integer >= Integer.MIN_VALUE && integer <= Integer.MAX_VALUE) {
+        if (value instanceof Long integer
+                && integer >= Integer.MIN_VALUE
+                && integer <= Integer.MAX_VALUE) {
             return integer.intValue();
         }
         warnMismatch(key, "integer", value, fallback);
@@ -145,7 +157,10 @@ public final class TomlConfig {
         return config;
     }
 
-    /** Parse a whole file before applying any runtime values; a parse failure leaves its text untouched. */
+    /**
+     * Parse a whole file before applying any runtime values; a parse failure leaves its text
+     * untouched.
+     */
     public static CommentedConfig readOrCreate(Path path, String defaults) throws IOException {
         Files.createDirectories(path.getParent());
         if (Files.notExists(path)) {
@@ -155,7 +170,9 @@ public final class TomlConfig {
         return parse(Files.readString(path, StandardCharsets.UTF_8));
     }
 
-    /** Values from exactly the schema's declared table; similarly named keys elsewhere do not apply. */
+    /**
+     * Values from exactly the schema's declared table; similarly named keys elsewhere do not apply.
+     */
     public static Map<String, Object> section(UnmodifiableConfig values, String section) {
         Object table = values.get(List.of(section));
         if (table == null) {
@@ -179,10 +196,11 @@ public final class TomlConfig {
     }
 
     /**
-     * The string array at {@code key}, or {@code fallback} when absent or, logged, not an array. Non-string
-     * entries are logged and dropped.
+     * The string array at {@code key}, or {@code fallback} when absent or, logged, not an array.
+     * Non-string entries are logged and dropped.
      */
-    public static List<String> strings(Map<String, Object> values, String key, List<String> fallback) {
+    public static List<String> strings(
+            Map<String, Object> values, String key, List<String> fallback) {
         Object value = values.get(key);
         if (value == null) {
             return fallback;
@@ -198,7 +216,9 @@ public final class TomlConfig {
             } else {
                 SomeGooglyCommon.LOGGER.warn(
                         "Config key '{}' has a non-string array entry {} ({}); ignoring it",
-                        key, entry, entry == null ? "null" : entry.getClass().getSimpleName());
+                        key,
+                        entry,
+                        entry == null ? "null" : entry.getClass().getSimpleName());
             }
         }
         return strings;
@@ -207,6 +227,10 @@ public final class TomlConfig {
     private static void warnMismatch(String key, String expected, Object value, Object fallback) {
         SomeGooglyCommon.LOGGER.warn(
                 "Config key '{}' expected a {} but found {} ({}); using default {}",
-                key, expected, value, value.getClass().getSimpleName(), fallback);
+                key,
+                expected,
+                value,
+                value.getClass().getSimpleName(),
+                fallback);
     }
 }

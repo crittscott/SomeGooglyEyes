@@ -8,8 +8,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
  */
 public final class FramedEyeGameTests {
 
-    private FramedEyeGameTests() {
-    }
+    private FramedEyeGameTests() {}
 
     public static void framedEyeFiltersItems(GameTestHelper helper) {
         FramedEyeGameTestsLogic.framedEyeFiltersItems(helper);

@@ -76,8 +76,9 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">EyeStateOverrideGameTestsLogic</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">The visual <code>/sg admin</code> commands, run through the server's command dispatcher by a player looking at an eyed
-cow. In game: as a creative operator, look at an eyed cow and run the commands each test names.</div>
+<div class="block">The visual <code>/sg admin</code> commands, run through the server's command dispatcher by a player
+looking at an eyed cow. In game: as a creative operator, look at an eyed cow and run the commands
+each test names.</div>
 </div>
 </section>
 <section class="summary">
@@ -97,22 +98,22 @@ cow. In game: as a creative operator, look at an eyed cow and run the commands e
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#adminAppearanceCommands(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">adminAppearanceCommands</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.server.level.ServerPlayer&nbsp;template)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Tint and glow commands set the looked-at mob's appearance; <code>tint clear</code> drops both tints but keeps the
-glow, and <code>glow config</code> then drops the last override.</div>
+<div class="block">Tint and glow commands set the looked-at mob's appearance; <code>tint clear</code> drops both
+tints but keeps the glow, and <code>glow config</code> then drops the last override.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#adminCommandsRefuseUnauthorizedOrInvalidUse(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">adminCommandsRefuseUnauthorizedOrInvalidUse</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.server.level.ServerPlayer&nbsp;template)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Admin commands refuse a survival operator, a creative non-operator, invalid arguments, and no looked-at target,
-changing nothing.</div>
+<div class="block">Admin commands refuse a survival operator, a creative non-operator, invalid arguments, and no
+looked-at target, changing nothing.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#adminEyesAndBehaviorCommands(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer)" class="member-name-link">adminEyesAndBehaviorCommands</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.server.level.ServerPlayer&nbsp;template)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block"><code>eyes false</code>/<code>eyes true</code> take and give the looked-at mob's eyes, and <code>behavior swirl</code> starts a
-swirl that a second behavior command can't interrupt.</div>
+<div class="block"><code>eyes false</code>/<code>eyes true</code> take and give the looked-at mob's eyes, and <code>
+behavior swirl</code> starts a swirl that a second behavior command can't interrupt.</div>
 </div>
 </div>
 </div>
@@ -137,11 +138,12 @@ swirl that a second behavior command can't interrupt.</div>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">adminAppearanceCommands</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.server.level.ServerPlayer&nbsp;template)</span></div>
-<div class="block">Tint and glow commands set the looked-at mob's appearance; <code>tint clear</code> drops both tints but keeps the
-glow, and <code>glow config</code> then drops the last override. In game: run <code>/sg admin tint iris 1 0 0</code>,
-<code>/sg admin tint cornea 0 0 1</code>, and <code>/sg admin glow on</code>; the eyes turn red and blue and glow. Run
-<code>/sg admin tint clear</code>; the colors return to the definition's but the glow stays. Run
-<code>/sg admin glow config</code>; the eyes look as the definition says.</div>
+<div class="block">Tint and glow commands set the looked-at mob's appearance; <code>tint clear</code> drops both
+tints but keeps the glow, and <code>glow config</code> then drops the last override. In game: run
+<code>/sg admin tint iris 1 0 0</code>, <code>/sg admin tint cornea 0 0 1</code>, and <code>/sg admin
+glow on</code>; the eyes turn red and blue and glow. Run <code>/sg admin tint clear</code>; the colors
+return to the definition's but the glow stays. Run <code>/sg admin glow config</code>; the eyes
+look as the definition says.</div>
 </div>
 </section>
 </li>
@@ -151,10 +153,11 @@ glow, and <code>glow config</code> then drops the last override. In game: run <c
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">adminCommandsRefuseUnauthorizedOrInvalidUse</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.server.level.ServerPlayer&nbsp;template)</span></div>
-<div class="block">Admin commands refuse a survival operator, a creative non-operator, invalid arguments, and no looked-at target,
-changing nothing. In game: try <code>/sg admin eyes false</code> while looking at an eyed cow in survival, then as a
-creative player without operator status; then, as a creative operator, try <code>/sg admin tint iris nope 0 0</code>
-and <code>/sg admin eyes false</code> looking at nothing. Each fails and the cow keeps its eyes.</div>
+<div class="block">Admin commands refuse a survival operator, a creative non-operator, invalid arguments, and no
+looked-at target, changing nothing. In game: try <code>/sg admin eyes false</code> while looking
+at an eyed cow in survival, then as a creative player without operator status; then, as a
+creative operator, try <code>/sg admin tint iris nope 0 0</code> and <code>/sg admin eyes false</code>
+looking at nothing. Each fails and the cow keeps its eyes.</div>
 </div>
 </section>
 </li>
@@ -164,10 +167,11 @@ and <code>/sg admin eyes false</code> looking at nothing. Each fails and the cow
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">adminEyesAndBehaviorCommands</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.server.level.ServerPlayer&nbsp;template)</span></div>
-<div class="block"><code>eyes false</code>/<code>eyes true</code> take and give the looked-at mob's eyes, and <code>behavior swirl</code> starts a
-swirl that a second behavior command can't interrupt. In game: run <code>/sg admin eyes false</code> and
-<code>/sg admin eyes true</code> at an eyed cow, then <code>/sg admin behavior swirl</code> and, while it swirls,
-<code>/sg admin behavior blink</code>; the blink is reported dropped.</div>
+<div class="block"><code>eyes false</code>/<code>eyes true</code> take and give the looked-at mob's eyes, and <code>
+behavior swirl</code> starts a swirl that a second behavior command can't interrupt. In game: run
+<code>/sg admin eyes false</code> and <code>/sg admin eyes true</code> at an eyed cow, then <code>/sg
+admin behavior swirl</code> and, while it swirls, <code>/sg admin behavior blink</code>; the blink is
+reported dropped.</div>
 </div>
 </section>
 </li>

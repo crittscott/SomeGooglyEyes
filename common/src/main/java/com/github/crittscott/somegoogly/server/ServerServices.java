@@ -13,9 +13,7 @@ import com.github.crittscott.somegoogly.network.EyeSettingsPacket;
 import com.github.crittscott.somegoogly.picker.PickerFreezeService;
 import com.github.crittscott.somegoogly.picker.PickerGate;
 import com.github.crittscott.somegoogly.platform.Networking;
-import java.util.List;
-import java.util.Map;
-import org.jspecify.annotations.Nullable;
+
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
@@ -26,35 +24,40 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 
+import org.jspecify.annotations.Nullable;
+
+import java.util.List;
+import java.util.Map;
+
 /**
- * Loader-neutral server lifecycle hooks that coordinate several services. A hook that concerns only one
- * service is called on that service directly (behavior ticks, tracking, and reactions go to
+ * Loader-neutral server lifecycle hooks that coordinate several services. A hook that concerns only
+ * one service is called on that service directly (behavior ticks, tracking, and reactions go to
  * {@link ServerBehaviorScheduler}).
  */
 public final class ServerServices {
 
-    @Nullable
-    private static String loggedConfig;
+    @Nullable private static String loggedConfig;
 
     /**
-     * The definitions connected clients last received, or {@code null} before the first send since server
-     * start. Read and written on the server thread only.
+     * The definitions connected clients last received, or {@code null} before the first send since
+     * server start. Read and written on the server thread only.
      */
-    @Nullable
-    private static Map<Identifier, RuntimeConfigSet> sentEyeConfigs;
-    /** The settings connected clients last received, on the same terms as {@link #sentEyeConfigs}. */
-    @Nullable
-    private static EyeSettingsPacket sentSettings;
+    @Nullable private static Map<Identifier, RuntimeConfigSet> sentEyeConfigs;
 
-    private ServerServices() {
-    }
+    /**
+     * The settings connected clients last received, on the same terms as {@link #sentEyeConfigs}.
+     */
+    @Nullable private static EyeSettingsPacket sentSettings;
+
+    private ServerServices() {}
 
     private static void applyGooglyDecision(LivingEntity living) {
         boolean hasGooglyEyes = false;
         Identifier entityType = BuiltInRegistries.ENTITY_TYPE.getKey(living.getType());
         RandomSource random = living.getRandom();
 
-        if (!(living instanceof Player) && ServerConfig.GOOGLY_EYES_ENABLED.get()
+        if (!(living instanceof Player)
+                && ServerConfig.GOOGLY_EYES_ENABLED.get()
                 && ServerEyeConfigs.canEverWearEyes(living)) {
             int percent = ServerConfig.percentFor(entityType);
             hasGooglyEyes = ServerConfig.roll(random, percent);
@@ -64,9 +67,10 @@ public final class ServerServices {
     }
 
     /**
-     * Send every player the eye definitions and the settings, each only when it differs from what clients last
-     * received. Runs once after each datapack reload and each server-config apply, on the server thread. New
-     * definitions restart client eye motion, because trackers are built from them; new settings don't.
+     * Send every player the eye definitions and the settings, each only when it differs from what
+     * clients last received. Runs once after each datapack reload and each server-config apply, on
+     * the server thread. New definitions restart client eye motion, because trackers are built from
+     * them; new settings don't.
      */
     public static void broadcastEyeSyncIfChanged(MinecraftServer server) {
         if (sentEyeConfigs != ServerEyeConfigs.all()) {
@@ -81,8 +85,8 @@ public final class ServerServices {
     }
 
     /**
-     * Minecraft is replacing {@code source} with {@code target} (a mob conversion): carry the eye state and any
-     * picker freeze across. Every loader conversion hook calls this.
+     * Minecraft is replacing {@code source} with {@code target} (a mob conversion): carry the eye
+     * state and any picker freeze across. Every loader conversion hook calls this.
      */
     public static void onConverted(LivingEntity source, LivingEntity target) {
         EyeState.copy(source, target);
@@ -90,10 +94,11 @@ public final class ServerServices {
     }
 
     /**
-     * Initialize persistent eye state once for a server-side living entity, then reconcile any picker
-     * freeze marker after that state is available. A player joining a level (login, respawn, dimension
-     * change) gets their own snapshot and becomes a watcher of their own eyes: their client has just built a
-     * fresh local player, and a player is never their own tracker, so the start-tracking path covers neither.
+     * Initialize persistent eye state once for a server-side living entity, then reconcile any
+     * picker freeze marker after that state is available. A player joining a level (login, respawn,
+     * dimension change) gets their own snapshot and becomes a watcher of their own eyes: their
+     * client has just built a fresh local player, and a player is never their own tracker, so the
+     * start-tracking path covers neither.
      */
     public static void onLivingEntityLoaded(LivingEntity living) {
         if (!EyeState.isInitialized(living)) {
@@ -109,11 +114,12 @@ public final class ServerServices {
     }
 
     /**
-     * Minecraft replaced {@code original} with {@code replacement} on respawn ({@code alive} false) or on
-     * leaving the End ({@code alive} true). Eyes applied to a player carry over only when alive; either way the
-     * original stops watching its own eyes.
+     * Minecraft replaced {@code original} with {@code replacement} on respawn ({@code alive} false)
+     * or on leaving the End ({@code alive} true). Eyes applied to a player carry over only when
+     * alive; either way the original stops watching its own eyes.
      */
-    public static void onPlayerCloned(ServerPlayer original, ServerPlayer replacement, boolean alive) {
+    public static void onPlayerCloned(
+            ServerPlayer original, ServerPlayer replacement, boolean alive) {
         if (alive) {
             EyeState.copy(original, replacement);
         }
@@ -127,16 +133,26 @@ public final class ServerServices {
         ServerBehaviorScheduler.onPlayerLeft(player);
     }
 
-    /** Record the settings that decide who gets eyes and which behaviors are off, at startup and on change. */
+    /**
+     * Record the settings that decide who gets eyes and which behaviors are off, at startup and on
+     * change.
+     */
     public static void onServerConfigApplied() {
-        List<String> behaviorsOff = ServerConfig.settings().stream()
-                .filter(setting -> setting instanceof ConfigValue.Flag flag
-                        && ServerConfig.SECTION_BEHAVIORS.equals(flag.section()) && !flag.get())
-                .map(ConfigValue::key)
-                .toList();
-        String applied = "googlyEyesEnabled=%s, globalPercent=%d, entityOverrides=%d, behaviorSwitchesOff=%s".formatted(
-                ServerConfig.GOOGLY_EYES_ENABLED.get(), ServerConfig.GLOBAL_PERCENT.get(),
-                ServerConfig.ENTITY_OVERRIDES.parsed().size(), behaviorsOff);
+        List<String> behaviorsOff =
+                ServerConfig.settings().stream()
+                        .filter(setting ->
+                                setting instanceof ConfigValue.Flag flag
+                                        && ServerConfig.SECTION_BEHAVIORS.equals(flag.section())
+                                        && !flag.get())
+                        .map(ConfigValue::key)
+                        .toList();
+        String applied =
+                "googlyEyesEnabled=%s, globalPercent=%d, entityOverrides=%d, behaviorSwitchesOff=%s"
+                        .formatted(
+                                ServerConfig.GOOGLY_EYES_ENABLED.get(),
+                                ServerConfig.GLOBAL_PERCENT.get(),
+                                ServerConfig.ENTITY_OVERRIDES.parsed().size(),
+                                behaviorsOff);
         if (!applied.equals(loggedConfig)) {
             SomeGooglyCommon.LOGGER.info("Server configuration applied ({})", applied);
             loggedConfig = applied;
@@ -155,8 +171,8 @@ public final class ServerServices {
     }
 
     /**
-     * Send the entity's full eye snapshot before registering the new watcher with behavior scheduling,
-     * whose registration may immediately send a mid-behavior catch-up packet.
+     * Send the entity's full eye snapshot before registering the new watcher with behavior
+     * scheduling, whose registration may immediately send a mid-behavior catch-up packet.
      */
     public static void onStartTracking(Entity entity, ServerPlayer player) {
         if (entity instanceof LivingEntity living) {
@@ -175,7 +191,8 @@ public final class ServerServices {
     }
 
     private static EyeSettingsPacket settingsPacket() {
-        return new EyeSettingsPacket(ServerConfig.GOOGLY_EYES_ENABLED.get(), BehaviorSettings.fromConfig());
+        return new EyeSettingsPacket(
+                ServerConfig.GOOGLY_EYES_ENABLED.get(), BehaviorSettings.fromConfig());
     }
 
     /** Send a joining player the current resolved eye definitions and settings. */

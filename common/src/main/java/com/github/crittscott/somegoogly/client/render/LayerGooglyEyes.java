@@ -8,6 +8,7 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.mojang.blaze3d.vertex.PoseStack;
+
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
@@ -17,17 +18,18 @@ import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.renderer.entity.state.SheepRenderState;
 
 /**
- * Eye layer for vanilla-style {@link LivingEntityRenderer}s. It draws from the {@link EyeRenderData}
- * taken at render-state extraction, which shares its visibility gate with the GeckoLib layer, resolves
- * configured attachment tokens through {@link Resolvers}, and delegates each eye's drawing to
- * {@link GooglyEyeRenderer}.
+ * Eye layer for vanilla-style {@link LivingEntityRenderer}s. It draws from the {@link
+ * EyeRenderData} taken at render-state extraction, which shares its visibility gate with the
+ * GeckoLib layer, resolves configured attachment tokens through {@link Resolvers}, and delegates
+ * each eye's drawing to {@link GooglyEyeRenderer}.
  *
- * <p>For the picker's target the layer draws the authoring preview instead: the edited variant's saved
- * eyes, the live draft eye, and the selection gizmo, with centered irises (no physics), since placement
- * is what matters there.
+ * <p>For the picker's target the layer draws the authoring preview instead: the edited variant's
+ * saved eyes, the live draft eye, and the selection gizmo, with centered irises (no physics), since
+ * placement is what matters there.
  *
- * <p>Vanilla poses its shared entity model only when the submitted model is drawn, after every layer has
- * submitted, so the layer poses the parent model for this render state itself before walking its parts.
+ * <p>Vanilla poses its shared entity model only when the submitted model is drawn, after every
+ * layer has submitted, so the layer poses the parent model for this render state itself before
+ * walking its parts.
  *
  * <p>The GeckoLib counterpart is {@code GooglyGeoLayer}, which makes the same split from GeckoLib's
  * per-bone callback.
@@ -42,8 +44,13 @@ public class LayerGooglyEyes<S extends LivingEntityRenderState, M extends Entity
     }
 
     @Override
-    public void submit(PoseStack poseStack, SubmitNodeCollector collector, int packedLight, S state,
-                       float yRot, float xRot) {
+    public void submit(
+            PoseStack poseStack,
+            SubmitNodeCollector collector,
+            int packedLight,
+            S state,
+            float yRot,
+            float xRot) {
         EyeRenderData data = EyeRenderData.of(state);
         if (!data.pickerTarget() && data.helper() == null) {
             return;
@@ -62,13 +69,20 @@ public class LayerGooglyEyes<S extends LivingEntityRenderState, M extends Entity
         }
     }
 
-    private void renderEyes(PoseStack poseStack, SubmitNodeCollector collector, int packedLight, int overlay,
-                            S state, M model, EyeAttachmentResolver resolver, EyeRenderData data) {
+    private void renderEyes(
+            PoseStack poseStack,
+            SubmitNodeCollector collector,
+            int packedLight,
+            int overlay,
+            S state,
+            M model,
+            EyeAttachmentResolver resolver,
+            EyeRenderData data) {
         HeadInfo helper = data.helper();
         GooglyTracker tracker = data.tracker();
         // Per-mob appearance overrides (dye / redstone / harvested-eye item), layered on top of the
-        // shared config below. Same AppearanceOverride an eye item carries; mirrored onto the tracker by
-        // ClientNetworkHandler so this doesn't re-parse it from NBT every frame.
+        // shared config below. Same AppearanceOverride an eye item carries; mirrored onto the
+        // tracker by ClientNetworkHandler so this doesn't re-parse it from NBT every frame.
         AppearanceOverride overrides = tracker.overrides;
         float partialTicks = data.partialTick();
 
@@ -76,45 +90,66 @@ public class LayerGooglyEyes<S extends LivingEntityRenderState, M extends Entity
         for (int headIndex = 0; headIndex < headCount; headIndex++) {
             poseStack.pushPose();
             // Move into this head's animated space, by the configured string part name.
-            if (resolver.toAttachmentSpace(poseStack, model, helper.getAttachToken(headIndex), state.isBaby)) {
+            if (resolver.toAttachmentSpace(
+                    poseStack, model, helper.getAttachToken(headIndex), state.isBaby)) {
                 insetShearedSheepBody(poseStack, state, helper.getAttachToken(headIndex));
-                GooglyEyeRenderer.renderHead(poseStack, collector, packedLight, overlay,
-                        tracker.eyes[headIndex], helper, overrides, headIndex, partialTicks);
+                GooglyEyeRenderer.renderHead(
+                        poseStack,
+                        collector,
+                        packedLight,
+                        overlay,
+                        tracker.eyes[headIndex],
+                        helper,
+                        overrides,
+                        headIndex,
+                        partialTicks);
             }
             poseStack.popPose();
         }
     }
 
     /**
-     * Sheep body eyes are authored on the wool's surface, which the separate wool layer draws around the
-     * body. A sheared adult shows no wool, so its body eyes move in along the body's length by the wool's
-     * thickness to sit on the bare body. Lambs are never sheared.
+     * Sheep body eyes are authored on the wool's surface, which the separate wool layer draws
+     * around the body. A sheared adult shows no wool, so its body eyes move in along the body's
+     * length by the wool's thickness to sit on the bare body. Lambs are never sheared.
      */
-    private static void insetShearedSheepBody(PoseStack poseStack, LivingEntityRenderState state, String part) {
-        if (state instanceof SheepRenderState sheep && sheep.isSheared && !sheep.isBaby
+    private static void insetShearedSheepBody(
+            PoseStack poseStack, LivingEntityRenderState state, String part) {
+        if (state instanceof SheepRenderState sheep
+                && sheep.isSheared
+                && !sheep.isBaby
                 && EyeConfigModel.PART_BODY.equals(part)) {
             poseStack.translate(0.0F, -SHEEP_WOOL_DEPTH, 0.0F);
         }
     }
 
-    private void renderPreview(PoseStack poseStack, SubmitNodeCollector collector, int packedLight, int overlay,
-                               S state, M model, EyeAttachmentResolver resolver) {
+    private void renderPreview(
+            PoseStack poseStack,
+            SubmitNodeCollector collector,
+            int packedLight,
+            int overlay,
+            S state,
+            M model,
+            EyeAttachmentResolver resolver) {
         for (PickerState.ListedEye listed : PickerState.previewEyes()) {
             poseStack.pushPose();
             if (resolver.toAttachmentSpace(poseStack, model, listed.part, state.isBaby)) {
                 insetShearedSheepBody(poseStack, state, listed.part);
-                GooglyEyeRenderer.renderPreviewEye(poseStack, collector, packedLight, overlay, listed.eye);
+                GooglyEyeRenderer.renderPreviewEye(
+                        poseStack, collector, packedLight, overlay, listed.eye);
             }
             poseStack.popPose();
         }
 
-        // With no active part (the empty state) the mob shows just its saved eyes, or nothing at all.
+        // With no active part (the empty state) the mob shows just its saved eyes, or nothing at
+        // all.
         String token = PickerState.currentPart();
         if (token != null) {
             poseStack.pushPose();
             if (resolver.toAttachmentSpace(poseStack, model, token, state.isBaby)) {
                 insetShearedSheepBody(poseStack, state, token);
-                GooglyEyeRenderer.renderPreviewPlacement(poseStack, collector, packedLight, overlay);
+                GooglyEyeRenderer.renderPreviewPlacement(
+                        poseStack, collector, packedLight, overlay);
             }
             poseStack.popPose();
         }
