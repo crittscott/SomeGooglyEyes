@@ -1,8 +1,9 @@
 package com.github.crittscott.somegoogly.client.network.fabric;
 
 import com.github.crittscott.somegoogly.network.NetworkProtocol;
-import com.github.crittscott.somegoogly.network.fabric.FabricNetworkTransport;
 import com.github.crittscott.somegoogly.network.PickerFreezePacket;
+import com.github.crittscott.somegoogly.network.fabric.FabricNetworkTransport;
+
 import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -12,17 +13,24 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 /** Physical-client Fabric payload receivers. */
 public final class FabricClientNetworkTransport {
 
-    private FabricClientNetworkTransport() {
-    }
+    private FabricClientNetworkTransport() {}
 
-    /** Register the client's version answer, its refusal of a server without the mod, and its payload receivers. */
+    /**
+     * Register the client's version answer, its refusal of a server without the mod, and its
+     * payload receivers.
+     */
     public static void register() {
-        ClientConfigurationNetworking.registerGlobalReceiver(FabricNetworkTransport.Handshake.TYPE,
-                (payload, context) -> context.responseSender().sendPacket(
-                        new FabricNetworkTransport.HandshakeReply(NetworkProtocol.NETWORK_VERSION)));
+        ClientConfigurationNetworking.registerGlobalReceiver(
+                FabricNetworkTransport.Handshake.TYPE,
+                (payload, context) ->
+                        context.responseSender()
+                                .sendPacket(
+                                        new FabricNetworkTransport.HandshakeReply(
+                                                NetworkProtocol.NETWORK_VERSION)));
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
             if (!ClientPlayNetworking.canSend(PickerFreezePacket.TYPE)) {
-                handler.getConnection().disconnect(Component.translatable("somegoogly.network.required_server"));
+                handler.getConnection()
+                        .disconnect(Component.translatable("somegoogly.network.required_server"));
             }
         });
         for (NetworkProtocol.Clientbound<?> payload : NetworkProtocol.CLIENTBOUND) {
@@ -30,7 +38,9 @@ public final class FabricClientNetworkTransport {
         }
     }
 
-    private static <T extends CustomPacketPayload> void registerReceiver(NetworkProtocol.Clientbound<T> payload) {
-        ClientPlayNetworking.registerGlobalReceiver(payload.type(), (packet, context) -> payload.handler().accept(packet));
+    private static <T extends CustomPacketPayload> void registerReceiver(
+            NetworkProtocol.Clientbound<T> payload) {
+        ClientPlayNetworking.registerGlobalReceiver(
+                payload.type(), (packet, context) -> payload.handler().accept(packet));
     }
 }

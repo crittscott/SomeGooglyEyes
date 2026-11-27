@@ -3,13 +3,12 @@ package com.github.crittscott.somegoogly.gametest;
 import net.minecraft.gametest.framework.GameTestHelper;
 
 /**
- * NeoForge GameTest entry points for {@link PickerFreezeGameTestsLogic}; see that class for the actual
- * assertions.
+ * NeoForge GameTest entry points for {@link PickerFreezeGameTestsLogic}; see that class for the
+ * actual assertions.
  */
 public final class PickerFreezeGameTests {
 
-    private PickerFreezeGameTests() {
-    }
+    private PickerFreezeGameTests() {}
 
     public static void freezeCapturesAndUnfreezeRestores(GameTestHelper helper) {
         PickerFreezeGameTestsLogic.freezeCapturesAndUnfreezeRestores(helper);
@@ -35,4 +34,3 @@ public final class PickerFreezeGameTests {
         PickerFreezeGameTestsLogic.joinDuringLiveEditReassertsTheFreeze(helper);
     }
 }
-

@@ -4,13 +4,12 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.neoforged.neoforge.common.util.FakePlayerFactory;
 
 /**
- * NeoForge GameTest entry points for {@link EligibilityGameTestsLogic}; see that class for the actual
- * assertions.
+ * NeoForge GameTest entry points for {@link EligibilityGameTestsLogic}; see that class for the
+ * actual assertions.
  */
 public final class EligibilityGameTests {
 
-    private EligibilityGameTests() {
-    }
+    private EligibilityGameTests() {}
 
     public static void slimyEyeAppliesOnlyToEligibleTargets(GameTestHelper helper) {
         EligibilityGameTestsLogic.slimyEyeAppliesOnlyToEligibleTargets(

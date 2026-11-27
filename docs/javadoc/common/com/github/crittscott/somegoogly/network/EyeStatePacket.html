@@ -101,12 +101,11 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public record </span><span class="element-name type-name-label">EyeStatePacket</span>(int&nbsp;entityId, <a href="../eye/state/EyeState.Snapshot.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeState.Snapshot</a>&nbsp;snapshot)
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a>
 implements net.minecraft.network.protocol.common.custom.CustomPacketPayload</span></div>
-<div class="block">Server → client sync of a single entity's full eye state: the <code>hasGooglyEyes</code> flag, the chosen
-placement-variant roll, plus the optional per-mob appearance overrides (see <a href="../eye/state/EyeState.html" title="class in com.github.crittscott.somegoogly.eye.state"><code>EyeState</code></a>). Sent on
-start-tracking (so a newly watching player gets current state) and whenever the state is mutated
-mid-life (so changes from shears, a Slimy Eye, or <code>/sg admin</code> appear immediately on every
-tracking client). Both paths follow the entity's own spawn on the same connection, so the client always knows the entity id.
-The snapshot travels in <a href="../eye/state/EyeState.Snapshot.html#STREAM_CODEC"><code>EyeState.Snapshot.STREAM_CODEC</code></a>, the head-item component's wire form.</div>
+<div class="block">Server → client sync of a single entity's full eye state: the <code>hasGooglyEyes</code> flag, the
+chosen placement-variant roll, plus the optional per-mob appearance overrides (see <a href="../eye/state/EyeState.html" title="class in com.github.crittscott.somegoogly.eye.state"><code>EyeState</code></a>). Sent on start-tracking (so a newly watching player gets current state) and whenever
+the state is mutated mid-life (so changes from shears, a Slimy Eye, or <code>/sg admin</code> appear
+immediately on every tracking client). Both paths follow the entity's own spawn on the same
+connection, so the client always knows the entity id. The snapshot travels in <a href="../eye/state/EyeState.Snapshot.html#STREAM_CODEC"><code>EyeState.Snapshot.STREAM_CODEC</code></a>, the head-item component's wire form.</div>
 </div>
 </section>
 <section class="summary">

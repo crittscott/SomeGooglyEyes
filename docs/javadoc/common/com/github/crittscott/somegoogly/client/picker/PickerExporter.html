@@ -75,21 +75,20 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">PickerExporter</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Turns picker drafts into datapack JSON. Every config field is a required codec field, so
-<code>ConfigFile.CODEC</code>'s own encode already produces the canonical, every-field-explicit form the
+<div class="block">Turns picker drafts into datapack JSON. Every config field is a required codec field, so <code>
+ConfigFile.CODEC</code>'s own encode already produces the canonical, every-field-explicit form the
 shipped data uses. Two entry points:
+
 <ul>
-  <li><a href="#export()"><code>export()</code></a> — the single committed mob, sent to the server as a
-      <code>PickerExportPacket</code>; the authorization-gated server handler validates it, writes
-      <code>world/datapacks/somegoogly-picker/data/&lt;ns&gt;/eyes/&lt;entity&gt;.json</code>, and <code>/reload</code>s
-      so it persists and re-syncs through the normal path. Works from a remote client; the result
-      arrives as a server chat message (rate-limited server-side by
-      <a href="../../picker/PickerGate.html#EXPORT_COOLDOWN_TICKS"><code>PickerGate.EXPORT_COOLDOWN_TICKS</code></a>).</li>
-  <li><a href="#exportAll()"><code>exportAll()</code></a> — a purely client-side dump of <i>every</i> eye config into
-      <code>&lt;gameDir&gt;/somegoogly-export/data/…</code>: the synced runtime state (<a href="../../config/ClientEyeConfigs.html" title="class in com.github.crittscott.somegoogly.config"><code>ClientEyeConfigs</code></a>)
-      for untouched entities, overlaid with the picker's per-entity drafts
-      (<a href="PickerState.html#authoredConfigs()"><code>PickerState.authoredConfigs()</code></a>) so a mob saved-but-never-exported is included too.
-      For copying straight into the mod's <code>resources/</code>.</li>
+  <li><a href="#export()"><code>export()</code></a> — the single committed mob, sent to the server as a <code>
+      PickerExportPacket</code>; the authorization-gated server handler validates it, writes <code>
+      world/datapacks/somegoogly-picker/data/&lt;ns&gt;/eyes/&lt;entity&gt;.json</code>, and <code>/reload</code>s so it
+      persists and re-syncs through the normal path. Works from a remote client; the result
+      arrives as a server chat message (rate-limited server-side by <a href="../../picker/PickerGate.html#EXPORT_COOLDOWN_TICKS"><code>PickerGate.EXPORT_COOLDOWN_TICKS</code></a>).
+  <li><a href="#exportAll()"><code>exportAll()</code></a> — a purely client-side dump of <i>every</i> eye config into <code>
+      &lt;gameDir&gt;/somegoogly-export/data/…</code>: the synced runtime state (<a href="../../config/ClientEyeConfigs.html" title="class in com.github.crittscott.somegoogly.config"><code>ClientEyeConfigs</code></a>)
+      for untouched entities, overlaid with the picker's per-entity drafts (<a href="PickerState.html#authoredConfigs()"><code>PickerState.authoredConfigs()</code></a>) so a mob saved-but-never-exported is included too. For
+      copying straight into the mod's <code>resources/</code>.
 </ul></div>
 </div>
 </section>
@@ -114,10 +113,10 @@ shipped data uses. Two entry points:
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.network.chat.Component</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#exportAll()" class="member-name-link">exportAll</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Dump every eye config to one canonical file per entity under
-<code>&lt;gameDir&gt;/somegoogly-export/data/&lt;ns&gt;/eyes/&lt;entity&gt;.json</code>: the synced runtime state for
-untouched entities, with each picker draft overlaid on its entity (so saved-but-not-exported mobs
-are written too).</div>
+<div class="block">Dump every eye config to one canonical file per entity under <code>
+&lt;gameDir&gt;/somegoogly-export/data/&lt;ns&gt;/eyes/&lt;entity&gt;.json</code>: the synced runtime state for
+untouched entities, with each picker draft overlaid on its entity (so saved-but-not-exported
+mobs are written too).</div>
 </div>
 </div>
 </div>
@@ -141,9 +140,10 @@ are written too).</div>
 <h3>export</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">net.minecraft.network.chat.Component</span>&nbsp;<span class="element-name">export</span>()</div>
-<div class="block">Send the committed draft for the chosen mob to the server to be written and reloaded. Client-side
-we only guard the obvious (something committed, small enough to send) and codec-encode the draft;
-all real validation — and the authoritative feedback — is the server's (<code>PickerExportService</code>).</div>
+<div class="block">Send the committed draft for the chosen mob to the server to be written and reloaded.
+Client-side we only guard the obvious (something committed, small enough to send) and
+codec-encode the draft; all real validation — and the authoritative feedback — is the
+server's (<code>PickerExportService</code>).</div>
 </div>
 </section>
 </li>
@@ -152,16 +152,17 @@ all real validation — and the authoritative feedback — is the server's (<cod
 <h3>exportAll</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">net.minecraft.network.chat.Component</span>&nbsp;<span class="element-name">exportAll</span>()</div>
-<div class="block">Dump every eye config to one canonical file per entity under
-<code>&lt;gameDir&gt;/somegoogly-export/data/&lt;ns&gt;/eyes/&lt;entity&gt;.json</code>: the synced runtime state for
-untouched entities, with each picker draft overlaid on its entity (so saved-but-not-exported mobs
-are written too). Unlike the per-mob export this is entirely client-side (no server involvement,
-no reload) — it just captures what's authored/live so it can be copied into the mod's
-<code>resources/</code>.
+<div class="block">Dump every eye config to one canonical file per entity under <code>
+&lt;gameDir&gt;/somegoogly-export/data/&lt;ns&gt;/eyes/&lt;entity&gt;.json</code>: the synced runtime state for
+untouched entities, with each picker draft overlaid on its entity (so saved-but-not-exported
+mobs are written too). Unlike the per-mob export this is entirely client-side (no server
+involvement, no reload) — it just captures what's authored/live so it can be copied into the
+mod's <code>resources/</code>.
 
 <p>The declared version is re-synthesized from the currently-loaded version of each entity's
 namespace (<a href="../../config/EyeConfigModel.ConfigFile.html#exportVersion(java.lang.String)"><code>EyeConfigModel.ConfigFile.exportVersion(String)</code></a>), exactly as <code>/sg export</code> declares it; the
-original entry's declared range isn't preserved in the runtime config, so it can't be recovered.</div>
+original entry's declared range isn't preserved in the runtime config, so it can't be
+recovered.</div>
 </div>
 </section>
 </li>

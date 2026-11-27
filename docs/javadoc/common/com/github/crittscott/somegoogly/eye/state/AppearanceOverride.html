@@ -101,23 +101,24 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public record </span><span class="element-name type-name-label">AppearanceOverride</span>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="EyeColor.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeColor</a>&gt;&nbsp;cornea, <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="EyeColor.html" title="class in com.github.crittscott.somegoogly.eye.state">EyeColor</a>&gt;&nbsp;iris, <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a>&gt;&nbsp;glow)
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a></span></div>
-<div class="block">A <b>sparse</b> override of an eye's <a href="../EyeAppearance.html" title="class in com.github.crittscott.somegoogly.eye"><code>EyeAppearance</code></a>: each field is optional and, when absent,
-falls back to the underlying value (a mob's datapack appearance, via <a href="../EyeAppearance.html#overlay(com.github.crittscott.somegoogly.eye.state.AppearanceOverride)"><code>EyeAppearance.overlay(AppearanceOverride)</code></a>).
+<div class="block">A <b>sparse</b> override of an eye's <a href="../EyeAppearance.html" title="class in com.github.crittscott.somegoogly.eye"><code>EyeAppearance</code></a>: each field is optional and, when
+absent, falls back to the underlying value (a mob's datapack appearance, via <a href="../EyeAppearance.html#overlay(com.github.crittscott.somegoogly.eye.state.AppearanceOverride)"><code>EyeAppearance.overlay(AppearanceOverride)</code></a>).
 
 <p>This is the one portable appearance payload. Persistent forms use <a href="#CODEC"><code>CODEC</code></a>; the bounded
 network packet (<code>EyeStatePacket</code>) uses <a href="#STREAM_CODEC"><code>STREAM_CODEC</code></a>. It serves three uses:
+
 <ul>
-  <li>an eye <b>item</b>'s data component (what survives crafting / harvest),</li>
-  <li>a mob's per-entity override (see <a href="EyeState.html" title="class in com.github.crittscott.somegoogly.eye.state"><code>EyeState</code></a>),</li>
-  <li>the network sync payload (<code>EyeStatePacket</code>).</li>
+  <li>an eye <b>item</b>'s data component (what survives crafting / harvest),
+  <li>a mob's per-entity override (see <a href="EyeState.html" title="class in com.github.crittscott.somegoogly.eye.state"><code>EyeState</code></a>),
+  <li>the network sync payload (<code>EyeStatePacket</code>).
 </ul>
 
-<p><b>Appearance only.</b> Placement — position, scale, angles, attach part — is never here; it always
-comes from the mob's datapack config (<a href="../EyePlacement.html" title="class in com.github.crittscott.somegoogly.eye"><code>EyePlacement</code></a>). An
-eye item carries "what the eye looks like", and attaching it reuses that mob's configured placement.
+<p><b>Appearance only.</b> Placement — position, scale, angles, attach part — is never here; it
+always comes from the mob's datapack config (<a href="../EyePlacement.html" title="class in com.github.crittscott.somegoogly.eye"><code>EyePlacement</code></a>). An eye item carries "what the eye looks
+like", and attaching it reuses that mob's configured placement.
 
-<p>Behaviors (stare, blink, swirl, …) are transient triggered effects, not appearance; they have no
-presence here (see <a href="../behavior/EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior"><code>EyeBehavior</code></a>).</div>
+<p>Behaviors (stare, blink, swirl, …) are transient triggered effects, not appearance; they have
+no presence here (see <a href="../behavior/EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior"><code>EyeBehavior</code></a>).</div>
 </div>
 </section>
 <section class="summary">

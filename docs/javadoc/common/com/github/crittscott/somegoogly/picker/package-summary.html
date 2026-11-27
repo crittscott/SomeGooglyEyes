@@ -87,30 +87,29 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="PickerExportService.html" title="class in com.github.crittscott.somegoogly.picker">PickerExportService</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
 <div class="block">Server-side half of <code>/sg export</code> (reached via <code>PickerExportPacket</code>): validates a
-client-authored eye config, writes it as canonical datapack JSON into the world's
-<code>somegoogly-picker</code> pack, and reloads datapacks as <code>/reload</code> does so it persists and re-syncs through the normal
-path.</div>
+client-authored eye config, writes it as canonical datapack JSON into the world's <code>
+somegoogly-picker</code> pack, and reloads datapacks as <code>/reload</code> does so it persists and
+re-syncs through the normal path.</div>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="PickerFreezeService.html" title="class in com.github.crittscott.somegoogly.picker">PickerFreezeService</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
-<div class="block">Server-owned picker mob freezing: a picker-targeted mob is held <code>NoAi=true</code> while edited and
-restored to its pre-picker value when released.</div>
+<div class="block">Server-owned picker mob freezing: a picker-targeted mob is held <code>NoAi=true</code> while edited
+and restored to its pre-picker value when released.</div>
 </div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="PickerGate.html" title="class in com.github.crittscott.somegoogly.picker">PickerGate</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
-<div class="block">Server-side authorization and throttling for client-driven picker operations — the two halves of the
-same gate, always checked together by the packet handlers.</div>
+<div class="block">Server-side authorization and throttling for client-driven picker operations — the two halves of
+the same gate, always checked together by the packet handlers.</div>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="PickerSpawnService.html" title="class in com.github.crittscott.somegoogly.picker">PickerSpawnService</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
-<div class="block">Authoring aid behind <code>/sg spawnall</code>: spawns one of every mob that <i>could</i> wear
-googly eyes — every summonable living entity, whether or not it has an eye config yet — so the
-picker can be used on any of them without hunting each one down in survival.</div>
+<div class="block">Authoring aid behind <code>/sg spawnall</code>: spawns one of every mob that <i>could</i> wear googly
+eyes — every summonable living entity, whether or not it has an eye config yet — so the picker
+can be used on any of them without hunting each one down in survival.</div>
 </div>
 <div class="col-first even-row-color class-summary class-summary-tab3"><a href="PickerSpawnService.SpawnRefusal.html" title="enum class in com.github.crittscott.somegoogly.picker">PickerSpawnService.SpawnRefusal</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab3">
-<div class="block">Why <code>/sg spawn</code> and <code>/sg spawnall</code> refuse an entity type, in the order <a href="PickerSpawnService.html#refusal(net.minecraft.world.entity.EntityType)"><code>PickerSpawnService.refusal(EntityType)</code></a>
-checks them, with the feedback each command gives.</div>
+<div class="block">Why <code>/sg spawn</code> and <code>/sg spawnall</code> refuse an entity type, in the order <a href="PickerSpawnService.html#refusal(net.minecraft.world.entity.EntityType)"><code>PickerSpawnService.refusal(EntityType)</code></a> checks them, with the feedback each command gives.</div>
 </div>
 </div>
 </div>

@@ -4,11 +4,12 @@ import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.client.neoforge.NeoForgeClient;
 import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
 import com.github.crittscott.somegoogly.config.neoforge.NeoForgeServerConfig;
-import com.github.crittscott.somegoogly.registry.ModContent;
 import com.github.crittscott.somegoogly.network.neoforge.NeoForgeNetworkTransport;
 import com.github.crittscott.somegoogly.platform.neoforge.RegistrationImpl;
+import com.github.crittscott.somegoogly.registry.ModContent;
 import com.github.crittscott.somegoogly.server.neoforge.HeadEyesLootModifier;
 import com.github.crittscott.somegoogly.server.neoforge.NeoForgeServerEvents;
+
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;

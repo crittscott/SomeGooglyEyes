@@ -8,8 +8,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
  */
 public final class PickerExportGameTests {
 
-    private PickerExportGameTests() {
-    }
+    private PickerExportGameTests() {}
 
     public static void canonicalJsonWritesDefaultValuedFields(GameTestHelper helper) {
         PickerExportGameTestsLogic.canonicalJsonWritesDefaultValuedFields(helper);
@@ -54,6 +53,7 @@ public final class PickerExportGameTests {
     public static void exportRejectsUnsafeNumericConfig(GameTestHelper helper) {
         PickerExportGameTestsLogic.exportRejectsUnsafeNumericConfig(helper);
     }
+
     public static void exportRejectsWhatTheSyncCouldNotCarry(GameTestHelper helper) {
         PickerExportGameTestsLogic.exportRejectsWhatTheSyncCouldNotCarry(helper);
     }

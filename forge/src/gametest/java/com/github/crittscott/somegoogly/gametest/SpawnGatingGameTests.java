@@ -8,8 +8,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
  */
 public final class SpawnGatingGameTests {
 
-    private SpawnGatingGameTests() {
-    }
+    private SpawnGatingGameTests() {}
 
     public static void fullPercentGrantsEyesAndZeroDeniesThem(GameTestHelper helper) {
         SpawnGatingGameTestsLogic.fullPercentGrantsEyesAndZeroDeniesThem(helper);

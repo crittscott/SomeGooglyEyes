@@ -10,6 +10,7 @@ pluginManagement {
         id 'dev.architectury.loom-no-remap' version loom_version
         id 'architectury-plugin' version architectury_plugin_version
         id 'com.gradleup.shadow' version shadow_version
+        id 'com.diffplug.spotless' version spotless_version
     }
 }
 

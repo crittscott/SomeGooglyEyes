@@ -3,6 +3,7 @@ package com.github.crittscott.somegoogly.client.compat;
 import com.github.crittscott.somegoogly.client.compat.gecko.GeckoIntegration;
 import com.github.crittscott.somegoogly.client.compat.gecko.GeoBones;
 import com.github.crittscott.somegoogly.config.ModVersionLookup;
+
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.world.entity.LivingEntity;
 
@@ -11,19 +12,23 @@ import java.util.List;
 /**
  * Soft-dependency gate for the optional GeckoLib renderer integration.
  *
- * <p>{@link GeckoIntegration} and {@link GeoBones} — and the GeckoLib types they reference — are touched only
- * after the {@link #LOADED} check, so they never load when GeckoLib is absent. Bone enumeration runs other mods' model
- * code against a GeckoLib that may be newer than the build's, so a failure there is logged once and leaves
- * the picker without that mob's bones. Rendering through the GeckoLib layer is not guarded.
+ * <p>{@link GeckoIntegration} and {@link GeoBones} — and the GeckoLib types they reference — are
+ * touched only after the {@link #LOADED} check, so they never load when GeckoLib is absent. Bone
+ * enumeration runs other mods' model code against a GeckoLib that may be newer than the build's, so
+ * a failure there is logged once and leaves the picker without that mob's bones. Rendering through
+ * the GeckoLib layer is not guarded.
  */
 public final class GeckoCompat {
 
-    private static final boolean LOADED = ModVersionLookup.versionForNamespace("geckolib").isPresent();
+    private static final boolean LOADED =
+            ModVersionLookup.versionForNamespace("geckolib").isPresent();
 
-    private GeckoCompat() {
-    }
+    private GeckoCompat() {}
 
-    /** Drop the GeckoLib model caches, if GeckoLib is present; called whenever the models are replaced. */
+    /**
+     * Drop the GeckoLib model caches, if GeckoLib is present; called whenever the models are
+     * replaced.
+     */
     public static void clearCaches() {
         if (LOADED) {
             GeoBones.clear();
@@ -45,8 +50,8 @@ public final class GeckoCompat {
     }
 
     /**
-     * Whether GeckoLib is present. Loader code checks this before registering its GeckoLib render-layer
-     * listener, whose class names GeckoLib's loader-specific event type.
+     * Whether GeckoLib is present. Loader code checks this before registering its GeckoLib
+     * render-layer listener, whose class names GeckoLib's loader-specific event type.
      */
     public static boolean isLoaded() {
         return LOADED;

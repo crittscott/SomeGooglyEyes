@@ -4,6 +4,7 @@ import com.electronwill.nightconfig.core.CommentedConfig;
 import com.github.crittscott.somegoogly.config.ConfigValue;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.fabric.TomlConfig;
+
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
@@ -16,8 +17,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Fabric GameTest entry points for {@link ConfigGameTestsLogic}, plus the Fabric-only TOML reader behind
- * Fabric's config files.
+ * Fabric GameTest entry points for {@link ConfigGameTestsLogic}, plus the Fabric-only TOML reader
+ * behind Fabric's config files.
  */
 public final class ConfigGameTests {
 
@@ -84,13 +85,15 @@ public final class ConfigGameTests {
     }
 
     /**
-     * {@link TomlConfig} writes defaults for an absent file, then re-reads an existing file without overwriting it.
-     * In game: open a new world and {@code serverconfig/somegoogly-server.toml} appears with every key at its
-     * default; set {@code globalPercent = 17}, run {@code /reload}, and the file still says 17.
+     * {@link TomlConfig} writes defaults for an absent file, then re-reads an existing file without
+     * overwriting it. In game: open a new world and {@code serverconfig/somegoogly-server.toml}
+     * appears with every key at its default; set {@code globalPercent = 17}, run {@code /reload},
+     * and the file still says 17.
      */
     @GameTest(structure = TEMPLATE, maxTicks = 60)
     public void serverTomlRoundTrips(GameTestHelper helper) {
-        String defaults = """
+        String defaults =
+                """
                 [server]
                 googlyEyesEnabled = false
                 globalPercent = 17
@@ -103,27 +106,43 @@ public final class ConfigGameTests {
             Path dir = Files.createTempDirectory("somegoogly-toml-test");
             Path file = dir.resolve("server.toml");
             try {
-                Map<String, Object> written = TomlConfig.section(TomlConfig.readOrCreate(file, defaults), "server");
-                helper.assertTrue(Files.exists(file), Component.literal("readOrCreate writes the defaults when the file is absent"));
-                helper.assertTrue(!TomlConfig.bool(written, "googlyEyesEnabled", true), Component.literal("a boolean round-trips"));
-                helper.assertTrue(TomlConfig.integer(written, "globalPercent", 5) == 17, Component.literal("an integer round-trips"));
+                Map<String, Object> written =
+                        TomlConfig.section(TomlConfig.readOrCreate(file, defaults), "server");
+                helper.assertTrue(
+                        Files.exists(file),
+                        Component.literal(
+                                "readOrCreate writes the defaults when the file is absent"));
+                helper.assertTrue(
+                        !TomlConfig.bool(written, "googlyEyesEnabled", true),
+                        Component.literal("a boolean round-trips"));
+                helper.assertTrue(
+                        TomlConfig.integer(written, "globalPercent", 5) == 17,
+                        Component.literal("an integer round-trips"));
                 helper.assertTrue(
                         TomlConfig.strings(written, "entityOverrides", List.of())
                                 .equals(List.of("minecraft:zombie,100", "*:*_horse,50")),
-                        Component.literal("a quoted string list round-trips with colons and wildcards intact"));
+                        Component.literal(
+                                "a quoted string list round-trips with colons and wildcards intact"));
 
-                Files.writeString(file, """
+                Files.writeString(
+                        file,
+                        """
                         [server]
                         googlyEyesEnabled = true
                         globalPercent = 3
                         entityOverrides = []
                         """);
-                Map<String, Object> reread = TomlConfig.section(TomlConfig.readOrCreate(file, defaults), "server");
-                helper.assertTrue(TomlConfig.bool(reread, "googlyEyesEnabled", false),
-                        Component.literal("an existing file is re-read, not overwritten by the defaults"));
-                helper.assertTrue(TomlConfig.integer(reread, "globalPercent", 5) == 3,
+                Map<String, Object> reread =
+                        TomlConfig.section(TomlConfig.readOrCreate(file, defaults), "server");
+                helper.assertTrue(
+                        TomlConfig.bool(reread, "googlyEyesEnabled", false),
+                        Component.literal(
+                                "an existing file is re-read, not overwritten by the defaults"));
+                helper.assertTrue(
+                        TomlConfig.integer(reread, "globalPercent", 5) == 3,
                         Component.literal("the re-read picks up the edited value"));
-                helper.assertTrue(TomlConfig.strings(reread, "entityOverrides", List.of("x")).isEmpty(),
+                helper.assertTrue(
+                        TomlConfig.strings(reread, "entityOverrides", List.of("x")).isEmpty(),
                         Component.literal("an empty list parses as empty"));
             } finally {
                 Files.deleteIfExists(file.resolveSibling(file.getFileName() + ".bak"));
@@ -137,15 +156,16 @@ public final class ConfigGameTests {
     }
 
     /**
-     * {@link TomlConfig} reads single-quoted literal strings, keeps quoted {@code #} and {@code ]}, and
-     * uses the integer default for a value of the wrong type. In game: on a Fabric server, write
-     * {@code spawnExcludedMods = ['minecolonies', 'create']} and {@code globalPercent = 5.0} into
-     * {@code serverconfig/somegoogly-server.toml}, run {@code /reload}, and check the log warns about
-     * {@code globalPercent} while both mods stay excluded.
+     * {@link TomlConfig} reads single-quoted literal strings, keeps quoted {@code #} and {@code ]},
+     * and uses the integer default for a value of the wrong type. In game: on a Fabric server,
+     * write {@code spawnExcludedMods = ['minecolonies', 'create']} and {@code globalPercent = 5.0}
+     * into {@code serverconfig/somegoogly-server.toml}, run {@code /reload}, and check the log
+     * warns about {@code globalPercent} while both mods stay excluded.
      */
     @GameTest(structure = TEMPLATE, maxTicks = 60)
     public void serverTomlReadsLiteralStringsAndRejectsWrongTypes(GameTestHelper helper) {
-        String source = """
+        String source =
+                """
                 [picker]
                 spawnExcludedMods = ['minecolonies', "create"]
                 spawnExcludedEntities = ['mod:a#b', 'mod:c]d'] # trailing comment
@@ -166,8 +186,12 @@ public final class ConfigGameTests {
                 helper.assertTrue(
                         TomlConfig.strings(values, "spawnExcludedEntities", List.of())
                                 .equals(List.of("mod:a#b", "mod:c]d")),
-                        Component.literal("a literal string keeps # and ] and a trailing comment is stripped"));
-                helper.assertTrue(TomlConfig.integer(TomlConfig.section(document, "server"), "globalPercent", 7) == 7,
+                        Component.literal(
+                                "a literal string keeps # and ] and a trailing comment is stripped"));
+                helper.assertTrue(
+                        TomlConfig.integer(
+                                        TomlConfig.section(document, "server"), "globalPercent", 7)
+                                == 7,
                         Component.literal("a floating-point value uses the integer default"));
             } finally {
                 Files.deleteIfExists(file.resolveSibling(file.getFileName() + ".bak"));
@@ -181,9 +205,10 @@ public final class ConfigGameTests {
     }
 
     /**
-     * Valid TOML syntax and table identity survive completion; malformed input is preserved. In game:
-     * quote globalPercent's key and set it to 1_0, add a comment and an unknown key, then reload. The value
-     * becomes 10 and the authored content remains. A syntax error is logged without rewriting the file.
+     * Valid TOML syntax and table identity survive completion; malformed input is preserved. In
+     * game: quote globalPercent's key and set it to 1_0, add a comment and an unknown key, then
+     * reload. The value becomes 10 and the authored content remains. A syntax error is logged
+     * without rewriting the file.
      */
     @GameTest(structure = TEMPLATE, maxTicks = 60)
     public void tomlCompletionPreservesAuthoredContent(GameTestHelper helper) {
@@ -191,7 +216,8 @@ public final class ConfigGameTests {
         try {
             dir = Files.createTempDirectory("somegoogly-toml-completion");
             Path file = dir.resolve("server.toml");
-            String source = """
+            String source =
+                    """
                     ["Server Settings"]
                     # An administrator's spawn policy.
                     "globalPercent" = 1_0
@@ -203,21 +229,36 @@ public final class ConfigGameTests {
                     """;
             Files.writeString(file, source);
             CommentedConfig document = TomlConfig.readOrCreate(file, "");
-            helper.assertTrue(TomlConfig.integer(TomlConfig.section(document, ServerConfig.SECTION_SERVER),
-                            ServerConfig.GLOBAL_PERCENT.key(), 5) == 10,
-                    Component.literal("quoted keys and digit separators are parsed in the declared table"));
-            helper.assertTrue(TomlConfig.completeIfMissing(file, document,
+            helper.assertTrue(
+                    TomlConfig.integer(
+                                    TomlConfig.section(document, ServerConfig.SECTION_SERVER),
+                                    ServerConfig.GLOBAL_PERCENT.key(),
+                                    5)
+                            == 10,
+                    Component.literal(
+                            "quoted keys and digit separators are parsed in the declared table"));
+            helper.assertTrue(
+                    TomlConfig.completeIfMissing(
+                            file,
+                            document,
                             "[\"Server Settings\"]\nglobalPercent=5\ngooglyEyesEnabled=true\n"),
                     Component.literal("an absent schema key is added"));
             String completed = Files.readString(file);
             CommentedConfig reread = TomlConfig.readOrCreate(file, "");
-            helper.assertTrue(completed.contains("An administrator's spawn policy.")
-                            && TomlConfig.section(reread, ServerConfig.SECTION_SERVER).containsKey("unknown")
-                            && TomlConfig.strings(TomlConfig.section(reread, ServerConfig.SECTION_BEHAVIORS),
-                                    ServerConfig.AMBIENT_BEHAVIOR_POOL.key(), List.of())
+            helper.assertTrue(
+                    completed.contains("An administrator's spawn policy.")
+                            && TomlConfig.section(reread, ServerConfig.SECTION_SERVER)
+                                    .containsKey("unknown")
+                            && TomlConfig.strings(
+                                            TomlConfig.section(
+                                                    reread, ServerConfig.SECTION_BEHAVIORS),
+                                            ServerConfig.AMBIENT_BEHAVIOR_POOL.key(),
+                                            List.of())
                                     .contains("somegoogly:unknown"),
-                    Component.literal("completion preserves comments, unknown keys, and unrecognized list entries"));
-            helper.assertTrue(Files.readString(file.resolveSibling("server.toml.bak")).equals(source),
+                    Component.literal(
+                            "completion preserves comments, unknown keys, and unrecognized list entries"));
+            helper.assertTrue(
+                    Files.readString(file.resolveSibling("server.toml.bak")).equals(source),
                     Component.literal("the original text is retained before reformatting"));
             String invalid = "[\"Server Settings\"]\nglobalPercent = 17%\n";
             Files.writeString(file, invalid);
@@ -227,7 +268,8 @@ public final class ConfigGameTests {
             } catch (IOException expected) {
                 rejected = true;
             }
-            helper.assertTrue(rejected && Files.readString(file).equals(invalid),
+            helper.assertTrue(
+                    rejected && Files.readString(file).equals(invalid),
                     Component.literal("syntax failure preserves the administrator's file"));
         } catch (IOException e) {
             throw new RuntimeException(e);

@@ -3,43 +3,48 @@ package com.github.crittscott.somegoogly.eye.behavior;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.ConfigValue;
 import com.github.crittscott.somegoogly.config.ServerConfig;
+
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.animal.goat.Goat;
-import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.piglin.AbstractPiglin;
+import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ProjectileWeaponItem;
 
 import org.jspecify.annotations.Nullable;
+
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The named eye behaviors that last as long as the mob stays in some state, as opposed to the one-shot
- * {@link EyeBehavior} expressions. Each client derives a state from what vanilla already syncs, so nothing about
- * one crosses the mod's own network except its server switch, sent with the eye definitions in
- * {@link BehaviorSettings}. A state never blocks an expression: the client folds it in on top of whatever plays.
+ * The named eye behaviors that last as long as the mob stays in some state, as opposed to the
+ * one-shot {@link EyeBehavior} expressions. Each client derives a state from what vanilla already
+ * syncs, so nothing about one crosses the mod's own network except its server switch, sent with the
+ * eye definitions in {@link BehaviorSettings}. A state never blocks an expression: the client folds
+ * it in on top of whatever plays.
  *
- * <p>Each entry owns its id, its server switch, and the vanilla state that drives it ({@link #level}); how the
- * eyes show it lives with the eye simulation in {@code GooglyTracker}. The one state with a server-reported half
- * is {@link #ANGER}: anger vanilla keeps on the server reaches clients through {@code EyeAngerPacket}, and the
- * tracker folds it into this level.
+ * <p>Each entry owns its id, its server switch, and the vanilla state that drives it ({@link
+ * #level}); how the eyes show it lives with the eye simulation in {@code GooglyTracker}. The one
+ * state with a server-reported half is {@link #ANGER}: anger vanilla keeps on the server reaches
+ * clients through {@code EyeAngerPacket}, and the tracker folds it into this level.
  *
- * <p>This type must stay free of client-only imports: the server class-loads it to build the synced settings.
+ * <p>This type must stay free of client-only imports: the server class-loads it to build the synced
+ * settings.
  */
 public enum OngoingBehavior {
 
     /**
-     * A skeleton drawing a ranged weapon, or a player drawing a bow, closes the eye away from the arm holding
-     * it. A player's crossbow doesn't count: charging it is item use, but aiming it once loaded is not.
+     * A skeleton drawing a ranged weapon, or a player drawing a bow, closes the eye away from the
+     * arm holding it. A player's crossbow doesn't count: charging it is item use, but aiming it
+     * once loaded is not.
      */
     AIM_WINK("aim_wink", ServerConfig.WINK_ON_AIM) {
         @Override
@@ -48,14 +53,15 @@ public enum OngoingBehavior {
                 return 0F;
             }
             Item weapon = entity.getUseItem().getItem();
-            return on(entity instanceof AbstractSkeleton && weapon instanceof ProjectileWeaponItem
-                    || entity instanceof Player && weapon instanceof BowItem);
+            return on(
+                    entity instanceof AbstractSkeleton && weapon instanceof ProjectileWeaponItem
+                            || entity instanceof Player && weapon instanceof BowItem);
         }
     },
 
     /**
-     * An attacking mob's pupils ease to red; so do those of a mob the server reports angry, which the tracker
-     * adds to this level.
+     * An attacking mob's pupils ease to red; so do those of a mob the server reports angry, which
+     * the tracker adds to this level.
      */
     ANGER("anger", ServerConfig.ANGRY_EYES) {
         @Override
@@ -125,8 +131,9 @@ public enum OngoingBehavior {
     }
 
     /**
-     * How strongly this behavior applies to {@code entity} right now, from 0 (not at all) to 1, read from state
-     * vanilla syncs to every viewer. Most are on or off; the swell rattle grows with the swell.
+     * How strongly this behavior applies to {@code entity} right now, from 0 (not at all) to 1,
+     * read from state vanilla syncs to every viewer. Most are on or off; the swell rattle grows
+     * with the swell.
      */
     public abstract float level(LivingEntity entity);
 
@@ -135,16 +142,19 @@ public enum OngoingBehavior {
     }
 
     /**
-     * Anger the client can't see for itself, kept by vanilla on the server: a neutral mob (iron golem, zombified
-     * piglin, enderman, wolf, bee, ...) with anger time left, or a piglin with someone to be angry at. Always
-     * {@code false} for any behavior but {@link #ANGER}, or while its switch is off.
+     * Anger the client can't see for itself, kept by vanilla on the server: a neutral mob (iron
+     * golem, zombified piglin, enderman, wolf, bee, ...) with anger time left, or a piglin with
+     * someone to be angry at. Always {@code false} for any behavior but {@link #ANGER}, or while
+     * its switch is off.
      */
     public boolean serverAngry(LivingEntity entity) {
         if (this != ANGER || !setting.get()) {
             return false;
         }
-        return entity instanceof NeutralMob neutral ? neutral.isAngry()
-                : entity instanceof AbstractPiglin && entity.getBrain().hasMemoryValue(MemoryModuleType.ANGRY_AT);
+        return entity instanceof NeutralMob neutral
+                ? neutral.isAngry()
+                : entity instanceof AbstractPiglin
+                        && entity.getBrain().hasMemoryValue(MemoryModuleType.ANGRY_AT);
     }
 
     /** The server switch that enables this behavior. */

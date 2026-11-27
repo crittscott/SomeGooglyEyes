@@ -5,6 +5,7 @@ import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import com.github.crittscott.somegoogly.registry.ModContent;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -19,8 +20,7 @@ import java.util.function.Consumer;
  */
 public final class EyeItemProperties {
 
-    private EyeItemProperties() {
-    }
+    private EyeItemProperties() {}
 
     /** The Slimy Eye's iris-layer tint: the stored iris color (black when unset) as opaque ARGB. */
     public static int slimyEyeIrisColor(ItemStack stack) {
@@ -28,13 +28,15 @@ public final class EyeItemProperties {
     }
 
     /**
-     * The tooltip lines of a mob head item that carries googly eyes, appended in place: a marker line, then the
-     * eyes' appearance. A head without eyes gets none.
+     * The tooltip lines of a mob head item that carries googly eyes, appended in place: a marker
+     * line, then the eyes' appearance. A head without eyes gets none.
      */
     public static void appendHeadTooltip(ItemStack stack, List<Component> tooltip) {
         EyeState.Snapshot eyes = SkullEyeState.itemSnapshot(stack);
         if (eyes != null) {
-            tooltip.add(Component.translatable("somegoogly.tooltip.head_eyes").withStyle(ChatFormatting.GRAY));
+            tooltip.add(
+                    Component.translatable("somegoogly.tooltip.head_eyes")
+                            .withStyle(ChatFormatting.GRAY));
             appendTooltip(eyes.properties(), tooltip::add);
         }
     }
@@ -45,14 +47,26 @@ public final class EyeItemProperties {
     }
 
     private static void appendTooltip(AppearanceOverride props, Consumer<Component> tooltip) {
-        props.iris().ifPresent(color ->
-                tooltip.accept(Component.translatable("somegoogly.tooltip.iris", color.toHex()).withStyle(ChatFormatting.GRAY)));
-        props.cornea().ifPresent(color ->
-                tooltip.accept(Component.translatable("somegoogly.tooltip.cornea", color.toHex()).withStyle(ChatFormatting.GRAY)));
-        props.glow().ifPresent(glow ->
-                tooltip.accept(Component.translatable("somegoogly.tooltip.glow",
-                        Component.translatable(glow ? "somegoogly.value.on" : "somegoogly.value.off"))
-                        .withStyle(ChatFormatting.GRAY)));
+        props.iris()
+                .ifPresent(color ->
+                        tooltip.accept(
+                                Component.translatable("somegoogly.tooltip.iris", color.toHex())
+                                        .withStyle(ChatFormatting.GRAY)));
+        props.cornea()
+                .ifPresent(color ->
+                        tooltip.accept(
+                                Component.translatable("somegoogly.tooltip.cornea", color.toHex())
+                                        .withStyle(ChatFormatting.GRAY)));
+        props.glow()
+                .ifPresent(glow ->
+                        tooltip.accept(
+                                Component.translatable(
+                                                "somegoogly.tooltip.glow",
+                                                Component.translatable(
+                                                        glow
+                                                                ? "somegoogly.value.on"
+                                                                : "somegoogly.value.off"))
+                                        .withStyle(ChatFormatting.GRAY)));
     }
 
     /** The stack's appearance override, or {@link AppearanceOverride#EMPTY} when it has none. */

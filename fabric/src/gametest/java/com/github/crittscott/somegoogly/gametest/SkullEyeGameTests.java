@@ -5,7 +5,8 @@ import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 
 /**
- * Fabric GameTest entry points for {@link SkullEyeGameTestsLogic}; see that class for the actual assertions.
+ * Fabric GameTest entry points for {@link SkullEyeGameTestsLogic}; see that class for the actual
+ * assertions.
  */
 public final class SkullEyeGameTests {
 
@@ -21,8 +22,8 @@ public final class SkullEyeGameTests {
         SkullEyeGameTestsLogic.brokenHeadKeepsItsEyes(helper, FakePlayer.get(helper.getLevel()));
     }
 
-    // TODO: eyedMobDropsAnEyedHead fails on both loaders for reasons not yet understood, though an eyed mob's
-    // head keeps its eyes in game; disabled until the cause is found.
+    // TODO: eyedMobDropsAnEyedHead fails on both loaders for reasons not yet understood, though an
+    // eyed mob's head keeps its eyes in game; disabled until the cause is found.
     // @GameTest(structure = TEMPLATE, maxTicks = 40)
     // public void eyedMobDropsAnEyedHead(GameTestHelper helper) {
     //     SkullEyeGameTestsLogic.eyedMobDropsAnEyedHead(helper);
@@ -35,17 +36,20 @@ public final class SkullEyeGameTests {
 
     @GameTest(structure = TEMPLATE, maxTicks = 40)
     public void optometristHarvestsAPlacedHead(GameTestHelper helper) {
-        SkullEyeGameTestsLogic.optometristHarvestsAPlacedHead(helper, FakePlayer.get(helper.getLevel()));
+        SkullEyeGameTestsLogic.optometristHarvestsAPlacedHead(
+                helper, FakePlayer.get(helper.getLevel()));
     }
 
     @GameTest(structure = TEMPLATE, maxTicks = 40)
     public void slimyEyeGivesAPlacedHeadEyes(GameTestHelper helper) {
-        SkullEyeGameTestsLogic.slimyEyeGivesAPlacedHeadEyes(helper, FakePlayer.get(helper.getLevel()));
+        SkullEyeGameTestsLogic.slimyEyeGivesAPlacedHeadEyes(
+                helper, FakePlayer.get(helper.getLevel()));
     }
 
     @GameTest(structure = TEMPLATE, maxTicks = 40)
     public void slimyEyeRefusesUnconfiguredHeadsAndTheSwitch(GameTestHelper helper) {
-        SkullEyeGameTestsLogic.slimyEyeRefusesUnconfiguredHeadsAndTheSwitch(helper, FakePlayer.get(helper.getLevel()));
+        SkullEyeGameTestsLogic.slimyEyeRefusesUnconfiguredHeadsAndTheSwitch(
+                helper, FakePlayer.get(helper.getLevel()));
     }
 
     @GameTest(structure = TEMPLATE, maxTicks = 40)
