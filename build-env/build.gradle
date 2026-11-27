@@ -3,6 +3,7 @@ plugins {
     id 'architectury-plugin'
     id 'com.gradleup.shadow' apply false
     id 'com.diffplug.spotless'
+    id 'net.ltgt.errorprone' apply false
 }
 
 architectury {
@@ -99,11 +100,25 @@ allprojects {
 
 // Compiler diagnostics are opt-in for every module and source set.
 def qualityLevel = providers.gradleProperty('quality').orNull
-if (qualityLevel != null && qualityLevel != 'compiler') {
-    throw new GradleException("Unknown quality level '$qualityLevel'; use -Pquality=compiler or omit -Pquality.")
+if (qualityLevel != null && !(qualityLevel in ['compiler', 'errorprone'])) {
+    throw new GradleException("Unknown quality level '$qualityLevel'; use -Pquality=compiler, -Pquality=errorprone, or omit -Pquality.")
 }
+def errorProneEnabled = qualityLevel == 'errorprone'
 
 subprojects {
+    if (errorProneEnabled) {
+        // Loom finalizes the compiler during configuration, so select it as soon as Java is applied.
+        pluginManager.withPlugin('java') {
+            tasks.withType(JavaCompile).configureEach {
+                javaCompiler = javaToolchains.compilerFor {
+                    languageVersion = JavaLanguageVersion.of(rootProject.errorprone_java_version as int)
+                }
+                options.release = rootProject.java_version as int
+            }
+        }
+        apply plugin: 'net.ltgt.errorprone'
+    }
+
     apply plugin: 'dev.architectury.loom'
     apply plugin: 'architectury-plugin'
 
@@ -132,6 +147,9 @@ subprojects {
         // Every module's source uses javax.annotation.Nullable. Minecraft ships JSR 305 at runtime, but
         // Loom does not put it on common's compile classpath, so declare it for all modules here.
         compileOnly "com.google.code.findbugs:jsr305:$rootProject.jsr305_version"
+        if (errorProneEnabled) {
+            errorprone "com.google.errorprone:error_prone_core:$rootProject.errorprone_version"
+        }
     }
 
     java {
@@ -147,8 +165,24 @@ subprojects {
     // Sources are UTF-8 whatever the machine's locale or the JDK's default charset.
     tasks.withType(JavaCompile).configureEach {
         options.encoding = 'UTF-8'
-        if (qualityLevel == 'compiler') {
+        if (qualityLevel != null) {
             options.compilerArgs.add('-Xlint:all')
+        }
+        if (errorProneEnabled) {
+            // Error Prone's JDK 21 integration needs type annotations retained on compiler symbols.
+            options.compilerArgs.add('-XDaddTypeAnnotationsToSymbol=true')
+            options.compilerArgs.addAll(['-Xmaxwarns', rootProject.errorprone_max_warnings])
+            options.errorprone.allErrorsAsWarnings = true
+        }
+    }
+    if (errorProneEnabled) {
+        sourceSets.configureEach { sourceSet ->
+            // Libraries such as Guava carry Error Prone contracts on the compile classpath.
+            dependencies.add(sourceSet.compileOnlyConfigurationName,
+                    "com.google.errorprone:error_prone_annotations:$rootProject.errorprone_version")
+            tasks.named(sourceSet.compileJavaTaskName, JavaCompile).configure {
+                options.errorprone.compilingTestOnlyCode = sourceSet.name in ['test', 'gametest']
+            }
         }
     }
     tasks.withType(Javadoc).configureEach {

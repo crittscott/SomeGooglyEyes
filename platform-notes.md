@@ -123,6 +123,7 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 
 ## Libraries and other mods
 
+- Error Prone's processor dependencies do not put its contract annotations on the source compile classpath. Add matching `error_prone_annotations` to each analyzed source set's compile-only configuration to resolve Guava's `DoNotCall`, `InlineMe`, and related annotation metadata. [tested: Error Prone 2.53.0, Guava 31.1-jre, JDK 21; missing-annotation diagnostics disappeared]
 - Ice and Fire 2.1.13 beta 5 on 1.20.1: a troll exposed to sufficiently bright sky during the day replaces itself with `iceandfire:stone_statue`. `RenderStoneStatue` extends `EntityRenderer`, selects the trapped mob's model inside `render`, and draws it directly rather than through a living renderer's layers. A statue therefore does not expose the live troll's model to the picker or eye-layer installation. [source: supplied original Ice and Fire `EntityTroll.aiStep` and `RenderStoneStatue`]
 
 - Ice and Fire 2.1.13 beta 5 on 1.20.1: `EntityMyrmexBase.isBaby()` is true for growth stages 0 and 1. `RenderMyrmexBase` uses `ModelMyrmexPupa` for both stages and its caste model for adults; its scale and passenger rotation wrap the renderer and therefore already reach render layers. [source: supplied original Ice and Fire `EntityMyrmexBase` and `RenderMyrmexBase`]

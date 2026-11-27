@@ -11,6 +11,7 @@ pluginManagement {
         id 'architectury-plugin' version architectury_plugin_version
         id 'com.gradleup.shadow' version shadow_version
         id 'com.diffplug.spotless' version spotless_version
+        id 'net.ltgt.errorprone' version errorprone_plugin_version
     }
 }
 
