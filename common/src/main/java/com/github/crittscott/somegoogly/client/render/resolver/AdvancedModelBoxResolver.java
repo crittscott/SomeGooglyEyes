@@ -17,8 +17,9 @@ import java.lang.reflect.Method;
  * owns its handles, its per-model cache, and its failure state: one library failing or being absent
  * never disables the other.
  *
- * <p>Uranus models are not vanilla {@code EntityModel}s, and Ice and Fire CE draws them from renderers
- * that are not {@code LivingEntityRenderer}s; {@code IceAndFireCompat} hands those models here.
+ * <p>Uranus models are not vanilla {@code EntityModel}s, and Ice and Fire CE draws them from
+ * renderers that are not {@code LivingEntityRenderer}s; {@code IceAndFireCompat} hands those models
+ * here.
  *
  * <p>Token vocabulary and matching live in {@link ReflectedBoxResolver}. The intrinsic segment name
  * here is the box's {@code boxName} — set by tabula-loaded models (Ice and Fire's dragons) and by
@@ -35,25 +36,35 @@ public class AdvancedModelBoxResolver extends ReflectedBoxResolver {
     private final String familyLabel;
     private final Handles api;
 
-    private AdvancedModelBoxResolver(String familyLabel, String modelClassName, String boxClassName) {
+    private AdvancedModelBoxResolver(
+            String familyLabel, String modelClassName, String boxClassName) {
         this.familyLabel = familyLabel;
         this.api = Handles.load(familyLabel, modelClassName, boxClassName);
     }
 
     /** Citadel's copy of the toolkit: Alex's Mobs, Ice and Fire. */
     public static AdvancedModelBoxResolver citadel() {
-        return new AdvancedModelBoxResolver("Citadel",
-                CITADEL_PACKAGE + "AdvancedEntityModel", CITADEL_PACKAGE + "AdvancedModelBox");
+        return new AdvancedModelBoxResolver(
+                "Citadel",
+                CITADEL_PACKAGE + "AdvancedEntityModel",
+                CITADEL_PACKAGE + "AdvancedModelBox");
     }
 
     /** Uranus' copy of the toolkit: Ice and Fire Community Edition. */
     public static AdvancedModelBoxResolver uranus() {
-        return new AdvancedModelBoxResolver("Uranus",
-                URANUS_PACKAGE + "AdvancedEntityModel", URANUS_PACKAGE + "AdvancedModelBox");
+        return new AdvancedModelBoxResolver(
+                "Uranus",
+                URANUS_PACKAGE + "AdvancedEntityModel",
+                URANUS_PACKAGE + "AdvancedModelBox");
     }
 
-    private record Handles(Class<?> modelClass, Class<?> boxClass, Method getAllParts,
-                           Method getParent, Method translateAndRotate, Field boxName) {
+    private record Handles(
+            Class<?> modelClass,
+            Class<?> boxClass,
+            Method getAllParts,
+            Method getParent,
+            Method translateAndRotate,
+            Field boxName) {
         static final Handles ABSENT = new Handles(null, null, null, null, null, null);
 
         boolean available() {
@@ -66,9 +77,11 @@ public class AdvancedModelBoxResolver extends ReflectedBoxResolver {
                 Class<?> boxClass = Class.forName(boxClassName);
                 Method getAllParts = modelClass.getMethod("getAllParts");
                 Method getParent = boxClass.getMethod("getParent");
-                Method translateAndRotate = boxClass.getMethod("translateAndRotate", PoseStack.class);
+                Method translateAndRotate =
+                        boxClass.getMethod("translateAndRotate", PoseStack.class);
                 Field boxName = boxClass.getField("boxName");
-                return new Handles(modelClass, boxClass, getAllParts, getParent, translateAndRotate, boxName);
+                return new Handles(
+                        modelClass, boxClass, getAllParts, getParent, translateAndRotate, boxName);
             } catch (ClassNotFoundException absent) {
                 return ABSENT;
             } catch (ReflectiveOperationException | LinkageError failure) {
@@ -122,7 +135,8 @@ public class AdvancedModelBoxResolver extends ReflectedBoxResolver {
     }
 
     @Override
-    protected void rawTransform(Object part, PoseStack poseStack) throws ReflectiveOperationException {
+    protected void rawTransform(Object part, PoseStack poseStack)
+            throws ReflectiveOperationException {
         api.translateAndRotate().invoke(part, poseStack);
     }
 }

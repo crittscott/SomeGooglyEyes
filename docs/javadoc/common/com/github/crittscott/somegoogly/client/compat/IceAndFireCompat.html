@@ -77,21 +77,22 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">IceAndFireCompat</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Optional bridge to Ice and Fire Community Edition's mob renderers. Its mobs draw Uranus models, which are
-not vanilla <code>EntityModel</code>s, from <code>LegacyMobRenderer</code>, a plain <code>EntityRenderer</code> rather
-than a <code>LivingEntityRenderer</code>, so neither the vanilla eye layer nor the living render-state hook
-reaches them. Instead each such renderer is given one of its own <code>LegacyEntityFeature</code>s through its
-public <code>addLayer</code>, built as a reflective proxy so there is no compile-time dependency.
+<div class="block">Optional bridge to Ice and Fire Community Edition's mob renderers. Its mobs draw Uranus models,
+which are not vanilla <code>EntityModel</code>s, from <code>LegacyMobRenderer</code>, a plain <code>
+EntityRenderer</code> rather than a <code>LivingEntityRenderer</code>, so neither the vanilla eye layer nor
+the living render-state hook reaches them. Instead each such renderer is given one of its own
+<code>LegacyEntityFeature</code>s through its public <code>addLayer</code>, built as a reflective proxy so
+there is no compile-time dependency.
 
-<p>The renderer runs its features inside the same base model pose <code>LivingEntityRenderer</code> gives its
-layers, right after posing the model's shared boxes for this entity and before another entity of the type
-can re-pose them, so attachments resolve against this entity's pose. The renderer extracts no living
-render state, so the eye decision is taken from the live entity the feature receives, at submit time,
-where the renderer itself reads it.
+<p>The renderer runs its features inside the same base model pose <code>LivingEntityRenderer</code>
+gives its layers, right after posing the model's shared boxes for this entity and before another
+entity of the type can re-pose them, so attachments resolve against this entity's pose. The
+renderer extracts no living render state, so the eye decision is taken from the live entity the
+feature receives, at submit time, where the renderer itself reads it.
 
 <p>The cockatrice's renderer is built directly on <code>EntityRenderer</code> and has no features;
-<code>IceAndFireModelRendererMixin</code> calls <a href="#submitAfterModel(net.minecraft.client.renderer.entity.EntityRenderer,net.minecraft.client.renderer.entity.state.LivingEntityRenderState,com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector)"><code>submitAfterModel(EntityRenderer, LivingEntityRenderState, PoseStack, SubmitNodeCollector)</code></a> from inside its <code>submit</code> instead.
-It draws one of two static models, chosen by age.</div>
+<code>IceAndFireModelRendererMixin</code> calls <a href="#submitAfterModel(net.minecraft.client.renderer.entity.EntityRenderer,net.minecraft.client.renderer.entity.state.LivingEntityRenderState,com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector)"><code>submitAfterModel(EntityRenderer, LivingEntityRenderState, PoseStack, SubmitNodeCollector)</code></a> from inside its <code>
+submit</code> instead. It draws one of two static models, chosen by age.</div>
 </div>
 </section>
 <section class="summary">
@@ -121,8 +122,9 @@ It draws one of two static models, chosen by age.</div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#model(net.minecraft.client.renderer.entity.EntityRenderer,net.minecraft.world.entity.LivingEntity)" class="member-name-link">model</a><wbr>(net.minecraft.client.renderer.entity.EntityRenderer&lt;?,<wbr>?&gt;&nbsp;renderer,
  net.minecraft.world.entity.LivingEntity&nbsp;living)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The Uranus model <code>renderer</code> draws <code>living</code> with, or <code>null</code> when it is not an Ice and
-Fire CE legacy mob renderer or the cockatrice's, its model is not loaded yet, or the lookup failed.</div>
+<div class="block">The Uranus model <code>renderer</code> draws <code>living</code> with, or <code>null</code> when it is not
+an Ice and Fire CE legacy mob renderer or the cockatrice's, its model is not loaded yet, or
+the lookup failed.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#submitAfterModel(net.minecraft.client.renderer.entity.EntityRenderer,net.minecraft.client.renderer.entity.state.LivingEntityRenderState,com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector)" class="member-name-link">submitAfterModel</a><wbr>(net.minecraft.client.renderer.entity.EntityRenderer&lt;?,<wbr>?&gt;&nbsp;renderer,
@@ -177,8 +179,9 @@ Fire CE legacy mob renderer or the cockatrice's, its model is not loaded yet, or
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">@Nullable <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">model</span><wbr><span class="parameters">(net.minecraft.client.renderer.entity.EntityRenderer&lt;?,<wbr>?&gt;&nbsp;renderer,
  net.minecraft.world.entity.LivingEntity&nbsp;living)</span></div>
-<div class="block">The Uranus model <code>renderer</code> draws <code>living</code> with, or <code>null</code> when it is not an Ice and
-Fire CE legacy mob renderer or the cockatrice's, its model is not loaded yet, or the lookup failed.</div>
+<div class="block">The Uranus model <code>renderer</code> draws <code>living</code> with, or <code>null</code> when it is not
+an Ice and Fire CE legacy mob renderer or the cockatrice's, its model is not loaded yet, or
+the lookup failed.</div>
 </div>
 </section>
 </li>
@@ -190,9 +193,9 @@ Fire CE legacy mob renderer or the cockatrice's, its model is not loaded yet, or
  net.minecraft.client.renderer.entity.state.LivingEntityRenderState&nbsp;state,
  com.mojang.blaze3d.vertex.PoseStack&nbsp;poseStack,
  net.minecraft.client.renderer.SubmitNodeCollector&nbsp;collector)</span></div>
-<div class="block">Draw eyes for an Ice and Fire CE renderer that submits its model itself. Called right after that
-submission, while <code>poseStack</code> still holds the model pose and the shared model is posed for this
-entity.</div>
+<div class="block">Draw eyes for an Ice and Fire CE renderer that submits its model itself. Called right after
+that submission, while <code>poseStack</code> still holds the model pose and the shared model is
+posed for this entity.</div>
 </div>
 </section>
 </li>

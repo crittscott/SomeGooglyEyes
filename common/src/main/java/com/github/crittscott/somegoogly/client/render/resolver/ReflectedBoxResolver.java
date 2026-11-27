@@ -5,6 +5,7 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import org.jspecify.annotations.Nullable;
+
 import java.lang.reflect.Field;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -17,31 +18,34 @@ import java.util.WeakHashMap;
 
 /**
  * Shared machinery for resolvers over reflected "box-tree" model families — external mods whose
- * models keep their own box hierarchy (a flat all-boxes list plus parent pointers and a per-box pose
- * transform) instead of vanilla {@code ModelPart}s. {@link AdvancedModelBoxResolver} and
+ * models keep their own box hierarchy (a flat all-boxes list plus parent pointers and a per-box
+ * pose transform) instead of vanilla {@code ModelPart}s. {@link AdvancedModelBoxResolver} and
  * {@link LLibraryResolver} are the concrete families; each supplies only the reflective handles,
  * while the token/path/index logic lives here so the families can't drift apart.
  *
  * <p>Tokens are the same full slash paths the vanilla resolvers speak — the box's parent chain,
- * suffix-matched via {@link EyeAttachmentResolver#pathMatches}, so a stored {@code Head} attaches to
- * {@code Tail_1/Body/Head} and a path disambiguates same-named boxes under different parents. Each
- * segment comes from three sources, in priority order:
+ * suffix-matched via {@link EyeAttachmentResolver#pathMatches}, so a stored {@code Head} attaches
+ * to {@code Tail_1/Body/Head} and a path disambiguates same-named boxes under different parents.
+ * Each segment comes from three sources, in priority order:
+ *
  * <ol>
- *   <li>the box's own name, where the family has one ({@link #intrinsicName});</li>
+ *   <li>the box's own name, where the family has one ({@link #intrinsicName});
  *   <li>the name of the model's own Java field holding the box. Mod classes are never
  *       obfuscation-mangled (only Minecraft/Forge classes are), so field names are as stable as box
- *       names;</li>
- *   <li>the positional {@code #N} (the box's index in the family's all-boxes list), for a box with no
- *       name and no field. It appears as a normal path segment and suffix-matches like any other.</li>
+ *       names;
+ *   <li>the positional {@code #N} (the box's index in the family's all-boxes list), for a box with
+ *       no name and no field. It appears as a normal path segment and suffix-matches like any
+ *       other.
  * </ol>
  */
 abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
 
-    // Indexed per model instance (models are singletons per renderer; render thread only). Both families'
-    // boxes hold a reference back to their model, so an entry keeps its own weak key alive and only
-    // clearModelCache() actually reclaims it.
+    // Indexed per model instance (models are singletons per renderer; render thread only). Both
+    // families' boxes hold a reference back to their model, so an entry keeps its own weak key
+    // alive and only clearModelCache() actually reclaims it.
     private final Map<Object, ModelIndex> cache = new WeakHashMap<>();
-    // Models whose reflection failed draw no eyes until the next reset; the family's other models go on.
+    // Models whose reflection failed draw no eyes until the next reset; the family's other models
+    // go on.
     private final Set<Object> failedModels = Collections.newSetFromMap(new WeakHashMap<>());
 
     @Override
@@ -53,11 +57,14 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
     /** Give up on {@code model} until the next reset and log the failure once. */
     private void fail(String operation, Object model, Object subject, Throwable failure) {
         failedModels.add(model);
-        ClientIntegrationFailures.warnOnce(familyLabel(), operation,
-                subject.getClass().getName(), failure);
+        ClientIntegrationFailures.warnOnce(
+                familyLabel(), operation, subject.getClass().getName(), failure);
     }
 
-    /** Whether reflection on {@code model} has failed since the last reset; other models are unaffected. */
+    /**
+     * Whether reflection on {@code model} has failed since the last reset; other models are
+     * unaffected.
+     */
     protected final boolean failed(Object model) {
         return failedModels.contains(model);
     }
@@ -75,7 +82,10 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
         static final ModelIndex EMPTY = new ModelIndex(List.of(), List.of());
     }
 
-    /** Whether the reflective handles all loaded (the family's classes are present and API-shaped as expected). */
+    /**
+     * Whether the reflective handles all loaded (the family's classes are present and API-shaped as
+     * expected).
+     */
     protected abstract boolean available();
 
     /** The family's box class, for instance checks and the field-name fallback scan. */
@@ -91,7 +101,8 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
     protected abstract Object rawParent(Object part) throws ReflectiveOperationException;
 
     /** Apply the box's local pose transform (the family's translate+rotate). */
-    protected abstract void rawTransform(Object part, PoseStack poseStack) throws ReflectiveOperationException;
+    protected abstract void rawTransform(Object part, PoseStack poseStack)
+            throws ReflectiveOperationException;
 
     /** All of the model's boxes in the family's stable order; empty on any reflection failure. */
     private List<Object> collectParts(Object model) {
@@ -115,7 +126,10 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
         }
     }
 
-    /** The parent box of {@code model}'s {@code part}, or {@code null} for a root or on reflection failure. */
+    /**
+     * The parent box of {@code model}'s {@code part}, or {@code null} for a root or on reflection
+     * failure.
+     */
     private Object parentOf(Object model, Object part) {
         try {
             Object parent = rawParent(part);
@@ -126,7 +140,9 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
         }
     }
 
-    /** Apply the local pose transform of {@code model}'s {@code part}; false on reflection failure. */
+    /**
+     * Apply the local pose transform of {@code model}'s {@code part}; false on reflection failure.
+     */
     private boolean applyTransform(Object model, Object part, PoseStack poseStack) {
         try {
             rawTransform(part, poseStack);
@@ -155,9 +171,9 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
 
     /**
      * Segment names for boxes whose {@link #intrinsicName} is empty: the model's Java field name
-     * holding the box where one exists (guarded reflection by type),
-     * else the box's positional {@code #N}. An unlisted, unnamed, field-less box (a stray ancestor)
-     * has no entry and is skipped when it appears mid-path.
+     * holding the box where one exists (guarded reflection by type), else the box's positional
+     * {@code #N}. An unlisted, unnamed, field-less box (a stray ancestor) has no entry and is
+     * skipped when it appears mid-path.
      */
     private Map<Object, String> fallbackNames(Object model, List<Object> parts) {
         Map<Object, String> names = new IdentityHashMap<>();
@@ -176,9 +192,13 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
                         names.put(box, field.getName());
                     }
                 } catch (ReflectiveOperationException | RuntimeException accessDenied) {
-                    ClientIntegrationFailures.warnOnce(familyLabel(),
-                            "fallback field access", model.getClass().getName(), accessDenied);
-                    // Positional names remain a reliable fallback when a Java field is inaccessible.
+                    ClientIntegrationFailures.warnOnce(
+                            familyLabel(),
+                            "fallback field access",
+                            model.getClass().getName(),
+                            accessDenied);
+                    // Positional names remain a reliable fallback when a Java field is
+                    // inaccessible.
                 }
             }
         }
@@ -186,8 +206,9 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
     }
 
     /**
-     * The index of the box {@code token} addresses, or {@code -1}: the first box — in all-boxes order —
-     * whose path suffix-matches. A nameless box's {@code #N} segment matches here like any other segment.
+     * The index of the box {@code token} addresses, or {@code -1}: the first box — in all-boxes
+     * order — whose path suffix-matches. A nameless box's {@code #N} segment matches here like any
+     * other segment.
      */
     private static int find(ModelIndex index, String token) {
         for (int i = 0; i < index.paths().size(); i++) {
@@ -241,13 +262,14 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
         if (!handles(model)) {
             return List.of();
         }
-        // Index-aligned with the all-boxes list, so a token's list position is the box's #N position.
+        // Index-aligned with the all-boxes list, so a token's list position is the box's #N
+        // position.
         return indexOf(model).paths();
     }
 
     /**
-     * The boxes from a root down to the attach box, inclusive, in the order they transform. Bound to the
-     * resolver that produced it, since only the family knows how to apply a box's transform.
+     * The boxes from a root down to the attach box, inclusive, in the order they transform. Bound
+     * to the resolver that produced it, since only the family knows how to apply a box's transform.
      */
     private final class BoxChain implements Attachment {
         private final Object[] chain;

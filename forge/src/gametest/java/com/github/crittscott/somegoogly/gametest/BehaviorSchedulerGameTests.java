@@ -3,13 +3,12 @@ package com.github.crittscott.somegoogly.gametest;
 import net.minecraft.gametest.framework.GameTestHelper;
 
 /**
- * Forge GameTest entry points for {@link BehaviorSchedulerGameTestsLogic}; see that class for the actual
- * assertions.
+ * Forge GameTest entry points for {@link BehaviorSchedulerGameTestsLogic}; see that class for the
+ * actual assertions.
  */
 public final class BehaviorSchedulerGameTests {
 
-    private BehaviorSchedulerGameTests() {
-    }
+    private BehaviorSchedulerGameTests() {}
 
     public static void affectionEventsPlayLove(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.affectionEventsPlayLove(
@@ -96,18 +95,22 @@ public final class BehaviorSchedulerGameTests {
     }
 
     public static void disabledEyesSuspendAutomaticBehaviors(GameTestHelper helper) {
-        BehaviorSchedulerGameTestsLogic.disabledEyesSuspendAutomaticBehaviors(helper, SomeGooglyGameTests.survivalPlayer(helper));
+        BehaviorSchedulerGameTestsLogic.disabledEyesSuspendAutomaticBehaviors(
+                helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
 
     public static void completedTradeSwirlsEyes(GameTestHelper helper) {
-        BehaviorSchedulerGameTestsLogic.completedTradeSwirlsEyes(helper, helper.makeMockServerPlayerInLevel());
+        BehaviorSchedulerGameTestsLogic.completedTradeSwirlsEyes(
+                helper, helper.makeMockServerPlayerInLevel());
     }
 
     public static void healAtFullHealthPlaysNoSwirl(GameTestHelper helper) {
-        BehaviorSchedulerGameTestsLogic.healAtFullHealthPlaysNoSwirl(helper, helper.makeMockServerPlayerInLevel());
+        BehaviorSchedulerGameTestsLogic.healAtFullHealthPlaysNoSwirl(
+                helper, helper.makeMockServerPlayerInLevel());
     }
 
     public static void playerHitBulgesEyes(GameTestHelper helper) {
-        BehaviorSchedulerGameTestsLogic.playerHitBulgesEyes(helper, helper.makeMockServerPlayerInLevel());
+        BehaviorSchedulerGameTestsLogic.playerHitBulgesEyes(
+                helper, helper.makeMockServerPlayerInLevel());
     }
 }

@@ -3,14 +3,12 @@ package com.github.crittscott.somegoogly.gametest;
 import net.minecraft.gametest.framework.GameTestHelper;
 
 /**
- * NeoForge GameTest entry points for {@link HandItemEyeGameTestsLogic}; see that class for the actual
- * assertions.
+ * NeoForge GameTest entry points for {@link HandItemEyeGameTestsLogic}; see that class for the
+ * actual assertions.
  */
 public final class HandItemEyeGameTests {
 
-
-    private HandItemEyeGameTests() {
-    }
+    private HandItemEyeGameTests() {}
 
     public static void handEyesFollowWorldGravityAcrossViews(GameTestHelper helper) {
         HandItemEyeGameTestsLogic.handEyesFollowWorldGravityAcrossViews(helper);

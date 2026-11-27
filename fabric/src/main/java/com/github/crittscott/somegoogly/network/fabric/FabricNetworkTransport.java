@@ -2,7 +2,9 @@ package com.github.crittscott.somegoogly.network.fabric;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.network.NetworkProtocol;
+
 import io.netty.buffer.ByteBuf;
+
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerConfigurationConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerConfigurationNetworking;
@@ -26,13 +28,15 @@ public final class FabricNetworkTransport {
     private static final int MAX_VERSION_LENGTH = 16;
 
     /**
-     * The server's version question, the first exchange of a connection's configuration phase. A client that
-     * lacks a receiver for it is refused; one that has it answers with a {@link HandshakeReply}.
+     * The server's version question, the first exchange of a connection's configuration phase. A
+     * client that lacks a receiver for it is refused; one that has it answers with a {@link
+     * HandshakeReply}.
      */
     public record Handshake() implements CustomPacketPayload {
         public static final CustomPacketPayload.Type<Handshake> TYPE =
                 new CustomPacketPayload.Type<>(SomeGooglyCommon.id("handshake"));
-        public static final StreamCodec<FriendlyByteBuf, Handshake> STREAM_CODEC = StreamCodec.unit(new Handshake());
+        public static final StreamCodec<FriendlyByteBuf, Handshake> STREAM_CODEC =
+                StreamCodec.unit(new Handshake());
 
         @Override
         public CustomPacketPayload.Type<Handshake> type() {
@@ -44,8 +48,9 @@ public final class FabricNetworkTransport {
     public record HandshakeReply(String version) implements CustomPacketPayload {
         public static final CustomPacketPayload.Type<HandshakeReply> TYPE =
                 new CustomPacketPayload.Type<>(SomeGooglyCommon.id("handshake_reply"));
-        public static final StreamCodec<ByteBuf, HandshakeReply> STREAM_CODEC = ByteBufCodecs.stringUtf8(MAX_VERSION_LENGTH)
-                .map(HandshakeReply::new, HandshakeReply::version);
+        public static final StreamCodec<ByteBuf, HandshakeReply> STREAM_CODEC =
+                ByteBufCodecs.stringUtf8(MAX_VERSION_LENGTH)
+                        .map(HandshakeReply::new, HandshakeReply::version);
 
         @Override
         public CustomPacketPayload.Type<HandshakeReply> type() {
@@ -53,9 +58,13 @@ public final class FabricNetworkTransport {
         }
     }
 
-    /** Holds the player in the configuration phase until the client's {@link HandshakeReply} arrives. */
+    /**
+     * Holds the player in the configuration phase until the client's {@link HandshakeReply}
+     * arrives.
+     */
     private record HandshakeTask() implements ConfigurationTask {
-        static final ConfigurationTask.Type TYPE = new ConfigurationTask.Type(SomeGooglyCommon.id("handshake").toString());
+        static final ConfigurationTask.Type TYPE =
+                new ConfigurationTask.Type(SomeGooglyCommon.id("handshake").toString());
 
         @Override
         public void start(Consumer<Packet<?>> sender) {
@@ -68,13 +77,17 @@ public final class FabricNetworkTransport {
         }
     }
 
-    private FabricNetworkTransport() {
-    }
+    private FabricNetworkTransport() {}
 
-    /** Register every payload type, the version check, and the serverbound receivers; called once from the mod initializer. */
+    /**
+     * Register every payload type, the version check, and the serverbound receivers; called once
+     * from the mod initializer.
+     */
     public static void register() {
-        PayloadTypeRegistry.clientboundConfiguration().register(Handshake.TYPE, Handshake.STREAM_CODEC);
-        PayloadTypeRegistry.serverboundConfiguration().register(HandshakeReply.TYPE, HandshakeReply.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundConfiguration()
+                .register(Handshake.TYPE, Handshake.STREAM_CODEC);
+        PayloadTypeRegistry.serverboundConfiguration()
+                .register(HandshakeReply.TYPE, HandshakeReply.STREAM_CODEC);
         for (NetworkProtocol.Clientbound<?> payload : NetworkProtocol.CLIENTBOUND) {
             registerType(payload);
         }
@@ -91,11 +104,13 @@ public final class FabricNetworkTransport {
                 handler.disconnect(requiredClientMessage());
             }
         });
-        ServerConfigurationNetworking.registerGlobalReceiver(HandshakeReply.TYPE,
+        ServerConfigurationNetworking.registerGlobalReceiver(
+                HandshakeReply.TYPE,
                 (payload, context) -> checkVersion(context.packetListener(), payload.version()));
     }
 
-    private static void checkVersion(ServerConfigurationPacketListenerImpl handler, String version) {
+    private static void checkVersion(
+            ServerConfigurationPacketListenerImpl handler, String version) {
         if (version.equals(NetworkProtocol.NETWORK_VERSION)) {
             handler.completeTask(HandshakeTask.TYPE);
         } else {
@@ -103,22 +118,30 @@ public final class FabricNetworkTransport {
         }
     }
 
-    private static <T extends CustomPacketPayload> void registerReceiver(NetworkProtocol.Serverbound<T> payload) {
-        ServerPlayNetworking.registerGlobalReceiver(payload.type(),
+    private static <T extends CustomPacketPayload> void registerReceiver(
+            NetworkProtocol.Serverbound<T> payload) {
+        ServerPlayNetworking.registerGlobalReceiver(
+                payload.type(),
                 (packet, context) -> payload.handler().accept(packet, context.player()));
     }
 
-    private static <T extends CustomPacketPayload> void registerType(NetworkProtocol.Clientbound<T> payload) {
+    private static <T extends CustomPacketPayload> void registerType(
+            NetworkProtocol.Clientbound<T> payload) {
         PayloadTypeRegistry.clientboundPlay().register(payload.type(), payload.codec());
     }
 
-    private static <T extends CustomPacketPayload> void registerType(NetworkProtocol.Serverbound<T> payload) {
+    private static <T extends CustomPacketPayload> void registerType(
+            NetworkProtocol.Serverbound<T> payload) {
         PayloadTypeRegistry.serverboundPlay().register(payload.type(), payload.codec());
     }
 
-    /** A refusal that also reads right to a client lacking our language file; Fabric API loads it on the server. */
+    /**
+     * A refusal that also reads right to a client lacking our language file; Fabric API loads it on
+     * the server.
+     */
     private static Component refusal(String key, Object... arguments) {
-        return Component.translatableWithFallback(key, Language.getInstance().getOrDefault(key), arguments);
+        return Component.translatableWithFallback(
+                key, Language.getInstance().getOrDefault(key), arguments);
     }
 
     /** The refusal shown to a client without this mod. */
@@ -128,6 +151,9 @@ public final class FabricNetworkTransport {
 
     /** The refusal shown to a client running network version {@code clientVersion}. */
     public static Component versionMismatchMessage(String clientVersion) {
-        return refusal("somegoogly.network.version_mismatch", NetworkProtocol.NETWORK_VERSION, clientVersion);
+        return refusal(
+                "somegoogly.network.version_mismatch",
+                NetworkProtocol.NETWORK_VERSION,
+                clientVersion);
     }
 }

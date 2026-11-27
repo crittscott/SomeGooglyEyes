@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.config;
 
 import org.jspecify.annotations.Nullable;
+
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,20 +15,20 @@ import java.util.Set;
  * the range synthesis ({@link #rangeFor}) used when exporting definitions for optional mods.
  *
  * <p>This is one shared data-format ordering on every loader, including loader-word filtering and
- * nearest-generation fallback. Loader-specific comparators would select different definitions from the same
- * datapack. Bare declarations are exact strings; bracket bounds deliberately use zero-padded components.
+ * nearest-generation fallback. Loader-specific comparators would select different definitions from
+ * the same datapack. Bare declarations are exact strings; bracket bounds deliberately use
+ * zero-padded components.
  */
 public final class VersionRangeMatcher {
 
     /** Version-string words that name a build's loader and say nothing about its age. */
     private static final Set<String> LOADER_NAMES = Set.of("fabric", "forge", "neoforge", "quilt");
 
-    private VersionRangeMatcher() {
-    }
+    private VersionRangeMatcher() {}
 
     /**
-     * Turn a loaded version like {@code 1.20.1} into the range {@code [1.20.1,1.21)} — inclusive of the
-     * loaded version, exclusive of the next minor. This is for optional-mod versions; Minecraft
+     * Turn a loaded version like {@code 1.20.1} into the range {@code [1.20.1,1.21)} — inclusive of
+     * the loaded version, exclusive of the next minor. This is for optional-mod versions; Minecraft
      * exports use the exact supported game version. Falls back to an exact match if parsing fails.
      */
     public static String rangeFor(String loaded) {
@@ -45,12 +46,14 @@ public final class VersionRangeMatcher {
     }
 
     /**
-     * A declaration's endpoints with their inclusivity; {@code null} = unbounded on that side. An exact
-     * version is a closed point ({@code lower == upper}, both inclusive).
+     * A declaration's endpoints with their inclusivity; {@code null} = unbounded on that side. An
+     * exact version is a closed point ({@code lower == upper}, both inclusive).
      */
-    private record Bounds(@Nullable String lower, @Nullable String upper,
-                          boolean includeLower, boolean includeUpper) {
-    }
+    private record Bounds(
+            @Nullable String lower,
+            @Nullable String upper,
+            boolean includeLower,
+            boolean includeUpper) {}
 
     private static boolean isBracketed(String trimmed) {
         return trimmed.startsWith("[") || trimmed.startsWith("(");
@@ -82,7 +85,10 @@ public final class VersionRangeMatcher {
         }
     }
 
-    /** Parse a declared version into its endpoints, or {@code null} if malformed (same cases as {@link #matches}). */
+    /**
+     * Parse a declared version into its endpoints, or {@code null} if malformed (same cases as
+     * {@link #matches}).
+     */
     @Nullable
     private static Bounds bounds(String range) {
         if (range.isBlank()) {
@@ -102,8 +108,11 @@ public final class VersionRangeMatcher {
         }
         String lower = body.substring(0, comma).trim();
         String upper = body.substring(comma + 1).trim();
-        return new Bounds(lower.isEmpty() ? null : lower, upper.isEmpty() ? null : upper,
-                trimmed.startsWith("["), trimmed.endsWith("]"));
+        return new Bounds(
+                lower.isEmpty() ? null : lower,
+                upper.isEmpty() ? null : upper,
+                trimmed.startsWith("["),
+                trimmed.endsWith("]"));
     }
 
     /** Whether a declaration is a well-formed exact version or bracket range. */
@@ -127,8 +136,8 @@ public final class VersionRangeMatcher {
     }
 
     /**
-     * Whether {@code version} satisfies {@code range}: an exact version by string equality, or a bracketed range by
-     * zero-padded component comparison. Blank or malformed input never matches.
+     * Whether {@code version} satisfies {@code range}: an exact version by string equality, or a
+     * bracketed range by zero-padded component comparison. Blank or malformed input never matches.
      */
     public static boolean matches(String range, String version) {
         if (range.isBlank() || version.isBlank()) {
@@ -161,21 +170,21 @@ public final class VersionRangeMatcher {
 
     /**
      * The fallback pick for when <b>no</b> declaration matches the installed version: the declared
-     * version string nearest to {@code loadedVersion} — the newest declaration entirely older than it,
-     * or, when the installed version predates them all, the oldest declaration. Version ordering has no
-     * distance metric, so "nearest" is defined by ordering alone; a gap between two generations resolves
-     * to the older neighbor (its model at least existed when the entry was authored). Malformed
-     * declarations are skipped, matching {@link #matches}. Returns one of the inputs verbatim, or
-     * {@code null} when nothing is usable.
+     * version string nearest to {@code loadedVersion} — the newest declaration entirely older than
+     * it, or, when the installed version predates them all, the oldest declaration. Version
+     * ordering has no distance metric, so "nearest" is defined by ordering alone; a gap between two
+     * generations resolves to the older neighbor (its model at least existed when the entry was
+     * authored). Malformed declarations are skipped, matching {@link #matches}. Returns one of the
+     * inputs verbatim, or {@code null} when nothing is usable.
      */
     @Nullable
     public static String nearestVersion(Collection<String> declaredVersions, String loadedVersion) {
         if (loadedVersion.isBlank()) {
             return null;
         }
-        String bestOlder = null;  // greatest upper bound at or below the installed version
+        String bestOlder = null; // greatest upper bound at or below the installed version
         String bestOlderUpper = null;
-        String bestNewer = null;  // smallest lower bound at or above the installed version
+        String bestNewer = null; // smallest lower bound at or above the installed version
         String bestNewerLower = null;
         for (String declared : declaredVersions) {
             Bounds b = bounds(declared);
@@ -194,7 +203,8 @@ public final class VersionRangeMatcher {
                 }
             }
             // Neither branch: the range brackets the installed version, so it would have matched —
-            // unreachable for the non-matching declarations this is called with. Skipped defensively.
+            // unreachable for the non-matching declarations this is called with. Skipped
+            // defensively.
         }
         return bestOlder != null ? bestOlder : bestNewer;
     }

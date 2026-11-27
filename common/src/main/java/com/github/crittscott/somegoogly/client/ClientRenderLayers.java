@@ -6,19 +6,22 @@ import com.github.crittscott.somegoogly.client.compat.IceAndFireCompat;
 import com.github.crittscott.somegoogly.client.render.LayerGooglyEyes;
 import com.github.crittscott.somegoogly.client.render.SkullEyeRenderer;
 import com.github.crittscott.somegoogly.client.render.resolver.Resolvers;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.WeakHashMap;
+
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.entity.layers.SlimeOuterLayer;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.WeakHashMap;
+
 /**
- * Installs the vanilla-model eye layer on living renderers after renderer rebuilds, and the eye feature on
- * Ice and Fire CE's legacy mob renderers, which are not living renderers. GeckoLib renderers are not living
- * renderers either; they receive their layer from GeckoLib's own compile-render-layers event.
+ * Installs the vanilla-model eye layer on living renderers after renderer rebuilds, and the eye
+ * feature on Ice and Fire CE's legacy mob renderers, which are not living renderers. GeckoLib
+ * renderers are not living renderers either; they receive their layer from GeckoLib's own
+ * compile-render-layers event.
  */
 public final class ClientRenderLayers {
 
@@ -27,8 +30,7 @@ public final class ClientRenderLayers {
 
     private static boolean loggedFirstInstall;
 
-    private ClientRenderLayers() {
-    }
+    private ClientRenderLayers() {}
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     private static void addLiving(LivingEntityRenderer renderer) {
@@ -43,7 +45,10 @@ public final class ClientRenderLayers {
         layers.add(eyes);
     }
 
-    /** Clear the attachment caches once per renderer rebuild; they are keyed by model, so before or after it. */
+    /**
+     * Clear the attachment caches once per renderer rebuild; they are keyed by model, so before or
+     * after it.
+     */
     public static void clearCaches() {
         ClientEyeRuntime.clear();
         Resolvers.clearCaches();
@@ -52,10 +57,10 @@ public final class ClientRenderLayers {
     }
 
     /**
-     * Install the eye layer on one renderer: the vanilla-model layer on a living renderer, the Ice and Fire
-     * CE feature on its legacy mob renderer; any other renderer is ignored. Duplicate-safe through the weak
-     * {@code INSTALLED} set. Client-hidden entities still get the layer; the per-frame render gate hides
-     * them, so a config change applies without a renderer rebuild.
+     * Install the eye layer on one renderer: the vanilla-model layer on a living renderer, the Ice
+     * and Fire CE feature on its legacy mob renderer; any other renderer is ignored. Duplicate-safe
+     * through the weak {@code INSTALLED} set. Client-hidden entities still get the layer; the
+     * per-frame render gate hides them, so a config change applies without a renderer rebuild.
      */
     @SuppressWarnings("rawtypes")
     public static void install(EntityRenderer<?, ?> renderer) {

@@ -75,10 +75,10 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">VariantSelectionGameTestsLogic</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Pure-logic coverage of <code>EyeConfigModel.chooseVariantIndex(EyeConfigModel.RuntimeConfig, float)</code> — the
-deterministic weighted pick that lets the client and server agree on a mob's arrangement from its
-stored roll without sending an index. World-less: builds configs in memory and asserts. The
-cumulative-weight boundary cases are the load-bearing part (a drift here desyncs viewers).</div>
+<div class="block">Pure-logic coverage of <code>EyeConfigModel.chooseVariantIndex(EyeConfigModel.RuntimeConfig, float)</code> — the deterministic weighted
+pick that lets the client and server agree on a mob's arrangement from its stored roll without
+sending an index. World-less: builds configs in memory and asserts. The cumulative-weight
+boundary cases are the load-bearing part (a drift here desyncs viewers).</div>
 </div>
 </section>
 <section class="summary">
@@ -126,8 +126,8 @@ cumulative-weight boundary cases are the load-bearing part (a drift here desyncs
 <h3>cumulativeWeightBoundariesPickExpectedVariant</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">cumulativeWeightBoundariesPickExpectedVariant</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">A stored roll picks the variant whose share of the cumulative weight contains it. No in-game form;
-guards that every client places a mob's eyes in the same arrangement the server chose.</div>
+<div class="block">A stored roll picks the variant whose share of the cumulative weight contains it. No in-game
+form; guards that every client places a mob's eyes in the same arrangement the server chose.</div>
 </div>
 </section>
 </li>
@@ -136,8 +136,8 @@ guards that every client places a mob's eyes in the same arrangement the server 
 <h3>degenerateConfigsFallToFirstVariant</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">degenerateConfigsFallToFirstVariant</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">A missing, empty, or zero-weight definition picks the first variant. No in-game form; guards that such
-a definition never breaks the pick.</div>
+<div class="block">A missing, empty, or zero-weight definition picks the first variant. No in-game form; guards
+that such a definition never breaks the pick.</div>
 </div>
 </section>
 </li>

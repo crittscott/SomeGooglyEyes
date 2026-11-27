@@ -1,39 +1,52 @@
 package com.github.crittscott.somegoogly.eye.behavior;
 
 /**
- * What a single active {@link EyeBehavior} exerts on one eye for one <b>simulation tick</b> (not one
- * frame). This is how behaviors participate in the physics model instead of overwriting it in the
- * renderer: the pupil is a point-mass, and a behavior that wants to move it contributes a <b>spring</b>
- * — an anchor point in the eye's unit disk plus a stiffness — that the simulator adds to the ordinary
- * forces (gravity, socket pseudo-forces). When the stiffness fades at the end of the effect, gravity
- * naturally takes the pupil back down; there is no blend and no separate hidden simulation to snap to.
+ * What a single active {@link EyeBehavior} exerts on one eye for one <b>simulation tick</b> (not
+ * one frame). This is how behaviors participate in the physics model instead of overwriting it in
+ * the renderer: the pupil is a point-mass, and a behavior that wants to move it contributes a
+ * <b>spring</b> — an anchor point in the eye's unit disk plus a stiffness — that the simulator adds
+ * to the ordinary forces (gravity, socket pseudo-forces). When the stiffness fades at the end of
+ * the effect, gravity naturally takes the pupil back down; there is no blend and no separate hidden
+ * simulation to snap to.
  *
  * <ul>
- *   <li><b>anchorX/anchorY + stiffness</b> — the pupil spring. {@code stiffness == 0} means the behavior
- *       doesn't drive the pupil at all (it keeps wobbling freely): grow, blink, and color leave it there.
- *       Stare anchors at center, side/cross anchor off to one side, swirl's anchor orbits.</li>
- *   <li><b>eyeScaleMul</b> — multiplies the eye's configured scale (grow). Non-physical overlay.</li>
- *   <li><b>irisScaleMul</b> — multiplies the pupil's configured size (love). Non-physical overlay.</li>
- *   <li><b>squashY</b> — multiplies the eye's vertical scale (blink). Non-physical overlay.</li>
- *   <li><b>corneaTint / tintAmount</b> — lerp the cornea toward {@code corneaTint} by {@code tintAmount}
- *       (color-change). Non-physical overlay.</li>
+ *   <li><b>anchorX/anchorY + stiffness</b> — the pupil spring. {@code stiffness == 0} means the
+ *       behavior doesn't drive the pupil at all (it keeps wobbling freely): grow, blink, and color
+ *       leave it there. Stare anchors at center, side/cross anchor off to one side, swirl's anchor
+ *       orbits.
+ *   <li><b>eyeScaleMul</b> — multiplies the eye's configured scale (grow). Non-physical overlay.
+ *   <li><b>irisScaleMul</b> — multiplies the pupil's configured size (love). Non-physical overlay.
+ *   <li><b>squashY</b> — multiplies the eye's vertical scale (blink). Non-physical overlay.
+ *   <li><b>corneaTint / tintAmount</b> — lerp the cornea toward {@code corneaTint} by {@code
+ *       tintAmount} (color-change). Non-physical overlay.
  * </ul>
  *
- * <p>Reused per eye: the simulator calls {@link #reset()} before asking the active behavior to fill it,
- * so an eye with no active behavior keeps the neutral defaults below (pure physics, no overlays).
+ * <p>Reused per eye: the simulator calls {@link #reset()} before asking the active behavior to fill
+ * it, so an eye with no active behavior keeps the neutral defaults below (pure physics, no
+ * overlays).
  */
 public final class EyeInfluence {
 
-    /** Pupil spring anchor in the eye's unit disk (only meaningful when {@link #stiffness} &gt; 0). */
+    /**
+     * Pupil spring anchor in the eye's unit disk (only meaningful when {@link #stiffness} &gt; 0).
+     */
     public float anchorX;
+
     public float anchorY;
-    /** Spring stiffness pulling the pupil toward the anchor; 0 = the behavior doesn't touch the pupil. */
+
+    /**
+     * Spring stiffness pulling the pupil toward the anchor; 0 = the behavior doesn't touch the
+     * pupil.
+     */
     public float stiffness;
 
     /** Multiplies the configured eye scale (1 = unchanged). */
     public float eyeScaleMul;
 
-    /** Multiplies the configured pupil (iris) size (1 = unchanged); the renderer caps it at the cornea. */
+    /**
+     * Multiplies the configured pupil (iris) size (1 = unchanged); the renderer caps it at the
+     * cornea.
+     */
     public float irisScaleMul;
 
     /** Multiplies the eye's vertical scale (1 = unchanged, &lt;1 = squashed for a blink). */

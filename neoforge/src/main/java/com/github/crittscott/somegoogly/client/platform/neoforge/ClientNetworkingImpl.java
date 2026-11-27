@@ -6,8 +6,7 @@ import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 /** NeoForge serverbound sends. */
 public final class ClientNetworkingImpl {
 
-    private ClientNetworkingImpl() {
-    }
+    private ClientNetworkingImpl() {}
 
     public static void sendToServer(CustomPacketPayload payload) {
         ClientPacketDistributor.sendToServer(payload);

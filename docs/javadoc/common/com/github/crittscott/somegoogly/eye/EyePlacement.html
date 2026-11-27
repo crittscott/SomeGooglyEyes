@@ -110,8 +110,8 @@ loadScripts(document, 'script');</script>
 <div class="block">The placement (geometry) of a single eye on a mob: offset from the attach joint, sizes, and aim.
 Config-only — never carried on an eye item (that's appearance, see <a href="state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state"><code>AppearanceOverride</code></a>).
 
-<p>Aim is two angles, not a quaternion: <code>inclination</code> from the part's +Y axis and
-<code>azimuth</code> from its +X axis (degrees). The eye's pupil faces local -Z by default; roll is
+<p>Aim is two angles, not a quaternion: <code>inclination</code> from the part's +Y axis and <code>
+azimuth</code> from its +X axis (degrees). The eye's pupil faces local -Z by default; roll is
 irrelevant (the eye is rotationally symmetric about its look axis), so two angles suffice.
 
 <p><code>depth</code> multiplies the eye's thickness along its look axis (<code>1.0</code> = the standard
@@ -120,12 +120,12 @@ deeper eye protrudes further from the model — enough to envelop a modeled eyeb
 of the head (e.g. the Ice and Fire cyclops). Cornea and iris stretch together, so the iris always
 stays in front of the cornea.
 
-<p><code>crossTarget</code> is the index of another eye <b>in the same head</b> that this eye rolls its
-pupil toward during the cross-eye behavior (see <code>EyeBehavior#CROSS_EYE</code>); <a href="#NO_CROSS_TARGET"><code>NO_CROSS_TARGET</code></a>
-means this eye doesn't cross. It's a within-head index into that head's <code>eyes</code> list.
+<p><code>crossTarget</code> is the index of another eye <b>in the same head</b> that this eye rolls
+its pupil toward during the cross-eye behavior (see <code>EyeBehavior#CROSS_EYE</code>); <a href="#NO_CROSS_TARGET"><code>NO_CROSS_TARGET</code></a> means this eye doesn't cross. It's a within-head index into that head's <code>
+eyes</code> list.
 
-<p>Sizes and angles are <code>float</code>, and <code>position</code> serializes at float precision, so authored
-values such as <code>0.22</code> are written back to a datapack unchanged.</div>
+<p>Sizes and angles are <code>float</code>, and <code>position</code> serializes at float precision, so
+authored values such as <code>0.22</code> are written back to a datapack unchanged.</div>
 </div>
 </section>
 <section class="summary">
@@ -248,8 +248,9 @@ values such as <code>0.22</code> are written back to a datapack unchanged.</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>org.joml.Quaternionf</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#orientation()" class="member-name-link">orientation</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">The rotation from the attachment part's frame into this eye's local frame, whose -Z is the pupil
-axis: azimuth turns about the part's vertical axis, then inclination tilts about the horizontal.</div>
+<div class="block">The rotation from the attachment part's frame into this eye's local frame, whose -Z is the
+pupil axis: azimuth turns about the part's vertical axis, then inclination tilts about the
+horizontal.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static org.joml.Quaternionf</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#orientation(double,double)" class="member-name-link">orientation</a><wbr>(double&nbsp;inclination,
@@ -456,8 +457,9 @@ elides any value equal to its default, leaving files whose meaning drifts with t
 <h3>orientation</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">org.joml.Quaternionf</span>&nbsp;<span class="element-name">orientation</span>()</div>
-<div class="block">The rotation from the attachment part's frame into this eye's local frame, whose -Z is the pupil
-axis: azimuth turns about the part's vertical axis, then inclination tilts about the horizontal.</div>
+<div class="block">The rotation from the attachment part's frame into this eye's local frame, whose -Z is the
+pupil axis: azimuth turns about the part's vertical axis, then inclination tilts about the
+horizontal.</div>
 </div>
 </section>
 </li>

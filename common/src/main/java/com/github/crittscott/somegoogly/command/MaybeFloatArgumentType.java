@@ -14,21 +14,26 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * A Brigadier argument that parses either a number or the literal {@code ~} — the "leave this axis/angle
- * unchanged" no-op. {@code ~} yields an empty {@link Optional}; a number yields {@code Optional.of(v)}.
- * Used by {@code /sg move} and {@code /sg rot}. The picker stores placement as {@code float} (matching
- * the config codecs), so this yields floats all the way through.
+ * A Brigadier argument that parses either a number or the literal {@code ~} — the "leave this
+ * axis/angle unchanged" no-op. {@code ~} yields an empty {@link Optional}; a number yields {@code
+ * Optional.of(v)}. Used by {@code /sg move} and {@code /sg rot}. The picker stores placement as
+ * {@code float} (matching the config codecs), so this yields floats all the way through.
  */
 public class MaybeFloatArgumentType implements ArgumentType<Optional<Float>> {
 
     private static final Collection<String> EXAMPLES = Arrays.asList("0", "0.5", "~", "-1.25");
 
-    /** {@code value} whole, as this argument parses it whatever the computer's language: for angles. */
+    /**
+     * {@code value} whole, as this argument parses it whatever the computer's language: for angles.
+     */
     public static String angle(double value) {
         return String.format(Locale.ROOT, "%.0f", value);
     }
 
-    /** {@code value} to two places, as this argument parses it: for scales, weights, and tight displays. */
+    /**
+     * {@code value} to two places, as this argument parses it: for scales, weights, and tight
+     * displays.
+     */
     public static String compact(double value) {
         return String.format(Locale.ROOT, "%.2f", value);
     }
@@ -50,7 +55,8 @@ public class MaybeFloatArgumentType implements ArgumentType<Optional<Float>> {
     }
 
     @Override
-    public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
+    public <S> CompletableFuture<Suggestions> listSuggestions(
+            CommandContext<S> context, SuggestionsBuilder builder) {
         if ("~".startsWith(builder.getRemaining())) {
             builder.suggest("~");
         }

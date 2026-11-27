@@ -77,9 +77,9 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">TwilightHeadGameTests</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Twilight Forest-only head scenarios: a head keeping its eyes when a candle, placed by hand or by dispenser, turns it
-into a skull candle, and trophies taking, keeping, and giving up eyes and saving only their eye state. They need
-Twilight Forest loaded and fail without it.</div>
+<div class="block">Twilight Forest-only head scenarios: a head keeping its eyes when a candle, placed by hand or by
+dispenser, turns it into a skull candle, and trophies taking, keeping, and giving up eyes and
+saving only their eye state. They need Twilight Forest loaded and fail without it.</div>
 </div>
 </section>
 <section class="summary">
@@ -98,7 +98,8 @@ Twilight Forest loaded and fail without it.</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#dispenserConversionKeepsEyes(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">dispenserConversionKeepsEyes</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">In game, point a dispenser with a red candle at an eyed wall-mounted skeleton skull and power it.</div>
+<div class="block">In game, point a dispenser with a red candle at an eyed wall-mounted skeleton skull and power
+it.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#lichTrophyTakesKeepsAndGivesUpEyes(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">lichTrophyTakesKeepsAndGivesUpEyes</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
@@ -114,8 +115,8 @@ Optometrist shears.</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#trophyKeepsOnlyItsEyeState(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">trophyKeepsOnlyItsEyeState</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">A trophy keeps only its eye state from the data it loads, so nothing else a trophy item carried is saved or
-sent to players.</div>
+<div class="block">A trophy keeps only its eye state from the data it loads, so nothing else a trophy item
+carried is saved or sent to players.</div>
 </div>
 </div>
 </div>
@@ -139,9 +140,9 @@ sent to players.</div>
 <h3>playerConversionKeepsEyes</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">playerConversionKeepsEyes</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">In game, give a skeleton skull eyes, right-click it with a red candle, and break it.
-The skull with a candle and the dropped vanilla skull should show the same eyes, and the dropped candle's
-tooltip lists no googly eyes.</div>
+<div class="block">In game, give a skeleton skull eyes, right-click it with a red candle, and break it. The
+skull with a candle and the dropped vanilla skull should show the same eyes, and the dropped
+candle's tooltip lists no googly eyes.</div>
 </div>
 </section>
 </li>
@@ -150,8 +151,8 @@ tooltip lists no googly eyes.</div>
 <h3>dispenserConversionKeepsEyes</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">dispenserConversionKeepsEyes</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">In game, point a dispenser with a red candle at an eyed wall-mounted skeleton skull and power it.
-The replacement skull candle should keep the eyes.</div>
+<div class="block">In game, point a dispenser with a red candle at an eyed wall-mounted skeleton skull and power
+it. The replacement skull candle should keep the eyes.</div>
 </div>
 </section>
 </li>
@@ -170,10 +171,11 @@ Optometrist shears. A second client should see the same eyes until they are shea
 <h3>trophyKeepsOnlyItsEyeState</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">trophyKeepsOnlyItsEyeState</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">A trophy keeps only its eye state from the data it loads, so nothing else a trophy item carried is saved or
-sent to players. In game, in creative: <code>/give</code> a Lich trophy whose <code>block_entity_data</code> has a
-<code>somegoogly:data</code> compound with <code>hasGooglyEyes</code> true and an extra key, and place it;
-<code>/data get block</code> shows the eye state without that key.</div>
+<div class="block">A trophy keeps only its eye state from the data it loads, so nothing else a trophy item
+carried is saved or sent to players. In game, in creative: <code>/give</code> a Lich trophy whose
+<code>block_entity_data</code> has a <code>somegoogly:data</code> compound with <code>hasGooglyEyes</code>
+true and an extra key, and place it; <code>/data get block</code> shows the eye state without that
+key.</div>
 </div>
 </section>
 </li>

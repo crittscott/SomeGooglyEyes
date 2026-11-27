@@ -6,8 +6,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 /** Fabric serverbound sends. */
 public final class ClientNetworkingImpl {
 
-    private ClientNetworkingImpl() {
-    }
+    private ClientNetworkingImpl() {}
 
     public static void sendToServer(CustomPacketPayload payload) {
         ClientPlayNetworking.send(payload);

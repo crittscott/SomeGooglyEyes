@@ -70,11 +70,10 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">Attachment</span></div>
-<div class="block">A resolved attach point: the ordered transforms that carry a pose from the model's base render space
-into a named part's animated space. Resolving one means finding the part (a tree search by string
-name); applying it means replaying the transforms of the part and each of its ancestors. Only the
-first is expensive, and it depends on nothing that changes, so <a href="EyeAttachmentResolver.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver"><code>EyeAttachmentResolver</code></a> resolves
-once per (model, token) and applies the result every frame.</div>
+<div class="block">A resolved attach point: the ordered transforms that carry a pose from the model's base render
+space into a named part's animated space. Resolving one means finding the part (a tree search by
+string name); applying it means replaying the transforms of the part and each of its ancestors.
+Only the first is expensive, and it depends on nothing that changes, so <a href="EyeAttachmentResolver.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver"><code>EyeAttachmentResolver</code></a> resolves once per (model, token) and applies the result every frame.</div>
 </div>
 </section>
 <section class="summary">
@@ -114,12 +113,12 @@ once per (model, token) and applies the result every frame.</div>
 <h3>apply</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">apply</span><wbr><span class="parameters">(com.mojang.blaze3d.vertex.PoseStack&nbsp;poseStack)</span></div>
-<div class="block">Move <code>poseStack</code> into the part's current (this-frame, post-animation) space. The caller owns
-the surrounding <code>pushPose()</code>/<code>popPose()</code>.</div>
+<div class="block">Move <code>poseStack</code> into the part's current (this-frame, post-animation) space. The caller
+owns the surrounding <code>pushPose()</code>/<code>popPose()</code>.</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd><code>false</code> if a transform could not be applied (a reflected model family whose handles
-        failed); the caller should skip drawing.</dd>
+<dd><code>false</code> if a transform could not be applied (a reflected model family whose
+    handles failed); the caller should skip drawing.</dd>
 </dl>
 </div>
 </section>

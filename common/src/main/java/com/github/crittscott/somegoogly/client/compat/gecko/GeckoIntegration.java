@@ -1,30 +1,30 @@
 package com.github.crittscott.somegoogly.client.compat.gecko;
 
-import com.github.crittscott.somegoogly.client.compat.ClientIntegrationFailures;
-import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.resources.Identifier;
-import net.minecraft.world.entity.LivingEntity;
 import com.geckolib.cache.model.BakedGeoModel;
 import com.geckolib.event.GeoRenderEvent;
 import com.geckolib.model.GeoModel;
 import com.geckolib.renderer.GeoEntityRenderer;
 import com.geckolib.renderer.base.GeoRenderState;
+import com.github.crittscott.somegoogly.client.compat.ClientIntegrationFailures;
+
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.LivingEntity;
 
 import java.util.List;
 
 /**
- * GeckoLib-referencing entry points, reached only via {@code GeckoCompat} or from loader listeners registered
- * after its presence check (so this class — and the GeckoLib classes it touches — load only when GeckoLib is
- * present).
+ * GeckoLib-referencing entry points, reached only via {@code GeckoCompat} or from loader listeners
+ * registered after its presence check (so this class — and the GeckoLib classes it touches — load
+ * only when GeckoLib is present).
  */
 public final class GeckoIntegration {
 
-    private GeckoIntegration() {
-    }
+    private GeckoIntegration() {}
 
     /**
-     * The bone names of {@code living}'s GeckoLib model, or an empty list for a non-GeckoLib renderer or unbaked
-     * model.
+     * The bone names of {@code living}'s GeckoLib model, or an empty list for a non-GeckoLib
+     * renderer or unbaked model.
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     public static List<String> enumerate(EntityRenderer<?, ?> renderer, LivingEntity living) {
@@ -32,14 +32,16 @@ public final class GeckoIntegration {
             return List.of();
         }
         GeoModel model = geo.getGeoModel();
-        Identifier location = model.getModelResource((GeoRenderState) geo.createRenderState(living, 0.0F));
+        Identifier location =
+                model.getModelResource((GeoRenderState) geo.createRenderState(living, 0.0F));
         BakedGeoModel baked = model.getBakedModel(location);
         return baked == null ? List.of() : GeoBones.enumerate(baked);
     }
 
     /**
-     * Add the googly-eye layer from a loader's GeckoLib entity compile-render-layers event, which fires once per
-     * renderer. A failure is logged once and leaves that renderer without eyes rather than breaking rendering.
+     * Add the googly-eye layer from a loader's GeckoLib entity compile-render-layers event, which
+     * fires once per renderer. A failure is logged once and leaves that renderer without eyes
+     * rather than breaking rendering.
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     public static void compileLayers(GeoRenderEvent.Entity.CompileRenderLayers event) {
@@ -48,7 +50,10 @@ public final class GeckoIntegration {
             event.addLayer(geoRenderer -> new GooglyGeoLayer((GeoEntityRenderer) geoRenderer));
         } catch (RuntimeException | LinkageError failure) {
             ClientIntegrationFailures.warnOnce(
-                    "GeckoLib", "render-layer installation", renderer.getClass().getName(), failure);
+                    "GeckoLib",
+                    "render-layer installation",
+                    renderer.getClass().getName(),
+                    failure);
         }
     }
 }

@@ -103,8 +103,9 @@ library covers both, and they cannot drift apart.
 owns its handles, its per-model cache, and its failure state: one library failing or being absent
 never disables the other.
 
-<p>Uranus models are not vanilla <code>EntityModel</code>s, and Ice and Fire CE draws them from renderers
-that are not <code>LivingEntityRenderer</code>s; <code>IceAndFireCompat</code> hands those models here.
+<p>Uranus models are not vanilla <code>EntityModel</code>s, and Ice and Fire CE draws them from
+renderers that are not <code>LivingEntityRenderer</code>s; <code>IceAndFireCompat</code> hands those models
+here.
 
 <p>Token vocabulary and matching live in <code>ReflectedBoxResolver</code>. The intrinsic segment name
 here is the box's <code>boxName</code> — set by tabula-loaded models (Ice and Fire's dragons) and by
@@ -139,7 +140,8 @@ recovers.</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#available()" class="member-name-link">available</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Whether the reflective handles all loaded (the family's classes are present and API-shaped as expected).</div>
+<div class="block">Whether the reflective handles all loaded (the family's classes are present and API-shaped as
+expected).</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a><wbr>&lt;?&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#boxClass()" class="member-name-link">boxClass</a>()</code></div>
@@ -150,9 +152,9 @@ recovers.</div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#canonicalToken(java.lang.Object,java.lang.String)" class="member-name-link">canonicalToken</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;model,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;storedToken)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Translate a (possibly differently-spelled or partial) stored attach token into the <i>canonical</i>
-path token this resolver would enumerate for the same part — the single vocabulary the picker, HUD,
-and exported configs all speak.</div>
+<div class="block">Translate a (possibly differently-spelled or partial) stored attach token into the
+<i>canonical</i> path token this resolver would enumerate for the same part — the single
+vocabulary the picker, HUD, and exported configs all speak.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="AdvancedModelBoxResolver.html" title="class in com.github.crittscott.somegoogly.client.render.resolver">AdvancedModelBoxResolver</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#citadel()" class="member-name-link">citadel</a>()</code></div>
@@ -167,12 +169,14 @@ and exported configs all speak.</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#enumerateParts(java.lang.Object)" class="member-name-link">enumerateParts</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;model)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">List selectable attachment tokens for this model, in a stable order (used by the part picker).</div>
+<div class="block">List selectable attachment tokens for this model, in a stable order (used by the part
+picker).</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected final boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#failed(java.lang.Object)" class="member-name-link">failed</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;model)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Whether reflection on <code>model</code> has failed since the last reset; other models are unaffected.</div>
+<div class="block">Whether reflection on <code>model</code> has failed since the last reset; other models are
+unaffected.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#familyLabel()" class="member-name-link">familyLabel</a>()</code></div>
@@ -209,8 +213,9 @@ and exported configs all speak.</div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#resolve(java.lang.Object,java.lang.String)" class="member-name-link">resolve</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;model,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;partToken)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Find the part <code>partToken</code> names and return the transforms that reach it, or <code>null</code> when
-the model has no such part (an unknown token, or a model whose worn variant lacks it).</div>
+<div class="block">Find the part <code>partToken</code> names and return the transforms that reach it, or <code>
+null</code> when the model has no such part (an unknown token, or a model whose worn variant lacks
+it).</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="AdvancedModelBoxResolver.html" title="class in com.github.crittscott.somegoogly.client.render.resolver">AdvancedModelBoxResolver</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#uranus()" class="member-name-link">uranus</a>()</code></div>
@@ -270,7 +275,8 @@ serving several libraries must override so its warnings say which one failed.</d
 <h3>available</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">available</span>()</div>
-<div class="block">Whether the reflective handles all loaded (the family's classes are present and API-shaped as expected).</div>
+<div class="block">Whether the reflective handles all loaded (the family's classes are present and API-shaped as
+expected).</div>
 </div>
 </section>
 </li>
@@ -351,8 +357,8 @@ serving several libraries must override so its warnings say which one failed.</d
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">clearModelCache</span>()</div>
 <div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="EyeAttachmentResolver.html#clearModelCache()">EyeAttachmentResolver</a></code></span></div>
-<div class="block">Drop any per-model state this resolver caches. Called from <a href="Resolvers.html#clearCaches()"><code>Resolvers.clearCaches()</code></a> when the
-models themselves are replaced. Default: the resolver keeps none.</div>
+<div class="block">Drop any per-model state this resolver caches. Called from <a href="Resolvers.html#clearCaches()"><code>Resolvers.clearCaches()</code></a>
+when the models themselves are replaced. Default: the resolver keeps none.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="EyeAttachmentResolver.html#clearModelCache()">clearModelCache</a></code>&nbsp;in interface&nbsp;<code><a href="EyeAttachmentResolver.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">EyeAttachmentResolver</a></code></dd>
@@ -365,7 +371,8 @@ models themselves are replaced. Default: the resolver keeps none.</div>
 <h3>failed</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">protected final</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">failed</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;model)</span></div>
-<div class="block">Whether reflection on <code>model</code> has failed since the last reset; other models are unaffected.</div>
+<div class="block">Whether reflection on <code>model</code> has failed since the last reset; other models are
+unaffected.</div>
 </div>
 </section>
 </li>
@@ -376,15 +383,15 @@ models themselves are replaced. Default: the resolver keeps none.</div>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">canonicalToken</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;model,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;storedToken)</span></div>
 <div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="EyeAttachmentResolver.html#canonicalToken(java.lang.Object,java.lang.String)">EyeAttachmentResolver</a></code></span></div>
-<div class="block">Translate a (possibly differently-spelled or partial) stored attach token into the <i>canonical</i>
-path token this resolver would enumerate for the same part — the single vocabulary the picker, HUD,
-and exported configs all speak. That is the full slash path (<code>root/body/head</code>), with a
-positional segment (<code>#N</code>) only where a part has no obfuscation-stable name. Returns the token
-unchanged when it can't be resolved to a part (so unknown tokens pass through untouched rather than
-being silently remapped).
+<div class="block">Translate a (possibly differently-spelled or partial) stored attach token into the
+<i>canonical</i> path token this resolver would enumerate for the same part — the single
+vocabulary the picker, HUD, and exported configs all speak. That is the full slash path
+(<code>root/body/head</code>), with a positional segment (<code>#N</code>) only where a part has no
+obfuscation-stable name. Returns the token unchanged when it can't be resolved to a part (so
+unknown tokens pass through untouched rather than being silently remapped).
 
-<p>Default: identity (the resolver's enumeration vocabulary already matches stored tokens, e.g.
-named bones).</div>
+<p>Default: identity (the resolver's enumeration vocabulary already matches stored tokens,
+e.g. named bones).</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="EyeAttachmentResolver.html#canonicalToken(java.lang.Object,java.lang.String)">canonicalToken</a></code>&nbsp;in interface&nbsp;<code><a href="EyeAttachmentResolver.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">EyeAttachmentResolver</a></code></dd>
@@ -398,8 +405,8 @@ named bones).</div>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">enumerateParts</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;model)</span></div>
 <div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="EyeAttachmentResolver.html#enumerateParts(java.lang.Object)">EyeAttachmentResolver</a></code></span></div>
-<div class="block">List selectable attachment tokens for this model, in a stable order (used by the part picker).
-Default: none (the resolver doesn't support enumeration / picker authoring).</div>
+<div class="block">List selectable attachment tokens for this model, in a stable order (used by the part
+picker). Default: none (the resolver doesn't support enumeration / picker authoring).</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="EyeAttachmentResolver.html#enumerateParts(java.lang.Object)">enumerateParts</a></code>&nbsp;in interface&nbsp;<code><a href="EyeAttachmentResolver.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">EyeAttachmentResolver</a></code></dd>
@@ -414,12 +421,12 @@ Default: none (the resolver doesn't support enumeration / picker authoring).</di
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="Attachment.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">Attachment</a></span>&nbsp;<span class="element-name">resolve</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;model,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;partToken)</span></div>
 <div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="EyeAttachmentResolver.html#resolve(java.lang.Object,java.lang.String)">EyeAttachmentResolver</a></code></span></div>
-<div class="block">Find the part <code>partToken</code> names and return the transforms that reach it, or <code>null</code> when
-the model has no such part (an unknown token, or a model whose worn variant lacks it).
+<div class="block">Find the part <code>partToken</code> names and return the transforms that reach it, or <code>
+null</code> when the model has no such part (an unknown token, or a model whose worn variant lacks
+it).
 
-<p>The expensive half of the contract: a search of the model's part tree, matching each candidate
-path against the token. Called once per (model, token) — see <code>Resolvers.ATTACHMENTS</code> — so it
-may allocate and walk freely.</div>
+<p>The expensive half of the contract: a search of the model's part tree, matching each
+candidate path against the token. Called once per (model, token) — see <code>Resolvers.ATTACHMENTS</code> — so it may allocate and walk freely.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="EyeAttachmentResolver.html#resolve(java.lang.Object,java.lang.String)">resolve</a></code>&nbsp;in interface&nbsp;<code><a href="EyeAttachmentResolver.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">EyeAttachmentResolver</a></code></dd>

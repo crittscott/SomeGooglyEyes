@@ -78,19 +78,20 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">SkullEyeRenderer</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Submits the eyes of placed mob heads and head items. A placed head's eyes are chosen while its render state
-is extracted (<a href="#extract(net.minecraft.world.level.block.entity.BlockEntity)"><code>extract(BlockEntity)</code></a>) and kept on that state (<a href="SkullEyeRenderer.PlacedHolder.html" title="interface in com.github.crittscott.somegoogly.client.render"><code>SkullEyeRenderer.PlacedHolder</code></a>). Mixins bracket a placed head's
-submission with <a href="../ClientEyeRuntime.html#beginHead(com.github.crittscott.somegoogly.client.PresentationEyes,float)"><code>ClientEyeRuntime.beginHead(PresentationEyes, float)</code></a> and an item render state's with
-<a href="../ClientEyeRuntime.html#beginItemState(net.minecraft.world.item.ItemStack,com.github.crittscott.somegoogly.client.PresentationEyes.Draw)"><code>ClientEyeRuntime.beginItemState(ItemStack, PresentationEyes.Draw)</code></a>, both closed by <a href="../ClientEyeRuntime.html#endItemDraw()"><code>ClientEyeRuntime.endItemDraw()</code></a>, and call
-<a href="#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,net.minecraft.client.model.object.skull.SkullModelBase,net.minecraft.client.model.object.skull.SkullModelBase.State)"><code>render(PoseStack, SubmitNodeCollector, int, SkullModelBase, SkullModelBase.State)</code></a> or <a href="#renderTrophy(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,net.minecraft.client.model.geom.ModelPart)"><code>renderTrophy(PoseStack, SubmitNodeCollector, int, ModelPart)</code></a> as the head model is submitted, in the model's space; they read that draw
-context while the head is submitted, never later. A placed head's eyes are live (<a href="../PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client"><code>PresentationEyes</code></a>). Head
-items in the GUI, in third-person hands, or in frames have independent pupils and ambient expressions. Unanimated
-items have centered pupils. Worn heads share the model submission outside both brackets, so they draw no eyes.
+<div class="block">Submits the eyes of placed mob heads and head items. A placed head's eyes are chosen while its
+render state is extracted (<a href="#extract(net.minecraft.world.level.block.entity.BlockEntity)"><code>extract(BlockEntity)</code></a>) and kept on that state (<a href="SkullEyeRenderer.PlacedHolder.html" title="interface in com.github.crittscott.somegoogly.client.render"><code>SkullEyeRenderer.PlacedHolder</code></a>).
+Mixins bracket a placed head's submission with <a href="../ClientEyeRuntime.html#beginHead(com.github.crittscott.somegoogly.client.PresentationEyes,float)"><code>ClientEyeRuntime.beginHead(PresentationEyes, float)</code></a> and an item
+render state's with <a href="../ClientEyeRuntime.html#beginItemState(net.minecraft.world.item.ItemStack,com.github.crittscott.somegoogly.client.PresentationEyes.Draw)"><code>ClientEyeRuntime.beginItemState(ItemStack, PresentationEyes.Draw)</code></a>, both closed by <a href="../ClientEyeRuntime.html#endItemDraw()"><code>ClientEyeRuntime.endItemDraw()</code></a>, and call <a href="#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,net.minecraft.client.model.object.skull.SkullModelBase,net.minecraft.client.model.object.skull.SkullModelBase.State)"><code>render(PoseStack, SubmitNodeCollector, int, SkullModelBase, SkullModelBase.State)</code></a> or <a href="#renderTrophy(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,net.minecraft.client.model.geom.ModelPart)"><code>renderTrophy(PoseStack, SubmitNodeCollector, int, ModelPart)</code></a> as the head
+model is submitted, in the model's space; they read that draw context while the head is
+submitted, never later. A placed head's eyes are live (<a href="../PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client"><code>PresentationEyes</code></a>). Head items in
+the GUI, in third-person hands, or in frames have independent pupils and ambient expressions.
+Unanimated items have centered pupils. Worn heads share the model submission outside both
+brackets, so they draw no eyes.
 
-<p>The eyes attach to the model's head part, which a vanilla head model shares with its mob, so the mob's
-definition places them as they are. Heads-mod models use a cached cube fit to carry eyes to their
-rebuilt head parts. Honors the client display settings by the head's mob and the server's
-<code>googlyEyesEnabled</code> switch.</div>
+<p>The eyes attach to the model's head part, which a vanilla head model shares with its mob, so
+the mob's definition places them as they are. Heads-mod models use a cached cube fit to carry
+eyes to their rebuilt head parts. Honors the client display settings by the head's mob and the
+server's <code>googlyEyesEnabled</code> switch.</div>
 </div>
 </section>
 <section class="summary">
@@ -112,7 +113,8 @@ rebuilt head parts. Honors the client display settings by the head's mob and the
 <div class="col-first odd-row-color"><code>static interface&nbsp;</code></div>
 <div class="col-second odd-row-color"><code><a href="SkullEyeRenderer.PlacedHolder.html" class="type-name-link" title="interface in com.github.crittscott.somegoogly.client.render">SkullEyeRenderer.PlacedHolder</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block">A placed head's render state's link to the eyes chosen when it was extracted, added by a Mixin.</div>
+<div class="block">A placed head's render state's link to the eyes chosen when it was extracted, added by a
+Mixin.</div>
 </div>
 </div>
 </section>
@@ -136,8 +138,8 @@ rebuilt head parts. Honors the client display settings by the head's mob and the
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable <a href="../PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client">PresentationEyes</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#extract(net.minecraft.world.level.block.entity.BlockEntity)" class="member-name-link">extract</a><wbr>(net.minecraft.world.level.block.entity.BlockEntity&nbsp;skull)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The eyes of the placed head <code>skull</code> to draw this frame, or <code>null</code> when it has none to show, as
-its render state is extracted.</div>
+<div class="block">The eyes of the placed head <code>skull</code> to draw this frame, or <code>null</code> when it has
+none to show, as its render state is extracted.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#render(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,net.minecraft.client.model.object.skull.SkullModelBase,net.minecraft.client.model.object.skull.SkullModelBase.State)" class="member-name-link">render</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
@@ -146,8 +148,9 @@ its render state is extracted.</div>
  net.minecraft.client.model.object.skull.SkullModelBase&nbsp;model,
  net.minecraft.client.model.object.skull.SkullModelBase.State&nbsp;modelState)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Submit the current placed head's or head item's eyes, if it has any to show, with <code>pose</code> in the space
-<code>model</code> was just submitted in, the head's <code>packedLight</code>, and its extracted model state.</div>
+<div class="block">Submit the current placed head's or head item's eyes, if it has any to show, with <code>
+pose</code> in the space <code>model</code> was just submitted in, the head's <code>packedLight</code>, and
+its extracted model state.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#renderTrophy(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,net.minecraft.client.model.geom.ModelPart)" class="member-name-link">renderTrophy</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
@@ -177,8 +180,8 @@ its render state is extracted.</div>
 <h3>extract</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">@Nullable <a href="../PresentationEyes.html" title="class in com.github.crittscott.somegoogly.client">PresentationEyes</a></span>&nbsp;<span class="element-name">extract</span><wbr><span class="parameters">(net.minecraft.world.level.block.entity.BlockEntity&nbsp;skull)</span></div>
-<div class="block">The eyes of the placed head <code>skull</code> to draw this frame, or <code>null</code> when it has none to show, as
-its render state is extracted.</div>
+<div class="block">The eyes of the placed head <code>skull</code> to draw this frame, or <code>null</code> when it has
+none to show, as its render state is extracted.</div>
 </div>
 </section>
 </li>
@@ -200,9 +203,10 @@ its render state is extracted.</div>
  int&nbsp;packedLight,
  net.minecraft.client.model.object.skull.SkullModelBase&nbsp;model,
  net.minecraft.client.model.object.skull.SkullModelBase.State&nbsp;modelState)</span></div>
-<div class="block">Submit the current placed head's or head item's eyes, if it has any to show, with <code>pose</code> in the space
-<code>model</code> was just submitted in, the head's <code>packedLight</code>, and its extracted model state. The model is posed only when it is drawn, after submission, so it is posed here
-the same way first.</div>
+<div class="block">Submit the current placed head's or head item's eyes, if it has any to show, with <code>
+pose</code> in the space <code>model</code> was just submitted in, the head's <code>packedLight</code>, and
+its extracted model state. The model is posed only when it is drawn, after submission, so it
+is posed here the same way first.</div>
 </div>
 </section>
 </li>

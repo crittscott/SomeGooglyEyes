@@ -96,19 +96,19 @@ loadScripts(document, 'script');</script>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
 implements net.minecraft.client.renderer.special.SpecialModelRenderer&lt;<a href="GooglyEyeItemRenderer.Frame.html" title="class in com.github.crittscott.somegoogly.client.render">GooglyEyeItemRenderer.Frame</a>&gt;</span></div>
 <div class="block">Renders a <code>googly_eye</code> item as the actual 3D <a href="ModelGooglyEye.html" title="class in com.github.crittscott.somegoogly.client.render"><code>ModelGooglyEye</code></a>, tinted by the item's
-<a href="../../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state"><code>AppearanceOverride</code></a>. Reuses the in-world eye model so the item and the mob eyes can't drift.
+<a href="../../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state"><code>AppearanceOverride</code></a>. Reuses the in-world eye model so the item and the mob eyes can't
+drift.
 
-<p>First- and third-person hand views select one holder/hand presentation, whose hurt and heal reactions the
-server sends to the holder and other viewers. Framed eyes have independent mounted pupil physics and ambient
-expressions, supplied by the frame's extracted render state. GUI presentations have their own clock, and ground
-views are static.
+<p>First- and third-person hand views select one holder/hand presentation, whose hurt and heal
+reactions the server sends to the holder and other viewers. Framed eyes have independent mounted
+pupil physics and ambient expressions, supplied by the frame's extracted render state. GUI
+presentations have their own clock, and ground views are static.
 
-<p>Registered as the <code>somegoogly:googly_eye</code> special model type and selected by
-<code>assets/somegoogly/items/googly_eye.json</code>; each loader puts <a href="GooglyEyeItemRenderer.Unbaked.html#MAP_CODEC"><code>GooglyEyeItemRenderer.Unbaked.MAP_CODEC</code></a> under
-<a href="#ID"><code>ID</code></a>.
+<p>Registered as the <code>somegoogly:googly_eye</code> special model type and selected by <code>
+assets/somegoogly/items/googly_eye.json</code>; each loader puts <a href="GooglyEyeItemRenderer.Unbaked.html#MAP_CODEC"><code>GooglyEyeItemRenderer.Unbaked.MAP_CODEC</code></a> under <a href="#ID"><code>ID</code></a>.
 
-<p>Draws through <a href="GooglyEyeRenderer.html#drawEye(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,int,float%5B%5D,float%5B%5D,float,float,float,boolean)"><code>GooglyEyeRenderer.drawEye(PoseStack, SubmitNodeCollector, int, int, float[], float[], float, float, float, boolean)</code></a>, so the item and the mob eyes share one drawing
-path, texture, and pair of render types.</div>
+<p>Draws through <a href="GooglyEyeRenderer.html#drawEye(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.SubmitNodeCollector,int,int,float%5B%5D,float%5B%5D,float,float,float,boolean)"><code>GooglyEyeRenderer.drawEye(PoseStack, SubmitNodeCollector, int, int, float[], float[], float, float, float, boolean)</code></a>, so the item and the mob eyes share one
+drawing path, texture, and pair of render types.</div>
 </div>
 </section>
 <section class="summary">

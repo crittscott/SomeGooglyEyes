@@ -2,24 +2,23 @@ package com.github.crittscott.somegoogly.mixin.common.client;
 
 import com.github.crittscott.somegoogly.client.PresentationEyes;
 import com.github.crittscott.somegoogly.client.render.SkullEyeRenderer;
+
 import net.minecraft.client.renderer.blockentity.state.SkullBlockRenderState;
+
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
-import org.jspecify.annotations.Nullable;
-
 /**
- * Carries a placed head's eyes from render-state extraction to its submission. Vanilla render states have no slot
- * for another mod's data, and no loader offers one, so the eyes ride the state as mixin fields.
+ * Carries a placed head's eyes from render-state extraction to its submission. Vanilla render
+ * states have no slot for another mod's data, and no loader offers one, so the eyes ride the state
+ * as mixin fields.
  */
 @Mixin(SkullBlockRenderState.class)
 abstract class SkullBlockRenderStateMixin implements SkullEyeRenderer.PlacedHolder {
 
-    @Unique
-    @Nullable
-    private PresentationEyes somegoogly$eyes;
-    @Unique
-    private float somegoogly$partialTick;
+    @Unique @Nullable private PresentationEyes somegoogly$eyes;
+    @Unique private float somegoogly$partialTick;
 
     @Override
     @Nullable

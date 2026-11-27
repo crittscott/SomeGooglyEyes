@@ -3,13 +3,12 @@ package com.github.crittscott.somegoogly.gametest;
 import net.minecraft.gametest.framework.GameTestHelper;
 
 /**
- * NeoForge GameTest entry points for {@link VersionRangeGameTestsLogic}; see that class for the actual
- * assertions.
+ * NeoForge GameTest entry points for {@link VersionRangeGameTestsLogic}; see that class for the
+ * actual assertions.
  */
 public final class VersionRangeGameTests {
 
-    private VersionRangeGameTests() {
-    }
+    private VersionRangeGameTests() {}
 
     public static void exactVersionMatchesOnlyItself(GameTestHelper helper) {
         VersionRangeGameTestsLogic.exactVersionMatchesOnlyItself(helper);
@@ -38,7 +37,6 @@ public final class VersionRangeGameTests {
     public static void nearestHandlesExactAndMalformedDeclarations(GameTestHelper helper) {
         VersionRangeGameTestsLogic.nearestHandlesExactAndMalformedDeclarations(helper);
     }
-
 
     public static void shorterVersionPadsWithZero(GameTestHelper helper) {
         VersionRangeGameTestsLogic.shorterVersionPadsWithZero(helper);

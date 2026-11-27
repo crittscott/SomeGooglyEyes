@@ -1,13 +1,14 @@
 package com.github.crittscott.somegoogly.eye.state;
 
+import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.HeadConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
-import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot;
 import com.github.crittscott.somegoogly.registry.ModContent;
 import com.google.common.base.Suppliers;
+
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
@@ -25,95 +26,112 @@ import net.minecraft.world.level.storage.loot.functions.CopyComponentsFunction;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
-import org.jspecify.annotations.Nullable;
 
 /**
- * Eye state of a placed mob head and of a head item. A head carries the same {@link Snapshot} a mob does,
- * in a compound a Mixin adds to the head block entity ({@link Holder}), saved under {@value #DATA_KEY} in
- * its data and replaced on every load, so the server's save and the clients' update packets carry it. A
- * head item carries it as the {@link ModContent#HEAD_EYES} component, which the block entity takes and gives
- * as an implicit component, as vanilla's head does its profile: placing the item hands it to the new block
- * entity, and the head's loot copies it back onto the dropped item.
+ * Eye state of a placed mob head and of a head item. A head carries the same {@link Snapshot} a mob
+ * does, in a compound a Mixin adds to the head block entity ({@link Holder}), saved under {@value
+ * #DATA_KEY} in its data and replaced on every load, so the server's save and the clients' update
+ * packets carry it. A head item carries it as the {@link ModContent#HEAD_EYES} component, which the
+ * block entity takes and gives as an implicit component, as vanilla's head does its profile:
+ * placing the item hands it to the new block entity, and the head's loot copies it back onto the
+ * dropped item.
  *
- * <p>A head type borrows its mob's adult eye definition and shows only the eyes attached to the part of its mob
- * that the head model reproduces ({@link #headParts}). Vanilla head types are matched by type, the Heads mod's
- * by block id ({@link #entityFor(Identifier)}), so that mod is never referenced and its absence changes
- * nothing. A head with no mob here (the dragon, other mods' heads, Heads' heads whose mob's eyes sit on a part
- * the head doesn't reproduce) never has eyes.
+ * <p>A head type borrows its mob's adult eye definition and shows only the eyes attached to the
+ * part of its mob that the head model reproduces ({@link #headParts}). Vanilla head types are
+ * matched by type, the Heads mod's by block id ({@link #entityFor(Identifier)}), so that mod is
+ * never referenced and its absence changes nothing. A head with no mob here (the dragon, other
+ * mods' heads, Heads' heads whose mob's eyes sit on a part the head doesn't reproduce) never has
+ * eyes.
  *
- * <p>Server mutations end in a block update, which resends the block entity's data to every client in
- * range; clients only read the compound.
+ * <p>Server mutations end in a block update, which resends the block entity's data to every client
+ * in range; clients only read the compound.
  */
 public final class SkullEyeState {
 
     /** The key of the eye-state compound in a head block entity's saved data. */
     public static final String DATA_KEY = "somegoogly:data";
+
     /** Twilight Forest's namespace; declared first because the entries below read it. */
     public static final String TWILIGHT_NAMESPACE = "twilightforest";
+
     /**
-     * The loot function that copies a placed head's eye state onto a dropped item, as the
-     * {@link ModContent#HEAD_EYES} component the block entity reports; built on first use, because the component
-     * is not registered at class load.
+     * The loot function that copies a placed head's eye state onto a dropped item, as the {@link
+     * ModContent#HEAD_EYES} component the block entity reports; built on first use, because the
+     * component is not registered at class load.
      */
-    private static final Supplier<LootItemFunction> HEAD_LOOT_COPY = Suppliers.memoize(() ->
-            CopyComponentsFunction.copyComponentsFromBlockEntity(LootContextParams.BLOCK_ENTITY)
-                    .include(ModContent.HEAD_EYES.get()).build());
+    private static final Supplier<LootItemFunction> HEAD_LOOT_COPY =
+            Suppliers.memoize(() ->
+                    CopyComponentsFunction.copyComponentsFromBlockEntity(
+                                    LootContextParams.BLOCK_ENTITY)
+                            .include(ModContent.HEAD_EYES.get())
+                            .build());
+
     /**
-     * The attachment token of the part a head reproduces, for mobs whose eyes sit on a part other than the head;
-     * every other mob's head shows the eyes on parts named {@value EyeConfigModel#PART_HEAD}.
+     * The attachment token of the part a head reproduces, for mobs whose eyes sit on a part other
+     * than the head; every other mob's head shows the eyes on parts named {@value
+     * EyeConfigModel#PART_HEAD}.
      */
-    private static final Map<Identifier, String> HEAD_PART_TOKENS = Map.ofEntries(
-            Map.entry(EntityType.getKey(EntityType.BEE), "bone"),
-            Map.entry(EntityType.getKey(EntityType.CHICKEN), "beak"),
-            Map.entry(EntityType.getKey(EntityType.DONKEY), "head_parts"),
-            Map.entry(EntityType.getKey(EntityType.GHAST), "root/body"),
-            Map.entry(EntityType.getKey(EntityType.HORSE), "head_parts"),
-            Map.entry(EntityType.getKey(EntityType.MULE), "head_parts"),
-            Map.entry(EntityType.getKey(EntityType.ZOMBIE_HORSE), "head_parts"),
-            Map.entry(EntityType.getKey(EntityType.SQUID), "root"),
-            Map.entry(EntityType.getKey(EntityType.GLOW_SQUID), "root"),
-            Map.entry(EntityType.getKey(EntityType.SLIME), "root/right_eye"),
-            Map.entry(EntityType.getKey(EntityType.MAGMA_CUBE), "root/cube0"),
-            Map.entry(Identifier.fromNamespaceAndPath(TWILIGHT_NAMESPACE, "naga"), "#0"),
-            Map.entry(Identifier.fromNamespaceAndPath(TWILIGHT_NAMESPACE, "ur_ghast"), "root/body"));
+    private static final Map<Identifier, String> HEAD_PART_TOKENS =
+            Map.ofEntries(
+                    Map.entry(EntityType.getKey(EntityType.BEE), "bone"),
+                    Map.entry(EntityType.getKey(EntityType.CHICKEN), "beak"),
+                    Map.entry(EntityType.getKey(EntityType.DONKEY), "head_parts"),
+                    Map.entry(EntityType.getKey(EntityType.GHAST), "root/body"),
+                    Map.entry(EntityType.getKey(EntityType.HORSE), "head_parts"),
+                    Map.entry(EntityType.getKey(EntityType.MULE), "head_parts"),
+                    Map.entry(EntityType.getKey(EntityType.ZOMBIE_HORSE), "head_parts"),
+                    Map.entry(EntityType.getKey(EntityType.SQUID), "root"),
+                    Map.entry(EntityType.getKey(EntityType.GLOW_SQUID), "root"),
+                    Map.entry(EntityType.getKey(EntityType.SLIME), "root/right_eye"),
+                    Map.entry(EntityType.getKey(EntityType.MAGMA_CUBE), "root/cube0"),
+                    Map.entry(Identifier.fromNamespaceAndPath(TWILIGHT_NAMESPACE, "naga"), "#0"),
+                    Map.entry(
+                            Identifier.fromNamespaceAndPath(TWILIGHT_NAMESPACE, "ur_ghast"),
+                            "root/body"));
+
     /**
-     * The Heads mod's heads by floor-block id path: the mob whose definition each borrows. Its wall blocks
-     * differ only by a {@code _wall} segment. Left out are the heads of mobs with no definition (axolotl,
-     * endermite, silverfish).
+     * The Heads mod's heads by floor-block id path: the mob whose definition each borrows. Its wall
+     * blocks differ only by a {@code _wall} segment. Left out are the heads of mobs with no
+     * definition (axolotl, endermite, silverfish).
      */
     public static final Map<String, EntityType<?>> HEADS_MOBS = headsMobs();
+
     /** The Heads mod's namespace. */
     public static final String HEADS_NAMESPACE = "heads";
-    public static final Identifier HYDRA_TROPHY_LAYOUT = Identifier.fromNamespaceAndPath(TWILIGHT_NAMESPACE, "hydra_trophy");
-    private static final Map<SkullBlock.Type, EntityType<?>> MOBS = Map.of(
-            SkullBlock.Types.CREEPER, EntityType.CREEPER,
-            SkullBlock.Types.PIGLIN, EntityType.PIGLIN,
-            SkullBlock.Types.PLAYER, EntityType.PLAYER,
-            SkullBlock.Types.SKELETON, EntityType.SKELETON,
-            SkullBlock.Types.WITHER_SKELETON, EntityType.WITHER_SKELETON,
-            SkullBlock.Types.ZOMBIE, EntityType.ZOMBIE);
 
-    private SkullEyeState() {
-    }
+    public static final Identifier HYDRA_TROPHY_LAYOUT =
+            Identifier.fromNamespaceAndPath(TWILIGHT_NAMESPACE, "hydra_trophy");
+    private static final Map<SkullBlock.Type, EntityType<?>> MOBS =
+            Map.of(
+                    SkullBlock.Types.CREEPER, EntityType.CREEPER,
+                    SkullBlock.Types.PIGLIN, EntityType.PIGLIN,
+                    SkullBlock.Types.PLAYER, EntityType.PLAYER,
+                    SkullBlock.Types.SKELETON, EntityType.SKELETON,
+                    SkullBlock.Types.WITHER_SKELETON, EntityType.WITHER_SKELETON,
+                    SkullBlock.Types.ZOMBIE, EntityType.ZOMBIE);
+
+    private SkullEyeState() {}
 
     /** The head block entity's side of the eye-state compound, added by a Mixin. */
     public interface Holder {
 
         /** The compound, or {@code null} if the head has none; read it, don't write it. */
-        @Nullable
-        CompoundTag somegoogly$find();
+        @Nullable CompoundTag somegoogly$find();
 
         /** The live compound, created when absent; written in place. */
         CompoundTag somegoogly$get();
 
         /**
-         * Put the compound into the update tag {@code tag} whenever the head has one, eyes or not. The client skips
-         * an empty update tag, so a plain head that just lost its eyes would otherwise send nothing and keep them.
+         * Put the compound into the update tag {@code tag} whenever the head has one, eyes or not.
+         * The client skips an empty update tag, so a plain head that just lost its eyes would
+         * otherwise send nothing and keep them.
          */
         default void somegoogly$syncEyes(CompoundTag tag) {
             CompoundTag data = somegoogly$find();
@@ -124,8 +142,8 @@ public final class SkullEyeState {
     }
 
     /**
-     * Whether a head of {@code entity}'s kind can have eyes under that mob's adult {@code config}: it is usable and
-     * has a weighted variant with eyes the head shows.
+     * Whether a head of {@code entity}'s kind can have eyes under that mob's adult {@code config}:
+     * it is usable and has a weighted variant with eyes the head shows.
      */
     public static boolean canHaveEyes(@Nullable Identifier entity, @Nullable RuntimeConfig config) {
         if (entity == null || !RuntimeConfig.isUsable(config)) {
@@ -140,9 +158,9 @@ public final class SkullEyeState {
     }
 
     /**
-     * Breaking an eyed head copies its eye state onto the head items among {@code drops}, the loot rolled in
-     * {@code context}, where placing one restores it. Other drops, such as a skull candle's candles, are left alone.
-     * Every loader runs each finished loot roll through here.
+     * Breaking an eyed head copies its eye state onto the head items among {@code drops}, the loot
+     * rolled in {@code context}, where placing one restores it. Other drops, such as a skull
+     * candle's candles, are left alone. Every loader runs each finished loot roll through here.
      */
     public static void copyEyesOntoHeadLoot(List<ItemStack> drops, LootContext context) {
         BlockEntity head = context.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
@@ -157,16 +175,19 @@ public final class SkullEyeState {
         }
     }
 
-    /** The placed head's eye-state compound, or {@code null} if it has none; read it, don't write it. */
+    /**
+     * The placed head's eye-state compound, or {@code null} if it has none; read it, don't write
+     * it.
+     */
     @Nullable
     public static CompoundTag data(@Nullable BlockEntity skull) {
         return skull instanceof Holder holder ? holder.somegoogly$find() : null;
     }
 
     /**
-     * The eye-state validated copy of a head's stored eye-state compound, or {@code null} if absent. Only the state
-     * keys are kept: a block entity tag can come from a creative client's item, and whatever is kept here is
-     * saved and sent to everyone near the head.
+     * The eye-state validated copy of a head's stored eye-state compound, or {@code null} if
+     * absent. Only the state keys are kept: a block entity tag can come from a creative client's
+     * item, and whatever is kept here is saved and sent to everyone near the head.
      */
     @Nullable
     public static CompoundTag loadedData(@Nullable CompoundTag tag) {
@@ -178,25 +199,33 @@ public final class SkullEyeState {
         return data;
     }
 
-    /** The mob whose eye definition the head {@code block} uses, or {@code null} for any other block. */
+    /**
+     * The mob whose eye definition the head {@code block} uses, or {@code null} for any other
+     * block.
+     */
     @Nullable
     public static Identifier entityFor(Block block) {
         if (block instanceof AbstractSkullBlock skull) {
             EntityType<?> type = MOBS.get(skull.getType());
-            return type == null ? entityFor(BuiltInRegistries.BLOCK.getKey(block)) : EntityType.getKey(type);
+            return type == null
+                    ? entityFor(BuiltInRegistries.BLOCK.getKey(block))
+                    : EntityType.getKey(type);
         }
         return entityFor(BuiltInRegistries.BLOCK.getKey(block));
     }
 
-    /** The mob whose eye definition the head item {@code stack} uses, or {@code null} for any other item. */
+    /**
+     * The mob whose eye definition the head item {@code stack} uses, or {@code null} for any other
+     * item.
+     */
     @Nullable
     public static Identifier entityFor(ItemStack stack) {
         return stack.getItem() instanceof BlockItem item ? entityFor(item.getBlock()) : null;
     }
 
     /**
-     * The mob whose eye definition the Heads mod's head block {@code blockId} (floor or wall) uses, or {@code null}
-     * for any other block id.
+     * The mob whose eye definition the Heads mod's head block {@code blockId} (floor or wall) uses,
+     * or {@code null} for any other block id.
      */
     @Nullable
     public static Identifier entityFor(Identifier blockId) {
@@ -226,9 +255,17 @@ public final class SkullEyeState {
             case "player_skull_candle" -> EntityType.getKey(EntityType.PLAYER);
             case "piglin_skull_candle" -> EntityType.getKey(EntityType.PIGLIN);
             case "hydra_trophy" -> HYDRA_TROPHY_LAYOUT;
-            case "naga_trophy", "lich_trophy", "minoshroom_trophy", "knight_phantom_trophy",
-                    "ur_ghast_trophy", "alpha_yeti_trophy", "snow_queen_trophy", "quest_ram_trophy" ->
-                    Identifier.fromNamespaceAndPath(id.getNamespace(), path.substring(0, path.length() - "_trophy".length()));
+            case "naga_trophy",
+                    "lich_trophy",
+                    "minoshroom_trophy",
+                    "knight_phantom_trophy",
+                    "ur_ghast_trophy",
+                    "alpha_yeti_trophy",
+                    "snow_queen_trophy",
+                    "quest_ram_trophy" ->
+                    Identifier.fromNamespaceAndPath(
+                            id.getNamespace(),
+                            path.substring(0, path.length() - "_trophy".length()));
             default -> null;
         };
     }
@@ -240,9 +277,9 @@ public final class SkullEyeState {
     }
 
     /**
-     * The indexes of {@code helper}'s heads, from {@code entity}'s definition, that a head of that mob shows, in
-     * order: those attached to the part the head reproduces, by default the model's head part (an attachment
-     * token whose last segment is {@value EyeConfigModel#PART_HEAD}).
+     * The indexes of {@code helper}'s heads, from {@code entity}'s definition, that a head of that
+     * mob shows, in order: those attached to the part the head reproduces, by default the model's
+     * head part (an attachment token whose last segment is {@value EyeConfigModel#PART_HEAD}).
      */
     public static int[] headParts(Identifier entity, HeadInfo helper) {
         int[] parts = new int[helper.getHeadCount()];
@@ -257,11 +294,23 @@ public final class SkullEyeState {
 
     private static Map<String, EntityType<?>> headsMobs() {
         Map<String, EntityType<?>> mobs = new HashMap<>();
-        for (String variant : List.of("all_black", "black", "british_shorthair", "calico", "jellie", "persian",
-                "ragdoll", "red", "siamese", "tabby", "white")) {
+        for (String variant :
+                List.of(
+                        "all_black",
+                        "black",
+                        "british_shorthair",
+                        "calico",
+                        "jellie",
+                        "persian",
+                        "ragdoll",
+                        "red",
+                        "siamese",
+                        "tabby",
+                        "white")) {
             mobs.put("cat_" + variant + "_head", EntityType.CAT);
         }
-        for (String variant : List.of("black", "brown", "chestnut", "creamy", "darkbrown", "gray", "white")) {
+        for (String variant :
+                List.of("black", "brown", "chestnut", "creamy", "darkbrown", "gray", "white")) {
             mobs.put("horse_" + variant + "_head", EntityType.HORSE);
         }
         for (DyeColor color : DyeColor.values()) {
@@ -321,13 +370,17 @@ public final class SkullEyeState {
         return Map.copyOf(mobs);
     }
 
-    /** Whether eyes attached at {@code token} show on a head of {@code entity}'s kind ({@link #headParts}). */
+    /**
+     * Whether eyes attached at {@code token} show on a head of {@code entity}'s kind ({@link
+     * #headParts}).
+     */
     private static boolean isShownPart(Identifier entity, @Nullable String token) {
         if (token == null) {
             return false;
         }
         String partToken = HEAD_PART_TOKENS.get(entity);
-        return partToken == null ? EyeConfigModel.lastAttachmentSegment(token).equals(EyeConfigModel.PART_HEAD)
+        return partToken == null
+                ? EyeConfigModel.lastAttachmentSegment(token).equals(EyeConfigModel.PART_HEAD)
                 : token.equals(partToken);
     }
 
@@ -344,8 +397,8 @@ public final class SkullEyeState {
     }
 
     /**
-     * Replace the placed head's eye state and send it to every client in range through a block update; server
-     * side only.
+     * Replace the placed head's eye state and send it to every client in range through a block
+     * update; server side only.
      */
     public static void set(BlockEntity skull, Snapshot snapshot) {
         snapshot.write(((Holder) skull).somegoogly$get());
@@ -370,17 +423,23 @@ public final class SkullEyeState {
         return data == null ? Snapshot.NONE : Snapshot.read(data);
     }
 
-    /** Store {@code snapshot} on the head item {@code stack}, where placing it hands it to the block entity. */
+    /**
+     * Store {@code snapshot} on the head item {@code stack}, where placing it hands it to the block
+     * entity.
+     */
     public static void stampItem(ItemStack stack, Snapshot snapshot) {
         stack.set(ModContent.HEAD_EYES.get(), snapshot);
     }
 
     /**
-     * The index of the variant of {@code entity}'s adult {@code config} that a head with {@code variantRoll} shows:
-     * the roll chooses among the variants with eyes on the part the head reproduces, so a mob's variant with eyes
-     * only elsewhere (a cow's on its body) never leaves a head blank.
+     * The index of the variant of {@code entity}'s adult {@code config} that a head with {@code
+     * variantRoll} shows: the roll chooses among the variants with eyes on the part the head
+     * reproduces, so a mob's variant with eyes only elsewhere (a cow's on its body) never leaves a
+     * head blank.
      */
-    public static int variantIndex(Identifier entity, @Nullable RuntimeConfig config, float variantRoll) {
-        return EyeConfigModel.chooseVariantIndex(config, variantRoll, variant -> showsOnHead(entity, variant));
+    public static int variantIndex(
+            Identifier entity, @Nullable RuntimeConfig config, float variantRoll) {
+        return EyeConfigModel.chooseVariantIndex(
+                config, variantRoll, variant -> showsOnHead(entity, variant));
     }
 }

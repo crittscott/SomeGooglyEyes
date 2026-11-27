@@ -3,28 +3,29 @@ package com.github.crittscott.somegoogly.mixin.common.twilight;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import com.github.crittscott.somegoogly.registry.ModContent;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentGetter;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import org.spongepowered.asm.mixin.Pseudo;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 
 import org.jspecify.annotations.Nullable;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
+import org.spongepowered.asm.mixin.Unique;
 
 /**
- * Gives Twilight Forest's boss trophies the saved, synced, and item-carried eye state vanilla heads get from
- * {@code SkullBlockEntityDataMixin}, making each trophy a {@link SkullEyeState.Holder}. Twilight Forest is an
- * optional mod with no API for this, and its trophy block entity is not a vanilla skull, so that Mixin does not
- * reach it.
+ * Gives Twilight Forest's boss trophies the saved, synced, and item-carried eye state vanilla heads
+ * get from {@code SkullBlockEntityDataMixin}, making each trophy a {@link SkullEyeState.Holder}.
+ * Twilight Forest is an optional mod with no API for this, and its trophy block entity is not a
+ * vanilla skull, so that Mixin does not reach it.
  */
 @Pseudo
 @Mixin(targets = "twilightforest.block.entity.TrophyBlockEntity", remap = false)
@@ -45,10 +46,7 @@ abstract class TwilightTrophyDataMixin extends BlockEntity implements SkullEyeSt
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
-
-    @Unique
-    @Nullable
-    private CompoundTag somegoogly$data;
+    @Unique @Nullable private CompoundTag somegoogly$data;
 
     @Override
     @Nullable
@@ -90,7 +88,9 @@ abstract class TwilightTrophyDataMixin extends BlockEntity implements SkullEyeSt
     @Override
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
-        somegoogly$data = SkullEyeState.loadedData(input.read(SkullEyeState.DATA_KEY, CompoundTag.CODEC).orElse(null));
+        somegoogly$data =
+                SkullEyeState.loadedData(
+                        input.read(SkullEyeState.DATA_KEY, CompoundTag.CODEC).orElse(null));
     }
 
     @Override
