@@ -91,8 +91,9 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">SpellbooksCompat</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Spellbooks' zombie and skeleton summons use GeckoLib while rising, then a private vanilla renderer.
- Both paths use vanilla part-local eye coordinates so their placement and picker drafts agree.</div>
+<div class="block">Spellbooks' zombie and skeleton summons use GeckoLib while rising, then a private vanilla
+ renderer. Both paths use vanilla part-local eye coordinates so their placement and picker drafts
+ agree.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -123,7 +124,8 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.client.renderer.entity.LivingEntityRenderer<wbr>&lt;?,<wbr>?&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#vanillaRenderer(net.minecraft.client.renderer.entity.EntityRenderer)" class="member-name-link">vanillaRenderer</a><wbr>(net.minecraft.client.renderer.entity.EntityRenderer&lt;?&gt;&nbsp;renderer)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The normal renderer behind a hybrid summon, or null for an unrelated or unavailable integration.</div>
+<div class="block">The normal renderer behind a hybrid summon, or null for an unrelated or unavailable
+ integration.</div>
 </div>
 </div>
 </div>
@@ -149,8 +151,9 @@ loadScripts(document, 'script');</script>
  float&nbsp;pivotX,
  float&nbsp;pivotY,
  float&nbsp;pivotZ)</span></div>
-<div class="block">GeckoLib's bone callback is in model coordinates after translating away from the pivot. Move back
- to that pivot and turn its X/Y axes into the vanilla part frame used by the nested renderer.</div>
+<div class="block">GeckoLib's bone callback is in model coordinates after translating away from the pivot. Move
+ back to that pivot and turn its X/Y axes into the vanilla part frame used by the nested
+ renderer.</div>
 </section>
 </li>
 <li>
@@ -165,9 +168,9 @@ loadScripts(document, 'script');</script>
 <h3>vanillaRenderer</h3>
 <div class="member-signature"><span class="annotations">@Nullable
 </span><span class="modifiers">public static</span>&nbsp;<span class="return-type">net.minecraft.client.renderer.entity.LivingEntityRenderer&lt;?,<wbr>?&gt;</span>&nbsp;<span class="element-name">vanillaRenderer</span><wbr><span class="parameters">(net.minecraft.client.renderer.entity.EntityRenderer&lt;?&gt;&nbsp;renderer)</span></div>
-<div class="block">The normal renderer behind a hybrid summon, or null for an unrelated or unavailable integration.
- Spellbooks exposes no accessor for this package-private field, so reflection is limited to its
- two known renderer classes and failures leave the other renderers available.</div>
+<div class="block">The normal renderer behind a hybrid summon, or null for an unrelated or unavailable
+ integration. Spellbooks exposes no accessor for this package-private field, so reflection is
+ limited to its two known renderer classes and failures leave the other renderers available.</div>
 </section>
 </li>
 </ul>

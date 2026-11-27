@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.platform;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 
@@ -8,16 +9,16 @@ import javax.annotation.Nullable;
 
 /**
  * Returns the mod-owned persistent compound attached to an entity. NeoForge and Forge expose their
- * patched {@code Entity#getPersistentData()} store; Fabric supplies an equivalent persistent attachment.
+ * patched {@code Entity#getPersistentData()} store; Fabric supplies an equivalent persistent
+ * attachment.
  */
 public final class EntityPersistentData {
 
-    private EntityPersistentData() {
-    }
+    private EntityPersistentData() {}
 
     /**
-     * The entity's compound for reading, or {@code null} if it has none. NeoForge and Forge have no read that
-     * doesn't create it, so only Fabric returns {@code null}.
+     * The entity's compound for reading, or {@code null} if it has none. NeoForge and Forge have no
+     * read that doesn't create it, so only Fabric returns {@code null}.
      */
     @ExpectPlatform
     @Nullable

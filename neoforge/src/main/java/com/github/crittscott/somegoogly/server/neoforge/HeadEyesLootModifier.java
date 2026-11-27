@@ -4,7 +4,9 @@ import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
@@ -15,17 +17,22 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 /**
- * Breaking an eyed head copies its eye state onto the dropped head item, where placing it restores it. Applied
- * to every loot table through {@code data/neoforge/loot_modifiers/global_loot_modifiers.json}; it acts only on
- * loot generated for a head block entity that has eyes, so it reaches other mods' heads, such as the Heads mod's.
- * Its data files live in this loader's resources; the rule is {@link SkullEyeState#copyEyesOntoHeadLoot}.
+ * Breaking an eyed head copies its eye state onto the dropped head item, where placing it restores
+ * it. Applied to every loot table through {@code
+ * data/neoforge/loot_modifiers/global_loot_modifiers.json}; it acts only on loot generated for a
+ * head block entity that has eyes, so it reaches other mods' heads, such as the Heads mod's. Its
+ * data files live in this loader's resources; the rule is {@link
+ * SkullEyeState#copyEyesOntoHeadLoot}.
  */
 public final class HeadEyesLootModifier extends LootModifier {
 
-    public static final MapCodec<HeadEyesLootModifier> CODEC = RecordCodecBuilder.mapCodec(instance ->
-            codecStart(instance).apply(instance, HeadEyesLootModifier::new));
+    public static final MapCodec<HeadEyesLootModifier> CODEC =
+            RecordCodecBuilder.mapCodec(
+                    instance -> codecStart(instance).apply(instance, HeadEyesLootModifier::new));
     private static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> SERIALIZERS =
-            DeferredRegister.create(NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, SomeGooglyCommon.MOD_ID);
+            DeferredRegister.create(
+                    NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS,
+                    SomeGooglyCommon.MOD_ID);
 
     public HeadEyesLootModifier(LootItemCondition[] conditions) {
         super(conditions);
@@ -43,7 +50,8 @@ public final class HeadEyesLootModifier extends LootModifier {
     }
 
     @Override
-    protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
+    protected ObjectArrayList<ItemStack> doApply(
+            ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
         SkullEyeState.copyEyesOntoHeadLoot(generatedLoot, context);
         return generatedLoot;
     }

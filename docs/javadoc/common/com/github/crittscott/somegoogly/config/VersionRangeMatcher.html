@@ -96,8 +96,9 @@ loadScripts(document, 'script');</script>
  the range synthesis (<a href="#rangeFor(java.lang.String)"><code>rangeFor(java.lang.String)</code></a>) used when exporting definitions for optional mods.
 
  <p>This is one shared data-format ordering on every loader, including loader-word filtering and
- nearest-generation fallback. Loader-specific comparators would select different definitions from the same
- datapack. Bare declarations are exact strings; bracket bounds deliberately use zero-padded components.</div>
+ nearest-generation fallback. Loader-specific comparators would select different definitions from
+ the same datapack. Bare declarations are exact strings; bracket bounds deliberately use
+ zero-padded components.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -121,22 +122,22 @@ loadScripts(document, 'script');</script>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#matches(java.lang.String,java.lang.String)" class="member-name-link">matches</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;range,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;version)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Whether <code>version</code> satisfies <code>range</code>: an exact version by string equality, or a bracketed range by
- zero-padded component comparison.</div>
+<div class="block">Whether <code>version</code> satisfies <code>range</code>: an exact version by string equality, or a
+ bracketed range by zero-padded component comparison.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#nearestVersion(java.util.Collection,java.lang.String)" class="member-name-link">nearestVersion</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;declaredVersions,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;loadedVersion)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">The fallback pick for when <b>no</b> declaration matches the installed version: the declared
- version string nearest to <code>loadedVersion</code> — the newest declaration entirely older than it,
- or, when the installed version predates them all, the oldest declaration.</div>
+ version string nearest to <code>loadedVersion</code> — the newest declaration entirely older than
+ it, or, when the installed version predates them all, the oldest declaration.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#rangeFor(java.lang.String)" class="member-name-link">rangeFor</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;loaded)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Turn a loaded version like <code>1.20.1</code> into the range <code>[1.20.1,1.21)</code> — inclusive of the
- loaded version, exclusive of the next minor.</div>
+<div class="block">Turn a loaded version like <code>1.20.1</code> into the range <code>[1.20.1,1.21)</code> — inclusive of
+ the loaded version, exclusive of the next minor.</div>
 </div>
 </div>
 </div>
@@ -159,8 +160,8 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="rangeFor(java.lang.String)">
 <h3>rangeFor</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">rangeFor</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;loaded)</span></div>
-<div class="block">Turn a loaded version like <code>1.20.1</code> into the range <code>[1.20.1,1.21)</code> — inclusive of the
- loaded version, exclusive of the next minor. This is for optional-mod versions; Minecraft
+<div class="block">Turn a loaded version like <code>1.20.1</code> into the range <code>[1.20.1,1.21)</code> — inclusive of
+ the loaded version, exclusive of the next minor. This is for optional-mod versions; Minecraft
  exports use the exact supported game version. Falls back to an exact match if parsing fails.</div>
 </section>
 </li>
@@ -176,8 +177,8 @@ loadScripts(document, 'script');</script>
 <h3>matches</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">matches</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;range,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;version)</span></div>
-<div class="block">Whether <code>version</code> satisfies <code>range</code>: an exact version by string equality, or a bracketed range by
- zero-padded component comparison. Blank or malformed input never matches.</div>
+<div class="block">Whether <code>version</code> satisfies <code>range</code>: an exact version by string equality, or a
+ bracketed range by zero-padded component comparison. Blank or malformed input never matches.</div>
 </section>
 </li>
 <li>
@@ -187,12 +188,12 @@ loadScripts(document, 'script');</script>
 </span><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">nearestVersion</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;declaredVersions,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;loadedVersion)</span></div>
 <div class="block">The fallback pick for when <b>no</b> declaration matches the installed version: the declared
- version string nearest to <code>loadedVersion</code> — the newest declaration entirely older than it,
- or, when the installed version predates them all, the oldest declaration. Version ordering has no
- distance metric, so "nearest" is defined by ordering alone; a gap between two generations resolves
- to the older neighbor (its model at least existed when the entry was authored). Malformed
- declarations are skipped, matching <a href="#matches(java.lang.String,java.lang.String)"><code>matches(java.lang.String, java.lang.String)</code></a>. Returns one of the inputs verbatim, or
- <code>null</code> when nothing is usable.</div>
+ version string nearest to <code>loadedVersion</code> — the newest declaration entirely older than
+ it, or, when the installed version predates them all, the oldest declaration. Version
+ ordering has no distance metric, so "nearest" is defined by ordering alone; a gap between two
+ generations resolves to the older neighbor (its model at least existed when the entry was
+ authored). Malformed declarations are skipped, matching <a href="#matches(java.lang.String,java.lang.String)"><code>matches(java.lang.String, java.lang.String)</code></a>. Returns one of the
+ inputs verbatim, or <code>null</code> when nothing is usable.</div>
 </section>
 </li>
 </ul>

@@ -91,15 +91,14 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">GooglyEyeRenderer</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">The mod's one eye-drawing path: mob eyes for both render layers (the vanilla <a href="LayerGooglyEyes.html" title="class in com.github.crittscott.somegoogly.client.render"><code>LayerGooglyEyes</code></a>
- and the GeckoLib <code>GooglyGeoLayer</code>), picker previews, and the 3D eye item all draw through
- <a href="#drawEye(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,int,float%5B%5D,float%5B%5D,float,float,float,boolean)"><code>drawEye(com.mojang.blaze3d.vertex.PoseStack, net.minecraft.client.renderer.MultiBufferSource, int, int, float[], float[], float, float, float, boolean)</code></a>. Keeping the appearance overrides (dye / harvested-eye item / slimy eye / NBT) here
- means a mob looks the same whether its model is vanilla or GeckoLib.
+<div class="block">The mod's one eye-drawing path: mob eyes for both render layers (the vanilla <a href="LayerGooglyEyes.html" title="class in com.github.crittscott.somegoogly.client.render"><code>LayerGooglyEyes</code></a> and the GeckoLib <code>GooglyGeoLayer</code>), picker previews, and the 3D eye item
+ all draw through <a href="#drawEye(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,int,float%5B%5D,float%5B%5D,float,float,float,boolean)"><code>drawEye(com.mojang.blaze3d.vertex.PoseStack, net.minecraft.client.renderer.MultiBufferSource, int, int, float[], float[], float, float, float, boolean)</code></a>. Keeping the appearance overrides (dye / harvested-eye item /
+ slimy eye / NBT) here means a mob looks the same whether its model is vanilla or GeckoLib.
 
- <p>This class only <b>renders</b>: the active behavior was already folded into the eye's simulated
- state by <a href="../GooglyTracker.html" title="class in com.github.crittscott.somegoogly.client"><code>GooglyTracker</code></a> (pupil physics + spring, plus the grow/blink/color overlays), so here
- we just read that per-eye state, interpolate it by <code>partialTicks</code>, and draw. There is no
- behavior logic on the render thread.
+ <p>This class only <b>renders</b>: the active behavior was already folded into the eye's
+ simulated state by <a href="../GooglyTracker.html" title="class in com.github.crittscott.somegoogly.client"><code>GooglyTracker</code></a> (pupil physics + spring, plus the grow/blink/color
+ overlays), so here we just read that per-eye state, interpolate it by <code>partialTicks</code>, and
+ draw. There is no behavior logic on the render thread.
 
  <p>The caller is responsible only for moving the pose into the head's animated attachment space;
  this class handles everything from the eye's own offset/rotation inward.</div>
@@ -156,8 +155,9 @@ loadScripts(document, 'script');</script>
  boolean&nbsp;glow,
  float&nbsp;partialTicks)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Draw one simulated eye at the current pose, which sits at the eye's center in its pupil plane, at its
- configured <code>eyeScale</code>, <code>depth</code> multiplier, and pupil size <code>irisScale</code>.</div>
+<div class="block">Draw one simulated eye at the current pose, which sits at the eye's center in its pupil
+ plane, at its configured <code>eyeScale</code>, <code>depth</code> multiplier, and pupil size <code>
+ irisScale</code>.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#drawEye(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,int,float%5B%5D,float%5B%5D,float,float,float,boolean)" class="member-name-link">drawEye</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
@@ -171,9 +171,9 @@ loadScripts(document, 'script');</script>
  float&nbsp;irisY,
  boolean&nbsp;glow)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Draw one eye at the current pose, already scaled to the eye's size: the cornea, the iris scaled by
- <code>irisScale</code> and offset to <code>(irisX, irisY)</code> in the unit disk, and, when <code>glow</code> is
- set, the same two parts again in the emissive render type.</div>
+<div class="block">Draw one eye at the current pose, already scaled to the eye's size: the cornea, the iris
+ scaled by <code>irisScale</code> and offset to <code>(irisX, irisY)</code> in the unit disk, and, when
+ <code>glow</code> is set, the same two parts again in the emissive render type.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#renderBoat(net.minecraft.world.entity.vehicle.Boat,float,com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int)" class="member-name-link">renderBoat</a><wbr>(net.minecraft.world.entity.vehicle.Boat&nbsp;boat,
@@ -182,8 +182,8 @@ loadScripts(document, 'script');</script>
  net.minecraft.client.renderer.MultiBufferSource&nbsp;buffers,
  int&nbsp;light)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Draw <code>boat</code>'s eyes in the hull model's space, which already includes vanilla yaw, damage rocking, and
- bubble rotation.</div>
+<div class="block">Draw <code>boat</code>'s eyes in the hull model's space, which already includes vanilla yaw,
+ damage rocking, and bubble rotation.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#renderHead(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,int,com.github.crittscott.somegoogly.client.GooglyTracker.EyeInfo%5B%5D,com.github.crittscott.somegoogly.eye.HeadInfo,com.github.crittscott.somegoogly.eye.state.AppearanceOverride,int,float)" class="member-name-link">renderHead</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
@@ -196,8 +196,9 @@ loadScripts(document, 'script');</script>
  int&nbsp;head,
  float&nbsp;partialTicks)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Draw head <code>head</code>'s visible eyes at the current pose, which sits in that head's attachment space, each
- simulated by its entry in <code>row</code>, or at rest when <code>row</code> is <code>null</code>.</div>
+<div class="block">Draw head <code>head</code>'s visible eyes at the current pose, which sits in that head's
+ attachment space, each simulated by its entry in <code>row</code>, or at rest when <code>row</code> is
+ <code>null</code>.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#renderPreviewEye(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,int,com.github.crittscott.somegoogly.client.picker.EyeDraft)" class="member-name-link">renderPreviewEye</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
@@ -206,8 +207,8 @@ loadScripts(document, 'script');</script>
  int&nbsp;overlay,
  <a href="../picker/EyeDraft.html" title="class in com.github.crittscott.somegoogly.client.picker">EyeDraft</a>&nbsp;eye)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Draw a picker draft eye as a static preview (centered iris, no physics) at the current pose, which
- the caller has already moved into the draft's attachment space.</div>
+<div class="block">Draw a picker draft eye as a static preview (centered iris, no physics) at the current pose,
+ which the caller has already moved into the draft's attachment space.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#renderPreviewPlacement(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.renderer.MultiBufferSource,int,int)" class="member-name-link">renderPreviewPlacement</a><wbr>(com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
@@ -215,8 +216,8 @@ loadScripts(document, 'script');</script>
  int&nbsp;packedLight,
  int&nbsp;overlay)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Draw the picker's selection gizmo and, when one is being shaped, the live draft eye, at the current pose,
- which the caller has already moved into the active part's attachment space.</div>
+<div class="block">Draw the picker's selection gizmo and, when one is being shaped, the live draft eye, at the
+ current pose, which the caller has already moved into the active part's attachment space.</div>
 </div>
 </div>
 </div>
@@ -280,12 +281,13 @@ loadScripts(document, 'script');</script>
  float&nbsp;irisScale,
  boolean&nbsp;glow,
  float&nbsp;partialTicks)</span></div>
-<div class="block">Draw one simulated eye at the current pose, which sits at the eye's center in its pupil plane, at its
- configured <code>eyeScale</code>, <code>depth</code> multiplier, and pupil size <code>irisScale</code>. Reads the
- eye's already-simulated state (the behavior, if any, was folded in by its simulator) and interpolates
- it by <code>partialTicks</code>: grow scales the whole eye, blink and the squints squash it, the tints blend
- its colors, love and the creepy pulse swell the pupil, and a sleeping villager's lids are drawn over it
- last. Leaves the pose stack as it found it.</div>
+<div class="block">Draw one simulated eye at the current pose, which sits at the eye's center in its pupil
+ plane, at its configured <code>eyeScale</code>, <code>depth</code> multiplier, and pupil size <code>
+ irisScale</code>. Reads the eye's already-simulated state (the behavior, if any, was folded in by
+ its simulator) and interpolates it by <code>partialTicks</code>: grow scales the whole eye, blink
+ and the squints squash it, the tints blend its colors, love and the creepy pulse swell the
+ pupil, and a sleeping villager's lids are drawn over it last. Leaves the pose stack as it
+ found it.</div>
 </section>
 </li>
 <li>
@@ -301,10 +303,10 @@ loadScripts(document, 'script');</script>
  float&nbsp;irisX,
  float&nbsp;irisY,
  boolean&nbsp;glow)</span></div>
-<div class="block">Draw one eye at the current pose, already scaled to the eye's size: the cornea, the iris scaled by
- <code>irisScale</code> and offset to <code>(irisX, irisY)</code> in the unit disk, and, when <code>glow</code> is
- set, the same two parts again in the emissive render type. Every eye the mod draws (mob, picker
- preview, item) comes through here.</div>
+<div class="block">Draw one eye at the current pose, already scaled to the eye's size: the cornea, the iris
+ scaled by <code>irisScale</code> and offset to <code>(irisX, irisY)</code> in the unit disk, and, when
+ <code>glow</code> is set, the same two parts again in the emissive render type. Every eye the mod
+ draws (mob, picker preview, item) comes through here.</div>
 </section>
 </li>
 <li>
@@ -315,8 +317,9 @@ loadScripts(document, 'script');</script>
  com.mojang.blaze3d.vertex.PoseStack&nbsp;pose,
  net.minecraft.client.renderer.MultiBufferSource&nbsp;buffers,
  int&nbsp;light)</span></div>
-<div class="block">Draw <code>boat</code>'s eyes in the hull model's space, which already includes vanilla yaw, damage rocking, and
- bubble rotation. The caller retains the hull pose; ordinary boat rendering and water masking stay with vanilla.</div>
+<div class="block">Draw <code>boat</code>'s eyes in the hull model's space, which already includes vanilla yaw,
+ damage rocking, and bubble rotation. The caller retains the hull pose; ordinary boat
+ rendering and water masking stay with vanilla.</div>
 </section>
 </li>
 <li>
@@ -332,9 +335,9 @@ loadScripts(document, 'script');</script>
  <a href="../../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a>&nbsp;overrides,
  int&nbsp;head,
  float&nbsp;partialTicks)</span></div>
-<div class="block">Draw head <code>head</code>'s visible eyes at the current pose, which sits in that head's attachment space, each
- simulated by its entry in <code>row</code>, or at rest when <code>row</code> is <code>null</code>. Returns whether any was
- drawn.</div>
+<div class="block">Draw head <code>head</code>'s visible eyes at the current pose, which sits in that head's
+ attachment space, each simulated by its entry in <code>row</code>, or at rest when <code>row</code> is
+ <code>null</code>. Returns whether any was drawn.</div>
 </section>
 </li>
 <li>
@@ -345,9 +348,9 @@ loadScripts(document, 'script');</script>
  int&nbsp;packedLight,
  int&nbsp;overlay,
  <a href="../picker/EyeDraft.html" title="class in com.github.crittscott.somegoogly.client.picker">EyeDraft</a>&nbsp;eye)</span></div>
-<div class="block">Draw a picker draft eye as a static preview (centered iris, no physics) at the current pose, which
- the caller has already moved into the draft's attachment space. Used by both the vanilla and the
- GeckoLib eye layers.</div>
+<div class="block">Draw a picker draft eye as a static preview (centered iris, no physics) at the current pose,
+ which the caller has already moved into the draft's attachment space. Used by both the
+ vanilla and the GeckoLib eye layers.</div>
 </section>
 </li>
 <li>
@@ -357,8 +360,8 @@ loadScripts(document, 'script');</script>
  net.minecraft.client.renderer.MultiBufferSource&nbsp;bufferSource,
  int&nbsp;packedLight,
  int&nbsp;overlay)</span></div>
-<div class="block">Draw the picker's selection gizmo and, when one is being shaped, the live draft eye, at the current pose,
- which the caller has already moved into the active part's attachment space.</div>
+<div class="block">Draw the picker's selection gizmo and, when one is being shaped, the live draft eye, at the
+ current pose, which the caller has already moved into the active part's attachment space.</div>
 </section>
 </li>
 </ul>

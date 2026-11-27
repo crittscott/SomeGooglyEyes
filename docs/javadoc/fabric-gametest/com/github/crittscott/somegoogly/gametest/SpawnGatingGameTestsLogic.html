@@ -90,10 +90,10 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">SpawnGatingGameTestsLogic</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">The at-spawn eye roll is probabilistic, but its endpoints are deterministic: <code>globalPercent = 100</code>
- always grants eyes to an eligible mob, <code>0</code> never does. Driven by forcing <code>ServerConfig.GLOBAL_PERCENT</code>
- (restored afterwards) and reading the persisted flag the join handler writes. The decision fires
- synchronously on entity join, so the flag is set by the time <code>spawn</code> returns.</div>
+<div class="block">The at-spawn eye roll is probabilistic, but its endpoints are deterministic: <code>globalPercent
+ = 100</code> always grants eyes to an eligible mob, <code>0</code> never does. Driven by forcing <code>ServerConfig.GLOBAL_PERCENT</code> (restored afterwards) and reading the persisted flag the join
+ handler writes. The decision fires synchronously on entity join, so the flag is set by the time
+ <code>spawn</code> returns.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -140,18 +140,19 @@ loadScripts(document, 'script');</script>
 <h3>fullPercentGrantsEyesAndZeroDeniesThem</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">fullPercentGrantsEyesAndZeroDeniesThem</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 <div class="block"><code>globalPercent = 100</code> always grants eyes and <code>0</code> never does. In game: with no
- <code>entityOverrides</code>, set <code>globalPercent = 100</code> and every spawned cow has eyes; set it to
- <code>0</code> and none of the new ones do.</div>
+ <code>entityOverrides</code>, set <code>globalPercent = 100</code> and every spawned cow has eyes; set
+ it to <code>0</code> and none of the new ones do.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="onlyEyedMobsStoreAVariantRoll(net.minecraft.gametest.framework.GameTestHelper)">
 <h3>onlyEyedMobsStoreAVariantRoll</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onlyEyedMobsStoreAVariantRoll</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Only a mob that gets eyes stores a placement roll, and one switched on later draws its own. In game: set
- <code>globalPercent = 0</code>, spawn a pig, and on NeoForge or Forge <code>/data get entity &lt;pig&gt;</code> shows no
- <code>somegoogly:eyeVariantRoll</code> key in <code>NeoForgeData</code> or <code>ForgeData</code>. Aiming at it and
- running <code>/sg admin eyes true</code> gives it eyes and the key.</div>
+<div class="block">Only a mob that gets eyes stores a placement roll, and one switched on later draws its own.
+ In game: set <code>globalPercent = 0</code>, spawn a pig, and on NeoForge or Forge <code>/data
+ get entity &lt;pig&gt;</code> shows no <code>somegoogly:eyeVariantRoll</code> key in <code>NeoForgeData</code> or
+ <code>ForgeData</code>. Aiming at it and running <code>/sg admin eyes true</code> gives it eyes and the
+ key.</div>
 </section>
 </li>
 </ul>

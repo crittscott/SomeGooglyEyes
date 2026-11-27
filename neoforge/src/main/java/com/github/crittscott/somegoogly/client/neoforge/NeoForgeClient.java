@@ -1,23 +1,21 @@
 package com.github.crittscott.somegoogly.client.neoforge;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
-import com.github.crittscott.somegoogly.client.ClientLifecycle;
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
+import com.github.crittscott.somegoogly.client.ClientLifecycle;
 import com.github.crittscott.somegoogly.client.ClientRenderLayers;
-import com.github.crittscott.somegoogly.client.render.GooglyEyeItemRenderer;
+import com.github.crittscott.somegoogly.client.command.GooglyClientCommands;
 import com.github.crittscott.somegoogly.client.compat.GeckoCompat;
 import com.github.crittscott.somegoogly.client.picker.PickerHud;
 import com.github.crittscott.somegoogly.client.picker.PickerInput;
-import com.github.crittscott.somegoogly.client.command.GooglyClientCommands;
+import com.github.crittscott.somegoogly.client.render.GooglyEyeItemRenderer;
 import com.github.crittscott.somegoogly.config.neoforge.NeoForgeClientConfig;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.registry.ModContent;
+
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.world.entity.EntityType;
-import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
-import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
-import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
@@ -30,12 +28,14 @@ import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
+import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
+import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
+import net.neoforged.neoforge.event.level.LevelEvent;
 
 /** Physical-client registration for NeoForge client services. */
 public final class NeoForgeClient {
 
-    private NeoForgeClient() {
-    }
+    private NeoForgeClient() {}
 
     private static void addRendererLayers(EntityRenderersEvent.AddLayers event) {
         ClientRenderLayers.clearCaches();
@@ -101,19 +101,24 @@ public final class NeoForgeClient {
         GooglyClientCommands.register(event.getDispatcher());
     }
 
-    /** Render the Googly Eye as the real 3D eye model (tinted by its AppearanceOverride, googly when held). */
+    /**
+     * Render the Googly Eye as the real 3D eye model (tinted by its AppearanceOverride, googly when
+     * held).
+     */
     private static void registerClientExtensions(RegisterClientExtensionsEvent event) {
-        event.registerItem(new IClientItemExtensions() {
-            private GooglyEyeItemRenderer renderer;
+        event.registerItem(
+                new IClientItemExtensions() {
+                    private GooglyEyeItemRenderer renderer;
 
-            @Override
-            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-                if (renderer == null) {
-                    renderer = new GooglyEyeItemRenderer();
-                }
-                return renderer;
-            }
-        }, ModContent.GOOGLY_EYE.get());
+                    @Override
+                    public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+                        if (renderer == null) {
+                            renderer = new GooglyEyeItemRenderer();
+                        }
+                        return renderer;
+                    }
+                },
+                ModContent.GOOGLY_EYE.get());
     }
 
     private static void registerGuiLayers(RegisterGuiLayersEvent event) {
@@ -123,7 +128,8 @@ public final class NeoForgeClient {
     }
 
     private static void registerItemColors(RegisterColorHandlersEvent.Item event) {
-        event.register((stack, tintIndex) -> EyeItemProperties.slimyEyeTint(stack, tintIndex),
+        event.register(
+                (stack, tintIndex) -> EyeItemProperties.slimyEyeTint(stack, tintIndex),
                 ModContent.SLIMY_EYE.get());
     }
 

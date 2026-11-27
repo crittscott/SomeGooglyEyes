@@ -7,8 +7,7 @@ import net.minecraft.world.entity.MobSpawnType;
 /** Fabric implementation of the shared spawn-finalization boundary. */
 public final class MobSpawningImpl {
 
-    private MobSpawningImpl() {
-    }
+    private MobSpawningImpl() {}
 
     public static boolean finalizeSpawn(Mob mob, ServerLevel level, MobSpawnType reason) {
         mob.finalizeSpawn(level, level.getCurrentDifficultyAt(mob.blockPosition()), reason, null);

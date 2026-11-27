@@ -100,11 +100,9 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">SlimyEyeItem</span>
 <span class="extends-implements">extends <a href="GooglyEyeItem.html" title="class in com.github.crittscott.somegoogly.item">GooglyEyeItem</a></span></div>
 <div class="block">A googly eye bedded in a slimeball: the applicator. Right-clicking a living entity with it sticks
- eyes on that entity, using the appearance the eye carried into the craft
- (<a href="EyeItemProperties.html" title="class in com.github.crittscott.somegoogly.item"><code>EyeItemProperties</code></a>); sneak + use on air applies it to the player themselves. A Slimy Eye, applied by
- the player or by another player, is the only way a player gets eyes (players are excluded from the
- at-spawn roll). It shares the Googly Eye's
- stored appearance and tooltip.
+ eyes on that entity, using the appearance the eye carried into the craft (<a href="EyeItemProperties.html" title="class in com.github.crittscott.somegoogly.item"><code>EyeItemProperties</code></a>); sneak + use on air applies it to the player themselves. A Slimy Eye, applied
+ by the player or by another player, is the only way a player gets eyes (players are excluded from
+ the at-spawn roll). It shares the Googly Eye's stored appearance and tooltip.
 
  <p>The slimy eye carries appearance only, never placement — where the eyes land comes from the
  target's datapack config, on a placement variant freshly rolled by each application. An
@@ -112,10 +110,11 @@ loadScripts(document, 'script');</script>
  harvesting its eye, modifying it, and re-applying.
 
  <p>One eye in, one eye out: an application consumes a single slimy eye and a harvest yields a
- single eye item, so a craft-apply-harvest loop costs a slimeball per turn and cannot multiply eyes.
+ single eye item, so a craft-apply-harvest loop costs a slimeball per turn and cannot multiply
+ eyes.
 
- <p>The application itself is <a href="EyeItemService.html#applySlimyEye(net.minecraft.world.item.ItemStack,net.minecraft.world.entity.player.Player,net.minecraft.world.entity.Entity)"><code>EyeItemService.applySlimyEye(net.minecraft.world.item.ItemStack, net.minecraft.world.entity.player.Player, net.minecraft.world.entity.Entity)</code></a>. The mob path is dispatched from
- each loader's entity-interact adapter — which claims the right-click before the target's own
+ <p>The application itself is <a href="EyeItemService.html#applySlimyEye(net.minecraft.world.item.ItemStack,net.minecraft.world.entity.player.Player,net.minecraft.world.entity.Entity)"><code>EyeItemService.applySlimyEye(net.minecraft.world.item.ItemStack, net.minecraft.world.entity.player.Player, net.minecraft.world.entity.Entity)</code></a>. The mob path is dispatched
+ from each loader's entity-interact adapter — which claims the right-click before the target's own
  interaction can consume it — not through <code>Item#interactLivingEntity</code>; only the sneak
  self-apply (<a href="#use(net.minecraft.world.level.Level,net.minecraft.world.entity.player.Player,net.minecraft.world.InteractionHand)"><code>use(net.minecraft.world.level.Level, net.minecraft.world.entity.player.Player, net.minecraft.world.InteractionHand)</code></a>) is dispatched through this class.</div>
 </section>
@@ -219,8 +218,9 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">net.minecraft.world.InteractionResultHolder&lt;net.minecraft.world.item.ItemStack&gt;</span>&nbsp;<span class="element-name">use</span><wbr><span class="parameters">(net.minecraft.world.level.Level&nbsp;level,
  net.minecraft.world.entity.player.Player&nbsp;player,
  net.minecraft.world.InteractionHand&nbsp;hand)</span></div>
-<div class="block">Sneak + use on air: eye yourself. Without the sneak this would fire on every stray right-click. Vanilla also
- reaches here when a click on a mob, head, or block passed, so a use aimed at anything is left alone.</div>
+<div class="block">Sneak + use on air: eye yourself. Without the sneak this would fire on every stray
+ right-click. Vanilla also reaches here when a click on a mob, head, or block passed, so a use
+ aimed at anything is left alone.</div>
 <dl class="notes">
 <dt>Overrides:</dt>
 <dd><code>use</code>&nbsp;in class&nbsp;<code>net.minecraft.world.item.Item</code></dd>

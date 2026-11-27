@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
+
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.neoforged.neoforge.common.util.FakePlayerFactory;
@@ -14,8 +15,7 @@ public final class EyeItemMigrationGameTests {
 
     private static final String TEMPLATE = "empty";
 
-    private EyeItemMigrationGameTests() {
-    }
+    private EyeItemMigrationGameTests() {}
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void fullAppearanceMigratesForBothItems(GameTestHelper helper) {

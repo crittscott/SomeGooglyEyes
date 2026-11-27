@@ -7,9 +7,9 @@ import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+
 import net.minecraft.resources.ResourceLocation;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,29 +20,36 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
+import javax.annotation.Nullable;
+
 /**
  * The complete eye-definition data model shared by datapack loading, runtime selection, network
  * synchronization, and picker export. All serialized shapes live together here; resolved rendering
  * views and side-specific storage live elsewhere.
  *
- * <p>Every codec field is required on serialized input; the Java initializers are construction defaults,
- * not decoding defaults. Instances and their lists are mutable while a loader or picker assembles them,
- * but a validated config graph is treated as read-only after installation in a side-specific store.
+ * <p>Every codec field is required on serialized input; the Java initializers are construction
+ * defaults, not decoding defaults. Instances and their lists are mutable while a loader or picker
+ * assembles them, but a validated config graph is treated as read-only after installation in a
+ * side-specific store.
  */
 public final class EyeConfigModel {
 
     public static final String AGE_ADULT = "adult";
     public static final String AGE_BABY = "baby";
     public static final String AGE_ANY = "any";
-    /** The attachment tokens the renderers name a model's body, head, and root by, and eye files use. */
+
+    /**
+     * The attachment tokens the renderers name a model's body, head, and root by, and eye files
+     * use.
+     */
     public static final String PART_BODY = "body";
+
     public static final String PART_HEAD = "head";
     public static final String PART_ROOT = "root";
     private static final String ATTACHMENT_INDEX_PREFIX = "#";
     private static final String ATTACHMENT_SEPARATOR = "/";
 
-    private EyeConfigModel() {
-    }
+    private EyeConfigModel() {}
 
     /** A positional name for a model part with no stable named segment. */
     public static String attachmentIndex(int index) {
@@ -70,10 +77,11 @@ public final class EyeConfigModel {
     }
 
     /**
-     * Resolve a stable 0..1 roll through the cumulative weights of the runtime config's {@code eligible} variants
-     * alone; 0 when none has weight.
+     * Resolve a stable 0..1 roll through the cumulative weights of the runtime config's {@code
+     * eligible} variants alone; 0 when none has weight.
      */
-    public static int chooseVariantIndex(@Nullable RuntimeConfig config, float roll, Predicate<Variant> eligible) {
+    public static int chooseVariantIndex(
+            @Nullable RuntimeConfig config, float roll, Predicate<Variant> eligible) {
         if (config == null || config.variants.isEmpty()) {
             return 0;
         }
@@ -105,30 +113,45 @@ public final class EyeConfigModel {
 
     /** The raw final segment of an authored attachment path. */
     public static String lastAttachmentSegment(String token) {
-        return token.substring(token.lastIndexOf(ATTACHMENT_SEPARATOR) + ATTACHMENT_SEPARATOR.length());
+        return token.substring(
+                token.lastIndexOf(ATTACHMENT_SEPARATOR) + ATTACHMENT_SEPARATOR.length());
     }
 
     /** Raw datapack file structure (one file per entity). */
     public static class ConfigFile {
-        public static final Codec<ConfigFile> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-                VersionedEntry.CODEC.listOf().fieldOf("entries").forGetter(file -> file.entries)
-        ).apply(inst, entries -> {
-            ConfigFile file = new ConfigFile();
-            file.entries = entries;
-            return file;
-        }));
+        public static final Codec<ConfigFile> CODEC =
+                RecordCodecBuilder.create(inst ->
+                        inst.group(
+                                        VersionedEntry.CODEC
+                                                .listOf()
+                                                .fieldOf("entries")
+                                                .forGetter(file -> file.entries))
+                                .apply(
+                                        inst,
+                                        entries -> {
+                                            ConfigFile file = new ConfigFile();
+                                            file.entries = entries;
+                                            return file;
+                                        }));
 
         private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-        /** Required ordered entries; version selection keeps the first match for each age bucket. */
+        /**
+         * Required ordered entries; version selection keeps the first match for each age bucket.
+         */
         public List<VersionedEntry> entries = List.of();
 
-        private static void addAge(List<VersionedEntry> entries, String age, @Nullable RuntimeConfig base,
-                                   Map<String, RuntimeConfig> authored, String versionRange,
-                                   UnaryOperator<String> canon) {
+        private static void addAge(
+                List<VersionedEntry> entries,
+                String age,
+                @Nullable RuntimeConfig base,
+                Map<String, RuntimeConfig> authored,
+                String versionRange,
+                UnaryOperator<String> canon) {
             boolean replaced = authored.containsKey(age);
             RuntimeConfig config = replaced ? authored.get(age) : base;
-            RuntimeConfig pruned = RuntimeConfig.pruned(config, replaced ? UnaryOperator.identity() : canon);
+            RuntimeConfig pruned =
+                    RuntimeConfig.pruned(config, replaced ? UnaryOperator.identity() : canon);
             if (pruned == null && config != null && !config.enabled) {
                 pruned = new RuntimeConfig();
                 pruned.enabled = false;
@@ -139,13 +162,16 @@ public final class EyeConfigModel {
         }
 
         /**
-         * The version declaration an export writes for {@code namespace}, from its loaded version: the
-         * exact game version for Minecraft, the current minor-release range
-         * ({@link VersionRangeMatcher#rangeFor}) for any other mod. Empty when nothing owns the namespace.
+         * The version declaration an export writes for {@code namespace}, from its loaded version:
+         * the exact game version for Minecraft, the current minor-release range ({@link
+         * VersionRangeMatcher#rangeFor}) for any other mod. Empty when nothing owns the namespace.
          */
         public static Optional<String> exportVersion(String namespace) {
             return ModVersionLookup.versionForNamespace(namespace)
-                    .map(version -> ResourceLocation.DEFAULT_NAMESPACE.equals(namespace) ? version : VersionRangeMatcher.rangeFor(version));
+                    .map(version ->
+                            ResourceLocation.DEFAULT_NAMESPACE.equals(namespace)
+                                    ? version
+                                    : VersionRangeMatcher.rangeFor(version));
         }
 
         /**
@@ -154,11 +180,26 @@ public final class EyeConfigModel {
          * when no entry remains after pruning.
          */
         @Nullable
-        public static ConfigFile overlay(@Nullable RuntimeConfigSet base, Map<String, RuntimeConfig> authored,
-                                         String versionRange, UnaryOperator<String> canon) {
+        public static ConfigFile overlay(
+                @Nullable RuntimeConfigSet base,
+                Map<String, RuntimeConfig> authored,
+                String versionRange,
+                UnaryOperator<String> canon) {
             List<VersionedEntry> entries = new ArrayList<>();
-            addAge(entries, AGE_ADULT, base == null ? null : base.adult, authored, versionRange, canon);
-            addAge(entries, AGE_BABY, base == null ? null : base.baby, authored, versionRange, canon);
+            addAge(
+                    entries,
+                    AGE_ADULT,
+                    base == null ? null : base.adult,
+                    authored,
+                    versionRange,
+                    canon);
+            addAge(
+                    entries,
+                    AGE_BABY,
+                    base == null ? null : base.baby,
+                    authored,
+                    versionRange,
+                    canon);
             addAge(entries, AGE_ANY, base == null ? null : base.any, authored, versionRange, canon);
             if (entries.isEmpty()) {
                 return null;
@@ -168,7 +209,10 @@ public final class EyeConfigModel {
             return file;
         }
 
-        /** Write this file to {@code path} as pretty-printed datapack JSON, creating parent directories. */
+        /**
+         * Write this file to {@code path} as pretty-printed datapack JSON, creating parent
+         * directories.
+         */
         public void writeJson(Path path) throws IOException {
             JsonElement json = CODEC.encodeStart(JsonOps.INSTANCE, this).getOrThrow();
             Files.createDirectories(path.getParent());
@@ -178,37 +222,60 @@ public final class EyeConfigModel {
 
     /** One head attachment and the eyes placed on it. */
     public static class HeadConfig {
-        public static final Codec<HeadConfig> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-                Codec.STRING.fieldOf("attachPoint").forGetter(head -> head.attachPoint),
-                EyeDefinition.CODEC.listOf().fieldOf("eyes").forGetter(head -> head.eyes)
-        ).apply(inst, (attachPoint, eyes) -> {
-            HeadConfig head = new HeadConfig();
-            head.attachPoint = attachPoint;
-            head.eyes = eyes;
-            return head;
-        }));
+        public static final Codec<HeadConfig> CODEC =
+                RecordCodecBuilder.create(inst ->
+                        inst.group(
+                                        Codec.STRING
+                                                .fieldOf("attachPoint")
+                                                .forGetter(head -> head.attachPoint),
+                                        EyeDefinition.CODEC
+                                                .listOf()
+                                                .fieldOf("eyes")
+                                                .forGetter(head -> head.eyes))
+                                .apply(
+                                        inst,
+                                        (attachPoint, eyes) -> {
+                                            HeadConfig head = new HeadConfig();
+                                            head.attachPoint = attachPoint;
+                                            head.eyes = eyes;
+                                            return head;
+                                        }));
 
         /** Nonblank attachment token, canonicalized when produced by the picker. */
         public String attachPoint;
+
         /** Required eye list; installed heads contain at least one eye. */
         public List<EyeDefinition> eyes = List.of();
     }
 
     /** Runtime structure selected by version and age, then synchronized to clients. */
     public static class RuntimeConfig {
-        public static final Codec<RuntimeConfig> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-                Codec.BOOL.fieldOf("enabled").forGetter(config -> config.enabled),
-                Variant.CODEC.listOf().fieldOf("variants").forGetter(config -> config.variants)
-        ).apply(inst, (enabled, variants) -> {
-            RuntimeConfig config = new RuntimeConfig();
-            config.enabled = enabled;
-            config.variants = variants;
-            return config;
-        }));
+        public static final Codec<RuntimeConfig> CODEC =
+                RecordCodecBuilder.create(inst ->
+                        inst.group(
+                                        Codec.BOOL
+                                                .fieldOf("enabled")
+                                                .forGetter(config -> config.enabled),
+                                        Variant.CODEC
+                                                .listOf()
+                                                .fieldOf("variants")
+                                                .forGetter(config -> config.variants))
+                                .apply(
+                                        inst,
+                                        (enabled, variants) -> {
+                                            RuntimeConfig config = new RuntimeConfig();
+                                            config.enabled = enabled;
+                                            config.variants = variants;
+                                            return config;
+                                        }));
 
         /** Whether this selected age config may be used for rendering and application. */
         public boolean enabled = true;
-        /** Required variants; an enabled installed config has at least one with positive total weight. */
+
+        /**
+         * Required variants; an enabled installed config has at least one with positive total
+         * weight.
+         */
         public List<Variant> variants = List.of();
 
         /** Whether a config is present, enabled, and has at least one variant. */
@@ -218,11 +285,12 @@ public final class EyeConfigModel {
 
         /**
          * Drop heads with no eyes and variants with no heads, canonicalizing each surviving head's
-         * attach token through {@code canon}. Returns {@code null} when {@code config} is {@code null}
-         * or nothing survives pruning.
+         * attach token through {@code canon}. Returns {@code null} when {@code config} is {@code
+         * null} or nothing survives pruning.
          */
         @Nullable
-        public static RuntimeConfig pruned(@Nullable RuntimeConfig config, UnaryOperator<String> canon) {
+        public static RuntimeConfig pruned(
+                @Nullable RuntimeConfig config, UnaryOperator<String> canon) {
             if (config == null) {
                 return null;
             }
@@ -258,31 +326,40 @@ public final class EyeConfigModel {
 
     /** The adult, baby, and age-independent runtime configs for one entity type. */
     public static class RuntimeConfigSet {
-        public static final Codec<RuntimeConfigSet> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-                RuntimeConfig.CODEC.optionalFieldOf(AGE_ADULT).forGetter(set -> Optional.ofNullable(set.adult)),
-                RuntimeConfig.CODEC.optionalFieldOf(AGE_BABY).forGetter(set -> Optional.ofNullable(set.baby)),
-                RuntimeConfig.CODEC.optionalFieldOf(AGE_ANY).forGetter(set -> Optional.ofNullable(set.any))
-        ).apply(inst, (adult, baby, any) -> {
-            RuntimeConfigSet set = new RuntimeConfigSet();
-            set.adult = adult.orElse(null);
-            set.baby = baby.orElse(null);
-            set.any = any.orElse(null);
-            return set;
-        }));
+        public static final Codec<RuntimeConfigSet> CODEC =
+                RecordCodecBuilder.create(inst ->
+                        inst.group(
+                                        RuntimeConfig.CODEC
+                                                .optionalFieldOf(AGE_ADULT)
+                                                .forGetter(set -> Optional.ofNullable(set.adult)),
+                                        RuntimeConfig.CODEC
+                                                .optionalFieldOf(AGE_BABY)
+                                                .forGetter(set -> Optional.ofNullable(set.baby)),
+                                        RuntimeConfig.CODEC
+                                                .optionalFieldOf(AGE_ANY)
+                                                .forGetter(set -> Optional.ofNullable(set.any)))
+                                .apply(
+                                        inst,
+                                        (adult, baby, any) -> {
+                                            RuntimeConfigSet set = new RuntimeConfigSet();
+                                            set.adult = adult.orElse(null);
+                                            set.baby = baby.orElse(null);
+                                            set.any = any.orElse(null);
+                                            return set;
+                                        }));
 
         /** Adult-specific config, or {@code null} when this set does not define one. */
-        @Nullable
-        public RuntimeConfig adult;
+        @Nullable public RuntimeConfig adult;
+
         /** Age-independent fallback, or {@code null} when this set does not define one. */
-        @Nullable
-        public RuntimeConfig any;
+        @Nullable public RuntimeConfig any;
+
         /** Baby-specific config, or {@code null} when this set does not define one. */
-        @Nullable
-        public RuntimeConfig baby;
+        @Nullable public RuntimeConfig baby;
 
         /**
-         * The runtime config for this age, falling back to the age-independent {@code any} config when
-         * the requested age has none of its own; {@code null} when neither exists.
+         * The runtime config for this age, falling back to the age-independent {@code any} config
+         * when the requested age has none of its own; {@code null} when neither exists.
          */
         @Nullable
         public RuntimeConfig get(boolean isBaby) {
@@ -298,48 +375,80 @@ public final class EyeConfigModel {
 
     /** One weighted placement arrangement. */
     public static class Variant {
-        public static final Codec<Variant> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-                Codec.DOUBLE.fieldOf("weight").forGetter(variant -> variant.weight),
-                HeadConfig.CODEC.listOf().fieldOf("heads").forGetter(variant -> variant.heads)
-        ).apply(inst, (weight, heads) -> {
-            Variant variant = new Variant();
-            variant.weight = weight;
-            variant.heads = heads;
-            return variant;
-        }));
+        public static final Codec<Variant> CODEC =
+                RecordCodecBuilder.create(inst ->
+                        inst.group(
+                                        Codec.DOUBLE
+                                                .fieldOf("weight")
+                                                .forGetter(variant -> variant.weight),
+                                        HeadConfig.CODEC
+                                                .listOf()
+                                                .fieldOf("heads")
+                                                .forGetter(variant -> variant.heads))
+                                .apply(
+                                        inst,
+                                        (weight, heads) -> {
+                                            Variant variant = new Variant();
+                                            variant.weight = weight;
+                                            variant.heads = heads;
+                                            return variant;
+                                        }));
 
         /** Required attachment groups; an installed variant contains at least one nonempty head. */
         public List<HeadConfig> heads = List.of();
-        /** Authored relative selection weight; validated installed values are finite and nonnegative. */
+
+        /**
+         * Authored relative selection weight; validated installed values are finite and
+         * nonnegative.
+         */
         public double weight = 1.0;
     }
 
     /** One version- and age-selectable entry in a datapack file. */
     public static class VersionedEntry {
-        public static final Codec<VersionedEntry> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-                Codec.STRING.fieldOf("version").forGetter(entry -> entry.version),
-                Codec.STRING.fieldOf("age").forGetter(entry -> entry.age),
-                Codec.BOOL.fieldOf("enabled").forGetter(entry -> entry.enabled),
-                Variant.CODEC.listOf().fieldOf("variants").forGetter(entry -> entry.variants)
-        ).apply(inst, (version, age, enabled, variants) -> {
-            VersionedEntry entry = new VersionedEntry();
-            entry.version = version;
-            entry.age = age;
-            entry.enabled = enabled;
-            entry.variants = variants;
-            return entry;
-        }));
+        public static final Codec<VersionedEntry> CODEC =
+                RecordCodecBuilder.create(inst ->
+                        inst.group(
+                                        Codec.STRING
+                                                .fieldOf("version")
+                                                .forGetter(entry -> entry.version),
+                                        Codec.STRING.fieldOf("age").forGetter(entry -> entry.age),
+                                        Codec.BOOL
+                                                .fieldOf("enabled")
+                                                .forGetter(entry -> entry.enabled),
+                                        Variant.CODEC
+                                                .listOf()
+                                                .fieldOf("variants")
+                                                .forGetter(entry -> entry.variants))
+                                .apply(
+                                        inst,
+                                        (version, age, enabled, variants) -> {
+                                            VersionedEntry entry = new VersionedEntry();
+                                            entry.version = version;
+                                            entry.age = age;
+                                            entry.enabled = enabled;
+                                            entry.variants = variants;
+                                            return entry;
+                                        }));
 
         /** Authored age selector; reload accepts {@code adult}, {@code baby}, or {@code any}. */
         public String age = AGE_ANY;
+
         /** Whether the selected runtime config is enabled. */
         public boolean enabled = true;
+
         /** Required authored placement variants. */
         public List<Variant> variants = List.of();
-        /** Required version or version-range selector interpreted by {@link VersionRangeMatcher}. */
+
+        /**
+         * Required version or version-range selector interpreted by {@link VersionRangeMatcher}.
+         */
         public String version = "";
 
-        /** An entry carrying {@code config}'s enabled flag and variants under the given version and age. */
+        /**
+         * An entry carrying {@code config}'s enabled flag and variants under the given version and
+         * age.
+         */
         public static VersionedEntry of(String versionRange, String age, RuntimeConfig config) {
             VersionedEntry entry = new VersionedEntry();
             entry.version = versionRange;

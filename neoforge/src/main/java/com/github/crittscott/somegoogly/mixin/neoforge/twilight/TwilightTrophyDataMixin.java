@@ -3,24 +3,26 @@ package com.github.crittscott.somegoogly.mixin.neoforge.twilight;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import com.github.crittscott.somegoogly.registry.ModContent;
+
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import org.spongepowered.asm.mixin.Pseudo;
+
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.Unique;
 
 import javax.annotation.Nullable;
 
 /**
  * Gives Twilight Forest's boss trophies the same saved and synced eye state vanilla heads get from
- * {@code SkullBlockEntityDataMixin}. Twilight Forest is an optional mod with no API for this, and its trophy
- * block entity is not a vanilla skull, so that Mixin does not reach it.
+ * {@code SkullBlockEntityDataMixin}. Twilight Forest is an optional mod with no API for this, and
+ * its trophy block entity is not a vanilla skull, so that Mixin does not reach it.
  */
 @Pseudo
 @Mixin(targets = "twilightforest.block.entity.TrophyBlockEntity", remap = false)
@@ -41,10 +43,7 @@ abstract class TwilightTrophyDataMixin extends BlockEntity implements SkullEyeSt
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
-
-    @Unique
-    @Nullable
-    private CompoundTag somegoogly$data;
+    @Unique @Nullable private CompoundTag somegoogly$data;
 
     @Override
     @Nullable

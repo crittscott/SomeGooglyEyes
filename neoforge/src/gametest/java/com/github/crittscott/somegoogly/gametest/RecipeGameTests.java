@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
+
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.neoforged.neoforge.gametest.GameTestHolder;
@@ -16,8 +17,7 @@ public final class RecipeGameTests {
 
     private static final String TEMPLATE = "empty";
 
-    private RecipeGameTests() {
-    }
+    private RecipeGameTests() {}
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
     public static void cobwebClearsAllOverrides(GameTestHelper helper) {

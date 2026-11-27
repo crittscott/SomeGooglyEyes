@@ -4,6 +4,7 @@ import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.item.EyeItemService;
 import com.github.crittscott.somegoogly.registry.ModContent;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
@@ -19,9 +20,9 @@ import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.util.FakePlayerFactory;
 import net.neoforged.neoforge.event.entity.player.PlayerDestroyItemEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-import net.neoforged.neoforge.common.util.FakePlayerFactory;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -30,8 +31,8 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
- * NeoForge GameTest entry points for {@link EyeItemServiceGameTestsLogic}; see that class for the actual
- * assertions.
+ * NeoForge GameTest entry points for {@link EyeItemServiceGameTestsLogic}; see that class for the
+ * actual assertions.
  */
 @GameTestHolder(SomeGooglyCommon.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -39,8 +40,7 @@ public final class EyeItemServiceGameTests {
 
     private static final String TEMPLATE = "empty";
 
-    private EyeItemServiceGameTests() {
-    }
+    private EyeItemServiceGameTests() {}
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void optometristInteractHarvestsEyesForOneDurability(GameTestHelper helper) {
@@ -71,9 +71,9 @@ public final class EyeItemServiceGameTests {
     }
 
     /**
-     * Shears that break on a harvest are reported as destroyed. In game: with a mod that refills a broken tool
-     * from your inventory, harvest an eyed cow with Optometrist shears on their last durability; the mod refills
-     * your hand as it would after vanilla shearing.
+     * Shears that break on a harvest are reported as destroyed. In game: with a mod that refills a
+     * broken tool from your inventory, harvest an eyed cow with Optometrist shears on their last
+     * durability; the mod refills your hand as it would after vanilla shearing.
      */
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void harvestBreakingShearsReportsThem(GameTestHelper helper) {
@@ -88,7 +88,8 @@ public final class EyeItemServiceGameTests {
 
         List<PlayerDestroyItemEvent> reports = new ArrayList<>();
         Consumer<PlayerDestroyItemEvent> listener = reports::add;
-        NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, PlayerDestroyItemEvent.class, listener);
+        NeoForge.EVENT_BUS.addListener(
+                EventPriority.NORMAL, false, PlayerDestroyItemEvent.class, listener);
         try {
             EyeItemService.interact(player, helper.getLevel(), InteractionHand.MAIN_HAND, cow);
         } finally {
@@ -96,14 +97,15 @@ public final class EyeItemServiceGameTests {
         }
 
         helper.assertTrue(shears.isEmpty(), "the last durability breaks the shears");
-        helper.assertTrue(reports.size() == 1, "the broken shears are reported once, got " + reports.size());
+        helper.assertTrue(
+                reports.size() == 1, "the broken shears are reported once, got " + reports.size());
         helper.succeed();
     }
 
     /**
-     * Optometrist shears act on an armor stand's eyes before the stand can take them into its hand. In game: give
-     * an armor stand with arms eyes using a Slimy Eye, and right-click it with Optometrist shears; its eyes come
-     * off and the shears stay in your hand.
+     * Optometrist shears act on an armor stand's eyes before the stand can take them into its hand.
+     * In game: give an armor stand with arms eyes using a Slimy Eye, and right-click it with
+     * Optometrist shears; its eyes come off and the shears stay in your hand.
      */
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void optometristActsOnArmorStandBeforeItTakesTheShears(GameTestHelper helper) {
@@ -113,18 +115,21 @@ public final class EyeItemServiceGameTests {
         EyeState.setHasEyes(stand, true);
 
         PlayerInteractEvent.EntityInteractSpecific event =
-                new PlayerInteractEvent.EntityInteractSpecific(player, InteractionHand.MAIN_HAND, stand, Vec3.ZERO);
+                new PlayerInteractEvent.EntityInteractSpecific(
+                        player, InteractionHand.MAIN_HAND, stand, Vec3.ZERO);
         NeoForge.EVENT_BUS.post(event);
 
-        helper.assertTrue(event.isCanceled(), "the harvest should end the click before the stand's own interaction");
+        helper.assertTrue(
+                event.isCanceled(),
+                "the harvest should end the click before the stand's own interaction");
         helper.assertTrue(!EyeState.hasEyes(stand), "the stand's eyes should come off");
         helper.succeed();
     }
 
     /**
-     * Using up the last Slimy Eye posts one native destruction event, as a hotbar-refill mod expects. In game, with
-     * a mod that refills an emptied hotbar slot, apply your last Slimy Eye to a cow in survival. The slot is
-     * refilled.
+     * Using up the last Slimy Eye posts one native destruction event, as a hotbar-refill mod
+     * expects. In game, with a mod that refills an emptied hotbar slot, apply your last Slimy Eye
+     * to a cow in survival. The slot is refilled.
      */
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void usingTheLastSlimyEyeReportsIt(GameTestHelper helper) {
@@ -133,33 +138,44 @@ public final class EyeItemServiceGameTests {
         player.setGameMode(GameType.SURVIVAL);
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
         EyeState.setHasEyes(cow, false);
-        helper.assertTrue(EyeItemService.verdictFor(cow) == EyeItemService.Verdict.CAN_HAVE,
+        helper.assertTrue(
+                EyeItemService.verdictFor(cow) == EyeItemService.Verdict.CAN_HAVE,
                 "the bundled cow definition lets a cow take eyes");
         ItemStack eye = new ItemStack(ModContent.SLIMY_EYE.get());
         player.setItemInHand(InteractionHand.MAIN_HAND, eye);
 
         List<PlayerDestroyItemEvent> reports = new ArrayList<>();
-        Consumer<PlayerDestroyItemEvent> listener = event -> {
-            if (event.getEntity() == player) {
-                reports.add(event);
-            }
-        };
-        NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, PlayerDestroyItemEvent.class, listener);
+        Consumer<PlayerDestroyItemEvent> listener =
+                event -> {
+                    if (event.getEntity() == player) {
+                        reports.add(event);
+                    }
+                };
+        NeoForge.EVENT_BUS.addListener(
+                EventPriority.NORMAL, false, PlayerDestroyItemEvent.class, listener);
         try {
             EyeItemService.interact(player, helper.getLevel(), InteractionHand.MAIN_HAND, cow);
         } finally {
             NeoForge.EVENT_BUS.unregister(listener);
         }
 
-        helper.assertTrue(EyeState.hasEyes(cow) && eye.isEmpty(), "the last Slimy Eye is applied and used up");
-        helper.assertTrue(reports.size() == 1, "the used-up Slimy Eye is reported once, got " + reports.size());
+        helper.assertTrue(
+                EyeState.hasEyes(cow) && eye.isEmpty(),
+                "the last Slimy Eye is applied and used up");
+        helper.assertTrue(
+                reports.size() == 1,
+                "the used-up Slimy Eye is reported once, got " + reports.size());
         helper.succeed();
     }
 
     private static ItemStack optometristShears(GameTestHelper helper) {
         ItemStack shears = new ItemStack(Items.SHEARS);
-        shears.enchant(helper.getLevel().registryAccess().lookupOrThrow(Registries.ENCHANTMENT)
-                .getOrThrow(ModContent.OPTOMETRIST), 1);
+        shears.enchant(
+                helper.getLevel()
+                        .registryAccess()
+                        .lookupOrThrow(Registries.ENCHANTMENT)
+                        .getOrThrow(ModContent.OPTOMETRIST),
+                1);
         return shears;
     }
 }

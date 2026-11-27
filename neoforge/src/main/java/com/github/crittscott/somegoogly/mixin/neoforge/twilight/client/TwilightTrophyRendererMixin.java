@@ -2,30 +2,39 @@ package com.github.crittscott.somegoogly.mixin.neoforge.twilight.client;
 
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.mojang.blaze3d.vertex.PoseStack;
+
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.world.level.block.entity.BlockEntity;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Coerce;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.world.level.block.entity.BlockEntity;
-import org.spongepowered.asm.mixin.injection.Coerce;
-
 /**
- * Brackets a placed trophy's draw so the trophy model Mixins draw its eyes, as {@code SkullBlockRendererMixin} does
- * for vanilla heads. Twilight Forest is an optional mod with no API for this, and its trophy renderer draws its boss
- * models itself instead of going through vanilla's head renderer.
+ * Brackets a placed trophy's draw so the trophy model Mixins draw its eyes, as {@code
+ * SkullBlockRendererMixin} does for vanilla heads. Twilight Forest is an optional mod with no API
+ * for this, and its trophy renderer draws its boss models itself instead of going through vanilla's
+ * head renderer.
  */
 @Pseudo
 @Mixin(targets = "twilightforest.client.renderer.block.TrophyRenderer", remap = false)
 abstract class TwilightTrophyRendererMixin {
-    private static final String PLACED_RENDER = "render(Ltwilightforest/block/entity/TrophyBlockEntity;"
-            + "FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;II)V";
+    private static final String PLACED_RENDER =
+            "render(Ltwilightforest/block/entity/TrophyBlockEntity;"
+                    + "FLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;II)V";
 
     @Inject(method = PLACED_RENDER, at = @At("HEAD"))
-    private void somegoogly$begin(@Coerce BlockEntity entity, float partialTick, PoseStack pose,
-                                 MultiBufferSource buffers, int light, int overlay, CallbackInfo callback) {
+    private void somegoogly$begin(
+            @Coerce BlockEntity entity,
+            float partialTick,
+            PoseStack pose,
+            MultiBufferSource buffers,
+            int light,
+            int overlay,
+            CallbackInfo callback) {
         ClientEyeRuntime.beginHead(entity, partialTick);
     }
 
@@ -33,5 +42,4 @@ abstract class TwilightTrophyRendererMixin {
     private void somegoogly$end(CallbackInfo callback) {
         ClientEyeRuntime.endItemDraw();
     }
-
 }

@@ -5,19 +5,21 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
+
+import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.LevelRenderer;
+
 import org.joml.Matrix4f;
 
 import java.util.OptionalDouble;
 
 /**
- * Draws the Blockbench/Blender-style transform gizmo for the selected part: RGB = XYZ axes
- * (3 blocks each way), a cube only on each positive end, and an origin marker. Rendered in the
- * part's local frame with depth-testing off (via {@link LinesNoDepth}) so the origin — buried
- * inside the mob mesh — stays visible.
+ * Draws the Blockbench/Blender-style transform gizmo for the selected part: RGB = XYZ axes (3
+ * blocks each way), a cube only on each positive end, and an origin marker. Rendered in the part's
+ * local frame with depth-testing off (via {@link LinesNoDepth}) so the origin — buried inside the
+ * mob mesh — stays visible.
  */
 public final class Gizmo {
 
@@ -30,19 +32,37 @@ public final class Gizmo {
     private static final EyeColor Y_COLOR = new EyeColor(0.15f, 1.0f, 0.15f);
     private static final EyeColor Z_COLOR = new EyeColor(0.25f, 0.45f, 1.0f);
 
-    private Gizmo() {
-    }
+    private Gizmo() {}
 
-    private static void axis(PoseStack ps, VertexConsumer vc, float x, float y, float z,
-                             EyeColor color) {
+    private static void axis(
+            PoseStack ps, VertexConsumer vc, float x, float y, float z, EyeColor color) {
         float r = color.r(), g = color.g(), b = color.b();
-        line(ps, vc, 0, 0, 0, x, y, z, r, g, b);                       // positive (bright)
-        line(ps, vc, 0, 0, 0, -x, -y, -z, r * NEGATIVE_AXIS_BRIGHTNESS, g * NEGATIVE_AXIS_BRIGHTNESS, b * NEGATIVE_AXIS_BRIGHTNESS); // negative (dim)
+        line(ps, vc, 0, 0, 0, x, y, z, r, g, b); // positive (bright)
+        line(
+                ps,
+                vc,
+                0,
+                0,
+                0,
+                -x,
+                -y,
+                -z,
+                r * NEGATIVE_AXIS_BRIGHTNESS,
+                g * NEGATIVE_AXIS_BRIGHTNESS,
+                b * NEGATIVE_AXIS_BRIGHTNESS); // negative (dim)
     }
 
-    private static void cube(PoseStack ps, VertexConsumer vc, float cx, float cy, float cz,
-                             float h, EyeColor color) {
-        LevelRenderer.renderLineBox(ps, vc, cx - h, cy - h, cz - h, cx + h, cy + h, cz + h, color.r(), color.g(), color.b(), 1.0f);
+    private static void cube(
+            PoseStack ps,
+            VertexConsumer vc,
+            float cx,
+            float cy,
+            float cz,
+            float h,
+            EyeColor color) {
+        LevelRenderer.renderLineBox(
+                ps, vc, cx - h, cy - h, cz - h, cx + h, cy + h, cz + h, color.r(), color.g(),
+                color.b(), 1.0f);
     }
 
     /** Draw the axis gizmo at the current pose origin. */
@@ -63,9 +83,18 @@ public final class Gizmo {
         cube(poseStack, vc, 0, 0, 0, ORIGIN_CUBE, EyeColor.WHITE);
     }
 
-    private static void line(PoseStack ps, VertexConsumer vc,
-                             float x1, float y1, float z1, float x2, float y2, float z2,
-                             float r, float g, float b) {
+    private static void line(
+            PoseStack ps,
+            VertexConsumer vc,
+            float x1,
+            float y1,
+            float z1,
+            float x2,
+            float y2,
+            float z2,
+            float r,
+            float g,
+            float b) {
         Matrix4f m = ps.last().pose();
         PoseStack.Pose pose = ps.last();
         float nx = x2 - x1, ny = y2 - y1, nz = z2 - z1;
@@ -80,34 +109,42 @@ public final class Gizmo {
     }
 
     /**
-     * A lines render type identical to vanilla {@link RenderType#lines()} but with depth-testing OFF, so
-     * the gizmo (and its origin, buried inside the mob mesh) is always visible. Subclassing
-     * {@link RenderType} is what lets us reference the protected {@link RenderStateShard} fields — no
-     * mixin needed; it is never instantiated.
+     * A lines render type identical to vanilla {@link RenderType#lines()} but with depth-testing
+     * OFF, so the gizmo (and its origin, buried inside the mob mesh) is always visible. Subclassing
+     * {@link RenderType} is what lets us reference the protected {@link RenderStateShard} fields —
+     * no mixin needed; it is never instantiated.
      */
     private static final class LinesNoDepth extends RenderType {
 
-        static final RenderType GIZMO_LINES = RenderType.create(
-                "somegoogly_gizmo_lines",
-                DefaultVertexFormat.POSITION_COLOR_NORMAL,
-                VertexFormat.Mode.LINES,
-                256,
-                false,
-                false,
-                RenderType.CompositeState.builder()
-                        .setCullState(NO_CULL)
-                        .setDepthTestState(NO_DEPTH_TEST)
-                        .setLayeringState(VIEW_OFFSET_Z_LAYERING)
-                        .setLineState(new RenderStateShard.LineStateShard(OptionalDouble.empty()))
-                        .setOutputState(MAIN_TARGET)
-                        .setShaderState(RENDERTYPE_LINES_SHADER)
-                        .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
-                        .setWriteMaskState(COLOR_DEPTH_WRITE)
-                        .createCompositeState(false)
-        );
+        static final RenderType GIZMO_LINES =
+                RenderType.create(
+                        "somegoogly_gizmo_lines",
+                        DefaultVertexFormat.POSITION_COLOR_NORMAL,
+                        VertexFormat.Mode.LINES,
+                        256,
+                        false,
+                        false,
+                        RenderType.CompositeState.builder()
+                                .setCullState(NO_CULL)
+                                .setDepthTestState(NO_DEPTH_TEST)
+                                .setLayeringState(VIEW_OFFSET_Z_LAYERING)
+                                .setLineState(
+                                        new RenderStateShard.LineStateShard(OptionalDouble.empty()))
+                                .setOutputState(MAIN_TARGET)
+                                .setShaderState(RENDERTYPE_LINES_SHADER)
+                                .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+                                .setWriteMaskState(COLOR_DEPTH_WRITE)
+                                .createCompositeState(false));
 
-        private LinesNoDepth(String name, VertexFormat format, VertexFormat.Mode mode, int bufferSize,
-                             boolean affectsCrumbling, boolean sortOnUpload, Runnable setup, Runnable clear) {
+        private LinesNoDepth(
+                String name,
+                VertexFormat format,
+                VertexFormat.Mode mode,
+                int bufferSize,
+                boolean affectsCrumbling,
+                boolean sortOnUpload,
+                Runnable setup,
+                Runnable clear) {
             super(name, format, mode, bufferSize, affectsCrumbling, sortOnUpload, setup, clear);
         }
     }

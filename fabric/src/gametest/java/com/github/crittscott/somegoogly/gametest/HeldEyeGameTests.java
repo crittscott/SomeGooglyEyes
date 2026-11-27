@@ -20,7 +20,8 @@ public final class HeldEyeGameTests implements FabricGameTest {
 
     @GameTest(template = TEMPLATE)
     public static void heldEyeHonorsServerSettings(GameTestHelper helper) {
-        HeldEyeGameTestsLogic.heldEyeHonorsServerSettings(helper, FakePlayer.get(helper.getLevel()));
+        HeldEyeGameTestsLogic.heldEyeHonorsServerSettings(
+                helper, FakePlayer.get(helper.getLevel()));
     }
 
     @GameTest(template = TEMPLATE)

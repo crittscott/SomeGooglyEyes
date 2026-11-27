@@ -15,7 +15,8 @@ public final class PickerAuthGameTests implements FabricGameTest {
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void bulkSpawnContinuesBeyondNearbyChunks(GameTestHelper helper) {
-        PickerSpawnServiceGameTestsLogic.bulkSpawnContinuesBeyondNearbyChunks(helper, FakePlayer.get(helper.getLevel()));
+        PickerSpawnServiceGameTestsLogic.bulkSpawnContinuesBeyondNearbyChunks(
+                helper, FakePlayer.get(helper.getLevel()));
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
@@ -31,11 +32,13 @@ public final class PickerAuthGameTests implements FabricGameTest {
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void entityTargetingStopsAtWalls(GameTestHelper helper) {
-        PickerSpawnServiceGameTestsLogic.entityTargetingStopsAtWalls(helper, FakePlayer.get(helper.getLevel()));
+        PickerSpawnServiceGameTestsLogic.entityTargetingStopsAtWalls(
+                helper, FakePlayer.get(helper.getLevel()));
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void pickerCommandsFailForSurvivalOperators(GameTestHelper helper) {
-        PickerAuthGameTestsLogic.pickerCommandsFailForSurvivalOperators(helper, FakePlayer.get(helper.getLevel()));
+        PickerAuthGameTestsLogic.pickerCommandsFailForSurvivalOperators(
+                helper, FakePlayer.get(helper.getLevel()));
     }
 }

@@ -96,19 +96,17 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="AgeableListResolver.html" title="class in com.github.crittscott.somegoogly.client.render.resolver">AgeableListResolver</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
-<div class="block">Resolver for the <code>AgeableListModel</code> family — the base of most vanilla mob models (humanoids,
- quadrupeds, and many others).</div>
+<div class="block">Resolver for the <code>AgeableListModel</code> family — the base of most vanilla mob models
+ (humanoids, quadrupeds, and many others).</div>
 </div>
 <div class="col-first even-row-color class-summary class-summary-tab1"><a href="Attachment.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">Attachment</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab1">
-<div class="block">A resolved attach point: the ordered transforms that carry a pose from the model's base render space
- into a named part's animated space.</div>
+<div class="block">A resolved attach point: the ordered transforms that carry a pose from the model's base render
+ space into a named part's animated space.</div>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="ChildMapResolver.html" title="class in com.github.crittscott.somegoogly.client.render.resolver">ChildMapResolver</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
-<div class="block">Catch-all resolver for any vanilla <code>EntityModel</code> that isn't a
- <code>HierarchicalModel</code> or <code>AgeableListModel</code>
- — and the final fallback for everything else.</div>
+<div class="block">Catch-all resolver for any vanilla <code>EntityModel</code> that isn't a <code>HierarchicalModel</code> or <code>AgeableListModel</code> — and the final fallback for everything else.</div>
 </div>
 <div class="col-first even-row-color class-summary class-summary-tab1"><a href="EyeAttachmentResolver.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">EyeAttachmentResolver</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab1">
@@ -133,9 +131,7 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first odd-row-color class-summary class-summary-tab2"><a href="RabbitLlamaResolver.html" title="class in com.github.crittscott.somegoogly.client.render.resolver">RabbitLlamaResolver</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
-<div class="block">Resolver for <code>RabbitModel</code> and <code>LlamaModel</code> — two vanilla models that extend
- <code>EntityModel</code> directly (neither <code>HierarchicalModel</code> nor
- <code>AgeableListModel</code>) and hand-roll their own scale/translate wraps
+<div class="block">Resolver for <code>RabbitModel</code> and <code>LlamaModel</code> — two vanilla models that extend <code>EntityModel</code> directly (neither <code>HierarchicalModel</code> nor <code>AgeableListModel</code>) and hand-roll their own scale/translate wraps
  around groups of their top-level parts inside <code>renderToBuffer</code>, applied and popped entirely
  outside the part tree, where a render layer's <code>PoseStack</code> never sees them.</div>
 </div>

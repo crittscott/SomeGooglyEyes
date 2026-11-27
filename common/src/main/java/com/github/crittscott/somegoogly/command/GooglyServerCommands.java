@@ -1,5 +1,8 @@
 package com.github.crittscott.somegoogly.command;
 
+import static com.github.crittscott.somegoogly.command.MaybeFloatArgumentType.angle;
+import static com.github.crittscott.somegoogly.command.MaybeFloatArgumentType.compact;
+
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.eye.EyePlacement;
@@ -19,6 +22,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
+
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -33,12 +37,9 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
-import javax.annotation.Nullable;
-
 import java.util.List;
 
-import static com.github.crittscott.somegoogly.command.MaybeFloatArgumentType.angle;
-import static com.github.crittscott.somegoogly.command.MaybeFloatArgumentType.compact;
+import javax.annotation.Nullable;
 
 /**
  * Server-owned {@code /sg} commands. Both kinds require creative mode and permission level 2: the
@@ -49,22 +50,32 @@ import static com.github.crittscott.somegoogly.command.MaybeFloatArgumentType.co
  * under one {@code /sg} root; loader client adapters preserve routing to these server branches.
  *
  * <ul>
- *   <li>{@code /sg admin eyes <true|false>} — toggle the has-eyes flag</li>
- *   <li>{@code /sg admin tint iris <r> <g> <b>} / {@code tint cornea <r> <g> <b>} — set a color (0–1)</li>
- *   <li>{@code /sg admin tint clear} — drop both color overrides</li>
- *   <li>{@code /sg admin glow <on|off|config>} — force glow on/off, or revert to per-eye config</li>
- *   <li>{@code /sg admin behavior <id|random>} — trigger a cosmetic behavior now</li>
+ *   <li>{@code /sg admin eyes <true|false>} — toggle the has-eyes flag
+ *   <li>{@code /sg admin tint iris <r> <g> <b>} / {@code tint cornea <r> <g> <b>} — set a color
+ *       (0–1)
+ *   <li>{@code /sg admin tint clear} — drop both color overrides
+ *   <li>{@code /sg admin glow <on|off|config>} — force glow on/off, or revert to per-eye config
+ *   <li>{@code /sg admin behavior <id|random>} — trigger a cosmetic behavior now
  * </ul>
  */
 public final class GooglyServerCommands {
 
     private static final String ADMIN = "admin";
     private static final String MOB = "mob";
-    /** The {@code /sg} root literal, shared by the server tree, the client tree, and Fabric's routing. */
+
+    /**
+     * The {@code /sg} root literal, shared by the server tree, the client tree, and Fabric's
+     * routing.
+     */
     public static final String ROOT = "sg";
+
     private static final String SPAWN = "spawn";
     private static final String SPAWN_ALL = "spawnall";
-    /** The branches this tree owns under {@link #ROOT}, which Fabric's client forwards to the server. */
+
+    /**
+     * The branches this tree owns under {@link #ROOT}, which Fabric's client forwards to the
+     * server.
+     */
     public static final List<String> SERVER_BRANCHES = List.of(ADMIN, MOB, SPAWN, SPAWN_ALL);
 
     private static final float MAX_MOB_MOVE = 20.0F;
@@ -73,19 +84,24 @@ public final class GooglyServerCommands {
     /** The {@code /sg admin behavior} token that picks a random behavior instead of naming one. */
     private static final String RANDOM_BEHAVIOR_TOKEN = "random";
 
-    /** Suggests the behavior short names plus {@code random} for {@code /sg admin behavior <id>}. */
-    private static final SuggestionProvider<CommandSourceStack> BEHAVIOR_SUGGESTIONS = (ctx, builder) -> {
-        builder.suggest(RANDOM_BEHAVIOR_TOKEN);
-        for (EyeBehavior behavior : EyeBehavior.values()) {
-            builder.suggest(behavior.id().getPath());
-        }
-        return builder.buildFuture();
-    };
+    /**
+     * Suggests the behavior short names plus {@code random} for {@code /sg admin behavior <id>}.
+     */
+    private static final SuggestionProvider<CommandSourceStack> BEHAVIOR_SUGGESTIONS =
+            (ctx, builder) -> {
+                builder.suggest(RANDOM_BEHAVIOR_TOKEN);
+                for (EyeBehavior behavior : EyeBehavior.values()) {
+                    builder.suggest(behavior.id().getPath());
+                }
+                return builder.buildFuture();
+            };
 
-    private GooglyServerCommands() {
-    }
+    private GooglyServerCommands() {}
 
-    /** The permission-level-2 {@code admin} subtree, grafted under {@code /sg} by {@link #register}. */
+    /**
+     * The permission-level-2 {@code admin} subtree, grafted under {@code /sg} by {@link #register}.
+     */
+    // spotless:off
     private static LiteralArgumentBuilder<CommandSourceStack> adminTree() {
         return Commands.literal(ADMIN)
                 .requires(GooglyServerCommands::gamemaster)
@@ -150,14 +166,19 @@ public final class GooglyServerCommands {
                         .then(Commands.argument("azimuth", FloatArgumentType.floatArg(-360.0F, 360.0F))
                                 .executes(GooglyServerCommands::rotateMob)));
     }
+    // spotless:on
 
     private static int spawn(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         ServerPlayer player = requirePickerUser(ctx);
         if (player == null) {
             return 0;
         }
-        return PickerSpawnService.spawnOne(ctx.getSource(), player,
-                ResourceArgument.getResource(ctx, "type", Registries.ENTITY_TYPE).value()) ? 1 : 0;
+        return PickerSpawnService.spawnOne(
+                        ctx.getSource(),
+                        player,
+                        ResourceArgument.getResource(ctx, "type", Registries.ENTITY_TYPE).value())
+                ? 1
+                : 0;
     }
 
     private static int spawnAll(CommandContext<CommandSourceStack> ctx, @Nullable String modFilter)
@@ -172,20 +193,26 @@ public final class GooglyServerCommands {
             return 0;
         }
         if (modFilter != null && !ServerConfig.validateNamespace(modFilter)) {
-            PickerGate.tellFailure(source, "somegoogly.command.picker.spawnall_invalid_mod", modFilter);
+            PickerGate.tellFailure(
+                    source, "somegoogly.command.picker.spawnall_invalid_mod", modFilter);
             return 0;
         }
         if (!PickerGate.allowSpawnAll(player.serverLevel().getServer())) {
             PickerGate.tellFailure(source, "somegoogly.command.picker.spawnall_cooldown");
             return 0;
         }
-        source.sendSuccess(() -> modFilter == null
-                ? Component.translatable("somegoogly.command.picker.spawning_all")
-                : Component.translatable("somegoogly.command.picker.spawning_mod", modFilter), false);
+        source.sendSuccess(
+                () ->
+                        modFilter == null
+                                ? Component.translatable("somegoogly.command.picker.spawning_all")
+                                : Component.translatable(
+                                        "somegoogly.command.picker.spawning_mod", modFilter),
+                false);
         return PickerSpawnService.spawn(source, player, modFilter);
     }
 
-    private static int moveMob(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+    private static int moveMob(CommandContext<CommandSourceStack> ctx)
+            throws CommandSyntaxException {
         CommandSourceStack source = ctx.getSource();
         ServerPlayer player = requirePickerUser(ctx);
         if (player == null) {
@@ -195,7 +222,8 @@ public final class GooglyServerCommands {
         double dy = FloatArgumentType.getFloat(ctx, "dy");
         double dz = FloatArgumentType.getFloat(ctx, "dz");
         if (dx * dx + dy * dy + dz * dz > MAX_MOB_MOVE_SQUARED) {
-            PickerGate.tellFailure(source, "somegoogly.command.picker.mob_out_of_range", MAX_MOB_MOVE);
+            PickerGate.tellFailure(
+                    source, "somegoogly.command.picker.mob_out_of_range", MAX_MOB_MOVE);
             return 0;
         }
         LivingEntity living = frozenMob(source, player);
@@ -203,13 +231,18 @@ public final class GooglyServerCommands {
             return 0;
         }
         living.teleportTo(living.getX() + dx, living.getY() + dy, living.getZ() + dz);
-        PickerGate.tellSuccess(source, true, "somegoogly.command.picker.mob_moved",
-                compact(living.getX()), compact(living.getY()),
+        PickerGate.tellSuccess(
+                source,
+                true,
+                "somegoogly.command.picker.mob_moved",
+                compact(living.getX()),
+                compact(living.getY()),
                 compact(living.getZ()));
         return 1;
     }
 
-    private static int rotateMob(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+    private static int rotateMob(CommandContext<CommandSourceStack> ctx)
+            throws CommandSyntaxException {
         CommandSourceStack source = ctx.getSource();
         ServerPlayer player = requirePickerUser(ctx);
         if (player == null) {
@@ -224,7 +257,8 @@ public final class GooglyServerCommands {
         living.setYRot(yaw);
         living.setYHeadRot(yaw);
         living.setYBodyRot(yaw);
-        PickerGate.tellSuccess(source, true, "somegoogly.command.picker.mob_rotated", angle(azimuth));
+        PickerGate.tellSuccess(
+                source, true, "somegoogly.command.picker.mob_rotated", angle(azimuth));
         return 1;
     }
 
@@ -243,17 +277,21 @@ public final class GooglyServerCommands {
         return living;
     }
 
-    /** The test for every server-owned branch. Game mode is checked at execution; the command tree isn't resent when it changes. */
+    /**
+     * The test for every server-owned branch. Game mode is checked at execution; the command tree
+     * isn't resent when it changes.
+     */
     private static boolean gamemaster(CommandSourceStack source) {
         return source.hasPermission(Commands.LEVEL_GAMEMASTERS);
     }
 
     /**
-     * Drive the server behavior scheduler by hand: trigger {@code id} (a short name like {@code stare},
-     * or {@code random}) on the looked-at mob. Exercises the full server → packet → client play path.
-     * Honors the one-at-a-time rule, so it reports if dropped.
+     * Drive the server behavior scheduler by hand: trigger {@code id} (a short name like {@code
+     * stare}, or {@code random}) on the looked-at mob. Exercises the full server → packet → client
+     * play path. Honors the one-at-a-time rule, so it reports if dropped.
      */
-    private static int behavior(CommandContext<CommandSourceStack> ctx, String id) throws CommandSyntaxException {
+    private static int behavior(CommandContext<CommandSourceStack> ctx, String id)
+            throws CommandSyntaxException {
         LivingEntity target = requireTarget(ctx);
         if (target == null) return 0;
 
@@ -266,16 +304,26 @@ public final class GooglyServerCommands {
             behavior = key == null ? null : EyeBehavior.byId(key);
         }
         if (behavior == null) {
-            adminFailure(ctx.getSource(), Component.translatable("somegoogly.command.admin.unknown_behavior", id));
+            adminFailure(
+                    ctx.getSource(),
+                    Component.translatable("somegoogly.command.admin.unknown_behavior", id));
             return 0;
         }
 
-        boolean started = ServerBehaviorScheduler.trigger(target, behavior, target.getRandom().nextLong());
-        return feedback(ctx, started
-                ? Component.translatable("somegoogly.command.admin.behavior_playing", behavior.id().getPath())
-                : Component.translatable("somegoogly.command.admin.behavior_dropped", behavior.id().getPath()));
+        boolean started =
+                ServerBehaviorScheduler.trigger(target, behavior, target.getRandom().nextLong());
+        return feedback(
+                ctx,
+                started
+                        ? Component.translatable(
+                                "somegoogly.command.admin.behavior_playing",
+                                behavior.id().getPath())
+                        : Component.translatable(
+                                "somegoogly.command.admin.behavior_dropped",
+                                behavior.id().getPath()));
     }
 
+    // spotless:off
     private static LiteralArgumentBuilder<CommandSourceStack> colorBranch(String name, boolean iris) {
         return Commands.literal(name)
                 .then(Commands.argument("r", FloatArgumentType.floatArg(0, 1))
@@ -299,10 +347,15 @@ public final class GooglyServerCommands {
                                                     "somegoogly.command.admin.tint_set", targetName, color.toHex()));
                                         }))));
     }
+    // spotless:on
 
     private static int feedback(CommandContext<CommandSourceStack> ctx, Component message) {
-        // Op-gated world mutation: broadcast to other operators and the console, per vanilla convention.
-        ctx.getSource().sendSuccess(() -> Component.translatable("somegoogly.command.admin.feedback", message), true);
+        // Op-gated world mutation: broadcast to other operators and the console, per vanilla
+        // convention.
+        ctx.getSource()
+                .sendSuccess(
+                        () -> Component.translatable("somegoogly.command.admin.feedback", message),
+                        true);
         return 1;
     }
 
@@ -315,8 +368,11 @@ public final class GooglyServerCommands {
         LivingEntity target = requireTarget(ctx);
         if (target == null) return 0;
         EyeState.setGlow(target, value);
-        Component display = Component.translatable(value == null
-                ? "somegoogly.value.config" : value ? "somegoogly.value.on" : "somegoogly.value.off");
+        Component display =
+                Component.translatable(
+                        value == null
+                                ? "somegoogly.value.config"
+                                : value ? "somegoogly.value.on" : "somegoogly.value.off");
         return feedback(ctx, Component.translatable("somegoogly.command.admin.glow_set", display));
     }
 
@@ -325,21 +381,24 @@ public final class GooglyServerCommands {
     }
 
     /** Register the server-owned world-mutation branches of {@code /sg}. */
-    public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext buildContext) {
-        dispatcher.register(Commands.literal(ROOT)
-                .then(adminTree())
-                .then(spawnTree(buildContext))
-                .then(spawnAllTree())
-                .then(mobTree()));
+    public static void register(
+            CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext buildContext) {
+        dispatcher.register(
+                Commands.literal(ROOT)
+                        .then(adminTree())
+                        .then(spawnTree(buildContext))
+                        .then(spawnAllTree())
+                        .then(mobTree()));
     }
 
     /**
-     * The per-execution guard of the picker verbs: the sender must be a player who may use the picker. Returns
-     * that player, or {@code null} after reporting the refusal; a non-player sender gets vanilla's player-required
-     * error.
+     * The per-execution guard of the picker verbs: the sender must be a player who may use the
+     * picker. Returns that player, or {@code null} after reporting the refusal; a non-player sender
+     * gets vanilla's player-required error.
      */
     @Nullable
-    private static ServerPlayer requirePickerUser(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+    private static ServerPlayer requirePickerUser(CommandContext<CommandSourceStack> ctx)
+            throws CommandSyntaxException {
         ServerPlayer player = ctx.getSource().getPlayerOrException();
         if (!PickerGate.mayUsePicker(player)) {
             PickerGate.tellFailure(ctx.getSource(), "somegoogly.command.picker.not_authorized");
@@ -349,18 +408,21 @@ public final class GooglyServerCommands {
     }
 
     /**
-     * The shared per-execution guard: the sender must be a player who may use the picker
-     * ({@link PickerGate#mayUsePicker}), looking at a living entity. The subtree's {@code requires} reads the source's
-     * level, which {@code /execute as} carries over to a player without it, so the rule is checked on the player
-     * here. Returns that entity, or {@code null} (with feedback) when the player may not or isn't looking at one;
-     * a non-player sender gets vanilla's player-required error. Every admin verb calls this first.
+     * The shared per-execution guard: the sender must be a player who may use the picker ({@link
+     * PickerGate#mayUsePicker}), looking at a living entity. The subtree's {@code requires} reads
+     * the source's level, which {@code /execute as} carries over to a player without it, so the
+     * rule is checked on the player here. Returns that entity, or {@code null} (with feedback) when
+     * the player may not or isn't looking at one; a non-player sender gets vanilla's
+     * player-required error. Every admin verb calls this first.
      */
     @Nullable
-    private static LivingEntity requireTarget(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+    private static LivingEntity requireTarget(CommandContext<CommandSourceStack> ctx)
+            throws CommandSyntaxException {
         CommandSourceStack source = ctx.getSource();
         ServerPlayer player = source.getPlayerOrException();
         if (!PickerGate.mayUsePicker(player)) {
-            adminFailure(source, Component.translatable("somegoogly.command.admin.requires_creative"));
+            adminFailure(
+                    source, Component.translatable("somegoogly.command.admin.requires_creative"));
             return null;
         }
 

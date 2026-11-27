@@ -96,10 +96,10 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">MaybeFloatArgumentType</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
 implements com.mojang.brigadier.arguments.ArgumentType&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Float.html" title="class or interface in java.lang" class="external-link">Float</a>&gt;&gt;</span></div>
-<div class="block">A Brigadier argument that parses either a number or the literal <code>~</code> — the "leave this axis/angle
- unchanged" no-op. <code>~</code> yields an empty <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link"><code>Optional</code></a>; a number yields <code>Optional.of(v)</code>.
- Used by <code>/sg move</code> and <code>/sg rot</code>. The picker stores placement as <code>float</code> (matching
- the config codecs), so this yields floats all the way through.</div>
+<div class="block">A Brigadier argument that parses either a number or the literal <code>~</code> — the "leave this
+ axis/angle unchanged" no-op. <code>~</code> yields an empty <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link"><code>Optional</code></a>; a number yields <code>
+ Optional.of(v)</code>. Used by <code>/sg move</code> and <code>/sg rot</code>. The picker stores placement as
+ <code>float</code> (matching the config codecs), so this yields floats all the way through.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -135,7 +135,8 @@ implements com.mojang.brigadier.arguments.ArgumentType&lt;<a href="https://docs.
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#compact(double)" class="member-name-link">compact</a><wbr>(double&nbsp;value)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block"><code>value</code> to two places, as this argument parses it: for scales, weights, and tight displays.</div>
+<div class="block"><code>value</code> to two places, as this argument parses it: for scales, weights, and tight
+ displays.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Float.html" title="class or interface in java.lang" class="external-link">Float</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#get(com.mojang.brigadier.context.CommandContext,java.lang.String)" class="member-name-link">get</a><wbr>(com.mojang.brigadier.context.CommandContext&lt;?&gt;&nbsp;ctx,
@@ -208,7 +209,8 @@ implements com.mojang.brigadier.arguments.ArgumentType&lt;<a href="https://docs.
 <section class="detail" id="compact(double)">
 <h3>compact</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">compact</span><wbr><span class="parameters">(double&nbsp;value)</span></div>
-<div class="block"><code>value</code> to two places, as this argument parses it: for scales, weights, and tight displays.</div>
+<div class="block"><code>value</code> to two places, as this argument parses it: for scales, weights, and tight
+ displays.</div>
 </section>
 </li>
 <li>

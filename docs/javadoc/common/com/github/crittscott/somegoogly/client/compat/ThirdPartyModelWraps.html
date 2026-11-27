@@ -91,32 +91,34 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">ThirdPartyModelWraps</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Owns whole-model and named-root-group transforms that models apply <i>outside</i>
- their part tree — a model-wide <code>pushPose → scale → translate</code> wrapped entirely inside the model's
- own <code>renderToBuffer</code>. A resolver can only replay <code>translateAndRotate</code> down the part tree, so
- without this the eyes land in the model's unscaled space: wrong pivots, oversized motion arcs, offset
- placement. <a href="#wholeModel(net.minecraft.client.model.EntityModel)"><code>wholeModel(net.minecraft.client.model.EntityModel&lt;?&gt;)</code></a> finds a listed model's transform once per model; it is pre-multiplied onto the
- pose stack before the resolver walk (the model applies its transform before any part's
- <code>translateAndRotate</code>, so pre-multiplying composes identically). <code>EyeAttachmentResolver#toAttachmentSpace</code>
- applies it before replaying the attachment; unlisted models have none.
+<div class="block">Owns whole-model and named-root-group transforms that models apply <i>outside</i> their part tree
+ — a model-wide <code>pushPose → scale → translate</code> wrapped entirely inside the model's own
+ <code>renderToBuffer</code>. A resolver can only replay <code>translateAndRotate</code> down the part tree,
+ so without this the eyes land in the model's unscaled space: wrong pivots, oversized motion arcs,
+ offset placement. <a href="#wholeModel(net.minecraft.client.model.EntityModel)"><code>wholeModel(net.minecraft.client.model.EntityModel&lt;?&gt;)</code></a> finds a listed model's transform once per model; it is
+ pre-multiplied onto the pose stack before the resolver walk (the model applies its transform
+ before any part's <code>translateAndRotate</code>, so pre-multiplying composes identically). <code>
+ EyeAttachmentResolver#toAttachmentSpace</code> applies it before replaying the attachment; unlisted
+ models have none.
 
- <p>Each table is keyed by fully qualified model class name, so there is no compile-time or classloading
- dependency on either mod. The branch is chosen by <code>model.young</code> — the same field the models
- themselves branch on. A <code>null</code> adult transform means that branch renders at identity; the Alex's Mobs entries are young-only and always carry a
- <code>null</code> adult.
+ <p>Each table is keyed by fully qualified model class name, so there is no compile-time or
+ classloading dependency on either mod. The branch is chosen by <code>model.young</code> — the same
+ field the models themselves branch on. A <code>null</code> adult transform means that branch renders
+ at identity; the Alex's Mobs entries are young-only and always carry a <code>null</code> adult.
 
- <p><b>Alex's Mobs</b> (Citadel models): young-only whole-model scale + translate. <code>ModelKangaroo</code>'s
- <code>renderOnlyHead</code> path is not covered by this whole-model compensation; per-box scaling and
- age-specific model classes remain the resolver's and the datapack's responsibility.
+ <p><b>Alex's Mobs</b> (Citadel models): young-only whole-model scale + translate. <code>
+ ModelKangaroo</code>'s <code>renderOnlyHead</code> path is not covered by this whole-model compensation;
+ per-box scaling and age-specific model classes remain the resolver's and the datapack's
+ responsibility.
 
- <p><b>Exotic Birds</b>: the listed model classes use fixed whole-model transforms for every baby and
- for most adults. Compatibility is limited to model versions that retain those class names and
+ <p><b>Exotic Birds</b>: the listed model classes use fixed whole-model transforms for every baby
+ and for most adults. Compatibility is limited to model versions that retain those class names and
  transforms. Flamingo's per-part lower-beak z-fight adjustment is intentionally outside this
  whole-model table.
 
- <p><a href="#groupTransform(net.minecraft.client.model.EntityModel,java.lang.String)"><code>groupTransform(net.minecraft.client.model.EntityModel&lt;?&gt;, java.lang.String)</code></a> supplies the separate named-root wraps: generic ageable formulas, vanilla
- rabbit/llama groups, and Twilight overrides of the generic formula. Group overrides replace rather than
- compose with the generic formula; root membership stays with the resolver.</div>
+ <p><a href="#groupTransform(net.minecraft.client.model.EntityModel,java.lang.String)"><code>groupTransform(net.minecraft.client.model.EntityModel&lt;?&gt;, java.lang.String)</code></a> supplies the separate named-root wraps: generic ageable formulas,
+ vanilla rabbit/llama groups, and Twilight overrides of the generic formula. Group overrides
+ replace rather than compose with the generic formula; root membership stays with the resolver.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -132,7 +134,8 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color"><code>static final record&nbsp;</code></div>
 <div class="col-second even-row-color"><code><a href="ThirdPartyModelWraps.Entry.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.client.compat">ThirdPartyModelWraps.Entry</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">Per-model transforms; <code>adult</code> is <code>null</code> where the adult branch renders at identity.</div>
+<div class="block">Per-model transforms; <code>adult</code> is <code>null</code> where the adult branch renders at
+ identity.</div>
 </div>
 </div>
 </section>
@@ -152,13 +155,14 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#groupTransform(net.minecraft.client.model.EntityModel,java.lang.String)" class="member-name-link">groupTransform</a><wbr>(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;group)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Resolve once with an attachment; recheck age each draw because model instances serve both ages.</div>
+<div class="block">Resolve once with an attachment; recheck age each draw because model instances serve both
+ ages.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="ThirdPartyModelWraps.Entry.html" title="class in com.github.crittscott.somegoogly.client.compat">ThirdPartyModelWraps.Entry</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#wholeModel(net.minecraft.client.model.EntityModel)" class="member-name-link">wholeModel</a><wbr>(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The whole-model render transform a listed model applies outside its part tree, or <code>null</code> for every
- unlisted model.</div>
+<div class="block">The whole-model render transform a listed model applies outside its part tree, or <code>
+ null</code> for every unlisted model.</div>
 </div>
 </div>
 </div>
@@ -183,8 +187,8 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="annotations">@Nullable
 </span><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;com.mojang.blaze3d.vertex.PoseStack&gt;</span>&nbsp;<span class="element-name">groupTransform</span><wbr><span class="parameters">(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;group)</span></div>
-<div class="block">Resolve once with an attachment; recheck age each draw because model instances serve both ages. <code>null</code>
- where the group has no wrap.</div>
+<div class="block">Resolve once with an attachment; recheck age each draw because model instances serve both
+ ages. <code>null</code> where the group has no wrap.</div>
 </section>
 </li>
 <li>
@@ -192,8 +196,9 @@ loadScripts(document, 'script');</script>
 <h3>wholeModel</h3>
 <div class="member-signature"><span class="annotations">@Nullable
 </span><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="ThirdPartyModelWraps.Entry.html" title="class in com.github.crittscott.somegoogly.client.compat">ThirdPartyModelWraps.Entry</a></span>&nbsp;<span class="element-name">wholeModel</span><wbr><span class="parameters">(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model)</span></div>
-<div class="block">The whole-model render transform a listed model applies outside its part tree, or <code>null</code> for every
- unlisted model. Fixed for the model instance's life; apply it each draw with the model's current age.</div>
+<div class="block">The whole-model render transform a listed model applies outside its part tree, or <code>
+ null</code> for every unlisted model. Fixed for the model instance's life; apply it each draw with
+ the model's current age.</div>
 </section>
 </li>
 </ul>

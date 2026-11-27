@@ -91,10 +91,11 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">ModContent</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Everything the mod registers, declared once through <a href="../platform/Registration.html" title="class in com.github.crittscott.somegoogly.platform"><code>Registration</code></a>: the Googly Eye (an ingredient) and
- the Slimy Eye it crafts into (the applicator), the appearance component both carry, the eye-state component of
- a mob head item, the mod's creative tab, and the eye-modifier and Slimy Eye recipe serializers. The Optometrist
- enchantment and self-shear damage type are data-driven, so only their resource keys live here.</div>
+<div class="block">Everything the mod registers, declared once through <a href="../platform/Registration.html" title="class in com.github.crittscott.somegoogly.platform"><code>Registration</code></a>: the Googly Eye (an
+ ingredient) and the Slimy Eye it crafts into (the applicator), the appearance component both
+ carry, the eye-state component of a mob head item, the mod's creative tab, and the eye-modifier
+ and Slimy Eye recipe serializers. The Optometrist enchantment and self-shear damage type are
+ data-driven, so only their resource keys live here.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -137,8 +138,8 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color"><code>static final net.minecraft.tags.TagKey<wbr>&lt;net.minecraft.world.item.Item&gt;</code></div>
 <div class="col-second odd-row-color"><code><a href="#SHEARS" class="member-name-link">SHEARS</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block">Items that harvest eyes as shears: vanilla shears plus the conventional <code>c:tools/shear</code> tag,
- so modded shears count without extending <code>ShearsItem</code>.</div>
+<div class="block">Items that harvest eyes as shears: vanilla shears plus the conventional <code>c:tools/shear</code>
+ tag, so modded shears count without extending <code>ShearsItem</code>.</div>
 </div>
 <div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a><wbr>&lt;<a href="../item/SlimyEyeItem.html" title="class in com.github.crittscott.somegoogly.item">SlimyEyeItem</a>&gt;</code></div>
 <div class="col-second even-row-color"><code><a href="#SLIMY_EYE" class="member-name-link">SLIMY_EYE</a></code></div>
@@ -163,7 +164,8 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#init()" class="member-name-link">init</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Register everything above; called once from each loader's entry point, before the loader registers.</div>
+<div class="block">Register everything above; called once from each loader's entry point, before the loader
+ registers.</div>
 </div>
 </div>
 </div>
@@ -211,9 +213,9 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="CREATIVE_TAB">
 <h3>CREATIVE_TAB</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;net.minecraft.world.item.CreativeModeTab&gt;</span>&nbsp;<span class="element-name">CREATIVE_TAB</span></div>
-<div class="block">The mod's own creative tab, icon'd with the googly eye. It gathers everything the mod adds — the
- eye, the slimy eye that applies it, and an Optometrist book — in one place rather than scattered
- across vanilla tabs.</div>
+<div class="block">The mod's own creative tab, icon'd with the googly eye. It gathers everything the mod adds —
+ the eye, the slimy eye that applies it, and an Optometrist book — in one place rather than
+ scattered across vanilla tabs.</div>
 </section>
 </li>
 <li>
@@ -238,16 +240,17 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="SELF_SHEAR">
 <h3>SELF_SHEAR</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">net.minecraft.resources.ResourceKey&lt;net.minecraft.world.damagesource.DamageType&gt;</span>&nbsp;<span class="element-name">SELF_SHEAR</span></div>
-<div class="block">The data-driven damage type plain shears deal when a player shears off their own eyes. It has no
- attacker, so PvP, team, and claim rules that guard player-on-player damage do not cancel it.</div>
+<div class="block">The data-driven damage type plain shears deal when a player shears off their own eyes. It has
+ no attacker, so PvP, team, and claim rules that guard player-on-player damage do not cancel
+ it.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="SHEARS">
 <h3>SHEARS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">net.minecraft.tags.TagKey&lt;net.minecraft.world.item.Item&gt;</span>&nbsp;<span class="element-name">SHEARS</span></div>
-<div class="block">Items that harvest eyes as shears: vanilla shears plus the conventional <code>c:tools/shear</code> tag,
- so modded shears count without extending <code>ShearsItem</code>.</div>
+<div class="block">Items that harvest eyes as shears: vanilla shears plus the conventional <code>c:tools/shear</code>
+ tag, so modded shears count without extending <code>ShearsItem</code>.</div>
 </section>
 </li>
 </ul>
@@ -262,7 +265,8 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="init()">
 <h3>init</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">init</span>()</div>
-<div class="block">Register everything above; called once from each loader's entry point, before the loader registers.</div>
+<div class="block">Register everything above; called once from each loader's entry point, before the loader
+ registers.</div>
 </section>
 </li>
 </ul>

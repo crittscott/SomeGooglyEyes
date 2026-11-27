@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
+
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraftforge.gametest.GameTestHolder;
@@ -14,8 +15,7 @@ public final class VariantSelectionGameTests {
 
     private static final String TEMPLATE = "somegoogly:empty";
 
-    private VariantSelectionGameTests() {
-    }
+    private VariantSelectionGameTests() {}
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void cumulativeWeightBoundariesPickExpectedVariant(GameTestHelper helper) {

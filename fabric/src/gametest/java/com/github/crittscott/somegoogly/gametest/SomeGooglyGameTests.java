@@ -4,6 +4,7 @@ import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.migration.fabric.FabricMigration;
 import com.github.crittscott.somegoogly.network.fabric.FabricNetworkTransport;
 import com.github.crittscott.somegoogly.platform.EntityPersistentData;
+
 import net.fabricmc.fabric.api.entity.FakePlayer;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
@@ -24,8 +25,8 @@ import java.util.Objects;
 
 /**
  * Fabric GameTest entry points for the shared core and picker-spawn assertions. Listed under the
- * {@code somegoogly_gametest} dev-mod's {@code fabric-gametest}
- * entrypoint since Fabric, unlike Forge's {@code @GameTestHolder} scan, requires explicit enumeration.
+ * {@code somegoogly_gametest} dev-mod's {@code fabric-gametest} entrypoint since Fabric, unlike
+ * Forge's {@code @GameTestHolder} scan, requires explicit enumeration.
  */
 public final class SomeGooglyGameTests implements FabricGameTest {
 
@@ -43,8 +44,8 @@ public final class SomeGooglyGameTests implements FabricGameTest {
     }
 
     /**
-     * Exercises Fabric's persistent-data attachment save/load rather than only the shared in-memory boundary.
-     * In game: see {@link SomeGooglyGameTestsLogic#entityPersistentDataSurvivesSaveLoad}.
+     * Exercises Fabric's persistent-data attachment save/load rather than only the shared in-memory
+     * boundary. In game: see {@link SomeGooglyGameTestsLogic#entityPersistentDataSurvivesSaveLoad}.
      */
     @GameTest(template = TEMPLATE, timeoutTicks = 20)
     public static void fabricEntityPersistentDataSurvivesSaveLoad(GameTestHelper helper) {
@@ -52,14 +53,15 @@ public final class SomeGooglyGameTests implements FabricGameTest {
     }
 
     /**
-     * Entity eye data saved by the previous released Fabric build loads into the current attachment and is
-     * not written back under the released key. In game: open a world saved by the previous release that
-     * has an eyed mob; the mob still shows its eyes, and after saving, its entity data (seen with
-     * {@code /data get entity}) no longer has a {@code somegoogly:persistentData} entry.
+     * Entity eye data saved by the previous released Fabric build loads into the current attachment
+     * and is not written back under the released key. In game: open a world saved by the previous
+     * release that has an eyed mob; the mob still shows its eyes, and after saving, its entity data
+     * (seen with {@code /data get entity}) no longer has a {@code somegoogly:persistentData} entry.
      */
     @GameTest(template = TEMPLATE, timeoutTicks = 20)
     public static void fabricReleasedEntityDataMigratesOnLoad(GameTestHelper helper) {
-        // Never added to the level, so it carries no attachment and the tag holds only the released format.
+        // Never added to the level, so it carries no attachment and the tag holds only the released
+        // format.
         Cow source = Objects.requireNonNull(EntityType.COW.create(helper.getLevel()));
         CompoundTag saved = source.saveWithoutId(new CompoundTag());
         CompoundTag released = new CompoundTag();
@@ -71,18 +73,21 @@ public final class SomeGooglyGameTests implements FabricGameTest {
         restored.load(saved);
 
         helper.assertTrue(EyeState.hasEyes(restored), "Released has-eyes flag should migrate");
-        helper.assertTrue(EyeState.getVariantRoll(restored) == 0.625F,
+        helper.assertTrue(
+                EyeState.getVariantRoll(restored) == 0.625F,
                 "Released placement-variant roll should migrate");
-        helper.assertTrue(!restored.saveWithoutId(new CompoundTag()).contains(RELEASED_PERSISTENT_DATA_KEY),
+        helper.assertTrue(
+                !restored.saveWithoutId(new CompoundTag()).contains(RELEASED_PERSISTENT_DATA_KEY),
                 "Migrated data should not be written under the released key");
         helper.succeed();
     }
 
     /**
-     * Released-key data that is not a compound is kept, not discarded, and the server log names the entity.
-     * In game: give a mob a non-compound {@code somegoogly:persistentData} value in a world saved by the
-     * previous release and open it; the log warns about setting the data aside, and {@code /data get entity}
-     * on the saved mob shows it under {@code somegoogly:unrecognizedReleasedData} in the mod's attachment.
+     * Released-key data that is not a compound is kept, not discarded, and the server log names the
+     * entity. In game: give a mob a non-compound {@code somegoogly:persistentData} value in a world
+     * saved by the previous release and open it; the log warns about setting the data aside, and
+     * {@code /data get entity} on the saved mob shows it under {@code
+     * somegoogly:unrecognizedReleasedData} in the mod's attachment.
      */
     @GameTest(template = TEMPLATE, timeoutTicks = 20)
     public static void fabricUnrecognizedReleasedEntityDataIsSetAside(GameTestHelper helper) {
@@ -93,11 +98,16 @@ public final class SomeGooglyGameTests implements FabricGameTest {
         Cow restored = Objects.requireNonNull(EntityType.COW.create(helper.getLevel()));
         restored.load(saved);
 
-        helper.assertTrue(!EyeState.hasEyes(restored), "Unrecognized released data must not grant eyes");
-        helper.assertTrue("not a compound".equals(EntityPersistentData.get(restored)
-                        .getString(FabricMigration.SET_ASIDE_KEY)),
+        helper.assertTrue(
+                !EyeState.hasEyes(restored), "Unrecognized released data must not grant eyes");
+        helper.assertTrue(
+                "not a compound"
+                        .equals(
+                                EntityPersistentData.get(restored)
+                                        .getString(FabricMigration.SET_ASIDE_KEY)),
                 "Unrecognized released data should be set aside in the attachment");
-        helper.assertTrue(!restored.saveWithoutId(new CompoundTag()).contains(RELEASED_PERSISTENT_DATA_KEY),
+        helper.assertTrue(
+                !restored.saveWithoutId(new CompoundTag()).contains(RELEASED_PERSISTENT_DATA_KEY),
                 "Set-aside data should not be written under the released key");
         helper.succeed();
     }
@@ -130,17 +140,21 @@ public final class SomeGooglyGameTests implements FabricGameTest {
 
     @GameTest(template = TEMPLATE, timeoutTicks = 20)
     public static void realShearsKillsHarvestAnEye(GameTestHelper helper) {
-        SomeGooglyGameTestsLogic.realShearsKillsHarvestAnEye(helper, FakePlayer.get(helper.getLevel()));
+        SomeGooglyGameTestsLogic.realShearsKillsHarvestAnEye(
+                helper, FakePlayer.get(helper.getLevel()));
     }
 
     /**
-     * A client without the mod reads the refusal in English. In game: join a Fabric server that has this mod from
-     * a client that doesn't; the disconnect screen shows a sentence rather than a translation key.
+     * A client without the mod reads the refusal in English. In game: join a Fabric server that has
+     * this mod from a client that doesn't; the disconnect screen shows a sentence rather than a
+     * translation key.
      */
     @GameTest(template = TEMPLATE, timeoutTicks = 20)
     public static void requiredClientRefusalCarriesItsText(GameTestHelper helper) {
-        TranslatableContents refusal = (TranslatableContents) FabricNetworkTransport.requiredClientMessage().getContents();
-        helper.assertTrue(refusal.getFallback() != null && !refusal.getFallback().equals(refusal.getKey()),
+        TranslatableContents refusal =
+                (TranslatableContents) FabricNetworkTransport.requiredClientMessage().getContents();
+        helper.assertTrue(
+                refusal.getFallback() != null && !refusal.getFallback().equals(refusal.getKey()),
                 "the refusal should carry the English text for a client without our language file");
         helper.succeed();
     }
@@ -148,28 +162,48 @@ public final class SomeGooglyGameTests implements FabricGameTest {
     /** Fabric's copy event; see the shared test for the End-exit and death steps. */
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void nativePlayerCopiesKeepEyesOnlyWhileAlive(GameTestHelper helper) {
-        LoaderInteractionGameTestsLogic.playerCopiesKeepEyesOnlyWhileAlive(helper, FakePlayer.get(helper.getLevel()),
-                (original, replacement, alive) -> ServerPlayerEvents.COPY_FROM.invoker()
-                        .copyFromPlayer(original, replacement, alive));
+        LoaderInteractionGameTestsLogic.playerCopiesKeepEyesOnlyWhileAlive(
+                helper,
+                FakePlayer.get(helper.getLevel()),
+                (original, replacement, alive) ->
+                        ServerPlayerEvents.COPY_FROM
+                                .invoker()
+                                .copyFromPlayer(original, replacement, alive));
     }
 
     /**
-     * Fabric's registered use callbacks; see the shared test for the in-game steps. Protection-listener ordering is
-     * checked by hand, so no refusal is exercised here.
+     * Fabric's registered use callbacks; see the shared test for the in-game steps.
+     * Protection-listener ordering is checked by hand, so no refusal is exercised here.
      */
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void nativeUseHooksHonorResults(GameTestHelper helper) {
-        LoaderInteractionGameTestsLogic.useHooksHonorResults(helper, FakePlayer.get(helper.getLevel()),
+        LoaderInteractionGameTestsLogic.useHooksHonorResults(
+                helper,
+                FakePlayer.get(helper.getLevel()),
                 (player, target, hit, refused) -> {
                     if (hit != null) {
-                        return UseBlockCallback.EVENT.invoker().interact(player, helper.getLevel(), InteractionHand.MAIN_HAND, hit);
+                        return UseBlockCallback.EVENT
+                                .invoker()
+                                .interact(
+                                        player, helper.getLevel(), InteractionHand.MAIN_HAND, hit);
                     }
                     if (target != null) {
-                        return UseEntityCallback.EVENT.invoker().interact(player, helper.getLevel(), InteractionHand.MAIN_HAND,
-                                target, target instanceof ArmorStand ? new EntityHitResult(target, target.position()) : null);
+                        return UseEntityCallback.EVENT
+                                .invoker()
+                                .interact(
+                                        player,
+                                        helper.getLevel(),
+                                        InteractionHand.MAIN_HAND,
+                                        target,
+                                        target instanceof ArmorStand
+                                                ? new EntityHitResult(target, target.position())
+                                                : null);
                     }
-                    return UseItemCallback.EVENT.invoker().interact(player, helper.getLevel(), InteractionHand.MAIN_HAND)
+                    return UseItemCallback.EVENT
+                            .invoker()
+                            .interact(player, helper.getLevel(), InteractionHand.MAIN_HAND)
                             .getResult();
-                }, false);
+                },
+                false);
     }
 }

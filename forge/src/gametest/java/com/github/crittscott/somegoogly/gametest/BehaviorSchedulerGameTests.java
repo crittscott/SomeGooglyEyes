@@ -1,21 +1,21 @@
 package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
+
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraftforge.gametest.GameTestHolder;
 
 /**
- * Forge GameTest entry points for {@link BehaviorSchedulerGameTestsLogic}; see that class for the actual
- * assertions.
+ * Forge GameTest entry points for {@link BehaviorSchedulerGameTestsLogic}; see that class for the
+ * actual assertions.
  */
 @GameTestHolder(SomeGooglyCommon.MOD_ID)
 public final class BehaviorSchedulerGameTests {
 
     private static final String TEMPLATE = "somegoogly:empty";
 
-    private BehaviorSchedulerGameTests() {
-    }
+    private BehaviorSchedulerGameTests() {}
 
     @GameTest(template = TEMPLATE, timeoutTicks = 400, batch = "somegoogly_affectioneventsplaylove")
     public static void affectionEventsPlayLove(GameTestHelper helper) {
@@ -54,7 +54,10 @@ public final class BehaviorSchedulerGameTests {
                 helper, helper.makeMockServerPlayerInLevel());
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 400, batch = "somegoogly_gameeventtriggersrespectconfig")
+    @GameTest(
+            template = TEMPLATE,
+            timeoutTicks = 400,
+            batch = "somegoogly_gameeventtriggersrespectconfig")
     public static void gameEventTriggersRespectConfig(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.gameEventTriggersRespectConfig(
                 helper, helper.makeMockServerPlayerInLevel());
@@ -72,7 +75,10 @@ public final class BehaviorSchedulerGameTests {
                 helper, helper.makeMockServerPlayerInLevel());
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 400, batch = "somegoogly_onebehavioratatimeuntilitelapses")
+    @GameTest(
+            template = TEMPLATE,
+            timeoutTicks = 400,
+            batch = "somegoogly_onebehavioratatimeuntilitelapses")
     public static void oneBehaviorAtATimeUntilItElapses(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.oneBehaviorAtATimeUntilItElapses(
                 helper, helper.makeMockServerPlayerInLevel());
@@ -94,7 +100,10 @@ public final class BehaviorSchedulerGameTests {
                 helper, helper.makeMockServerPlayerInLevel());
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 400, batch = "somegoogly_sleepingmobplaysnobehaviors")
+    @GameTest(
+            template = TEMPLATE,
+            timeoutTicks = 400,
+            batch = "somegoogly_sleepingmobplaysnobehaviors")
     public static void sleepingMobPlaysNoBehaviors(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.sleepingMobPlaysNoBehaviors(
                 helper, helper.makeMockServerPlayerInLevel());
@@ -120,23 +129,33 @@ public final class BehaviorSchedulerGameTests {
         BehaviorSchedulerGameTestsLogic.receivedExpressionsOutliveRenderTrackers(helper);
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 400, batch = "somegoogly_disabledeyessuspendautomaticbehaviors")
+    @GameTest(
+            template = TEMPLATE,
+            timeoutTicks = 400,
+            batch = "somegoogly_disabledeyessuspendautomaticbehaviors")
     public static void disabledEyesSuspendAutomaticBehaviors(GameTestHelper helper) {
-        BehaviorSchedulerGameTestsLogic.disabledEyesSuspendAutomaticBehaviors(helper, SomeGooglyGameTests.survivalPlayer(helper));
+        BehaviorSchedulerGameTestsLogic.disabledEyesSuspendAutomaticBehaviors(
+                helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 100)
     public static void completedTradeSwirlsEyes(GameTestHelper helper) {
-        BehaviorSchedulerGameTestsLogic.completedTradeSwirlsEyes(helper, helper.makeMockServerPlayerInLevel());
+        BehaviorSchedulerGameTestsLogic.completedTradeSwirlsEyes(
+                helper, helper.makeMockServerPlayerInLevel());
     }
 
-    @GameTest(template = TEMPLATE, timeoutTicks = 400, batch = "somegoogly_healatfullhealthplaysnoswirl")
+    @GameTest(
+            template = TEMPLATE,
+            timeoutTicks = 400,
+            batch = "somegoogly_healatfullhealthplaysnoswirl")
     public static void healAtFullHealthPlaysNoSwirl(GameTestHelper helper) {
-        BehaviorSchedulerGameTestsLogic.healAtFullHealthPlaysNoSwirl(helper, helper.makeMockServerPlayerInLevel());
+        BehaviorSchedulerGameTestsLogic.healAtFullHealthPlaysNoSwirl(
+                helper, helper.makeMockServerPlayerInLevel());
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
     public static void playerHitBulgesEyes(GameTestHelper helper) {
-        BehaviorSchedulerGameTestsLogic.playerHitBulgesEyes(helper, helper.makeMockServerPlayerInLevel());
+        BehaviorSchedulerGameTestsLogic.playerHitBulgesEyes(
+                helper, helper.makeMockServerPlayerInLevel());
     }
 }

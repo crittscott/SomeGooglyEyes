@@ -5,6 +5,7 @@ import com.electronwill.nightconfig.toml.TomlParser;
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.config.forge.ForgeServerConfig;
+
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraftforge.gametest.GameTestHolder;
@@ -20,8 +21,7 @@ public final class ConfigGameTests {
 
     private static final String TEMPLATE = "somegoogly:empty";
 
-    private ConfigGameTests() {
-    }
+    private ConfigGameTests() {}
 
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
     public static void percentForResolvesExactBeforeWildcard(GameTestHelper helper) {
@@ -84,16 +84,28 @@ public final class ConfigGameTests {
     }
 
     /**
-     * Native file correction retains released values and adds absent keys. In game: open a world saved
-     * by the 0.8.2 release for Minecraft 1.21.1 with globalPercent set to 17; correction keeps 17 and adds squintOnSleep.
+     * Native file correction retains released values and adds absent keys. In game: open a world
+     * saved by the 0.8.2 release for Minecraft 1.21.1 with globalPercent set to 17; correction
+     * keeps 17 and adds squintOnSleep.
      */
     @GameTest(template = TEMPLATE, timeoutTicks = 60)
     public static void releasedConfigSurvivesNativeCorrection(GameTestHelper helper) {
-        CommentedConfig config = new TomlParser().parse("[\"Server Settings\"]\nglobalPercent = 17\n");
+        CommentedConfig config =
+                new TomlParser().parse("[\"Server Settings\"]\nglobalPercent = 17\n");
         ForgeServerConfig.SPEC.correct(config);
-        helper.assertTrue(config.<Number>get(List.of(ServerConfig.SECTION_SERVER, ServerConfig.GLOBAL_PERCENT.key())).intValue() == 17,
+        helper.assertTrue(
+                config.<Number>get(
+                                        List.of(
+                                                ServerConfig.SECTION_SERVER,
+                                                ServerConfig.GLOBAL_PERCENT.key()))
+                                .intValue()
+                        == 17,
                 "native correction retains a released non-default value");
-        helper.assertTrue(config.<Boolean>get(List.of(ServerConfig.SECTION_BEHAVIORS, ServerConfig.SQUINT_ON_SLEEP.key())),
+        helper.assertTrue(
+                config.<Boolean>get(
+                        List.of(
+                                ServerConfig.SECTION_BEHAVIORS,
+                                ServerConfig.SQUINT_ON_SLEEP.key())),
                 "native correction supplies an absent behavior key");
         helper.succeed();
     }

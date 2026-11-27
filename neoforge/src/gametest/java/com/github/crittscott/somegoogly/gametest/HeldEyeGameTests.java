@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
+
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.neoforged.neoforge.common.util.FakePlayerFactory;
@@ -17,36 +18,41 @@ public final class HeldEyeGameTests {
 
     private static final String TEMPLATE = "empty";
 
-    private HeldEyeGameTests() {
-    }
+    private HeldEyeGameTests() {}
 
     @GameTest(template = TEMPLATE)
     public static void heldEyeBulgesWhenHurt(GameTestHelper helper) {
-        HeldEyeGameTestsLogic.heldEyeBulgesWhenHurt(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+        HeldEyeGameTestsLogic.heldEyeBulgesWhenHurt(
+                helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
     }
 
     @GameTest(template = TEMPLATE)
     public static void heldEyeHonorsServerSettings(GameTestHelper helper) {
-        HeldEyeGameTestsLogic.heldEyeHonorsServerSettings(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+        HeldEyeGameTestsLogic.heldEyeHonorsServerSettings(
+                helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
     }
 
     @GameTest(template = TEMPLATE)
     public static void heldEyePlaysIdleBehaviors(GameTestHelper helper) {
-        HeldEyeGameTestsLogic.heldEyePlaysIdleBehaviors(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+        HeldEyeGameTestsLogic.heldEyePlaysIdleBehaviors(
+                helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
     }
 
     @GameTest(template = TEMPLATE)
     public static void heldEyeResetsWhenPutAway(GameTestHelper helper) {
-        HeldEyeGameTestsLogic.heldEyeResetsWhenPutAway(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+        HeldEyeGameTestsLogic.heldEyeResetsWhenPutAway(
+                helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 400, batch = "somegoogly_held_heal")
     public static void heldEyeSwirlsWhenHealed(GameTestHelper helper) {
-        HeldEyeGameTestsLogic.heldEyeSwirlsWhenHealed(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+        HeldEyeGameTestsLogic.heldEyeSwirlsWhenHealed(
+                helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
     }
 
     @GameTest(template = TEMPLATE)
     public static void heldEyeWinksAlone(GameTestHelper helper) {
-        HeldEyeGameTestsLogic.heldEyeWinksAlone(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+        HeldEyeGameTestsLogic.heldEyeWinksAlone(
+                helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
     }
 }

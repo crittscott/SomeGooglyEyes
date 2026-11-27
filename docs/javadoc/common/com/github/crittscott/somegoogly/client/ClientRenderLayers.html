@@ -91,9 +91,10 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">ClientRenderLayers</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Installs the vanilla-model eye layer on living renderers after renderer rebuilds. GeckoLib renderers are
- not living renderers; they receive their layer from GeckoLib's own compile-render-layers event.
- Spellbooks' hybrid summons also expose a nested vanilla renderer that needs this layer.</div>
+<div class="block">Installs the vanilla-model eye layer on living renderers after renderer rebuilds. GeckoLib
+ renderers are not living renderers; they receive their layer from GeckoLib's own
+ compile-render-layers event. Spellbooks' hybrid summons also expose a nested vanilla renderer
+ that needs this layer.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -111,8 +112,8 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#clearCaches()" class="member-name-link">clearCaches</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Clear the attachment caches and head-eye placements once per renderer rebuild; they are keyed by model, so
- before or after it.</div>
+<div class="block">Clear the attachment caches and head-eye placements once per renderer rebuild; they are keyed
+ by model, so before or after it.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#install(net.minecraft.client.renderer.entity.EntityRenderer)" class="member-name-link">install</a><wbr>(net.minecraft.client.renderer.entity.EntityRenderer&lt;?&gt;&nbsp;renderer)</code></div>
@@ -140,8 +141,8 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="clearCaches()">
 <h3>clearCaches</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">clearCaches</span>()</div>
-<div class="block">Clear the attachment caches and head-eye placements once per renderer rebuild; they are keyed by model, so
- before or after it.</div>
+<div class="block">Clear the attachment caches and head-eye placements once per renderer rebuild; they are keyed
+ by model, so before or after it.</div>
 </section>
 </li>
 <li>
@@ -150,7 +151,8 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">install</span><wbr><span class="parameters">(net.minecraft.client.renderer.entity.EntityRenderer&lt;?&gt;&nbsp;renderer)</span></div>
 <div class="block">Install the vanilla-model eye layer on a living renderer or a supported nested renderer.
  Duplicate-safe through the weak <code>INSTALLED</code> set. Client-hidden entities still get the
- layer; the per-frame render gate hides them, so a config change applies without a renderer rebuild.</div>
+ layer; the per-frame render gate hides them, so a config change applies without a renderer
+ rebuild.</div>
 </section>
 </li>
 </ul>

@@ -42,7 +42,8 @@ public final class BoatEyeGameTests implements FabricGameTest {
 
     @GameTest(template = TEMPLATE)
     public static void boatsHonorCreativeConsumption(GameTestHelper helper) {
-        BoatEyeGameTestsLogic.boatsHonorCreativeConsumption(helper, FakePlayer.get(helper.getLevel()));
+        BoatEyeGameTestsLogic.boatsHonorCreativeConsumption(
+                helper, FakePlayer.get(helper.getLevel()));
     }
 
     @GameTest(template = TEMPLATE)
@@ -52,7 +53,8 @@ public final class BoatEyeGameTests implements FabricGameTest {
 
     @GameTest(template = TEMPLATE)
     public static void boatsReceiveAppearanceAndRefuseRestyling(GameTestHelper helper) {
-        BoatEyeGameTestsLogic.boatsReceiveAppearanceAndRefuseRestyling(helper, FakePlayer.get(helper.getLevel()));
+        BoatEyeGameTestsLogic.boatsReceiveAppearanceAndRefuseRestyling(
+                helper, FakePlayer.get(helper.getLevel()));
     }
 
     @GameTest(template = TEMPLATE)

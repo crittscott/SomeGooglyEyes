@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.config.fabric;
 
 import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
+
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.resources.ResourceLocation;
 

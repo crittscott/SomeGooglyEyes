@@ -95,20 +95,18 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">RabbitLlamaResolver</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Resolver for <code>RabbitModel</code> and <code>LlamaModel</code> — two vanilla models that extend
- <code>EntityModel</code> directly (neither <code>HierarchicalModel</code> nor
- <code>AgeableListModel</code>) and hand-roll their own scale/translate wraps
+<div class="block">Resolver for <code>RabbitModel</code> and <code>LlamaModel</code> — two vanilla models that extend <code>EntityModel</code> directly (neither <code>HierarchicalModel</code> nor <code>AgeableListModel</code>) and hand-roll their own scale/translate wraps
  around groups of their top-level parts inside <code>renderToBuffer</code>, applied and popped entirely
- outside the part tree, where a render layer's <code>PoseStack</code> never sees them. This resolver replays
- each wrap for the parts it encloses, grouped per model rather than by a uniform head/body split as in
- <a href="AgeableListResolver.html" title="class in com.github.crittscott.somegoogly.client.render.resolver"><code>AgeableListResolver</code></a>. It must precede <a href="ChildMapResolver.html" title="class in com.github.crittscott.somegoogly.client.render.resolver"><code>ChildMapResolver</code></a>, whose positional fallback has no
- concept of either wrap.
+ outside the part tree, where a render layer's <code>PoseStack</code> never sees them. This resolver
+ replays each wrap for the parts it encloses, grouped per model rather than by a uniform head/body
+ split as in <a href="AgeableListResolver.html" title="class in com.github.crittscott.somegoogly.client.render.resolver"><code>AgeableListResolver</code></a>. It must precede <a href="ChildMapResolver.html" title="class in com.github.crittscott.somegoogly.client.render.resolver"><code>ChildMapResolver</code></a>, whose
+ positional fallback has no concept of either wrap.
 
- <p>Rabbit's wrap is unusual: its <b>adult</b> render also lives inside its own
- wrap (not just the baby one), so both ages need a replayed transform, split into a head-group
- (<code>head</code>, <code>rightEar</code>, <code>leftEar</code>, <code>nose</code>) and a body-group (everything else).
- Llama's adult render has no wrap at all; its three groups (<code>head</code>; <code>body</code>; the four legs
- plus two chest boxes) each apply only when young.</div>
+ <p>Rabbit's wrap is unusual: its <b>adult</b> render also lives inside its own wrap (not just the
+ baby one), so both ages need a replayed transform, split into a head-group (<code>head</code>, <code>
+ rightEar</code>, <code>leftEar</code>, <code>nose</code>) and a body-group (everything else). Llama's adult
+ render has no wrap at all; its three groups (<code>head</code>; <code>body</code>; the four legs plus two
+ chest boxes) each apply only when young.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -149,14 +147,15 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#canonicalToken(net.minecraft.client.model.EntityModel,java.lang.String)" class="member-name-link">canonicalToken</a><wbr>(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;storedToken)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Translate a (possibly differently-spelled or partial) stored attach token into the <i>canonical</i>
- path token this resolver would enumerate for the same part — the single vocabulary the picker, HUD,
- and exported configs all speak.</div>
+<div class="block">Translate a (possibly differently-spelled or partial) stored attach token into the
+ <i>canonical</i> path token this resolver would enumerate for the same part — the single
+ vocabulary the picker, HUD, and exported configs all speak.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#enumerateParts(net.minecraft.client.model.EntityModel)" class="member-name-link">enumerateParts</a><wbr>(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">List selectable attachment tokens for this model, in a stable order (used by the part picker).</div>
+<div class="block">List selectable attachment tokens for this model, in a stable order (used by the part
+ picker).</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#handles(net.minecraft.client.model.EntityModel)" class="member-name-link">handles</a><wbr>(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model)</code></div>
@@ -175,8 +174,9 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#resolve(net.minecraft.client.model.EntityModel,java.lang.String)" class="member-name-link">resolve</a><wbr>(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;partToken)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Find the part <code>partToken</code> names and return the transforms that reach it, or <code>null</code> when
- the model has no such part (an unknown token, or a model whose worn variant lacks it).</div>
+<div class="block">Find the part <code>partToken</code> names and return the transforms that reach it, or <code>
+ null</code> when the model has no such part (an unknown token, or a model whose worn variant lacks
+ it).</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;com.github.crittscott.somegoogly.client.render.resolver.ModelPartTreeResolver.NamedRoot&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#roots(net.minecraft.client.model.EntityModel)" class="member-name-link">roots</a><wbr>(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model)</code></div>
@@ -229,7 +229,8 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="roots(net.minecraft.client.model.EntityModel)">
 <h3>roots</h3>
 <div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;com.github.crittscott.somegoogly.client.render.resolver.ModelPartTreeResolver.NamedRoot&gt;</span>&nbsp;<span class="element-name">roots</span><wbr><span class="parameters">(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model)</span></div>
-<div class="block">The subtrees to walk for this model, in a stable order. Only called when <a href="EyeAttachmentResolver.html#handles(net.minecraft.client.model.EntityModel)"><code>EyeAttachmentResolver.handles(net.minecraft.client.model.EntityModel&lt;?&gt;)</code></a> is true.</div>
+<div class="block">The subtrees to walk for this model, in a stable order. Only called when <a href="EyeAttachmentResolver.html#handles(net.minecraft.client.model.EntityModel)"><code>EyeAttachmentResolver.handles(net.minecraft.client.model.EntityModel&lt;?&gt;)</code></a> is
+ true.</div>
 </section>
 </li>
 <li>
@@ -247,8 +248,8 @@ loadScripts(document, 'script');</script>
 <h3>enumerateParts</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">enumerateParts</span><wbr><span class="parameters">(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model)</span></div>
 <div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="EyeAttachmentResolver.html#enumerateParts(net.minecraft.client.model.EntityModel)">EyeAttachmentResolver</a></code></span></div>
-<div class="block">List selectable attachment tokens for this model, in a stable order (used by the part picker).
- Default: none (the resolver doesn't support enumeration / picker authoring).</div>
+<div class="block">List selectable attachment tokens for this model, in a stable order (used by the part
+ picker). Default: none (the resolver doesn't support enumeration / picker authoring).</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="EyeAttachmentResolver.html#enumerateParts(net.minecraft.client.model.EntityModel)">enumerateParts</a></code>&nbsp;in interface&nbsp;<code><a href="EyeAttachmentResolver.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">EyeAttachmentResolver</a></code></dd>
@@ -261,15 +262,15 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">canonicalToken</span><wbr><span class="parameters">(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;storedToken)</span></div>
 <div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="EyeAttachmentResolver.html#canonicalToken(net.minecraft.client.model.EntityModel,java.lang.String)">EyeAttachmentResolver</a></code></span></div>
-<div class="block">Translate a (possibly differently-spelled or partial) stored attach token into the <i>canonical</i>
- path token this resolver would enumerate for the same part — the single vocabulary the picker, HUD,
- and exported configs all speak. That is the full slash path (<code>root/body/head</code>), with a
- positional segment (<code>#N</code>) only where a part has no obfuscation-stable name. Returns the token
- unchanged when it can't be resolved to a part (so unknown tokens pass through untouched rather than
- being silently remapped).
+<div class="block">Translate a (possibly differently-spelled or partial) stored attach token into the
+ <i>canonical</i> path token this resolver would enumerate for the same part — the single
+ vocabulary the picker, HUD, and exported configs all speak. That is the full slash path
+ (<code>root/body/head</code>), with a positional segment (<code>#N</code>) only where a part has no
+ obfuscation-stable name. Returns the token unchanged when it can't be resolved to a part (so
+ unknown tokens pass through untouched rather than being silently remapped).
 
- <p>Default: identity (the resolver's enumeration vocabulary already matches stored tokens, e.g.
- named bones).</div>
+ <p>Default: identity (the resolver's enumeration vocabulary already matches stored tokens,
+ e.g. named bones).</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="EyeAttachmentResolver.html#canonicalToken(net.minecraft.client.model.EntityModel,java.lang.String)">canonicalToken</a></code>&nbsp;in interface&nbsp;<code><a href="EyeAttachmentResolver.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">EyeAttachmentResolver</a></code></dd>
@@ -283,12 +284,12 @@ loadScripts(document, 'script');</script>
 </span><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="Attachment.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">Attachment</a></span>&nbsp;<span class="element-name">resolve</span><wbr><span class="parameters">(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;partToken)</span></div>
 <div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="EyeAttachmentResolver.html#resolve(net.minecraft.client.model.EntityModel,java.lang.String)">EyeAttachmentResolver</a></code></span></div>
-<div class="block">Find the part <code>partToken</code> names and return the transforms that reach it, or <code>null</code> when
- the model has no such part (an unknown token, or a model whose worn variant lacks it).
+<div class="block">Find the part <code>partToken</code> names and return the transforms that reach it, or <code>
+ null</code> when the model has no such part (an unknown token, or a model whose worn variant lacks
+ it).
 
- <p>The expensive half of the contract: a search of the model's part tree, matching each candidate
- path against the token. Called once per (model, token) — see <code>Resolvers.ATTACHMENTS</code> — so it
- may allocate and walk freely.</div>
+ <p>The expensive half of the contract: a search of the model's part tree, matching each
+ candidate path against the token. Called once per (model, token) — see <code>Resolvers.ATTACHMENTS</code> — so it may allocate and walk freely.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="EyeAttachmentResolver.html#resolve(net.minecraft.client.model.EntityModel,java.lang.String)">resolve</a></code>&nbsp;in interface&nbsp;<code><a href="EyeAttachmentResolver.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">EyeAttachmentResolver</a></code></dd>

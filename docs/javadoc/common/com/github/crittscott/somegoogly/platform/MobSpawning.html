@@ -91,9 +91,9 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">MobSpawning</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Runs a mob's spawn finalization the way the loader's own spawn paths do, so other mods' finalize-spawn
- listeners see mobs the mod spawns. NeoForge and Forge route through their finalize-spawn event, which a
- listener may cancel; Fabric has no such event and calls <code>Mob.finalizeSpawn(net.minecraft.world.level.ServerLevelAccessor, net.minecraft.world.DifficultyInstance, net.minecraft.world.entity.MobSpawnType, net.minecraft.world.entity.SpawnGroupData)</code> directly.</div>
+<div class="block">Runs a mob's spawn finalization the way the loader's own spawn paths do, so other mods'
+ finalize-spawn listeners see mobs the mod spawns. NeoForge and Forge route through their
+ finalize-spawn event, which a listener may cancel; Fabric has no such event and calls <code>Mob.finalizeSpawn(net.minecraft.world.level.ServerLevelAccessor, net.minecraft.world.DifficultyInstance, net.minecraft.world.entity.MobSpawnType, net.minecraft.world.entity.SpawnGroupData)</code> directly.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">

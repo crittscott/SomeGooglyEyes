@@ -1,14 +1,15 @@
 package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
+
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 /**
- * NeoForge GameTest entry points for {@link HandItemEyeGameTestsLogic}; see that class for the actual
- * assertions.
+ * NeoForge GameTest entry points for {@link HandItemEyeGameTestsLogic}; see that class for the
+ * actual assertions.
  */
 @GameTestHolder(SomeGooglyCommon.MOD_ID)
 @PrefixGameTestTemplate(false)
@@ -16,8 +17,7 @@ public final class HandItemEyeGameTests {
 
     private static final String TEMPLATE = "empty";
 
-    private HandItemEyeGameTests() {
-    }
+    private HandItemEyeGameTests() {}
 
     @GameTest(template = TEMPLATE)
     public static void handEyesFollowWorldGravityAcrossViews(GameTestHelper helper) {
