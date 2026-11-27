@@ -36,6 +36,8 @@ public final class ForgeClientConfig {
      * Register the CLIENT config spec and copy its values into {@code ClientConfig} on load and
      * reload.
      */
+    // This fixed Minecraft 1.20.1 target retains Forge's context accessor.
+    @SuppressWarnings("removal")
     public static void register(FMLJavaModLoadingContext context) {
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, SPEC, ClientConfig.FILE_NAME);
         context.getModEventBus().addListener(ForgeClientConfig::onConfigChanged);

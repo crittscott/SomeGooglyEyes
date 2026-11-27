@@ -595,9 +595,11 @@ public final class ClientEyeRuntime {
                 SKULLS.remove(skull.getBlockPos());
                 return null;
             }
-            eyes =
-                    PresentationEyes.placedHead(
-                            Mth.getSeed(skull.getBlockPos()), entity, snapshot, layout, parts);
+            // Retain Minecraft 1.20.1's position-based seed calculation.
+            @SuppressWarnings("deprecation")
+            long seed = Mth.getSeed(skull.getBlockPos());
+
+            eyes = PresentationEyes.placedHead(seed, entity, snapshot, layout, parts);
             eyes.headData = data;
             SKULLS.put(skull.getBlockPos().immutable(), eyes);
         }

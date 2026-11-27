@@ -28,6 +28,8 @@ import java.util.List;
 public final class SomeGooglyForge {
 
     public SomeGooglyForge() {
+        // This fixed Minecraft 1.20.1 target retains Forge's context accessor.
+        @SuppressWarnings("removal")
         FMLJavaModLoadingContext context = FMLJavaModLoadingContext.get();
         IEventBus modEventBus = context.getModEventBus();
         ModContent.init();

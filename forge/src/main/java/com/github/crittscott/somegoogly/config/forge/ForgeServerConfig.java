@@ -59,6 +59,8 @@ public final class ForgeServerConfig {
      * Register the SERVER config spec and copy its values into {@link ServerConfig} on load and
      * reload.
      */
+    // This fixed Minecraft 1.20.1 target retains Forge's context accessor.
+    @SuppressWarnings("removal")
     public static void register(FMLJavaModLoadingContext context) {
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, SPEC, ServerConfig.FILE_NAME);
         context.getModEventBus().addListener(ForgeServerConfig::onConfigChanged);

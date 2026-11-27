@@ -41,7 +41,7 @@ Read code-review-decisions.md before applying a general rule to accepted behavio
 - Catch the narrowest exceptions that can occur: `ReflectiveOperationException | LinkageError` around reflection, never `Throwable`. Do not use a caught exception as a type test.
 - A per-item catch may isolate an expected filesystem or integration failure so other items can succeed. Log which item failed. Do not catch ordinary processing defects and report them as malformed input; use a codec's failure result for malformed data. Likewise, a recoverable model or attachment failure must not disable every model in its library family.
 - Trust our code and platform and mod contracts unless the relevant behavior is known to be unreliable or unguaranteed. Guard actual boundaries, including filesystem and reflection failures; do not invent speculative failure paths. Network peers remain untrusted.
-- Do not suppress deprecation or removal warnings. Move to the replacement.
+- Review deprecated API uses against the checkout's fixed target and dependency versions. When retaining an API is deliberate, use the specific @SuppressWarnings category on the smallest practical declaration and explain the reason beside it; keep warnings enabled in the build.
 
 ## Removing what is not needed
 

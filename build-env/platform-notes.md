@@ -67,6 +67,7 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 
 ## Forge
 
+- 1.20.1: Forge's `MushroomCow` patch moves cow creation into private `List<ItemStack> shearInternal(SoundSource)`; both `shear` and `onSheared` use that helper. The patch does not post a living-conversion event there. [source: [published 1.20.1 patch](https://github.com/MinecraftForge/MinecraftForge/blob/1.20.1/patches/minecraft/net/minecraft/world/entity/animal/MushroomCow.java.patch), unchanged on that branch since commit `d8c84e2949131999b797580805e3baf0e3c933e2`]
 - 1.20.1: `LivingDropsEvent` fires after the loot gate in `dropAllDeathLoot`, whatever `doMobLoot` says, because it also carries equipment drops. A listener must check the game rule itself. [tested]
 - 1.20.1: `LivingDamageEvent` fires from both `actuallyHurt` implementations. `LivingHealEvent` fires before the heal. [tested]
 - 1.20.1: `ForgeEventFactory.onLivingConvert` is patched into the hand-built lightning conversions, so `LivingConversionEvent` covers them. [tested]
@@ -103,6 +104,7 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 
 ## Mixin
 
+- A Forge-added target absent from common's compile classpath cannot have its descriptor inferred by the annotation processor. Supplying its verified descriptor permits refmap generation; `@SuppressWarnings("target")` on the injector suppresses the expected missing-target validation diagnostic. [tested: isolated 1.20.1 common compilation with and without the Forge helper selector; descriptor verified against Forge's published patch]
 - In a multi-target `@Mixin({A.class, B.class})`, every injection must exist on every target. A method only `A` declares fails at launch, so split the class. [reasoned, not run]
 - An injector with a method list counts matches across the list, so a name absent on one loader does not fail `defaultRequire: 1` while another name matches. [tested]
 - `@Pseudo` tolerates a missing target class only, not a missing method in a class that exists. [recalled]
@@ -117,6 +119,15 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 - GeckoLib publishes no common artifact for 1.20.1. Common compiles against the Fabric artifact with `modCompileOnly`. Only `GeoRenderEvent` differs by loader. [tested]
 
 ## Libraries and other mods
+
+- Ice and Fire 2.1.13 beta 5 on 1.20.1: a troll exposed to sufficiently bright sky during the day replaces itself with `iceandfire:stone_statue`. `RenderStoneStatue` extends `EntityRenderer`, selects the trapped mob's model inside `render`, and draws it directly rather than through a living renderer's layers. A statue therefore does not expose the live troll's model to the picker or eye-layer installation. [source: supplied original Ice and Fire `EntityTroll.aiStep` and `RenderStoneStatue`]
+
+- Ice and Fire 2.1.13 beta 5 on 1.20.1: `EntityMyrmexBase.isBaby()` is true for growth stages 0 and 1. `RenderMyrmexBase` uses `ModelMyrmexPupa` for both stages and its caste model for adults; its scale and passenger rotation wrap the renderer and therefore already reach render layers. [source: supplied original Ice and Fire `EntityMyrmexBase` and `RenderMyrmexBase`]
+
+- Citadel's 1.20 source exposes public `AdvancedEntityModel.getAllParts()`, `AdvancedModelBox.getParent()`, `translateAndRotate(PoseStack)`, and `boxName`; unnamed box constructors set `boxName` to null. Original Ice and Fire's `ModelTroll` extends `ModelDragonBase`, which extends `AdvancedEntityModel`, and enumerates its boxes through `getAllParts()`. [source: supplied Ice and Fire models and published [Citadel model sources](https://github.com/AlexModGuy/Citadel/tree/1.20/src/main/java/com/github/alexthe666/citadel/client/model)]
+
+- GeckoLib 4 on 1.20.1 invokes per-bone render layers after translating away from the pivot. Its baked cube coordinates retain model-space Y/Z and negate X; eye placements in that callback therefore use model coordinates unless an integration explicitly normalizes the bone frame. [source: supplied GeckoLib `GeoEntityRenderer.renderRecursively`, `BakedModelFactory.Builtin.constructCube`, and `RenderUtils`]
+- Iron's Spells 'n Spellbooks 1.20.1-3.16.4: `SummonedZombieMultiRenderer` and `SummonedSkeletonMultiRenderer` use GeckoLib while `isAnimatingRise()` is true, then their package-private `vanillaRenderer` fields. Both GeckoLib models have a head pivot at `(0, 24, 0)` and the vanilla-style head geometry. [source: owner-authorized inspection of the local Spellbooks jar and its geometry JSON]
 
 - Maven `VersionRange` reads a bare version as a soft recommendation that matches everything, so it is not a drop-in reader for data where a bare version means an exact one. [recalled]
 - Twilight Forest's `AbstractTrophyBlock.use` always consumes the click, so an item's `useOn` never runs on a trophy unless the player sneaks. [recalled]

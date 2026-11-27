@@ -209,6 +209,8 @@ public final class TomlConfig {
     /**
      * Values from exactly the schema's declared table; similarly named keys elsewhere do not apply.
      */
+    // Retain valueMap() for the pinned NightConfig dependency.
+    @SuppressWarnings("deprecation")
     public static Map<String, Object> section(UnmodifiableConfig values, String section) {
         Object table = values.get(List.of(section));
         if (table == null) {

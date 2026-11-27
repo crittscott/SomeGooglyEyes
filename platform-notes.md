@@ -67,6 +67,7 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 
 ## Forge
 
+- 1.20.1: Forge's `MushroomCow` patch moves cow creation into private `List<ItemStack> shearInternal(SoundSource)`; both `shear` and `onSheared` use that helper. The patch does not post a living-conversion event there. [source: [published 1.20.1 patch](https://github.com/MinecraftForge/MinecraftForge/blob/1.20.1/patches/minecraft/net/minecraft/world/entity/animal/MushroomCow.java.patch), unchanged on that branch since commit `d8c84e2949131999b797580805e3baf0e3c933e2`]
 - 1.20.1: `LivingDropsEvent` fires after the loot gate in `dropAllDeathLoot`, whatever `doMobLoot` says, because it also carries equipment drops. A listener must check the game rule itself. [tested]
 - 1.20.1: `LivingDamageEvent` fires from both `actuallyHurt` implementations. `LivingHealEvent` fires before the heal. [tested]
 - 1.20.1: `ForgeEventFactory.onLivingConvert` is patched into the hand-built lightning conversions, so `LivingConversionEvent` covers them. [tested]
@@ -103,6 +104,7 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 
 ## Mixin
 
+- A Forge-added target absent from common's compile classpath cannot have its descriptor inferred by the annotation processor. Supplying its verified descriptor permits refmap generation; `@SuppressWarnings("target")` on the injector suppresses the expected missing-target validation diagnostic. [tested: isolated 1.20.1 common compilation with and without the Forge helper selector; descriptor verified against Forge's published patch]
 - In a multi-target `@Mixin({A.class, B.class})`, every injection must exist on every target. A method only `A` declares fails at launch, so split the class. [reasoned, not run]
 - An injector with a method list counts matches across the list, so a name absent on one loader does not fail `defaultRequire: 1` while another name matches. [tested]
 - `@Pseudo` tolerates a missing target class only, not a missing method in a class that exists. [recalled]
