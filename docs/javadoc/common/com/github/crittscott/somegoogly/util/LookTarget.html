@@ -91,8 +91,9 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">LookTarget</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Ray-picks what a player is aiming at: the living entity the <code>/sg admin</code> and picker spawn verbs target past
- vanilla's interaction reach, and whether the eye items' sneak self-use is aimed at nothing.</div>
+<div class="block">Ray-picks what a player is aiming at: the living entity the <code>/sg admin</code> and picker spawn
+ verbs target past vanilla's interaction reach, and whether the eye items' sneak self-use is aimed
+ at nothing.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -127,15 +128,16 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#aimsAtNothing(net.minecraft.world.entity.player.Player)" class="member-name-link">aimsAtNothing</a><wbr>(net.minecraft.world.entity.player.Player&nbsp;player)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Whether <code>player</code> aims at nothing it could click: no block within its block interaction range and no
- pickable entity within its entity interaction range, the ranges vanilla's own crosshair target uses.</div>
+<div class="block">Whether <code>player</code> aims at nothing it could click: no block within its block interaction
+ range and no pickable entity within its entity interaction range, the ranges vanilla's own
+ crosshair target uses.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable net.minecraft.world.entity.LivingEntity</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#livingInCrosshair(net.minecraft.world.entity.player.Player,double)" class="member-name-link">livingInCrosshair</a><wbr>(net.minecraft.world.entity.player.Player&nbsp;player,
  double&nbsp;reach)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The pickable, non-spectator living entity under <code>player</code>'s crosshair within <code>reach</code> blocks, or
- <code>null</code>.</div>
+<div class="block">The pickable, non-spectator living entity under <code>player</code>'s crosshair within <code>
+ reach</code> blocks, or <code>null</code>.</div>
 </div>
 </div>
 </div>
@@ -181,9 +183,10 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="aimsAtNothing(net.minecraft.world.entity.player.Player)">
 <h3>aimsAtNothing</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">aimsAtNothing</span><wbr><span class="parameters">(net.minecraft.world.entity.player.Player&nbsp;player)</span></div>
-<div class="block">Whether <code>player</code> aims at nothing it could click: no block within its block interaction range and no
- pickable entity within its entity interaction range, the ranges vanilla's own crosshair target uses. Both
- sides answer the same way, so a use the client predicts on air is the use the server performs.</div>
+<div class="block">Whether <code>player</code> aims at nothing it could click: no block within its block interaction
+ range and no pickable entity within its entity interaction range, the ranges vanilla's own
+ crosshair target uses. Both sides answer the same way, so a use the client predicts on air is
+ the use the server performs.</div>
 </section>
 </li>
 <li>
@@ -191,8 +194,8 @@ loadScripts(document, 'script');</script>
 <h3>livingInCrosshair</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">@Nullable net.minecraft.world.entity.LivingEntity</span>&nbsp;<span class="element-name">livingInCrosshair</span><wbr><span class="parameters">(net.minecraft.world.entity.player.Player&nbsp;player,
  double&nbsp;reach)</span></div>
-<div class="block">The pickable, non-spectator living entity under <code>player</code>'s crosshair within <code>reach</code> blocks, or
- <code>null</code>.</div>
+<div class="block">The pickable, non-spectator living entity under <code>player</code>'s crosshair within <code>
+ reach</code> blocks, or <code>null</code>.</div>
 </section>
 </li>
 </ul>

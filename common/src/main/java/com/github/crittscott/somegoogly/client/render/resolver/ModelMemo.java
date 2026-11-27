@@ -1,16 +1,18 @@
 package com.github.crittscott.somegoogly.client.render.resolver;
 
 import org.jspecify.annotations.Nullable;
+
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
 /**
- * Memoizes a value per (model instance, attach token), misses included. An entry stays valid for as long
- * as its model lives, so a datapack reload never clears anything here; {@link #clear()} drops every entry
- * when models are replaced, which is also the only way an entry goes. Models are matched by identity: the
- * cached values are parts of that very instance, and GeckoLib's baked models are records that compare equal
- * to any model of the same structure, including the one a resource reload replaces.
+ * Memoizes a value per (model instance, attach token), misses included. An entry stays valid for as
+ * long as its model lives, so a datapack reload never clears anything here; {@link #clear()} drops
+ * every entry when models are replaced, which is also the only way an entry goes. Models are
+ * matched by identity: the cached values are parts of that very instance, and GeckoLib's baked
+ * models are records that compare equal to any model of the same structure, including the one a
+ * resource reload replaces.
  *
  * <p>Client main thread only.
  *
@@ -22,9 +24,10 @@ public final class ModelMemo<K, V> {
     /** Computes the value for a (model, token) pair. Called only on a miss. */
     @FunctionalInterface
     public interface Resolver<K, V> {
-        /** @return the resolved value, or {@code null} when the token names nothing in the model. */
-        @Nullable
-        V resolve(K model, String token);
+        /**
+         * @return the resolved value, or {@code null} when the token names nothing in the model.
+         */
+        @Nullable V resolve(K model, String token);
     }
 
     private final Map<K, Map<String, V>> byModel = new IdentityHashMap<>();
@@ -37,8 +40,8 @@ public final class ModelMemo<K, V> {
     /**
      * The value for {@code token} in {@code model}, resolving and caching it on first ask.
      *
-     * <p>Pass the resolver as an object rather than a bound method reference: a capturing lambda would
-     * allocate on every call, and this is on the per-frame render path.
+     * <p>Pass the resolver as an object rather than a bound method reference: a capturing lambda
+     * would allocate on every call, and this is on the per-frame render path.
      */
     @Nullable
     public V get(K model, String token, Resolver<K, V> resolver) {

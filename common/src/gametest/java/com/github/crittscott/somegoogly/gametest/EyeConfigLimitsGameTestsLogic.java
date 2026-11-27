@@ -4,9 +4,10 @@ import com.github.crittscott.somegoogly.config.EyeConfigLimits;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.HeadConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
+import com.github.crittscott.somegoogly.eye.EyeAppearance;
 import com.github.crittscott.somegoogly.eye.EyeDefinition;
 import com.github.crittscott.somegoogly.eye.EyePlacement;
-import com.github.crittscott.somegoogly.eye.EyeAppearance;
+
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
@@ -15,14 +16,14 @@ import java.util.List;
 
 /**
  * Semantic-bound coverage for {@link EyeConfigLimits#validateRuntimeConfig(RuntimeConfig)} — the
- * object-graph validator that guards datapack reload, picker export, and (through
- * {@code validateSync}) network decode, which {@link SerializationGameTestsLogic} and
- * {@link PickerExportGameTestsLogic} exercise end to end. Pure and world-less: only {@link GameTestHelper} assertions touch the framework.
+ * object-graph validator that guards datapack reload, picker export, and (through {@code
+ * validateSync}) network decode, which {@link SerializationGameTestsLogic} and {@link
+ * PickerExportGameTestsLogic} exercise end to end. Pure and world-less: only {@link GameTestHelper}
+ * assertions touch the framework.
  */
 public final class EyeConfigLimitsGameTestsLogic {
 
-    private EyeConfigLimitsGameTestsLogic() {
-    }
+    private EyeConfigLimitsGameTestsLogic() {}
 
     private static EyeDefinition validEye() {
         return new EyeDefinition(EyePlacement.DEFAULT, EyeAppearance.DEFAULT);
@@ -74,13 +75,15 @@ public final class EyeConfigLimitsGameTestsLogic {
                 && error.arguments().getLast() instanceof EyeConfigLimits.Issue nested) {
             error = nested;
         }
-        helper.assertTrue(error.key().equals("somegoogly.validation." + reason),
+        helper.assertTrue(
+                error.key().equals("somegoogly.validation." + reason),
                 Component.literal("expected rejection for " + reason + ", got " + error.key()));
     }
 
     /**
      * A variant weight must be finite and nonnegative. In-game, a datapack eye definition with
-     * {@code "weight": -5} is ignored on {@code /reload}, with an "invalid weight" error in the log.
+     * {@code "weight": -5} is ignored on {@code /reload}, with an "invalid weight" error in the
+     * log.
      */
     public static void variantWeightMustBeNonnegative(GameTestHelper helper) {
         Variant negative = variant(1, 1);
@@ -90,56 +93,118 @@ public final class EyeConfigLimitsGameTestsLogic {
     }
 
     /**
-     * {@code crossTarget} must name a different eye in the same head, or be
-     * {@link EyePlacement#NO_CROSS_TARGET}. In game, a datapack eye definition whose only eye has
-     * {@code "crossTarget": 0} is ignored on {@code /reload}, with a "cross-eye target" error in the log;
+     * {@code crossTarget} must name a different eye in the same head, or be {@link
+     * EyePlacement#NO_CROSS_TARGET}. In game, a datapack eye definition whose only eye has {@code
+     * "crossTarget": 0} is ignored on {@code /reload}, with a "cross-eye target" error in the log;
      * with a second eye in that head, it loads.
      */
     public static void crossTargetMustReferenceAnotherEyeInTheSameHead(GameTestHelper helper) {
-        EyePlacement selfTarget = new EyePlacement(Vec3.ZERO, 1F, 1F, 1F,
-                EyePlacement.DEFAULT_INCLINATION, EyePlacement.DEFAULT_AZIMUTH, 0);
-        assertRejected(helper, configWithEye(new EyeDefinition(selfTarget, EyeAppearance.DEFAULT)),
+        EyePlacement selfTarget =
+                new EyePlacement(
+                        Vec3.ZERO,
+                        1F,
+                        1F,
+                        1F,
+                        EyePlacement.DEFAULT_INCLINATION,
+                        EyePlacement.DEFAULT_AZIMUTH,
+                        0);
+        assertRejected(
+                helper,
+                configWithEye(new EyeDefinition(selfTarget, EyeAppearance.DEFAULT)),
                 "cross_target");
 
-        EyePlacement outOfRange = new EyePlacement(Vec3.ZERO, 1F, 1F, 1F,
-                EyePlacement.DEFAULT_INCLINATION, EyePlacement.DEFAULT_AZIMUTH, 1);
-        assertRejected(helper, configWithEye(new EyeDefinition(outOfRange, EyeAppearance.DEFAULT)),
+        EyePlacement outOfRange =
+                new EyePlacement(
+                        Vec3.ZERO,
+                        1F,
+                        1F,
+                        1F,
+                        EyePlacement.DEFAULT_INCLINATION,
+                        EyePlacement.DEFAULT_AZIMUTH,
+                        1);
+        assertRejected(
+                helper,
+                configWithEye(new EyeDefinition(outOfRange, EyeAppearance.DEFAULT)),
                 "cross_target");
 
-        EyePlacement partnered = new EyePlacement(Vec3.ZERO, 1F, 1F, 1F,
-                EyePlacement.DEFAULT_INCLINATION, EyePlacement.DEFAULT_AZIMUTH, 1);
-        RuntimeConfig ok = config(variant(head(
-                new EyeDefinition(partnered, EyeAppearance.DEFAULT), validEye())));
-        helper.assertTrue(EyeConfigLimits.validateRuntimeConfig(ok) == null,
+        EyePlacement partnered =
+                new EyePlacement(
+                        Vec3.ZERO,
+                        1F,
+                        1F,
+                        1F,
+                        EyePlacement.DEFAULT_INCLINATION,
+                        EyePlacement.DEFAULT_AZIMUTH,
+                        1);
+        RuntimeConfig ok =
+                config(
+                        variant(
+                                head(
+                                        new EyeDefinition(partnered, EyeAppearance.DEFAULT),
+                                        validEye())));
+        helper.assertTrue(
+                EyeConfigLimits.validateRuntimeConfig(ok) == null,
                 Component.literal("an eye may cross toward another eye in the same head"));
         helper.succeed();
     }
 
     /**
-     * Position, scale/depth, and angle each have a finite hard range. In game, a datapack eye definition
-     * with {@code "position": [100.0, 0.0, 0.0]}, {@code "eyeScale": 64.0}, or {@code "azimuth": 9000.0}
-     * is ignored on {@code /reload}, with an error naming the out-of-range field in the log.
+     * Position, scale/depth, and angle each have a finite hard range. In game, a datapack eye
+     * definition with {@code "position": [100.0, 0.0, 0.0]}, {@code "eyeScale": 64.0}, or {@code
+     * "azimuth": 9000.0} is ignored on {@code /reload}, with an error naming the out-of-range field
+     * in the log.
      */
     public static void numericPlacementBoundsAreEnforced(GameTestHelper helper) {
-        assertRejected(helper, configWithEye(new EyeDefinition(new EyePlacement(
-                        new Vec3(100.0, 0.0, 0.0), 1F, 1F, 1F,
-                        EyePlacement.DEFAULT_INCLINATION, EyePlacement.DEFAULT_AZIMUTH, -1),
-                EyeAppearance.DEFAULT)), "position");
-        assertRejected(helper, configWithEye(new EyeDefinition(new EyePlacement(
-                        Vec3.ZERO, 64F, 1F, 1F,
-                        EyePlacement.DEFAULT_INCLINATION, EyePlacement.DEFAULT_AZIMUTH, -1),
-                EyeAppearance.DEFAULT)), "scale_depth");
-        assertRejected(helper, configWithEye(new EyeDefinition(new EyePlacement(
-                        Vec3.ZERO, 1F, 1F, 1F,
-                        EyePlacement.DEFAULT_INCLINATION, 9_000F, -1),
-                EyeAppearance.DEFAULT)), "angle");
+        assertRejected(
+                helper,
+                configWithEye(
+                        new EyeDefinition(
+                                new EyePlacement(
+                                        new Vec3(100.0, 0.0, 0.0),
+                                        1F,
+                                        1F,
+                                        1F,
+                                        EyePlacement.DEFAULT_INCLINATION,
+                                        EyePlacement.DEFAULT_AZIMUTH,
+                                        -1),
+                                EyeAppearance.DEFAULT)),
+                "position");
+        assertRejected(
+                helper,
+                configWithEye(
+                        new EyeDefinition(
+                                new EyePlacement(
+                                        Vec3.ZERO,
+                                        64F,
+                                        1F,
+                                        1F,
+                                        EyePlacement.DEFAULT_INCLINATION,
+                                        EyePlacement.DEFAULT_AZIMUTH,
+                                        -1),
+                                EyeAppearance.DEFAULT)),
+                "scale_depth");
+        assertRejected(
+                helper,
+                configWithEye(
+                        new EyeDefinition(
+                                new EyePlacement(
+                                        Vec3.ZERO,
+                                        1F,
+                                        1F,
+                                        1F,
+                                        EyePlacement.DEFAULT_INCLINATION,
+                                        9_000F,
+                                        -1),
+                                EyeAppearance.DEFAULT)),
+                "angle");
         helper.succeed();
     }
 
     /**
-     * The per-container count caps reject before the object graph is walked. In game, a datapack eye
-     * definition with more than {@link EyeConfigLimits#MAX_EYES_PER_HEAD} eyes in one head (or too many
-     * variants, heads, or eyes per variant) is ignored on {@code /reload}, with a count error in the log.
+     * The per-container count caps reject before the object graph is walked. In game, a datapack
+     * eye definition with more than {@link EyeConfigLimits#MAX_EYES_PER_HEAD} eyes in one head (or
+     * too many variants, heads, or eyes per variant) is ignored on {@code /reload}, with a count
+     * error in the log.
      */
     public static void containerCountCapsAreEnforced(GameTestHelper helper) {
         Variant[] tooManyVariants = new Variant[EyeConfigLimits.MAX_VARIANTS_PER_CONFIG + 1];
@@ -148,8 +213,14 @@ public final class EyeConfigLimitsGameTestsLogic {
         }
         assertRejected(helper, config(tooManyVariants), "variant_count");
 
-        assertRejected(helper, config(variant(EyeConfigLimits.MAX_HEADS_PER_VARIANT + 1, 1)), "head_count");
-        assertRejected(helper, config(variant(1, EyeConfigLimits.MAX_EYES_PER_HEAD + 1)), "head_eye_count");
+        assertRejected(
+                helper,
+                config(variant(EyeConfigLimits.MAX_HEADS_PER_VARIANT + 1, 1)),
+                "head_count");
+        assertRejected(
+                helper,
+                config(variant(1, EyeConfigLimits.MAX_EYES_PER_HEAD + 1)),
+                "head_eye_count");
         assertRejected(helper, config(variant(9, 15)), "variant_eye_count");
         helper.succeed();
     }

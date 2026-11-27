@@ -7,9 +7,9 @@ import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
 /**
- * One configuration setting: everything each loader needs to declare it in its config file, plus the mutable,
- * validated runtime view of the value that file holds. {@link Flag}, {@link Ranged}, and {@link Parsed} are the
- * kinds a loader's file distinguishes.
+ * One configuration setting: everything each loader needs to declare it in its config file, plus
+ * the mutable, validated runtime view of the value that file holds. {@link Flag}, {@link Ranged},
+ * and {@link Parsed} are the kinds a loader's file distinguishes.
  */
 public abstract class ConfigValue<T> {
 
@@ -20,7 +20,12 @@ public abstract class ConfigValue<T> {
     private final String section;
     private volatile T value;
 
-    private ConfigValue(String section, String key, T defaultValue, UnaryOperator<T> normalize, String comment) {
+    private ConfigValue(
+            String section,
+            String key,
+            T defaultValue,
+            UnaryOperator<T> normalize,
+            String comment) {
         this.section = section;
         this.key = key;
         this.comment = comment;
@@ -65,7 +70,8 @@ public abstract class ConfigValue<T> {
      * Create an integer value whose default and every subsequently assigned value are clamped to
      * {@code [min, max]}.
      */
-    public static Ranged integer(String section, String key, int defaultValue, int min, int max, String comment) {
+    public static Ranged integer(
+            String section, String key, int defaultValue, int min, int max, String comment) {
         return new Ranged(section, key, defaultValue, min, max, comment);
     }
 
@@ -76,13 +82,18 @@ public abstract class ConfigValue<T> {
 
     /**
      * Create a string-list value whose default and every subsequently assigned list are filtered by
-     * {@code valid} and stored as an immutable copy, and which keeps {@code parser}'s view of the accepted
-     * entries, rebuilt on every assignment and reset, for lists read far more often than set. Rejected entries
-     * are omitted; reporting them is the job of whichever config reader supplied the raw list.
+     * {@code valid} and stored as an immutable copy, and which keeps {@code parser}'s view of the
+     * accepted entries, rebuilt on every assignment and reset, for lists read far more often than
+     * set. Rejected entries are omitted; reporting them is the job of whichever config reader
+     * supplied the raw list.
      */
-    public static <D> Parsed<D> parsedStrings(String section, String key, List<String> defaultValue,
-                                              Predicate<String> valid, Function<List<String>, D> parser,
-                                              String comment) {
+    public static <D> Parsed<D> parsedStrings(
+            String section,
+            String key,
+            List<String> defaultValue,
+            Predicate<String> valid,
+            Function<List<String>, D> parser,
+            String comment) {
         return new Parsed<>(section, key, defaultValue, valid, parser, comment);
     }
 
@@ -116,8 +127,13 @@ public abstract class ConfigValue<T> {
         private volatile D parsed;
         private final Predicate<String> valid;
 
-        private Parsed(String section, String key, List<String> defaultValue, Predicate<String> valid,
-                       Function<List<String>, D> parser, String comment) {
+        private Parsed(
+                String section,
+                String key,
+                List<String> defaultValue,
+                Predicate<String> valid,
+                Function<List<String>, D> parser,
+                String comment) {
             super(section, key, defaultValue, filter(valid), comment);
             this.parser = parser;
             this.parsed = parser.apply(get());
@@ -136,8 +152,9 @@ public abstract class ConfigValue<T> {
         }
 
         /**
-         * Assign {@code value}, dropping its invalid entries. A non-empty list with no valid entry falls back to
-         * the default rather than to an empty list, which is how Forge's and NeoForge's own list correction treat it.
+         * Assign {@code value}, dropping its invalid entries. A non-empty list with no valid entry
+         * falls back to the default rather than to an empty list, which is how Forge's and
+         * NeoForge's own list correction treat it.
          */
         @Override
         public void set(List<String> value) {
@@ -160,8 +177,14 @@ public abstract class ConfigValue<T> {
         private final int max;
         private final int min;
 
-        private Ranged(String section, String key, int defaultValue, int min, int max, String comment) {
-            super(section, key, defaultValue, value -> Math.max(min, Math.min(max, value)), comment);
+        private Ranged(
+                String section, String key, int defaultValue, int min, int max, String comment) {
+            super(
+                    section,
+                    key,
+                    defaultValue,
+                    value -> Math.max(min, Math.min(max, value)),
+                    comment);
             this.max = max;
             this.min = min;
         }

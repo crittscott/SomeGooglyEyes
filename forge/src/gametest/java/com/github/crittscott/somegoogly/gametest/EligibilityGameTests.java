@@ -8,8 +8,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
  */
 public final class EligibilityGameTests {
 
-    private EligibilityGameTests() {
-    }
+    private EligibilityGameTests() {}
 
     public static void slimyEyeAppliesOnlyToEligibleTargets(GameTestHelper helper) {
         EligibilityGameTestsLogic.slimyEyeAppliesOnlyToEligibleTargets(

@@ -2,10 +2,26 @@ plugins {
     id 'dev.architectury.loom' apply false
     id 'architectury-plugin'
     id 'com.gradleup.shadow' apply false
+    id 'com.diffplug.spotless'
 }
 
 architectury {
     minecraft = project.minecraft_version
+}
+
+// Formats every module's Java sources, javadoc included, with google-java-format in AOSP style.
+// Formatting is applied on demand with spotlessApply and does not gate the build.
+spotless {
+    enforceCheck = false
+
+    java {
+        target 'common/src/**/*.java', 'fabric/src/**/*.java', 'forge/src/**/*.java',
+                'neoforge/src/**/*.java'
+        googleJavaFormat(google_java_format_version).aosp().reorderImports(true)
+        toggleOffOn()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
 }
 
 // Creates a loader's `gametest` source set over the shared scenarios and resources, registers its

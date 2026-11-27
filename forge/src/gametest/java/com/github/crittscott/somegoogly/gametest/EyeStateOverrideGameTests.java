@@ -8,18 +8,20 @@ import net.minecraft.gametest.framework.GameTestHelper;
  */
 public final class EyeStateOverrideGameTests {
 
-    private EyeStateOverrideGameTests() {
-    }
+    private EyeStateOverrideGameTests() {}
 
     public static void adminAppearanceCommands(GameTestHelper helper) {
-        EyeStateOverrideGameTestsLogic.adminAppearanceCommands(helper, SomeGooglyGameTests.survivalPlayer(helper));
+        EyeStateOverrideGameTestsLogic.adminAppearanceCommands(
+                helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
 
     public static void adminCommandsRefuseUnauthorizedOrInvalidUse(GameTestHelper helper) {
-        EyeStateOverrideGameTestsLogic.adminCommandsRefuseUnauthorizedOrInvalidUse(helper, SomeGooglyGameTests.survivalPlayer(helper));
+        EyeStateOverrideGameTestsLogic.adminCommandsRefuseUnauthorizedOrInvalidUse(
+                helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
 
     public static void adminEyesAndBehaviorCommands(GameTestHelper helper) {
-        EyeStateOverrideGameTestsLogic.adminEyesAndBehaviorCommands(helper, SomeGooglyGameTests.survivalPlayer(helper));
+        EyeStateOverrideGameTestsLogic.adminEyesAndBehaviorCommands(
+                helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
 }

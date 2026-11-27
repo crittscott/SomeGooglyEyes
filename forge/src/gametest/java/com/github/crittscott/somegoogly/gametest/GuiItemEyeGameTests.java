@@ -8,8 +8,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
  */
 public final class GuiItemEyeGameTests {
 
-    private GuiItemEyeGameTests() {
-    }
+    private GuiItemEyeGameTests() {}
 
     public static void guiEyesAdvanceWithoutWorldTicks(GameTestHelper helper) {
         GuiItemEyeGameTestsLogic.guiEyesAdvanceWithoutWorldTicks(helper);

@@ -93,14 +93,15 @@ loadScripts(document, 'script');</script>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Closed, faceted eye geometry used by mob eyes, picker previews, and eye items.
 
- <p>The cornea and iris are two shallow cylinders. The iris stays physically in front of the cornea,
- so their surfaces never overlap or need z-fighting offsets; its rear cap would face only the cornea's
- front cap, so it is not drawn. The 16-sided rim reads as round at item scale while remaining
- inexpensive, and each cap is drawn as a fan of quads over its ring. A mob eye may also draw upper and
- lower eyelids in front of both.
+ <p>The cornea and iris are two shallow cylinders. The iris stays physically in front of the
+ cornea, so their surfaces never overlap or need z-fighting offsets; its rear cap would face only
+ the cornea's front cap, so it is not drawn. The 16-sided rim reads as round at item scale while
+ remaining inexpensive, and each cap is drawn as a fan of quads over its ring. A mob eye may also
+ draw upper and lower eyelids in front of both.
 
- <p>Each part is emitted from a submitted custom-geometry callback, which runs after every eye has been
- submitted, so the geometry holds no per-eye state: everything an eye needs arrives as arguments.</div>
+ <p>Each part is emitted from a submitted custom-geometry callback, which runs after every eye has
+ been submitted, so the geometry holds no per-eye state: everything an eye needs arrives as
+ arguments.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -121,8 +122,8 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color"><code>static final float</code></div>
 <div class="col-second odd-row-color"><code><a href="#MAX_PUPIL_SIZE" class="member-name-link">MAX_PUPIL_SIZE</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block">The largest pupil size (iris scale) that still fits inside the cornea, where the iris rim meets the
- cornea rim and the pupil has no room left to travel.</div>
+<div class="block">The largest pupil size (iris scale) that still fits inside the cornea, where the iris rim
+ meets the cornea rim and the pupil has no room left to travel.</div>
 </div>
 </div>
 </section>
@@ -142,8 +143,8 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#addExtents(org.joml.Matrix4f,java.util.function.Consumer)" class="member-name-link">addExtents</a><wbr>(org.joml.Matrix4f&nbsp;pose,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;org.joml.Vector3fc&gt;&nbsp;output)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Add the corners of the box enclosing the whole eye, lids included, transformed by <code>pose</code>, for
- vanilla's item extents.</div>
+<div class="block">Add the corners of the box enclosing the whole eye, lids included, transformed by <code>
+ pose</code>, for vanilla's item extents.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#renderCornea(com.mojang.blaze3d.vertex.PoseStack.Pose,com.mojang.blaze3d.vertex.VertexConsumer,int,int,float,float,float,float)" class="member-name-link">renderCornea</a><wbr>(com.mojang.blaze3d.vertex.PoseStack.Pose&nbsp;pose,
@@ -170,9 +171,9 @@ loadScripts(document, 'script');</script>
  float&nbsp;normY,
  float&nbsp;pupilSize)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Draw the iris cylinder in the given color at the unit-disk pupil position <code>(normX, normY)</code> in
- [-1,1], mapped linearly onto the full travel circle so the iris edge just kisses the cornea rim at
- <code>|norm| = 1</code>.</div>
+<div class="block">Draw the iris cylinder in the given color at the unit-disk pupil position <code>(normX,
+ normY)</code> in [-1,1], mapped linearly onto the full travel circle so the iris edge just kisses
+ the cornea rim at <code>|norm| = 1</code>.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#renderLids(com.mojang.blaze3d.vertex.PoseStack.Pose,com.mojang.blaze3d.vertex.VertexConsumer,int,int,float,float,float,float,float)" class="member-name-link">renderLids</a><wbr>(com.mojang.blaze3d.vertex.PoseStack.Pose&nbsp;pose,
@@ -185,8 +186,8 @@ loadScripts(document, 'script');</script>
  float&nbsp;alpha,
  float&nbsp;coverage)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Draw an upper and a lower eyelid, each closed until it covers <code>coverage</code> of the eye's height
- (0 none, at most half), in the given color.</div>
+<div class="block">Draw an upper and a lower eyelid, each closed until it covers <code>coverage</code> of the eye's
+ height (0 none, at most half), in the given color.</div>
 </div>
 </div>
 </div>
@@ -209,10 +210,11 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="BASE_DEPTH">
 <h3>BASE_DEPTH</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">BASE_DEPTH</span></div>
-<div class="block">The Z pose-scale that gives the eye its standard thickness (relative to its width). Every render
- site multiplies this by the eye's own <code>depth</code> multiplier (1 = standard); the geometry below
- stays fixed. The model extends toward -Z from its origin (the back face sits at Z = 0), so a
- larger depth pushes the front face further out of the model without moving the attach point.</div>
+<div class="block">The Z pose-scale that gives the eye its standard thickness (relative to its width). Every
+ render site multiplies this by the eye's own <code>depth</code> multiplier (1 = standard); the
+ geometry below stays fixed. The model extends toward -Z from its origin (the back face sits
+ at Z = 0), so a larger depth pushes the front face further out of the model without moving
+ the attach point.</div>
 <dl class="notes">
 <dt>See Also:</dt>
 <dd>
@@ -227,8 +229,8 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="MAX_PUPIL_SIZE">
 <h3>MAX_PUPIL_SIZE</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">MAX_PUPIL_SIZE</span></div>
-<div class="block">The largest pupil size (iris scale) that still fits inside the cornea, where the iris rim meets the
- cornea rim and the pupil has no room left to travel.</div>
+<div class="block">The largest pupil size (iris scale) that still fits inside the cornea, where the iris rim
+ meets the cornea rim and the pupil has no room left to travel.</div>
 <dl class="notes">
 <dt>See Also:</dt>
 <dd>
@@ -252,8 +254,8 @@ loadScripts(document, 'script');</script>
 <h3>addExtents</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addExtents</span><wbr><span class="parameters">(org.joml.Matrix4f&nbsp;pose,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;org.joml.Vector3fc&gt;&nbsp;output)</span></div>
-<div class="block">Add the corners of the box enclosing the whole eye, lids included, transformed by <code>pose</code>, for
- vanilla's item extents.</div>
+<div class="block">Add the corners of the box enclosing the whole eye, lids included, transformed by <code>
+ pose</code>, for vanilla's item extents.</div>
 </section>
 </li>
 <li>
@@ -284,10 +286,11 @@ loadScripts(document, 'script');</script>
  float&nbsp;normX,
  float&nbsp;normY,
  float&nbsp;pupilSize)</span></div>
-<div class="block">Draw the iris cylinder in the given color at the unit-disk pupil position <code>(normX, normY)</code> in
- [-1,1], mapped linearly onto the full travel circle so the iris edge just kisses the cornea rim at
- <code>|norm| = 1</code>. The caller applies the <code>pupilSize</code> (irisScale) on the pose, so the offset is
- expressed in the iris's own pre-scale units (hence the <code>/ pupilSize</code>).</div>
+<div class="block">Draw the iris cylinder in the given color at the unit-disk pupil position <code>(normX,
+ normY)</code> in [-1,1], mapped linearly onto the full travel circle so the iris edge just kisses
+ the cornea rim at <code>|norm| = 1</code>. The caller applies the <code>pupilSize</code> (irisScale) on
+ the pose, so the offset is expressed in the iris's own pre-scale units (hence the <code>/
+ pupilSize</code>).</div>
 </section>
 </li>
 <li>
@@ -302,11 +305,11 @@ loadScripts(document, 'script');</script>
  float&nbsp;blue,
  float&nbsp;alpha,
  float&nbsp;coverage)</span></div>
-<div class="block">Draw an upper and a lower eyelid, each closed until it covers <code>coverage</code> of the eye's height
- (0 none, at most half), in the given color. Each lid is the part of a disk a little wider than the
- cornea beyond a horizontal edge, as deep as the whole eye, so it caps the cornea from the front and
- side; its front face sits ahead of the iris, which shows only between the two edges. Neither has a
- back face, which would face only the head.</div>
+<div class="block">Draw an upper and a lower eyelid, each closed until it covers <code>coverage</code> of the eye's
+ height (0 none, at most half), in the given color. Each lid is the part of a disk a little
+ wider than the cornea beyond a horizontal edge, as deep as the whole eye, so it caps the
+ cornea from the front and side; its front face sits ahead of the iris, which shows only
+ between the two edges. Neither has a back face, which would face only the head.</div>
 </section>
 </li>
 </ul>

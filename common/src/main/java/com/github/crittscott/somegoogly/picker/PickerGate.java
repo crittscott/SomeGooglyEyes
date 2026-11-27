@@ -9,27 +9,28 @@ import net.minecraft.server.permissions.Permissions;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import org.jspecify.annotations.Nullable;
 
 /**
- * Server-side authorization and throttling for client-driven picker operations — the two halves of the
- * same gate, always checked together by the packet handlers.
+ * Server-side authorization and throttling for client-driven picker operations — the two halves of
+ * the same gate, always checked together by the packet handlers.
  *
- * <p>Authorization ({@link #mayUsePicker}) is creative mode plus permission level 2, the level of vanilla
- * {@code /summon}, {@code /tp}, and {@code /fill}: the picker freezes, moves, and spawns mobs and can
- * rewrite blocks without firing the events protection mods listen to, so it is an operator tool. The
- * client CLI and keyboard picker apply the same rule as UX only and are never trusted; packet handlers
- * use {@link #authorized}, which refuses silently so unauthorized custom-payload spam cannot amplify
- * into server feedback packets.
+ * <p>Authorization ({@link #mayUsePicker}) is creative mode plus permission level 2, the level of
+ * vanilla {@code /summon}, {@code /tp}, and {@code /fill}: the picker freezes, moves, and spawns
+ * mobs and can rewrite blocks without firing the events protection mods listen to, so it is an
+ * operator tool. The client CLI and keyboard picker apply the same rule as UX only and are never
+ * trusted; packet handlers use {@link #authorized}, which refuses silently so unauthorized
+ * custom-payload spam cannot amplify into server feedback packets.
  *
  * <p>Every picker throttle lives here: one request per player per tick, the server-wide spawn-all
  * cooldown, and the two export limits. Each successful export triggers a full datapack reload, so
- * successes have the longer {@link #EXPORT_COOLDOWN_TICKS}; every attempt has the short
- * {@link #EXPORT_ATTEMPT_COOLDOWN_TICKS}, applied before any codec work. Per-player state is released
- * when the player leaves and all of it at server stop, since {@code getTickCount} restarts from 0 with
+ * successes have the longer {@link #EXPORT_COOLDOWN_TICKS}; every attempt has the short {@link
+ * #EXPORT_ATTEMPT_COOLDOWN_TICKS}, applied before any codec work. Per-player state is released when
+ * the player leaves and all of it at server stop, since {@code getTickCount} restarts from 0 with
  * the next (single-player) world and a stale large tick would read as a far-future cooldown.
  */
 public final class PickerGate {
@@ -37,7 +38,9 @@ public final class PickerGate {
     /** Server-wide interval in ticks between {@code /sg spawnall} runs. */
     public static final int SPAWN_ALL_COOLDOWN_TICKS = 200;
 
-    /** Ticks between successful exports per player (10 seconds; failed validation doesn't arm it). */
+    /**
+     * Ticks between successful exports per player (10 seconds; failed validation doesn't arm it).
+     */
     public static final int EXPORT_COOLDOWN_TICKS = 200;
 
     /** Cheap attempt throttle applied before codec work, including malformed requests. */
@@ -48,15 +51,18 @@ public final class PickerGate {
     private static final Map<UUID, Integer> LAST_EXPORT_TICK = new HashMap<>();
     private static int lastSpawnAllTick = Integer.MIN_VALUE;
 
-    private PickerGate() {
-    }
+    private PickerGate() {}
 
     /** Whether {@code player} may use the picker at all: creative mode and permission level 2. */
     public static boolean mayUsePicker(Player player) {
-        return player.isCreative() && player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER);
+        return player.isCreative()
+                && player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER);
     }
 
-    /** Whether {@code sender} may drive one picker request now: {@link #mayUsePicker}, and not rate-limited this tick. */
+    /**
+     * Whether {@code sender} may drive one picker request now: {@link #mayUsePicker}, and not
+     * rate-limited this tick.
+     */
     public static boolean authorized(ServerPlayer sender) {
         return mayUsePicker(sender) && allowRequest(sender);
     }
@@ -71,7 +77,8 @@ public final class PickerGate {
     /** Arm a server-wide cooldown for the destructive bulk-spawn operation. */
     public static boolean allowSpawnAll(MinecraftServer server) {
         int now = server.getTickCount();
-        if (lastSpawnAllTick != Integer.MIN_VALUE && now - lastSpawnAllTick < SPAWN_ALL_COOLDOWN_TICKS) {
+        if (lastSpawnAllTick != Integer.MIN_VALUE
+                && now - lastSpawnAllTick < SPAWN_ALL_COOLDOWN_TICKS) {
             return false;
         }
         lastSpawnAllTick = now;
@@ -79,8 +86,8 @@ public final class PickerGate {
     }
 
     /**
-     * Arm the export attempt throttle and check both export limits. Returns {@code null} when the export
-     * may proceed, or the feedback explaining why it may not.
+     * Arm the export attempt throttle and check both export limits. Returns {@code null} when the
+     * export may proceed, or the feedback explaining why it may not.
      */
     @Nullable
     public static Component tryExport(MinecraftServer server, UUID playerId) {
@@ -92,10 +99,14 @@ public final class PickerGate {
         LAST_EXPORT_ATTEMPT_TICK.put(playerId, now);
         Integer last = LAST_EXPORT_TICK.get(playerId);
         if (last != null && now - last < EXPORT_COOLDOWN_TICKS) {
-            int seconds = Mth.positiveCeilDiv(EXPORT_COOLDOWN_TICKS - (now - last), SharedConstants.TICKS_PER_SECOND);
-            return Component.translatable(seconds == 1
-                    ? "somegoogly.command.picker.export_cooldown_one_second"
-                    : "somegoogly.command.picker.export_cooldown_many_seconds", seconds);
+            int seconds =
+                    Mth.positiveCeilDiv(
+                            EXPORT_COOLDOWN_TICKS - (now - last), SharedConstants.TICKS_PER_SECOND);
+            return Component.translatable(
+                    seconds == 1
+                            ? "somegoogly.command.picker.export_cooldown_one_second"
+                            : "somegoogly.command.picker.export_cooldown_many_seconds",
+                    seconds);
         }
         return null;
     }
@@ -109,14 +120,20 @@ public final class PickerGate {
         LAST_EXPORT_TICK.put(playerId, server.getTickCount());
     }
 
-    /** Forget a player's request and export throttles; called from {@code ServerServices.onPlayerLeft}. */
+    /**
+     * Forget a player's request and export throttles; called from {@code
+     * ServerServices.onPlayerLeft}.
+     */
     public static void onPlayerLeft(UUID playerId) {
         LAST_REQUEST_TICK.remove(playerId);
         LAST_EXPORT_ATTEMPT_TICK.remove(playerId);
         LAST_EXPORT_TICK.remove(playerId);
     }
 
-    /** Forget every throttle, including the spawn-all cooldown; called from {@code ServerServices.onServerStopping}. */
+    /**
+     * Forget every throttle, including the spawn-all cooldown; called from {@code
+     * ServerServices.onServerStopping}.
+     */
     public static void onServerStopping() {
         LAST_REQUEST_TICK.clear();
         LAST_EXPORT_ATTEMPT_TICK.clear();
@@ -135,10 +152,12 @@ public final class PickerGate {
     }
 
     /**
-     * Report a result to the command's sender under the shared picker prefix; {@code broadcast} also tells other
-     * operators and the console, as vanilla does for commands that change the world.
+     * Report a result to the command's sender under the shared picker prefix; {@code broadcast}
+     * also tells other operators and the console, as vanilla does for commands that change the
+     * world.
      */
-    public static void tellSuccess(CommandSourceStack source, boolean broadcast, String key, Object... args) {
+    public static void tellSuccess(
+            CommandSourceStack source, boolean broadcast, String key, Object... args) {
         source.sendSuccess(() -> prefixed(Component.translatable(key, args)), broadcast);
     }
 }

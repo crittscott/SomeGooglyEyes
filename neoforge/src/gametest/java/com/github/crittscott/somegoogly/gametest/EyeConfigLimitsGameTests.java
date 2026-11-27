@@ -3,13 +3,12 @@ package com.github.crittscott.somegoogly.gametest;
 import net.minecraft.gametest.framework.GameTestHelper;
 
 /**
- * NeoForge GameTest entry points for {@link EyeConfigLimitsGameTestsLogic}; see that class for the actual
- * assertions.
+ * NeoForge GameTest entry points for {@link EyeConfigLimitsGameTestsLogic}; see that class for the
+ * actual assertions.
  */
 public final class EyeConfigLimitsGameTests {
 
-    private EyeConfigLimitsGameTests() {
-    }
+    private EyeConfigLimitsGameTests() {}
 
     public static void crossTargetMustReferenceAnotherEyeInTheSameHead(GameTestHelper helper) {
         EyeConfigLimitsGameTestsLogic.crossTargetMustReferenceAnotherEyeInTheSameHead(helper);

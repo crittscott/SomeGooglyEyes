@@ -91,15 +91,14 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">ServerEyeConfigs</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Server-authoritative store of eye geometry configs, loaded from datapacks by
- <a href="EyeConfigReloadListener.html" title="class in com.github.crittscott.somegoogly.config"><code>EyeConfigReloadListener</code></a>. The server uses this to gate <code>hasGooglyEyes</code>
- (see <a href="../server/ServerServices.html#onLivingEntityLoaded(net.minecraft.world.entity.LivingEntity)"><code>ServerServices.onLivingEntityLoaded(net.minecraft.world.entity.LivingEntity)</code></a>) and to build the sync payload sent to clients.
+<div class="block">Server-authoritative store of eye geometry configs, loaded from datapacks by <a href="EyeConfigReloadListener.html" title="class in com.github.crittscott.somegoogly.config"><code>EyeConfigReloadListener</code></a>. The server uses this to gate <code>hasGooglyEyes</code> (see <a href="../server/ServerServices.html#onLivingEntityLoaded(net.minecraft.world.entity.LivingEntity)"><code>ServerServices.onLivingEntityLoaded(net.minecraft.world.entity.LivingEntity)</code></a>) and to build the sync payload sent to clients.
 
  <p>Kept separate from <a href="ClientEyeConfigs.html" title="class in com.github.crittscott.somegoogly.config"><code>ClientEyeConfigs</code></a> so the integrated server and client don't share
- one static map in single-player. The installed set is held as the immutable sync packet built for it; its
- mutable model values are owned by this store and must be treated as read-only after installation. The packet
- carries the sets' NBT encoding, which is the identity a reload compares to decide whether anything changed,
- and its already-serialized bytes, which every joining player and every broadcast reuses.</div>
+ one static map in single-player. The installed set is held as the immutable sync packet built for
+ it; its mutable model values are owned by this store and must be treated as read-only after
+ installation. The packet carries the sets' NBT encoding, which is the identity a reload compares
+ to decide whether anything changed, and its already-serialized bytes, which every joining player
+ and every broadcast reuses.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -115,9 +114,9 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color"><code>static final net.minecraft.resources.Identifier</code></div>
 <div class="col-second even-row-color"><code><a href="#ENDER_DRAGON" class="member-name-link">ENDER_DRAGON</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">Hard-excluded from googly eyes: the ender dragon's renderer bypasses the
- <code>LivingEntityRenderer</code> family entirely (no eye layer can attach) and its model has no
- walkable part tree, so eyes can never render on it.</div>
+<div class="block">Hard-excluded from googly eyes: the ender dragon's renderer bypasses the <code>
+ LivingEntityRenderer</code> family entirely (no eye layer can attach) and its model has no walkable
+ part tree, so eyes can never render on it.</div>
 </div>
 </div>
 </section>
@@ -177,16 +176,17 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#replaceIfChanged(com.github.crittscott.somegoogly.network.EyeConfigSyncPacket)" class="member-name-link">replaceIfChanged</a><wbr>(<a href="../network/EyeConfigSyncPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeConfigSyncPacket</a>&nbsp;next)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Datapack-reload entry point: install <code>next</code> only when its encoding differs from the installed
- set's, so a <code>/reload</code> for an unrelated datapack leaves the installed snapshot, and therefore
- every client's copy, alone.</div>
+<div class="block">Datapack-reload entry point: install <code>next</code> only when its encoding differs from the
+ installed set's, so a <code>/reload</code> for an unrelated datapack leaves the installed
+ snapshot, and therefore every client's copy, alone.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#resolve(net.minecraft.resources.Identifier,boolean,float)" class="member-name-link">resolve</a><wbr>(net.minecraft.resources.Identifier&nbsp;entity,
  boolean&nbsp;baby,
  float&nbsp;variantRoll)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Resolve the selected variant for the requested age without sharing the client's renderer cache.</div>
+<div class="block">Resolve the selected variant for the requested age without sharing the client's renderer
+ cache.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#resolveHead(net.minecraft.resources.Identifier,float)" class="member-name-link">resolveHead</a><wbr>(net.minecraft.resources.Identifier&nbsp;entity,
@@ -215,10 +215,10 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="ENDER_DRAGON">
 <h3>ENDER_DRAGON</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">net.minecraft.resources.Identifier</span>&nbsp;<span class="element-name">ENDER_DRAGON</span></div>
-<div class="block">Hard-excluded from googly eyes: the ender dragon's renderer bypasses the
- <code>LivingEntityRenderer</code> family entirely (no eye layer can attach) and its model has no
- walkable part tree, so eyes can never render on it. <a href="EyeConfigReloadListener.html" title="class in com.github.crittscott.somegoogly.config"><code>EyeConfigReloadListener</code></a> refuses
- datapack configs for it and <code>/sg spawnall</code> skips it.</div>
+<div class="block">Hard-excluded from googly eyes: the ender dragon's renderer bypasses the <code>
+ LivingEntityRenderer</code> family entirely (no eye layer can attach) and its model has no walkable
+ part tree, so eyes can never render on it. <a href="EyeConfigReloadListener.html" title="class in com.github.crittscott.somegoogly.config"><code>EyeConfigReloadListener</code></a> refuses datapack
+ configs for it and <code>/sg spawnall</code> skips it.</div>
 </section>
 </li>
 </ul>
@@ -241,11 +241,11 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="canEverWearEyes(net.minecraft.world.entity.LivingEntity)">
 <h3>canEverWearEyes</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">canEverWearEyes</span><wbr><span class="parameters">(net.minecraft.world.entity.LivingEntity&nbsp;living)</span></div>
-<div class="block">Whether this entity can wear eyes at <b>any</b> life stage (baby or adult). Used by the at-spawn
- roll (<a href="../server/ServerServices.html#onLivingEntityLoaded(net.minecraft.world.entity.LivingEntity)"><code>ServerServices.onLivingEntityLoaded(net.minecraft.world.entity.LivingEntity)</code></a>): that decision is stored for life, so a baby
- that only has an adult config must still be allowed to roll — otherwise it stores
- <code>hasGooglyEyes=false</code> and never re-rolls, locking it out of eyes forever even after it
- grows up. The client swaps in the age-appropriate geometry as the mob ages.</div>
+<div class="block">Whether this entity can wear eyes at <b>any</b> life stage (baby or adult). Used by the
+ at-spawn roll (<a href="../server/ServerServices.html#onLivingEntityLoaded(net.minecraft.world.entity.LivingEntity)"><code>ServerServices.onLivingEntityLoaded(net.minecraft.world.entity.LivingEntity)</code></a>): that decision is stored for
+ life, so a baby that only has an adult config must still be allowed to roll — otherwise it
+ stores <code>hasGooglyEyes=false</code> and never re-rolls, locking it out of eyes forever even
+ after it grows up. The client swaps in the age-appropriate geometry as the mob ages.</div>
 </section>
 </li>
 <li>
@@ -269,7 +269,8 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a></span>&nbsp;<span class="element-name">resolve</span><wbr><span class="parameters">(net.minecraft.resources.Identifier&nbsp;entity,
  boolean&nbsp;baby,
  float&nbsp;variantRoll)</span></div>
-<div class="block">Resolve the selected variant for the requested age without sharing the client's renderer cache.</div>
+<div class="block">Resolve the selected variant for the requested age without sharing the client's renderer
+ cache.</div>
 </section>
 </li>
 <li>
@@ -291,9 +292,9 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="replaceIfChanged(com.github.crittscott.somegoogly.network.EyeConfigSyncPacket)">
 <h3>replaceIfChanged</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">replaceIfChanged</span><wbr><span class="parameters">(<a href="../network/EyeConfigSyncPacket.html" title="class in com.github.crittscott.somegoogly.network">EyeConfigSyncPacket</a>&nbsp;next)</span></div>
-<div class="block">Datapack-reload entry point: install <code>next</code> only when its encoding differs from the installed
- set's, so a <code>/reload</code> for an unrelated datapack leaves the installed snapshot, and therefore
- every client's copy, alone. Returns whether a swap happened.</div>
+<div class="block">Datapack-reload entry point: install <code>next</code> only when its encoding differs from the
+ installed set's, so a <code>/reload</code> for an unrelated datapack leaves the installed
+ snapshot, and therefore every client's copy, alone. Returns whether a swap happened.</div>
 </section>
 </li>
 <li>

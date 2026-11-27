@@ -3,39 +3,43 @@ package com.github.crittscott.somegoogly.client.compat.gecko;
 import com.github.crittscott.somegoogly.client.render.resolver.EyeAttachmentResolver;
 import com.github.crittscott.somegoogly.client.render.resolver.ModelMemo;
 import com.github.crittscott.somegoogly.config.EyeConfigModel;
+
+import org.jspecify.annotations.Nullable;
+
 import software.bernie.geckolib.cache.model.BakedGeoModel;
 import software.bernie.geckolib.cache.model.GeoBone;
 
-import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * GeckoLib bone access — the GeckoLib analog of vanilla part resolution. <b>Only loaded when GeckoLib
- * is present</b> (reached through {@code GeckoCompat}); it references GeckoLib types directly.
+ * GeckoLib bone access — the GeckoLib analog of vanilla part resolution. <b>Only loaded when
+ * GeckoLib is present</b> (reached through {@code GeckoCompat}); it references GeckoLib types
+ * directly.
  *
  * <p>Bones are named in the {@code .geo.json}, so enumeration yields real names (better than the
  * vanilla reflection family's {@code #N}). There is deliberately no "move the pose to a bone" here:
- * the tasks registered by {@link GooglyGeoLayer#addPerBoneRender} receive the fully composed bone pose
- * from GeckoLib, including the entity's body rotations. Lookup returns the {@link GeoBone} itself,
- * which the layer matches by identity at render time.
+ * the tasks registered by {@link GooglyGeoLayer#addPerBoneRender} receive the fully composed bone
+ * pose from GeckoLib, including the entity's body rotations. Lookup returns the {@link GeoBone}
+ * itself, which the layer matches by identity at render time.
  *
- * <p>The adapter requires {@link BakedGeoModel#topLevelBones()}, {@link GeoBone#name()}, and
- * {@link GeoBone#children()}; those methods are its complete GeckoLib bone-enumeration boundary.
+ * <p>The adapter requires {@link BakedGeoModel#topLevelBones()}, {@link GeoBone#name()}, and {@link
+ * GeoBone#children()}; those methods are its complete GeckoLib bone-enumeration boundary.
  */
 public final class GeoBones {
 
     /**
-     * Bones resolved once per (baked model, token) and matched by identity thereafter. Keying on the baked
-     * model — not the entity — is what makes a model swap correct: a swapped-in model is a different
-     * {@link BakedGeoModel} with its own entries, including its own cached "this token names no bone".
+     * Bones resolved once per (baked model, token) and matched by identity thereafter. Keying on
+     * the baked model — not the entity — is what makes a model swap correct: a swapped-in model is
+     * a different {@link BakedGeoModel} with its own entries, including its own cached "this token
+     * names no bone".
      *
-     * <p>Cleared with the vanilla-side caches ({@link #clear}) when a resource reload replaces the models.
+     * <p>Cleared with the vanilla-side caches ({@link #clear}) when a resource reload replaces the
+     * models.
      */
     private static final ModelMemo<BakedGeoModel, GeoBone> BONES = new ModelMemo<>();
 
-    private GeoBones() {
-    }
+    private GeoBones() {}
 
     /** Drop every cached bone; GeckoLib rebakes its models on each resource reload. */
     public static void clear() {
@@ -61,8 +65,8 @@ public final class GeoBones {
     }
 
     /**
-     * First bone (depth-first, so a stable order) whose root→bone name path suffix-matches
-     * {@code token} per {@link EyeAttachmentResolver#pathMatches}, or {@code null}. A bare bone name
+     * First bone (depth-first, so a stable order) whose root→bone name path suffix-matches {@code
+     * token} per {@link EyeAttachmentResolver#pathMatches}, or {@code null}. A bare bone name
      * matches like {@link BakedGeoModel#getBone}; a slash path disambiguates same-named bones under
      * different parents, keeping GeckoLib tokens in the same vocabulary as the vanilla resolvers.
      */

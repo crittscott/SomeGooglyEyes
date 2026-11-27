@@ -92,12 +92,12 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">GooglyClientCommands</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">The <code>/sg</code> command tree — the in-game eye-placement CLI. Each loader registers the same
- source-neutral Brigadier tree as <b>client</b> commands because the editing they drive lives entirely
- in the client-side <a href="../picker/PickerState.html" title="class in com.github.crittscott.somegoogly.client.picker"><code>PickerState</code></a>. Like the keyboard picker, they require creative mode and
- permission level 2 (<a href="../../picker/PickerGate.html#mayUsePicker(net.minecraft.world.entity.player.Player)"><code>PickerGate.mayUsePicker(net.minecraft.world.entity.player.Player)</code></a>).
+ source-neutral Brigadier tree as <b>client</b> commands because the editing they drive lives
+ entirely in the client-side <a href="../picker/PickerState.html" title="class in com.github.crittscott.somegoogly.client.picker"><code>PickerState</code></a>. Like the keyboard picker, they require creative
+ mode and permission level 2 (<a href="../../picker/PickerGate.html#mayUsePicker(net.minecraft.world.entity.player.Player)"><code>PickerGate.mayUsePicker(net.minecraft.world.entity.player.Player)</code></a>).
 
- <p>The picker keyboard and this CLI
- call the same <a href="../picker/PickerState.html" title="class in com.github.crittscott.somegoogly.client.picker"><code>PickerState</code></a> methods, so they stay in lock-step.
+ <p>The picker keyboard and this CLI call the same <a href="../picker/PickerState.html" title="class in com.github.crittscott.somegoogly.client.picker"><code>PickerState</code></a> methods, so they stay in
+ lock-step.
 
  <p><code>export</code> sends the client-authored draft to the server. World-mutating commands such as
  <code>spawn</code>, <code>spawnall</code>, and <code>mob</code> live directly in the server command tree.</div>

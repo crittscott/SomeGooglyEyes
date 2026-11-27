@@ -91,9 +91,9 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">PickerInput</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">The picker's keybindings, all rebindable in Options → Controls, and the routing of their presses to
- <a href="PickerState.html" title="class in com.github.crittscott.somegoogly.client.picker"><code>PickerState</code></a> while the picker is active. Driven from each loader's client key-mapping and tick hooks;
- only the toggle key works when the picker is off.
+<div class="block">The picker's keybindings, all rebindable in Options → Controls, and the routing of their presses
+ to <a href="PickerState.html" title="class in com.github.crittscott.somegoogly.client.picker"><code>PickerState</code></a> while the picker is active. Driven from each loader's client key-mapping
+ and tick hooks; only the toggle key works when the picker is off.
 
  <p>The keyboard is navigation + a live view only: toggle the picker, lock onto a mob, and cycle
  parts. All eye editing (position, rotation, properties, save/delete, export) is done through the
@@ -116,7 +116,8 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;net.minecraft.client.KeyMapping&gt;</code></div>
 <div class="col-second odd-row-color"><code><a href="#KEYS" class="member-name-link">KEYS</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block">Every picker key, in the order their presses are handled; each loader registers exactly these.</div>
+<div class="block">Every picker key, in the order their presses are handled; each loader registers exactly
+ these.</div>
 </div>
 <div class="col-first even-row-color"><code>static final net.minecraft.client.KeyMapping</code></div>
 <div class="col-second even-row-color"><code><a href="#LOCK" class="member-name-link">LOCK</a></code></div>
@@ -200,7 +201,8 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="KEYS">
 <h3>KEYS</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;net.minecraft.client.KeyMapping&gt;</span>&nbsp;<span class="element-name">KEYS</span></div>
-<div class="block">Every picker key, in the order their presses are handled; each loader registers exactly these.</div>
+<div class="block">Every picker key, in the order their presses are handled; each loader registers exactly
+ these.</div>
 </section>
 </li>
 </ul>
@@ -215,7 +217,8 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="consumePendingKeys()">
 <h3>consumePendingKeys</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">consumePendingKeys</span>()</div>
-<div class="block">Drain each picker key's click queue, routing presses to <code>handle(net.minecraft.client.KeyMapping)</code>. Call once per client tick.</div>
+<div class="block">Drain each picker key's click queue, routing presses to <code>handle(net.minecraft.client.KeyMapping)</code>. Call once per client
+ tick.</div>
 </section>
 </li>
 </ul>

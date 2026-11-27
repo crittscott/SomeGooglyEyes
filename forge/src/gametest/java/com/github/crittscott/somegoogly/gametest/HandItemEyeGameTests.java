@@ -8,9 +8,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
  */
 public final class HandItemEyeGameTests {
 
-
-    private HandItemEyeGameTests() {
-    }
+    private HandItemEyeGameTests() {}
 
     public static void handEyesFollowWorldGravityAcrossViews(GameTestHelper helper) {
         HandItemEyeGameTestsLogic.handEyesFollowWorldGravityAcrossViews(helper);

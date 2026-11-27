@@ -1,5 +1,9 @@
 package com.github.crittscott.somegoogly.client.command;
 
+import static com.github.crittscott.somegoogly.command.MaybeFloatArgumentType.angle;
+import static com.github.crittscott.somegoogly.command.MaybeFloatArgumentType.compact;
+import static com.github.crittscott.somegoogly.command.MaybeFloatArgumentType.position;
+
 import com.github.crittscott.somegoogly.client.picker.EyeDraft;
 import com.github.crittscott.somegoogly.client.picker.PickerExporter;
 import com.github.crittscott.somegoogly.client.picker.PickerState;
@@ -21,6 +25,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
@@ -29,18 +34,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import static com.github.crittscott.somegoogly.command.MaybeFloatArgumentType.angle;
-import static com.github.crittscott.somegoogly.command.MaybeFloatArgumentType.compact;
-import static com.github.crittscott.somegoogly.command.MaybeFloatArgumentType.position;
-
 /**
  * The {@code /sg} command tree — the in-game eye-placement CLI. Each loader registers the same
- * source-neutral Brigadier tree as <b>client</b> commands because the editing they drive lives entirely
- * in the client-side {@link PickerState}. Like the keyboard picker, they require creative mode and
- * permission level 2 ({@link PickerGate#mayUsePicker}).
+ * source-neutral Brigadier tree as <b>client</b> commands because the editing they drive lives
+ * entirely in the client-side {@link PickerState}. Like the keyboard picker, they require creative
+ * mode and permission level 2 ({@link PickerGate#mayUsePicker}).
  *
- * <p>The picker keyboard and this CLI
- * call the same {@link PickerState} methods, so they stay in lock-step.
+ * <p>The picker keyboard and this CLI call the same {@link PickerState} methods, so they stay in
+ * lock-step.
  *
  * <p>{@code export} sends the client-authored draft to the server. World-mutating commands such as
  * {@code spawn}, {@code spawnall}, and {@code mob} live directly in the server command tree.
@@ -48,29 +49,39 @@ import static com.github.crittscott.somegoogly.command.MaybeFloatArgumentType.po
 public class GooglyClientCommands {
 
     private static final DynamicCommandExceptionType BAD_CROSS_TARGET =
-            new DynamicCommandExceptionType(n -> Component.translatable("somegoogly.command.picker.bad_cross_target", n));
+            new DynamicCommandExceptionType(
+                    n -> Component.translatable("somegoogly.command.picker.bad_cross_target", n));
     private static final DynamicCommandExceptionType BAD_INDEX =
-            new DynamicCommandExceptionType(n -> Component.translatable("somegoogly.command.picker.bad_index", n));
+            new DynamicCommandExceptionType(
+                    n -> Component.translatable("somegoogly.command.picker.bad_index", n));
     private static final DynamicCommandExceptionType BAD_PART =
-            new DynamicCommandExceptionType(t -> Component.translatable("somegoogly.command.picker.bad_part", t));
+            new DynamicCommandExceptionType(
+                    t -> Component.translatable("somegoogly.command.picker.bad_part", t));
     private static final DynamicCommandExceptionType BAD_VARIANT =
-            new DynamicCommandExceptionType(n -> Component.translatable("somegoogly.command.picker.bad_variant", n));
+            new DynamicCommandExceptionType(
+                    n -> Component.translatable("somegoogly.command.picker.bad_variant", n));
     private static final SimpleCommandExceptionType CANT_DELETE_LAST_VARIANT =
-            new SimpleCommandExceptionType(Component.translatable("somegoogly.command.picker.cant_delete_last_variant"));
+            new SimpleCommandExceptionType(
+                    Component.translatable("somegoogly.command.picker.cant_delete_last_variant"));
     private static final SimpleCommandExceptionType NO_DRAFT =
-            new SimpleCommandExceptionType(Component.translatable("somegoogly.command.picker.no_draft"));
+            new SimpleCommandExceptionType(
+                    Component.translatable("somegoogly.command.picker.no_draft"));
     private static final SimpleCommandExceptionType NO_PART =
-            new SimpleCommandExceptionType(Component.translatable("somegoogly.command.picker.no_part"));
+            new SimpleCommandExceptionType(
+                    Component.translatable("somegoogly.command.picker.no_part"));
     private static final SimpleCommandExceptionType NOT_CHOSEN =
-            new SimpleCommandExceptionType(Component.translatable("somegoogly.command.picker.not_chosen"));
+            new SimpleCommandExceptionType(
+                    Component.translatable("somegoogly.command.picker.not_chosen"));
     private static final SimpleCommandExceptionType NOT_AUTHORIZED =
-            new SimpleCommandExceptionType(Component.translatable("somegoogly.command.picker.not_authorized"));
+            new SimpleCommandExceptionType(
+                    Component.translatable("somegoogly.command.picker.not_authorized"));
 
     /** The {@code /sg part} token that clears the current attachment instead of selecting one. */
     private static final String CLEAR_PART_TOKEN = "none";
 
     /** Appended to the selected eye or variant in {@code /sg list} output. */
-    private static final Component SELECTED_MARK = Component.translatable("somegoogly.picker.selected_mark");
+    private static final Component SELECTED_MARK =
+            Component.translatable("somegoogly.picker.selected_mark");
 
     private static int choose(CommandContext<?> ctx) throws CommandSyntaxException {
         requireAuthorized();
@@ -86,8 +97,7 @@ public class GooglyClientCommands {
         float y = FloatArgumentType.getFloat(ctx, "y");
         float z = FloatArgumentType.getFloat(ctx, "z");
         PickerState.createEye(x, y, z);
-        feedback("somegoogly.command.picker.created_eye",
-                position(x), position(y), position(z));
+        feedback("somegoogly.command.picker.created_eye", position(x), position(y), position(z));
         return 1;
     }
 
@@ -113,7 +123,9 @@ public class GooglyClientCommands {
         return 1;
     }
 
-    /** Exports the chosen mob's draft; {@code requireChosen} keeps it from firing at a stale target. */
+    /**
+     * Exports the chosen mob's draft; {@code requireChosen} keeps it from firing at a stale target.
+     */
     private static int export(CommandContext<?> ctx) throws CommandSyntaxException {
         requireAuthorized();
         requireChosen();
@@ -138,17 +150,30 @@ public class GooglyClientCommands {
         requireAuthorized();
         requireChosen();
         List<ListedEye> list = PickerState.currentEyes();
-        feedback("somegoogly.command.picker.eyes_header", PickerState.variantIndex() + 1, list.size());
+        feedback(
+                "somegoogly.command.picker.eyes_header",
+                PickerState.variantIndex() + 1,
+                list.size());
         for (int i = 0; i < list.size(); i++) {
             ListedEye le = list.get(i);
             EyeDraft e = le.eye;
             Component mark = i == PickerState.selectedIndex() ? SELECTED_MARK : Component.empty();
-            Component cross = e.crossTarget != EyePlacement.NO_CROSS_TARGET
-                    ? Component.translatable("somegoogly.picker.cross_target_mark", e.crossTarget + 1)
-                    : Component.empty();
-            feedback("somegoogly.command.picker.eye_entry", i + 1, le.part,
-                    position(e.position[0]), position(e.position[1]), position(e.position[2]),
-                    angle(e.inclination), angle(e.azimuth), cross, mark);
+            Component cross =
+                    e.crossTarget != EyePlacement.NO_CROSS_TARGET
+                            ? Component.translatable(
+                                    "somegoogly.picker.cross_target_mark", e.crossTarget + 1)
+                            : Component.empty();
+            feedback(
+                    "somegoogly.command.picker.eye_entry",
+                    i + 1,
+                    le.part,
+                    position(e.position[0]),
+                    position(e.position[1]),
+                    position(e.position[2]),
+                    angle(e.inclination),
+                    angle(e.azimuth),
+                    cross,
+                    mark);
         }
         return 1;
     }
@@ -170,7 +195,12 @@ public class GooglyClientCommands {
         for (int i = 0; i < PickerState.variantCount(); i++) {
             PickerState.DraftVariant v = PickerState.variants().get(i);
             Component mark = i == PickerState.variantIndex() ? SELECTED_MARK : Component.empty();
-            feedback("somegoogly.command.picker.variant_entry", i + 1, compact(v.weight), v.eyes.size(), mark);
+            feedback(
+                    "somegoogly.command.picker.variant_entry",
+                    i + 1,
+                    compact(v.weight),
+                    v.eyes.size(),
+                    mark);
         }
         return 1;
     }
@@ -179,12 +209,16 @@ public class GooglyClientCommands {
         requireAuthorized();
         requireChosen();
         requireDraft();
-        PickerState.setPosition(MaybeFloatArgumentType.get(ctx, "x"),
+        PickerState.setPosition(
+                MaybeFloatArgumentType.get(ctx, "x"),
                 MaybeFloatArgumentType.get(ctx, "y"),
                 MaybeFloatArgumentType.get(ctx, "z"));
         EyeDraft e = PickerState.currentEye();
-        feedback("somegoogly.command.picker.position",
-                position(e.position[0]), position(e.position[1]), position(e.position[2]));
+        feedback(
+                "somegoogly.command.picker.position",
+                position(e.position[0]),
+                position(e.position[1]),
+                position(e.position[2]));
         return 1;
     }
 
@@ -214,20 +248,26 @@ public class GooglyClientCommands {
         requireAuthorized();
         requireChosen();
         requireDraft();
-        PickerState.setPosition(MaybeFloatArgumentType.get(ctx, "x"),
+        PickerState.setPosition(
+                MaybeFloatArgumentType.get(ctx, "x"),
                 MaybeFloatArgumentType.get(ctx, "y"),
                 MaybeFloatArgumentType.get(ctx, "z"));
-        PickerState.setRotation(MaybeFloatArgumentType.get(ctx, "inclination"),
+        PickerState.setRotation(
+                MaybeFloatArgumentType.get(ctx, "inclination"),
                 MaybeFloatArgumentType.get(ctx, "azimuth"));
         EyeDraft e = PickerState.currentEye();
-        feedback("somegoogly.command.picker.posrot",
-                position(e.position[0]), position(e.position[1]), position(e.position[2]),
-                angle(e.inclination), angle(e.azimuth));
+        feedback(
+                "somegoogly.command.picker.posrot",
+                position(e.position[0]),
+                position(e.position[1]),
+                position(e.position[2]),
+                angle(e.inclination),
+                angle(e.azimuth));
         return 1;
     }
 
-    private static <S, T> LiteralArgumentBuilder<S> prop(String name, ArgumentType<T> type,
-                                                         Command<S> exec) {
+    private static <S, T> LiteralArgumentBuilder<S> prop(
+            String name, ArgumentType<T> type, Command<S> exec) {
         RequiredArgumentBuilder<S, T> v = RequiredArgumentBuilder.argument("v", type);
         v.executes(exec);
         return LiteralArgumentBuilder.<S>literal(name).then(v);
@@ -254,8 +294,10 @@ public class GooglyClientCommands {
         requireAuthorized();
         requireChosen();
         requireDraft();
-        PickerState.setCorneaColor(FloatArgumentType.getFloat(ctx, "r"),
-                FloatArgumentType.getFloat(ctx, "g"), FloatArgumentType.getFloat(ctx, "b"));
+        PickerState.setCorneaColor(
+                FloatArgumentType.getFloat(ctx, "r"),
+                FloatArgumentType.getFloat(ctx, "g"),
+                FloatArgumentType.getFloat(ctx, "b"));
         feedback("somegoogly.command.picker.cornea_set");
         return 1;
     }
@@ -286,7 +328,8 @@ public class GooglyClientCommands {
         requireDraft();
         boolean v = BoolArgumentType.getBool(ctx, "v");
         PickerState.setGlow(v);
-        feedback("somegoogly.command.picker.glow_set",
+        feedback(
+                "somegoogly.command.picker.glow_set",
                 Component.translatable(v ? "somegoogly.value.on" : "somegoogly.value.off"));
         return 1;
     }
@@ -295,8 +338,10 @@ public class GooglyClientCommands {
         requireAuthorized();
         requireChosen();
         requireDraft();
-        PickerState.setIrisColor(FloatArgumentType.getFloat(ctx, "r"),
-                FloatArgumentType.getFloat(ctx, "g"), FloatArgumentType.getFloat(ctx, "b"));
+        PickerState.setIrisColor(
+                FloatArgumentType.getFloat(ctx, "r"),
+                FloatArgumentType.getFloat(ctx, "g"),
+                FloatArgumentType.getFloat(ctx, "b"));
         feedback("somegoogly.command.picker.iris_set");
         return 1;
     }
@@ -312,6 +357,7 @@ public class GooglyClientCommands {
     }
 
     /** Build the {@code /sg} picker command tree into the given dispatcher. */
+    // spotless:off
     public static <S> void register(CommandDispatcher<S> dispatcher) {
         LiteralArgumentBuilder<S> sg = LiteralArgumentBuilder.literal(GooglyServerCommands.ROOT);
 
@@ -434,6 +480,7 @@ public class GooglyClientCommands {
 
         dispatcher.register(sg);
     }
+    // spotless:on
 
     private static void requireChosen() throws CommandSyntaxException {
         if (!PickerState.isActive() || PickerState.target() == null) {
@@ -441,7 +488,10 @@ public class GooglyClientCommands {
         }
     }
 
-    /** Guard the shaping verbs (move/rot/properties/save): they need a live draft, never auto-vivify one. */
+    /**
+     * Guard the shaping verbs (move/rot/properties/save): they need a live draft, never auto-vivify
+     * one.
+     */
     private static void requireDraft() throws CommandSyntaxException {
         if (!PickerState.hasDraft()) {
             throw NO_DRAFT.create();
@@ -456,21 +506,25 @@ public class GooglyClientCommands {
     }
 
     private static <S> RequiredArgumentBuilder<S, Float> rgb(Command<S> exec) {
-        RequiredArgumentBuilder<S, Float> bArg = RequiredArgumentBuilder.argument("b", FloatArgumentType.floatArg(0, 1));
+        RequiredArgumentBuilder<S, Float> bArg =
+                RequiredArgumentBuilder.argument("b", FloatArgumentType.floatArg(0, 1));
         bArg.executes(exec);
         return RequiredArgumentBuilder.<S, Float>argument("r", FloatArgumentType.floatArg(0, 1))
-                .then(RequiredArgumentBuilder.<S, Float>argument("g", FloatArgumentType.floatArg(0, 1)).then(bArg));
+                .then(
+                        RequiredArgumentBuilder.<S, Float>argument(
+                                        "g", FloatArgumentType.floatArg(0, 1))
+                                .then(bArg));
     }
 
     private static int rot(CommandContext<?> ctx) throws CommandSyntaxException {
         requireAuthorized();
         requireChosen();
         requireDraft();
-        PickerState.setRotation(MaybeFloatArgumentType.get(ctx, "inclination"),
+        PickerState.setRotation(
+                MaybeFloatArgumentType.get(ctx, "inclination"),
                 MaybeFloatArgumentType.get(ctx, "azimuth"));
         EyeDraft e = PickerState.currentEye();
-        feedback("somegoogly.command.picker.rotation",
-                angle(e.inclination), angle(e.azimuth));
+        feedback("somegoogly.command.picker.rotation", angle(e.inclination), angle(e.azimuth));
         return 1;
     }
 
@@ -481,8 +535,11 @@ public class GooglyClientCommands {
         if (!PickerState.save()) {
             throw NO_PART.create();
         }
-        feedback("somegoogly.command.picker.saved_eye",
-                PickerState.selectedIndex() + 1, PickerState.variantIndex() + 1, PickerState.currentEyeCount());
+        feedback(
+                "somegoogly.command.picker.saved_eye",
+                PickerState.selectedIndex() + 1,
+                PickerState.variantIndex() + 1,
+                PickerState.currentEyeCount());
         return 1;
     }
 
@@ -546,9 +603,14 @@ public class GooglyClientCommands {
         return 1;
     }
 
-    /** Add a child literal {@code name} to {@code root}, letting {@code config} build out its subtree. */
-    private static <S> void verb(LiteralArgumentBuilder<S> root, String name,
-                                 Consumer<LiteralArgumentBuilder<S>> config) {
+    /**
+     * Add a child literal {@code name} to {@code root}, letting {@code config} build out its
+     * subtree.
+     */
+    private static <S> void verb(
+            LiteralArgumentBuilder<S> root,
+            String name,
+            Consumer<LiteralArgumentBuilder<S>> config) {
         LiteralArgumentBuilder<S> node = LiteralArgumentBuilder.literal(name);
         config.accept(node);
         root.then(node);
