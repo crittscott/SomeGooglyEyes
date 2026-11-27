@@ -44,6 +44,8 @@ public final class PickerSpawnServiceGameTestsLogic {
      * over air and run {@code /sg spawnall minecraft}; mobs and their platforms continue beyond the
      * nearby chunk area instead of every remaining type being discarded at the first distant cell.
      */
+    // Shared 1.20.1 registry reads use the vanilla API backed by Forge registry wrappers.
+    @SuppressWarnings("deprecation")
     public static void bulkSpawnContinuesBeyondNearbyChunks(
             GameTestHelper helper, ServerPlayer player) {
         var originalPosition = player.position();
@@ -135,6 +137,8 @@ public final class PickerSpawnServiceGameTestsLogic {
      * untouched. The loader wrapper installs the refusing listener. No in-game form without a mod
      * that refuses spawns; guards that a refused spawn leaves terrain and head data as they were.
      */
+    // Shared 1.20.1 registry reads use the vanilla API backed by Forge registry wrappers.
+    @SuppressWarnings("deprecation")
     public static void refusedBulkSpawnLeavesTerrain(GameTestHelper helper, ServerPlayer player) {
         var originalPosition = player.position();
         float originalYaw = player.getYRot();

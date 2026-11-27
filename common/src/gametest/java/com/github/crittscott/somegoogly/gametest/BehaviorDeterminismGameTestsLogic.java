@@ -93,6 +93,8 @@ public final class BehaviorDeterminismGameTestsLogic {
 
     private static HeadInfo helperFor(GameTestHelper helper) {
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
+        // Shared 1.20.1 registry reads use the vanilla API backed by Forge registry wrappers.
+        @SuppressWarnings("deprecation")
         ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(cow.getType());
         return ServerEyeConfigs.resolve(type, cow.isBaby(), EyeState.getVariantRoll(cow));
     }

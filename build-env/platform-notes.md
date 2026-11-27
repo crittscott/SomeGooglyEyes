@@ -67,6 +67,8 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 
 ## Forge
 
+- 1.20.1: Forge marks `ResourceLocation`'s string constructors for removal to encourage porting to Minecraft 1.21's factories. Its backported `fromNamespaceAndPath` and `parse` methods simply call those same constructors. [source: [published ResourceLocation patch](https://github.com/MinecraftForge/MinecraftForge/blob/1.20.1/patches/minecraft/net/minecraft/resources/ResourceLocation.java.patch)]
+- 1.20.1: Forge deprecates `BuiltInRegistries.BLOCK` and `ENTITY_TYPE` in favor of `ForgeRegistries`, but initializes them through `GameData.getWrapper`; vanilla registry read operations use Forge-backed wrappers. [source: [published BuiltInRegistries patch](https://github.com/MinecraftForge/MinecraftForge/blob/1.20.1/patches/minecraft/net/minecraft/core/registries/BuiltInRegistries.java.patch)]
 - 1.20.1: Forge's `MushroomCow` patch moves cow creation into private `List<ItemStack> shearInternal(SoundSource)`; both `shear` and `onSheared` use that helper. The patch does not post a living-conversion event there. [source: [published 1.20.1 patch](https://github.com/MinecraftForge/MinecraftForge/blob/1.20.1/patches/minecraft/net/minecraft/world/entity/animal/MushroomCow.java.patch), unchanged on that branch since commit `d8c84e2949131999b797580805e3baf0e3c933e2`]
 - 1.20.1: `LivingDropsEvent` fires after the loot gate in `dropAllDeathLoot`, whatever `doMobLoot` says, because it also carries equipment drops. A listener must check the game rule itself. [tested]
 - 1.20.1: `LivingDamageEvent` fires from both `actuallyHurt` implementations. `LivingHealEvent` fires before the heal. [tested]
@@ -113,6 +115,7 @@ Upgrade the mark when a build or test settles a fact, and correct or delete a fa
 
 ## Architectury and Loom
 
+- 1.20.1: `JavaCompile` can use JDK 21 with `options.release = 17` while the project's Java 17 toolchain continues to launch Minecraft. All generated mod and GameTest classes target Java 17 (class-file major 61), and both loaders' GameTests pass on a Java 17 runtime. Override the task's compiler before Loom finalizes it during project configuration; an init script's `beforeProject` plus Java-plugin callback works, while `projectsEvaluated` is too late. [tested: stage-one compatibility probe, 191 Fabric and 196 Forge GameTests]
 - 1.20.1: common Mixins compile in `common/src/main/java` and need their own refmap, named `somegoogly-common.refmap.json` by `loom.mixin.defaultRefmapName` in common; each loader module's refmap covers only Mixins compiled there. The common Mixin config names no `refmap` key, so development runs resolve it by Mojang names; Architectury's production transforms add the refmap to the config, and Forge's transform rewrites it to SRG names, which Forge runs on. A wrong refmap surfaces only at runtime, so check a production-jar launch after changing this. [tested]
 - `@ExpectPlatform` needs a per-loader class, so its one-line forwarding is forced. [tested]
 - Forge receives the Fabric access widener converted to an access transformer at remap time; one file serves both loaders. [tested] Loom's `forge { convertAccessWideners = true; extraAccessWideners.add <widener name> }` does the conversion by filling `remapJar`'s `atAccessWideners`. [recalled]

@@ -50,8 +50,14 @@ public final class ConfigGameTestsLogic {
             // order, and an unmatched id must fall through to globalPercent.
             ServerConfig.ENTITY_OVERRIDES.set(List.of("minecraft:zombie,100", "minecraft:*,50"));
 
+            // Retain 1.20.1 identifier constructors; Forge's warning concerns porting to 1.21.
+            @SuppressWarnings("removal")
             int zombie = ServerConfig.percentFor(new ResourceLocation("minecraft", "zombie"));
+            // Retain 1.20.1 identifier constructors; Forge's warning concerns porting to 1.21.
+            @SuppressWarnings("removal")
             int cow = ServerConfig.percentFor(new ResourceLocation("minecraft", "cow"));
+            // Retain 1.20.1 identifier constructors; Forge's warning concerns porting to 1.21.
+            @SuppressWarnings("removal")
             int other = ServerConfig.percentFor(new ResourceLocation("examplemod", "thing"));
 
             helper.assertTrue(
@@ -158,6 +164,8 @@ public final class ConfigGameTestsLogic {
      * adult and baby zombies spawn with red irises.
      */
     public static void exactMinecraftGenerationIsSelected(GameTestHelper helper) {
+        // Retain 1.20.1 identifier constructors; Forge's warning concerns porting to 1.21.
+        @SuppressWarnings("removal")
         ResourceLocation id = new ResourceLocation("minecraft", "zombie");
         JsonElement json =
                 fileJson(
@@ -197,11 +205,19 @@ public final class ConfigGameTestsLogic {
             ServerConfig.GLOBAL_PERCENT.set(2);
             ServerConfig.ENTITY_OVERRIDES.set(List.of("*:*_horse,50", "minecraft:*,10"));
 
+            // Retain 1.20.1 identifier constructors; Forge's warning concerns porting to 1.21.
+            @SuppressWarnings("removal")
             int skeletonHorse =
                     ServerConfig.percentFor(new ResourceLocation("minecraft", "skeleton_horse"));
+            // Retain 1.20.1 identifier constructors; Forge's warning concerns porting to 1.21.
+            @SuppressWarnings("removal")
             int zombie = ServerConfig.percentFor(new ResourceLocation("minecraft", "zombie"));
+            // Retain 1.20.1 identifier constructors; Forge's warning concerns porting to 1.21.
+            @SuppressWarnings("removal")
             int moddedHorse =
                     ServerConfig.percentFor(new ResourceLocation("examplemod", "fancy_horse"));
+            // Retain 1.20.1 identifier constructors; Forge's warning concerns porting to 1.21.
+            @SuppressWarnings("removal")
             int other = ServerConfig.percentFor(new ResourceLocation("examplemod", "thing"));
 
             helper.assertTrue(
@@ -265,6 +281,8 @@ public final class ConfigGameTestsLogic {
      * server log reports the dragon file refused.
      */
     public static void reloadHardExcludesEnderDragon(GameTestHelper helper) {
+        // Retain 1.20.1 identifier constructors; Forge's warning concerns porting to 1.21.
+        @SuppressWarnings("removal")
         ResourceLocation zombie = new ResourceLocation("minecraft", "zombie");
         Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
         try {
@@ -322,6 +340,8 @@ public final class ConfigGameTestsLogic {
      * spawn without eyes.
      */
     public static void reloadRejectsFileWithMalformedEntry(GameTestHelper helper) {
+        // Retain 1.20.1 identifier constructors; Forge's warning concerns porting to 1.21.
+        @SuppressWarnings("removal")
         ResourceLocation zombie = new ResourceLocation("minecraft", "zombie");
         String noVersion = "{ \"age\": \"adult\", \"enabled\": true, \"variants\": [] }";
         Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
@@ -349,8 +369,14 @@ public final class ConfigGameTestsLogic {
      * first entry.
      */
     public static void reloadToleratesBadFilesAndDuplicates(GameTestHelper helper) {
+        // Retain 1.20.1 identifier constructors; Forge's warning concerns porting to 1.21.
+        @SuppressWarnings("removal")
         ResourceLocation zombie = new ResourceLocation("minecraft", "zombie");
+        // Retain 1.20.1 identifier constructors; Forge's warning concerns porting to 1.21.
+        @SuppressWarnings("removal")
         ResourceLocation creeper = new ResourceLocation("minecraft", "creeper");
+        // Retain 1.20.1 identifier constructors; Forge's warning concerns porting to 1.21.
+        @SuppressWarnings("removal")
         ResourceLocation skeleton = new ResourceLocation("minecraft", "skeleton");
         Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
         try {
@@ -390,6 +416,8 @@ public final class ConfigGameTestsLogic {
      * "[1.16,1.17)"}, run {@code /reload}, and zombies still spawn with those eyes.
      */
     public static void reloadFallsBackToNearestGeneration(GameTestHelper helper) {
+        // Retain 1.20.1 identifier constructors; Forge's warning concerns porting to 1.21.
+        @SuppressWarnings("removal")
         ResourceLocation zombie = new ResourceLocation("minecraft", "zombie");
         Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
         try {
@@ -411,6 +439,8 @@ public final class ConfigGameTestsLogic {
      * /reload} again, and every eye resets to the new definition.
      */
     public static void reloadReplacesConfigsOnlyOnContentChange(GameTestHelper helper) {
+        // Retain 1.20.1 identifier constructors; Forge's warning concerns porting to 1.21.
+        @SuppressWarnings("removal")
         ResourceLocation zombie = new ResourceLocation("minecraft", "zombie");
         Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
         try {

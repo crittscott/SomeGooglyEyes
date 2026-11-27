@@ -44,7 +44,7 @@ import javax.annotation.Nullable;
  * behavior: each sits on top of whatever plays. A sleeping entity starts no new behavior whether or
  * not its squint is on.
  */
-public class GooglyTracker {
+public final class GooglyTracker {
     // Reused each tick on the single client tick thread (one tracker updated at a time), so folding
     // the active behavior into the simulation allocates nothing per tick.
     private static final EyeInfluence INFLUENCE = new EyeInfluence();

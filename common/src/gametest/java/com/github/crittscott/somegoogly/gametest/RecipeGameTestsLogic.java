@@ -39,10 +39,18 @@ import java.util.Optional;
  */
 public final class RecipeGameTestsLogic {
 
+    // Retain 1.20.1 identifier constructors; Forge's warning concerns porting to 1.21.
+    @SuppressWarnings("removal")
     private static final ResourceLocation EYE_MODIFIER =
             new ResourceLocation(SomeGooglyCommon.MOD_ID, "eye_modifier");
+
+    // Retain 1.20.1 identifier constructors; Forge's warning concerns porting to 1.21.
+    @SuppressWarnings("removal")
     private static final ResourceLocation SLIMY_EYE =
             new ResourceLocation(SomeGooglyCommon.MOD_ID, "slimy_eye");
+
+    // Retain 1.20.1 identifier constructors; Forge's warning concerns porting to 1.21.
+    @SuppressWarnings("removal")
     private static final ResourceLocation SLIMY_EYE_ADVANCEMENT =
             new ResourceLocation(SomeGooglyCommon.MOD_ID, "recipes/misc/slimy_eye");
 

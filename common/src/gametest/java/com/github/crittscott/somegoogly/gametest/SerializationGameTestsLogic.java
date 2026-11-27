@@ -258,6 +258,8 @@ public final class SerializationGameTestsLogic {
      * server encoded, and a full modpack's set fits its budgets. No in-game form; guards that
      * joining clients draw the same eyes the server's datapacks define.
      */
+    // Retain 1.20.1 identifier constructors; Forge's warning concerns porting to 1.21.
+    @SuppressWarnings("removal")
     public static void configSyncPacketRoundTrips(GameTestHelper helper) {
         Map<ResourceLocation, RuntimeConfigSet> configs =
                 Map.of(new ResourceLocation("minecraft", "cow"), sampleConfigSet());
@@ -549,6 +551,8 @@ public final class SerializationGameTestsLogic {
      * age is refused on decode. No in-game form; guards that {@code /sg export} delivers exactly
      * the definition the client authored.
      */
+    // Retain 1.20.1 identifier constructors; Forge's warning concerns porting to 1.21.
+    @SuppressWarnings("removal")
     public static void pickerExportPacketRoundTrips(GameTestHelper helper) {
         CompoundTag config = new CompoundTag();
         config.putBoolean("enabled", true);
@@ -699,6 +703,8 @@ public final class SerializationGameTestsLogic {
     }
 
     /** A compressed config-sync fixture carrying {@code set} for one entity. */
+    // Retain 1.20.1 identifier constructors; Forge's warning concerns porting to 1.21.
+    @SuppressWarnings("removal")
     private static FriendlyByteBuf singleConfigPayload(
             GameTestHelper helper, RuntimeConfigSet set) {
         FriendlyByteBuf buffer = buffer(helper);

@@ -758,6 +758,8 @@ public final class BehaviorSchedulerGameTestsLogic {
     }
 
     private static HeadInfo headInfo(GameTestHelper helper, LivingEntity mob) {
+        // Shared 1.20.1 registry reads use the vanilla API backed by Forge registry wrappers.
+        @SuppressWarnings("deprecation")
         ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(mob.getType());
         HeadInfo headInfo =
                 ServerEyeConfigs.resolve(type, mob.isBaby(), EyeState.getVariantRoll(mob));
@@ -1357,6 +1359,8 @@ public final class BehaviorSchedulerGameTestsLogic {
      */
     public static void sleepingVillagerClosesLids(GameTestHelper helper) {
         Villager villager = helper.spawnWithNoFreeWill(EntityType.VILLAGER, new BlockPos(2, 2, 2));
+        // Shared 1.20.1 registry reads use the vanilla API backed by Forge registry wrappers.
+        @SuppressWarnings("deprecation")
         ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(villager.getType());
         HeadInfo headInfo =
                 ServerEyeConfigs.resolve(
@@ -1437,6 +1441,8 @@ public final class BehaviorSchedulerGameTestsLogic {
      */
     public static void swellingCreeperRattles(GameTestHelper helper) {
         Creeper creeper = helper.spawnWithNoFreeWill(EntityType.CREEPER, new BlockPos(2, 2, 2));
+        // Shared 1.20.1 registry reads use the vanilla API backed by Forge registry wrappers.
+        @SuppressWarnings("deprecation")
         ResourceLocation type = BuiltInRegistries.ENTITY_TYPE.getKey(creeper.getType());
         HeadInfo headInfo =
                 ServerEyeConfigs.resolve(type, creeper.isBaby(), EyeState.getVariantRoll(creeper));

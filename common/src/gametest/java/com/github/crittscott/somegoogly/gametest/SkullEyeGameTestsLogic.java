@@ -99,6 +99,8 @@ public final class SkullEyeGameTestsLogic {
         Snapshot snapshot = new Snapshot(true, 0F, AppearanceOverride.EMPTY);
         int[] parts = SkullEyeState.headParts(entity, layout);
         helper.assertTrue(parts.length == 1, "the skull renders the single-eye layout");
+        // Match the position-based seed calculation retained in 1.20.1 production rendering.
+        @SuppressWarnings("deprecation")
         long seed = Mth.getSeed(new BlockPos(1, 2, 3));
         var watched = PresentationEyes.placedHead(seed, entity, snapshot, layout, parts);
         var returning = PresentationEyes.placedHead(seed, entity, snapshot, layout, parts);
@@ -526,6 +528,8 @@ public final class SkullEyeGameTestsLogic {
     }
 
     /** The Heads mod's block {@code path}; fails the test when that mod isn't loaded. */
+    // Shared 1.20.1 registry reads use the vanilla API backed by Forge registry wrappers.
+    @SuppressWarnings("deprecation")
     private static Block headsBlock(GameTestHelper helper, String path) {
         ResourceLocation id = headsId(path);
         helper.assertTrue(
@@ -533,6 +537,8 @@ public final class SkullEyeGameTestsLogic {
         return BuiltInRegistries.BLOCK.get(id);
     }
 
+    // Retain 1.20.1 identifier constructors; Forge's warning concerns porting to 1.21.
+    @SuppressWarnings("removal")
     private static ResourceLocation headsId(String path) {
         return new ResourceLocation(SkullEyeState.HEADS_NAMESPACE, path);
     }
@@ -543,6 +549,8 @@ public final class SkullEyeGameTestsLogic {
      * at a placed Heads cow head, then at a wall-mounted one; both report that they can have eyes.
      * A Heads squid head can also have eyes.
      */
+    // Retain 1.20.1 identifier constructors; Forge's warning concerns porting to 1.21.
+    @SuppressWarnings("removal")
     public static void headsModBlocksMapToTheirMobs(GameTestHelper helper) {
         Map<String, EntityType<?>> expected =
                 Map.of(

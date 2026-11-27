@@ -67,6 +67,8 @@ public final class EligibilityGameTestsLogic {
         var original = ServerEyeConfigs.all();
         var overrides = ServerConfig.ENTITY_OVERRIDES.get();
         boolean enabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
+        // Shared 1.20.1 registry reads use the vanilla API backed by Forge registry wrappers.
+        @SuppressWarnings("deprecation")
         ResourceLocation cowId = BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW);
         try {
             ServerConfig.GOOGLY_EYES_ENABLED.set(true);
@@ -120,6 +122,8 @@ public final class EligibilityGameTestsLogic {
      * and rejoin the world; the eyed cows keep their eyes in the same places.
      */
     public static void naturalDecisionRespectsMasterToggleAndIsOneShot(GameTestHelper helper) {
+        // Shared 1.20.1 registry reads use the vanilla API backed by Forge registry wrappers.
+        @SuppressWarnings("deprecation")
         ResourceLocation cowId = BuiltInRegistries.ENTITY_TYPE.getKey(EntityType.COW);
         Map<ResourceLocation, RuntimeConfigSet> originalConfigs = ServerEyeConfigs.all();
         boolean originalEnabled = ServerConfig.GOOGLY_EYES_ENABLED.get();
@@ -176,6 +180,8 @@ public final class EligibilityGameTestsLogic {
      * googlyEyesEnabled = false} (refused, item kept); and an eyeless cow with it {@code true} (the
      * cow gains red-iris eyes and one Slimy Eye is used).
      */
+    // Shared 1.20.1 registry reads use the vanilla API backed by Forge registry wrappers.
+    @SuppressWarnings("deprecation")
     public static void slimyEyeAppliesOnlyToEligibleTargets(GameTestHelper helper, Player player) {
         // The loader's shared fake player takes the server's default game mode, and creative skips
         // both the consumption and the durability cost this test checks.
@@ -250,6 +256,8 @@ public final class EligibilityGameTestsLogic {
      * the stack. In game: in creative, right-click an eyeless cow with a Slimy Eye; the cow gains
      * eyes and the stack count does not change.
      */
+    // Shared 1.20.1 registry reads use the vanilla API backed by Forge registry wrappers.
+    @SuppressWarnings("deprecation")
     public static void slimyEyeCreativeApplicationDoesNotConsume(
             GameTestHelper helper, Player player) {
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
@@ -283,6 +291,8 @@ public final class EligibilityGameTestsLogic {
      * and the cow's eyes stay red and in place. Right-click an eyed horse with a Slimy Eye in hand;
      * you mount it.
      */
+    // Shared 1.20.1 registry reads use the vanilla API backed by Forge registry wrappers.
+    @SuppressWarnings("deprecation")
     public static void slimyEyeRefusesAnAlreadyEyedTarget(GameTestHelper helper, Player player) {
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
         EyeColor red = new EyeColor(1F, 0F, 0F);
@@ -327,6 +337,8 @@ public final class EligibilityGameTestsLogic {
      * shears and put them back with a Slimy Eye, over and over; usually the eyes land on its head,
      * but now and then on its rear.
      */
+    // Shared 1.20.1 registry reads use the vanilla API backed by Forge registry wrappers.
+    @SuppressWarnings("deprecation")
     public static void slimyEyeRerollsThePlacementVariant(GameTestHelper helper, Player player) {
         Cow cow = helper.spawnWithNoFreeWill(EntityType.COW, new BlockPos(2, 2, 2));
 
@@ -366,6 +378,8 @@ public final class EligibilityGameTestsLogic {
      * or a block, and nothing happens either; sneak and right-click the air, and you have eyes
      * (visible in third person) and the Slimy Eye is used.
      */
+    // Shared 1.20.1 registry reads use the vanilla API backed by Forge registry wrappers.
+    @SuppressWarnings("deprecation")
     public static void slimyEyeSelfApplyRequiresSneak(GameTestHelper helper, Player player) {
         Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
         BlockPos wall = new BlockPos(2, 3, 5);

@@ -78,6 +78,9 @@ public final class BoatEyeGameTestsLogic {
                 }
                 helper.assertTrue(
                         !EyeState.hasEyes(boat), "placement never gives a boat random eyes");
+                // Shared 1.20.1 registry reads use the vanilla API backed by Forge registry
+                // wrappers.
+                @SuppressWarnings("deprecation")
                 var config =
                         ServerEyeConfigs.get(BuiltInRegistries.ENTITY_TYPE.getKey(type), false);
                 helper.assertTrue(

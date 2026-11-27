@@ -130,6 +130,9 @@ public final class TwilightHeadGameTests {
                 "Twilight Forest is missing from the GameTest run");
     }
 
+    // Retain 1.20.1 identifier constructors; Forge's warning concerns porting to 1.21.
+    // These 1.20.1 registry reads use the vanilla API backed by Forge registry wrappers.
+    @SuppressWarnings({"deprecation", "removal"})
     private static Block twilightBlock(String path) {
         return BuiltInRegistries.BLOCK.get(new ResourceLocation("twilightforest", path));
     }

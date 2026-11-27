@@ -133,7 +133,11 @@ public final class PickerExportGameTestsLogic {
      */
     public static void draftsRetainSpeciesAndAge(GameTestHelper helper) {
         PickerState.DraftSession session = new PickerState.DraftSession();
+        // Retain 1.20.1 identifier constructors; Forge's warning concerns porting to 1.21.
+        @SuppressWarnings("removal")
         ResourceLocation cow = new ResourceLocation("cow");
+        // Retain 1.20.1 identifier constructors; Forge's warning concerns porting to 1.21.
+        @SuppressWarnings("removal")
         ResourceLocation sheep = new ResourceLocation("sheep");
         PickerState.Draft adult = session.select(cow, false, () -> draft(1F));
         adult.variants().get(0).eyes.get(0).eye.position[0] = 4F;
@@ -296,6 +300,8 @@ public final class PickerExportGameTestsLogic {
      * server disconnecting you, while an ordinary config exports normally.
      */
     public static void exportPacketRefusesOversizedConfig(GameTestHelper helper) {
+        // Retain 1.20.1 identifier constructors; Forge's warning concerns porting to 1.21.
+        @SuppressWarnings("removal")
         ResourceLocation cow = new ResourceLocation("minecraft", "cow");
         CompoundTag small = new CompoundTag();
         small.putBoolean("enabled", true);
@@ -322,6 +328,8 @@ public final class PickerExportGameTestsLogic {
                         .encodeStart(NbtOps.INSTANCE, new RuntimeConfig())
                         .result()
                         .orElseThrow();
+        // Retain 1.20.1 identifier constructors; Forge's warning concerns porting to 1.21.
+        @SuppressWarnings("removal")
         Component result =
                 PickerExportService.export(
                         server(helper),
@@ -342,6 +350,8 @@ public final class PickerExportGameTestsLogic {
      * in-game form with an unmodified client; guards the server against a forged export packet.
      */
     public static void exportRejectsEmptyPayloadAsMalformed(GameTestHelper helper) {
+        // Retain 1.20.1 identifier constructors; Forge's warning concerns porting to 1.21.
+        @SuppressWarnings("removal")
         Component result =
                 PickerExportService.export(
                         server(helper),
@@ -363,6 +373,8 @@ public final class PickerExportGameTestsLogic {
      * choose the dragon in the picker; guards the server against a forged export packet.
      */
     public static void exportRejectsEnderDragon(GameTestHelper helper) {
+        // Retain 1.20.1 identifier constructors; Forge's warning concerns porting to 1.21.
+        @SuppressWarnings("removal")
         Component result =
                 PickerExportService.export(
                         server(helper),
@@ -388,6 +400,8 @@ public final class PickerExportGameTestsLogic {
         CompoundTag garbage = new CompoundTag();
         garbage.putBoolean("enabled", true);
         garbage.putString("variants", "not a list");
+        // Retain 1.20.1 identifier constructors; Forge's warning concerns porting to 1.21.
+        @SuppressWarnings("removal")
         Component result =
                 PickerExportService.export(
                         server(helper),
@@ -409,6 +423,8 @@ public final class PickerExportGameTestsLogic {
      * client, which exports only mobs that exist; guards the server against a forged export packet.
      */
     public static void exportRejectsUnknownEntityType(GameTestHelper helper) {
+        // Retain 1.20.1 identifier constructors; Forge's warning concerns porting to 1.21.
+        @SuppressWarnings("removal")
         ResourceLocation type = new ResourceLocation("somegoogly", "not_a_real_mob");
         Component result =
                 PickerExportService.export(
@@ -466,6 +482,8 @@ public final class PickerExportGameTestsLogic {
         Tag encoded =
                 RuntimeConfig.CODEC.encodeStart(NbtOps.INSTANCE, config).result().orElseThrow();
 
+        // Retain 1.20.1 identifier constructors; Forge's warning concerns porting to 1.21.
+        @SuppressWarnings("removal")
         Component result =
                 PickerExportService.export(
                         server(helper),
@@ -488,6 +506,8 @@ public final class PickerExportGameTestsLogic {
      * EyeConfigLimits#MAX_TOTAL_EYES_PER_SYNC} eyes; then one more exported eye reports the unsafe
      * payload in chat, and no file appears in the world's {@code somegoogly-picker} pack.
      */
+    // Retain 1.20.1 identifier constructors; Forge's warning concerns porting to 1.21.
+    @SuppressWarnings("removal")
     public static void exportRejectsWhatTheSyncCouldNotCarry(GameTestHelper helper) {
         HeadConfig head = new HeadConfig();
         head.attachPoint = "head";
