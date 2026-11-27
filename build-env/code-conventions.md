@@ -43,6 +43,26 @@ Read code-review-decisions.md before applying a general rule to accepted behavio
 - Trust our code and platform and mod contracts unless the relevant behavior is known to be unreliable or unguaranteed. Guard actual boundaries, including filesystem and reflection failures; do not invent speculative failure paths. Network peers remain untrusted.
 - Review deprecated API uses against the checkout's fixed target and dependency versions. When retaining an API is deliberate, use the specific @SuppressWarnings category on the smallest practical declaration and explain the reason beside it; keep warnings enabled in the build.
 
+## Compiler warnings and framework annotations
+
+Use Java's `@SuppressWarnings("CheckName")` on the smallest practical declaration, with the positive reason beside it. Combine names in one annotation when necessary, preserving existing names. Keep the checks enabled in the build; framework involvement alone does not establish that a finding is benign. Error Prone's advisory review policy is recorded in `code-review-decisions.md`.
+
+These recurring Minecraft framework cases have established reasons for local suppression when the described conditions hold:
+
+| Suppression name | When it applies |
+| --- | --- |
+| `UnusedMethod` | A Mixin injector is invoked through transformation rather than an ordinary Java caller. Also applies to the required constructor of an intentionally uninstantiated `RenderType` subclass used only to expose protected render states. Keep the actual injection annotation or subclass purpose visible. |
+| `UnusedVariable` | Unused parameters preserve a Mixin handler's injection signature. Retain the signature; remove unused parameters from ordinary private helpers and their callers instead of suppressing them. |
+| `DoNotCallSuggester` | An `@ExpectPlatform` stub throws only because Architectury replaces its body with the loader implementation. These methods are meant to be called; do not add the suggested `@DoNotCall`. |
+| `deprecation`, `removal` | A reviewed API is intentionally retained for the checkout's fixed Minecraft and dependency versions. Name that version-specific reason locally; do not assume every deprecated API is harmless. |
+
+Other accepted suppressions require evidence specific to the declaration:
+
+- `ArrayRecordComponent`: a rendering bundle owns arrays whose consumers only read them, whose direct array use serves the draw path, and whose generated value equality is unused. Explain those ownership and usage facts; do not suppress this for every record containing an array.
+- `ImmutableEnumChecker`: a retained external value is established to be immutable despite missing the checker's annotation, or the enum deliberately references central live configuration rather than owning changing behavior state. Explain the particular field; never mark a mutable config class `@Immutable` to silence the check.
+- `ReferenceEquality`: review each comparison for the exact meaning of equality. Live owners, installed snapshots, and model bones can require object identity; a registry comparison requires its own registered-object rationale. Do not replace identity with `equals` mechanically or suppress the check across a class or package merely because this is a mod.
+- Mixin processor `target`: only for a verified loader-added target absent from common's compile classpath, with its exact descriptor and supporting platform evidence recorded. It must not hide an unverified or broken injection. Consult the checkout's `platform-notes.md`.
+
 ## Removing what is not needed
 
 - When the last reader of a parameter, field, or branch goes, it goes too.
