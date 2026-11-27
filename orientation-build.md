@@ -48,6 +48,8 @@ The root project applies Spotless to the Java sources under `common/src`, `fabri
 
 Compiler analysis is opt-in for all production and GameTest source sets. `-Pquality=compiler` enables `-Xlint:all` with Java 17. `-Pquality=errorprone` adds Error Prone's default checks, using JDK 21 with `--release 17`, treating checker errors as warnings and reporting up to 1,000 compiler warnings. Game execution remains on Java 17; there is no `-Werror` or source rewriting. Unsupported quality values fail configuration; omitting the property uses ordinary Java 17 compilation.
 
+Error Prone is a routine advisory check alongside Spotless; local exceptions follow `code-conventions.md`.
+
 Run `.\gradlew.bat compileJava compileGametestJava -Pquality=errorprone` to check production and GameTest sources. Only this mode applies the Error Prone plugin to subprojects and adds its core to the existing processor paths plus its annotations to each source set's compile-only classpath. Mixin processing and refmaps remain enabled; `test` and `gametest` are marked as test code. Compiler/tool arguments are task inputs, so mode changes invalidate compilation; add `--rerun-tasks` to repeat an unchanged run. Error Prone dependencies are not bundled or required at game runtime.
 
 ## Exact build versions
