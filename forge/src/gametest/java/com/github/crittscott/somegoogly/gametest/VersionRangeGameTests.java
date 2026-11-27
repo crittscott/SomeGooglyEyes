@@ -8,8 +8,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
  */
 public final class VersionRangeGameTests {
 
-    private VersionRangeGameTests() {
-    }
+    private VersionRangeGameTests() {}
 
     public static void exactVersionMatchesOnlyItself(GameTestHelper helper) {
         VersionRangeGameTestsLogic.exactVersionMatchesOnlyItself(helper);
@@ -38,7 +37,6 @@ public final class VersionRangeGameTests {
     public static void nearestHandlesExactAndMalformedDeclarations(GameTestHelper helper) {
         VersionRangeGameTestsLogic.nearestHandlesExactAndMalformedDeclarations(helper);
     }
-
 
     public static void shorterVersionPadsWithZero(GameTestHelper helper) {
         VersionRangeGameTestsLogic.shorterVersionPadsWithZero(helper);

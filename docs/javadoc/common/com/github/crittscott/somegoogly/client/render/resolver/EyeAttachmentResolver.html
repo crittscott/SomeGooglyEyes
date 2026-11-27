@@ -100,14 +100,14 @@ extends <a href="ModelMemo.Resolver.html" title="interface in com.github.crittsc
  attachment part, so eyes can be drawn relative to it.
 
  <p>Different model frameworks expose their part trees differently (see <a href="RootModelResolver.html" title="class in com.github.crittscott.somegoogly.client.render.resolver"><code>RootModelResolver</code></a>,
- <a href="AdvancedModelBoxResolver.html" title="class in com.github.crittscott.somegoogly.client.render.resolver"><code>AdvancedModelBoxResolver</code></a>, and <a href="LLibraryResolver.html" title="class in com.github.crittscott.somegoogly.client.render.resolver"><code>LLibraryResolver</code></a>); each converges on
- the same contract here. Implementations must use <b>obfuscation-safe</b> handles only — string part
- names walked from a stable entry point / positional root indices, never obfuscated field names.
+ <a href="AdvancedModelBoxResolver.html" title="class in com.github.crittscott.somegoogly.client.render.resolver"><code>AdvancedModelBoxResolver</code></a>, and <a href="LLibraryResolver.html" title="class in com.github.crittscott.somegoogly.client.render.resolver"><code>LLibraryResolver</code></a>); each converges on the same
+ contract here. Implementations must use <b>obfuscation-safe</b> handles only — string part names
+ walked from a stable entry point / positional root indices, never obfuscated field names.
 
- <p>The work splits in two. <a href="#resolve(net.minecraft.client.model.EntityModel,java.lang.String)"><code>resolve(net.minecraft.client.model.EntityModel&lt;?&gt;, java.lang.String)</code></a> searches the model's part tree by string name and is the
- expensive half; <a href="#toAttachmentSpace(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.model.EntityModel,java.lang.String,boolean)"><code>toAttachmentSpace(com.mojang.blaze3d.vertex.PoseStack, net.minecraft.client.model.EntityModel&lt;?&gt;, java.lang.String, boolean)</code></a> replays the <a href="Attachment.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver"><code>Attachment</code></a> it produced onto the pose and
- is the per-frame half. The split is what lets <code>Resolvers.ATTACHMENTS</code> memoize the search: a model
- is a singleton and a token names the same part within it forever.</div>
+ <p>The work splits in two. <a href="#resolve(net.minecraft.client.model.EntityModel,java.lang.String)"><code>resolve(net.minecraft.client.model.EntityModel&lt;?&gt;, java.lang.String)</code></a> searches the model's part tree by string name and is
+ the expensive half; <a href="#toAttachmentSpace(com.mojang.blaze3d.vertex.PoseStack,net.minecraft.client.model.EntityModel,java.lang.String,boolean)"><code>toAttachmentSpace(com.mojang.blaze3d.vertex.PoseStack, net.minecraft.client.model.EntityModel&lt;?&gt;, java.lang.String, boolean)</code></a> replays the <a href="Attachment.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver"><code>Attachment</code></a> it produced onto
+ the pose and is the per-frame half. The split is what lets <code>Resolvers.ATTACHMENTS</code> memoize
+ the search: a model is a singleton and a token names the same part within it forever.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -143,9 +143,9 @@ extends <a href="ModelMemo.Resolver.html" title="interface in com.github.crittsc
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#canonicalToken(net.minecraft.client.model.EntityModel,java.lang.String)" class="member-name-link">canonicalToken</a><wbr>(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;storedToken)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
-<div class="block">Translate a (possibly differently-spelled or partial) stored attach token into the <i>canonical</i>
- path token this resolver would enumerate for the same part — the single vocabulary the picker, HUD,
- and exported configs all speak.</div>
+<div class="block">Translate a (possibly differently-spelled or partial) stored attach token into the
+ <i>canonical</i> path token this resolver would enumerate for the same part — the single
+ vocabulary the picker, HUD, and exported configs all speak.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#clearModelCache()" class="member-name-link">clearModelCache</a>()</code></div>
@@ -155,7 +155,8 @@ extends <a href="ModelMemo.Resolver.html" title="interface in com.github.crittsc
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#enumerateParts(net.minecraft.client.model.EntityModel)" class="member-name-link">enumerateParts</a><wbr>(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
-<div class="block">List selectable attachment tokens for this model, in a stable order (used by the part picker).</div>
+<div class="block">List selectable attachment tokens for this model, in a stable order (used by the part
+ picker).</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#handles(net.minecraft.client.model.EntityModel)" class="member-name-link">handles</a><wbr>(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model)</code></div>
@@ -165,21 +166,23 @@ extends <a href="ModelMemo.Resolver.html" title="interface in com.github.crittsc
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#normalize(java.lang.String)" class="member-name-link">normalize</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;s)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1">
-<div class="block">Normalizes a single token/part-name segment so camelCase field names match snake_case child-map keys.</div>
+<div class="block">Normalizes a single token/part-name segment so camelCase field names match snake_case
+ child-map keys.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#pathMatches(java.lang.String,java.lang.String)" class="member-name-link">pathMatches</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;storedToken,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;candidatePath)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
-<div class="block">Whether <code>candidatePath</code> ends with <code>storedToken</code> (a normalized <b>suffix</b> match over
- path segments).</div>
+<div class="block">Whether <code>candidatePath</code> ends with <code>storedToken</code> (a normalized <b>suffix</b> match
+ over path segments).</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="Attachment.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">Attachment</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#resolve(net.minecraft.client.model.EntityModel,java.lang.String)" class="member-name-link">resolve</a><wbr>(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;partToken)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Find the part <code>partToken</code> names and return the transforms that reach it, or <code>null</code> when
- the model has no such part (an unknown token, or a model whose worn variant lacks it).</div>
+<div class="block">Find the part <code>partToken</code> names and return the transforms that reach it, or <code>
+ null</code> when the model has no such part (an unknown token, or a model whose worn variant lacks
+ it).</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#segments(java.lang.String)" class="member-name-link">segments</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;token)</code></div>
@@ -192,9 +195,8 @@ extends <a href="ModelMemo.Resolver.html" title="interface in com.github.crittsc
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;partToken,
  boolean&nbsp;young)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
-<div class="block">Move <code>poseStack</code> into the named part's current (this-frame, post-animation) space, first
- reproducing any whole-model transform the model applies outside its part tree
- (<a href="../../compat/ThirdPartyModelWraps.html" title="class in com.github.crittscott.somegoogly.client.compat"><code>ThirdPartyModelWraps</code></a>).</div>
+<div class="block">Move <code>poseStack</code> into the named part's current (this-frame, post-animation) space,
+ first reproducing any whole-model transform the model applies outside its part tree (<a href="../../compat/ThirdPartyModelWraps.html" title="class in com.github.crittscott.somegoogly.client.compat"><code>ThirdPartyModelWraps</code></a>).</div>
 </div>
 </div>
 </div>
@@ -229,8 +231,8 @@ extends <a href="ModelMemo.Resolver.html" title="interface in com.github.crittsc
 <section class="detail" id="enumerateParts(net.minecraft.client.model.EntityModel)">
 <h3>enumerateParts</h3>
 <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">enumerateParts</span><wbr><span class="parameters">(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model)</span></div>
-<div class="block">List selectable attachment tokens for this model, in a stable order (used by the part picker).
- Default: none (the resolver doesn't support enumeration / picker authoring).</div>
+<div class="block">List selectable attachment tokens for this model, in a stable order (used by the part
+ picker). Default: none (the resolver doesn't support enumeration / picker authoring).</div>
 </section>
 </li>
 <li>
@@ -238,15 +240,15 @@ extends <a href="ModelMemo.Resolver.html" title="interface in com.github.crittsc
 <h3>canonicalToken</h3>
 <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">canonicalToken</span><wbr><span class="parameters">(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;storedToken)</span></div>
-<div class="block">Translate a (possibly differently-spelled or partial) stored attach token into the <i>canonical</i>
- path token this resolver would enumerate for the same part — the single vocabulary the picker, HUD,
- and exported configs all speak. That is the full slash path (<code>root/body/head</code>), with a
- positional segment (<code>#N</code>) only where a part has no obfuscation-stable name. Returns the token
- unchanged when it can't be resolved to a part (so unknown tokens pass through untouched rather than
- being silently remapped).
+<div class="block">Translate a (possibly differently-spelled or partial) stored attach token into the
+ <i>canonical</i> path token this resolver would enumerate for the same part — the single
+ vocabulary the picker, HUD, and exported configs all speak. That is the full slash path
+ (<code>root/body/head</code>), with a positional segment (<code>#N</code>) only where a part has no
+ obfuscation-stable name. Returns the token unchanged when it can't be resolved to a part (so
+ unknown tokens pass through untouched rather than being silently remapped).
 
- <p>Default: identity (the resolver's enumeration vocabulary already matches stored tokens, e.g.
- named bones).</div>
+ <p>Default: identity (the resolver's enumeration vocabulary already matches stored tokens,
+ e.g. named bones).</div>
 </section>
 </li>
 <li>
@@ -260,24 +262,26 @@ extends <a href="ModelMemo.Resolver.html" title="interface in com.github.crittsc
 <section class="detail" id="clearModelCache()">
 <h3>clearModelCache</h3>
 <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">clearModelCache</span>()</div>
-<div class="block">Drop any per-model state this resolver caches. Called from <a href="Resolvers.html#clearCaches()"><code>Resolvers.clearCaches()</code></a> when the
- models themselves are replaced. Default: the resolver keeps none.</div>
+<div class="block">Drop any per-model state this resolver caches. Called from <a href="Resolvers.html#clearCaches()"><code>Resolvers.clearCaches()</code></a>
+ when the models themselves are replaced. Default: the resolver keeps none.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="normalize(java.lang.String)">
 <h3>normalize</h3>
 <div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">normalize</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;s)</span></div>
-<div class="block">Normalizes a single token/part-name segment so camelCase field names match snake_case child-map keys.</div>
+<div class="block">Normalizes a single token/part-name segment so camelCase field names match snake_case
+ child-map keys.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="segments(java.lang.String)">
 <h3>segments</h3>
 <div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">segments</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;token)</span></div>
-<div class="block">Split a slash-delimited attach token into normalized, non-empty path segments. A bare name (no
- slash) yields a one-element list; a blank token yields an empty list. Each segment is
- <a href="#normalize(java.lang.String)"><code>normalize(java.lang.String)</code></a>d, so <code>"Body/leftHead"</code> and <code>"body/left_head"</code> produce the same list.</div>
+<div class="block">Split a slash-delimited attach token into normalized, non-empty path segments. A bare name
+ (no slash) yields a one-element list; a blank token yields an empty list. Each segment is
+ <a href="#normalize(java.lang.String)"><code>normalize(java.lang.String)</code></a>d, so <code>"Body/leftHead"</code> and <code>"body/left_head"</code> produce the same
+ list.</div>
 </section>
 </li>
 <li>
@@ -285,10 +289,11 @@ extends <a href="ModelMemo.Resolver.html" title="interface in com.github.crittsc
 <h3>pathMatches</h3>
 <div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">pathMatches</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;storedToken,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;candidatePath)</span></div>
-<div class="block">Whether <code>candidatePath</code> ends with <code>storedToken</code> (a normalized <b>suffix</b> match over
- path segments). So a stored <code>"head"</code> matches a candidate <code>"root/body/head"</code>, and a stored
- <code>"body/head"</code> matches it too while distinguishing two parts both named <code>head</code> under
- different parents. An empty stored token never matches (callers must supply a part).</div>
+<div class="block">Whether <code>candidatePath</code> ends with <code>storedToken</code> (a normalized <b>suffix</b> match
+ over path segments). So a stored <code>"head"</code> matches a candidate <code>"root/body/head"</code>,
+ and a stored <code>"body/head"</code> matches it too while distinguishing two parts both named
+ <code>head</code> under different parents. An empty stored token never matches (callers must
+ supply a part).</div>
 </section>
 </li>
 <li>
@@ -297,12 +302,12 @@ extends <a href="ModelMemo.Resolver.html" title="interface in com.github.crittsc
 <div class="member-signature"><span class="annotations">@Nullable
 </span><span class="return-type"><a href="Attachment.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">Attachment</a></span>&nbsp;<span class="element-name">resolve</span><wbr><span class="parameters">(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;partToken)</span></div>
-<div class="block">Find the part <code>partToken</code> names and return the transforms that reach it, or <code>null</code> when
- the model has no such part (an unknown token, or a model whose worn variant lacks it).
+<div class="block">Find the part <code>partToken</code> names and return the transforms that reach it, or <code>
+ null</code> when the model has no such part (an unknown token, or a model whose worn variant lacks
+ it).
 
- <p>The expensive half of the contract: a search of the model's part tree, matching each candidate
- path against the token. Called once per (model, token) — see <code>Resolvers.ATTACHMENTS</code> — so it
- may allocate and walk freely.</div>
+ <p>The expensive half of the contract: a search of the model's part tree, matching each
+ candidate path against the token. Called once per (model, token) — see <code>Resolvers.ATTACHMENTS</code> — so it may allocate and walk freely.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="ModelMemo.Resolver.html#resolve(K,java.lang.String)">resolve</a></code>&nbsp;in interface&nbsp;<code><a href="ModelMemo.Resolver.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">ModelMemo.Resolver</a>&lt;net.minecraft.client.model.EntityModel&lt;?&gt;,<wbr><a href="Attachment.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">Attachment</a>&gt;</code></dd>
@@ -320,17 +325,16 @@ extends <a href="ModelMemo.Resolver.html" title="interface in com.github.crittsc
  net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;partToken,
  boolean&nbsp;young)</span></div>
-<div class="block">Move <code>poseStack</code> into the named part's current (this-frame, post-animation) space, first
- reproducing any whole-model transform the model applies outside its part tree
- (<a href="../../compat/ThirdPartyModelWraps.html" title="class in com.github.crittscott.somegoogly.client.compat"><code>ThirdPartyModelWraps</code></a>). The caller is responsible for <code>pushPose()</code>/<code>popPose()</code>
+<div class="block">Move <code>poseStack</code> into the named part's current (this-frame, post-animation) space,
+ first reproducing any whole-model transform the model applies outside its part tree (<a href="../../compat/ThirdPartyModelWraps.html" title="class in com.github.crittscott.somegoogly.client.compat"><code>ThirdPartyModelWraps</code></a>). The caller is responsible for <code>pushPose()</code>/<code>popPose()</code>
  around this call.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>partToken</code> - the configured attachment token (a string part name, possibly camelCase)</dd>
 <dd><code>young</code> - the render state's baby flag, which selects the model's age branch</dd>
 <dt>Returns:</dt>
-<dd><code>true</code> if the part was found and the pose moved; <code>false</code> otherwise (caller
-         should skip drawing for this head)</dd>
+<dd><code>true</code> if the part was found and the pose moved; <code>false</code> otherwise
+     (caller should skip drawing for this head)</dd>
 </dl>
 </section>
 </li>

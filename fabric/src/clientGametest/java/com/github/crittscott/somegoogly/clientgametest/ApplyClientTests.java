@@ -22,7 +22,8 @@ public final class ApplyClientTests implements FabricClientGameTest {
         s.hotbar(0);
         s.useHeldOn(survivalCow, -2, 1.6, 2.5);
         s.cameraOn(-2, 1.4, 3.5, survivalCow);
-        s.shot("Survival: the cow now has green-irised eyes, a squelch subtitle shows, and the hotbar stack went from 2 to 1.");
+        s.shot(
+                "Survival: the cow now has green-irised eyes, a squelch subtitle shows, and the hotbar stack went from 2 to 1.");
         s.gamemode("creative");
         s.hud(true);
         s.clearInventory();
@@ -30,7 +31,8 @@ public final class ApplyClientTests implements FabricClientGameTest {
         s.hotbar(0);
         s.useHeldOn(creativeCow, 2, 1.6, 2.5);
         s.cameraOn(2, 1.4, 3.5, creativeCow);
-        s.shot("Creative: the second cow has green-irised eyes and the hotbar stack still shows 2.");
+        s.shot(
+                "Creative: the second cow has green-irised eyes and the hotbar stack still shows 2.");
     }
 
     /** In-game: Slimy Eyes on each boat variant with different appearances and hands. */
@@ -54,14 +56,16 @@ public final class ApplyClientTests implements FabricClientGameTest {
         s.useOnEntity(chestRaft, 5, 0.5, 2.5, slimy("{glow:0b}"));
         s.server("time set midnight");
         s.cameraAt(0, 1.2, 7, 0, 0, 0);
-        s.shot("At night, left to right: oak boat with plain eyes (main hand), chest boat with red irises (offhand), raft with glowing eyes, chest raft with eyes not glowing. The player is not seated and no chest screen opened.");
+        s.shot(
+                "At night, left to right: oak boat with plain eyes (main hand), chest boat with red irises (offhand), raft with glowing eyes, chest raft with eyes not glowing. The player is not seated and no chest screen opened.");
         s.server("time set noon");
         s.clearInventory();
         s.give(Scene.SLIMY, 2);
         s.hotbar(0);
         s.useHeldOn(oak, -5, 0.5, 2.5);
         s.cameraAt(-5, 1, 3.5, -5, 0, 0);
-        s.shot("A Slimy Eye used on the already eyed oak boat: its eyes are unchanged and the hotbar stack still shows 2.");
+        s.shot(
+                "A Slimy Eye used on the already eyed oak boat: its eyes are unchanged and the hotbar stack still shows 2.");
     }
 
     /** In-game: a Slimy Eye on an eyeless head in survival, and on another in adventure mode. */
@@ -74,7 +78,8 @@ public final class ApplyClientTests implements FabricClientGameTest {
         s.useOnBlock(2, 0, 0, Scene.SLIMY);
         s.hud(true);
         s.cameraAt(0, 1.5, 3, 0, 0.3, 0);
-        s.shot("Left head (survival) has eyes. Right head (adventure mode) has none, and the Slimy Eye is still in the hotbar.");
+        s.shot(
+                "Left head (survival) has eyes. Right head (adventure mode) has none, and the Slimy Eye is still in the hotbar.");
     }
 
     /** In-game: a Slimy Eye on an eyed cow, a silverfish, and a baby armadillo, in survival. */
@@ -87,13 +92,15 @@ public final class ApplyClientTests implements FabricClientGameTest {
         s.hud(true);
         s.useOnEntity(eyed, -3, 1.6, 2.5, Scene.SLIMY);
         s.cameraOn(-3, 1.4, 3.5, eyed);
-        s.shot("Already eyed cow: its eyes are unchanged and the Slimy Eye is still in the hotbar.");
+        s.shot(
+                "Already eyed cow: its eyes are unchanged and the Slimy Eye is still in the hotbar.");
         s.useOnEntity(silverfish, 0, 1, 2, Scene.SLIMY);
         s.cameraOn(0, 1, 2.5, silverfish);
         s.shot("Silverfish (no definition): no eyes, and the Slimy Eye is still in the hotbar.");
         s.useOnEntity(baby, 3, 1, 2, Scene.SLIMY);
         s.cameraOn(3, 1, 2.5, baby);
-        s.shot("Baby armadillo (adult-only definition): no eyes, and the Slimy Eye is still in the hotbar.");
+        s.shot(
+                "Baby armadillo (adult-only definition): no eyes, and the Slimy Eye is still in the hotbar.");
     }
 
     /** In-game: sneak-use a Slimy Eye on the air. */
@@ -115,13 +122,16 @@ public final class ApplyClientTests implements FabricClientGameTest {
 
     @Override
     public void runTest(ClientGameTestContext context) {
-        Scene.run(context, Scene.MAIN, s -> {
-            s.scenario("6.1", "Slimy Eye on a mob", () -> applyToMob(s));
-            s.scenario("6.2", "Refused targets", () -> refusals(s));
-            s.scenario("6.3", "Slimy Eye on yourself", () -> self(s));
-            s.scenario("6.4", "Heads and build permission", () -> heads(s));
-            s.scenario("6.5", "Boats, both hands, appearances", () -> boats(s));
-            s.scenario("6.6", "Spectators cannot apply", () -> spectator(s));
-        });
+        Scene.run(
+                context,
+                Scene.MAIN,
+                s -> {
+                    s.scenario("6.1", "Slimy Eye on a mob", () -> applyToMob(s));
+                    s.scenario("6.2", "Refused targets", () -> refusals(s));
+                    s.scenario("6.3", "Slimy Eye on yourself", () -> self(s));
+                    s.scenario("6.4", "Heads and build permission", () -> heads(s));
+                    s.scenario("6.5", "Boats, both hands, appearances", () -> boats(s));
+                    s.scenario("6.6", "Spectators cannot apply", () -> spectator(s));
+                });
     }
 }

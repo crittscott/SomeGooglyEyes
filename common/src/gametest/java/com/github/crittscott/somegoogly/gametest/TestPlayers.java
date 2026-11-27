@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.gametest;
 
 import com.mojang.authlib.GameProfile;
+
 import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -14,17 +15,17 @@ import java.util.UUID;
 final class TestPlayers {
 
     /**
-     * An interaction reach shorter than the gap between a player's eyes and the top of the 4-block-high test
-     * structure, so aiming up within it touches nothing, whatever encloses the test area.
+     * An interaction reach shorter than the gap between a player's eyes and the top of the
+     * 4-block-high test structure, so aiming up within it touches nothing, whatever encloses the
+     * test area.
      */
     private static final double NOTHING_REACH = 0.25;
 
-    private TestPlayers() {
-    }
+    private TestPlayers() {}
 
     /**
-     * Aim {@code player} straight up with a reach of {@link #NOTHING_REACH}, so a use is aimed at nothing; the
-     * returned action restores its aim and reaches.
+     * Aim {@code player} straight up with a reach of {@link #NOTHING_REACH}, so a use is aimed at
+     * nothing; the returned action restores its aim and reaches.
      */
     static Runnable aimAtNothing(Player player) {
         AttributeInstance block = player.getAttribute(Attributes.BLOCK_INTERACTION_RANGE);
@@ -43,13 +44,17 @@ final class TestPlayers {
     }
 
     static ServerPlayer create(ServerPlayer template, boolean creative, int permission) {
-        ServerPlayer player = new ServerPlayer(template.level().getServer(), template.level(),
-                new GameProfile(UUID.randomUUID(), "EyeTest"), ClientInformation.createDefault()) {
-            @Override
-            public boolean hasPermissions(int required) {
-                return permission >= required;
-            }
-        };
+        ServerPlayer player =
+                new ServerPlayer(
+                        template.level().getServer(),
+                        template.level(),
+                        new GameProfile(UUID.randomUUID(), "EyeTest"),
+                        ClientInformation.createDefault()) {
+                    @Override
+                    public boolean hasPermissions(int required) {
+                        return permission >= required;
+                    }
+                };
         player.connection = template.connection;
         player.setGameMode(creative ? GameType.CREATIVE : GameType.SURVIVAL);
         return player;

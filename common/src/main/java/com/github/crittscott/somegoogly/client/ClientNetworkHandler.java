@@ -8,20 +8,20 @@ import com.github.crittscott.somegoogly.network.EyeBehaviorTriggerPacket;
 import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.github.crittscott.somegoogly.network.EyeSettingsPacket;
 import com.github.crittscott.somegoogly.network.EyeStatePacket;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
 /**
- * Applies the server-to-client payloads on the client game thread. Loader payload registration runs on
- * both distributions, so it reaches these handlers only from inside lambda bodies, which link this class when a
- * payload arrives rather than when the handler is registered.
+ * Applies the server-to-client payloads on the client game thread. Loader payload registration runs
+ * on both distributions, so it reaches these handlers only from inside lambda bodies, which link
+ * this class when a payload arrives rather than when the handler is registered.
  */
 public final class ClientNetworkHandler {
 
-    private ClientNetworkHandler() {
-    }
+    private ClientNetworkHandler() {}
 
     /** Record a server-reported anger change; an unknown entity is ignored. */
     public static void handleAnger(EyeAngerPacket packet) {
@@ -31,14 +31,22 @@ public final class ClientNetworkHandler {
         }
     }
 
-    /** Retain a behavior for a known entity or one of its hands, including one that has not rendered yet. */
+    /**
+     * Retain a behavior for a known entity or one of its hands, including one that has not rendered
+     * yet.
+     */
     public static void handleBehavior(EyeBehaviorTriggerPacket packet) {
         LivingEntity living = living(packet.entityId());
         if (living != null) {
             if (packet.target() == EyeBehaviorTriggerPacket.Target.ENTITY) {
-                ClientEyeRuntime.setBehavior(living, packet.behavior(), packet.seed(), packet.elapsed());
+                ClientEyeRuntime.setBehavior(
+                        living, packet.behavior(), packet.seed(), packet.elapsed());
             } else {
-                ClientEyeRuntime.setHandBehavior(living, packet.target().hand(), packet.behavior(), packet.seed(),
+                ClientEyeRuntime.setHandBehavior(
+                        living,
+                        packet.target().hand(),
+                        packet.behavior(),
+                        packet.seed(),
                         packet.elapsed());
             }
         }
@@ -50,12 +58,16 @@ public final class ClientNetworkHandler {
         ClientEyeRuntime.clear();
     }
 
-    /** Take the server's master switch and behavior settings; trackers read them afresh each tick. */
+    /**
+     * Take the server's master switch and behavior settings; trackers read them afresh each tick.
+     */
     public static void handleEyeSettings(EyeSettingsPacket packet) {
         ClientEyeConfigs.applySettings(packet.googlyEyesEnabled(), packet.behaviors());
     }
 
-    /** Apply snapshots only to living entities and supported vanilla boats; unknown ids are ignored. */
+    /**
+     * Apply snapshots only to living entities and supported vanilla boats; unknown ids are ignored.
+     */
     public static void handleEyeState(EyeStatePacket packet) {
         ClientLevel level = Minecraft.getInstance().level;
         Entity entity = level == null ? null : level.getEntity(packet.entityId());

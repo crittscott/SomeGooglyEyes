@@ -1,14 +1,15 @@
 package com.github.crittscott.somegoogly.clientgametest;
 
 import com.github.crittscott.somegoogly.registry.ModContent;
+
 import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest;
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.fabricmc.fabric.api.client.itemgroup.v1.FabricCreativeInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 
 /**
- * Client test plan section 7: crafting. Ingredients go into a crafting table's grid by slot clicks; results whose
- * glow matters are framed in a dark room, where glow is visible.
+ * Client test plan section 7: crafting. Ingredients go into a crafting table's grid by slot clicks;
+ * results whose glow matters are framed in a dark room, where glow is visible.
  */
 public final class CraftingClientTests implements FabricClientGameTest {
     private static final String GLOWING_RED = Scene.googly("{irisColor:" + Scene.RED + ",glow:1b}");
@@ -30,7 +31,8 @@ public final class CraftingClientTests implements FabricClientGameTest {
         s.takeCraftResult();
         frameHeld(s, 0);
         s.cameraAt(0, 1.6, 1, 0, 1.5, -4);
-        s.shot("A dark room: the eye made with red dye and then glowstone has a red iris and glows.");
+        s.shot(
+                "A dark room: the eye made with red dye and then glowstone has a red iris and glows.");
     }
 
     /** In-game: craft a Googly Eye with red dye. */
@@ -52,19 +54,25 @@ public final class CraftingClientTests implements FabricClientGameTest {
         s.takeCraftResult();
         frameHeld(s, 2);
         s.cameraAt(0, 1.6, 1, 0, 1.5, -4);
-        s.shot("A dark room. Left: red eye, not glowing (redstone). Middle: plain white eye, not glowing (cobweb cleared everything). Right: plain eye, glowing (glowstone).");
+        s.shot(
+                "A dark room. Left: red eye, not glowing (redstone). Middle: plain white eye, not glowing (cobweb cleared everything). Right: plain eye, glowing (glowstone).");
     }
 
     /** In-game: name a red eye, craft it with a slimeball, and select it. */
     private static void slimeKeepsName(Scene s) {
-        s.craft(Scene.GOOGLY + "[custom_name=\"Bob\",somegoogly:eye_properties={irisColor:" + Scene.RED + "}]",
+        s.craft(
+                Scene.GOOGLY
+                        + "[custom_name=\"Bob\",somegoogly:eye_properties={irisColor:"
+                        + Scene.RED
+                        + "}]",
                 "minecraft:slime_ball");
         s.shot("The result slot shows a Slimy Eye with a red iris.");
         s.takeCraftResult();
         s.hud(true);
         s.hotbar(1);
         s.hotbar(0);
-        s.shot("The Slimy Eye selected in the hotbar: its name, Bob, shows above the hotbar, and its icon has a red iris.");
+        s.shot(
+                "The Slimy Eye selected in the hotbar: its name, Bob, shows above the hotbar, and its icon has a red iris.");
     }
 
     /** In-game: start a survival world and pick up a Googly Eye. */
@@ -75,10 +83,12 @@ public final class CraftingClientTests implements FabricClientGameTest {
         s.hud(true);
         s.camera(0, 0, 0, 0, 30);
         s.shot("A new survival world before picking anything up: no recipe toast.");
-        s.server("summon minecraft:item %s %d %s {Item:{id:\"%s\",count:1}}", String.valueOf(s.x(0)), Scene.GROUND,
-                String.valueOf(s.z(0)), Scene.GOOGLY);
+        s.server(
+                "summon minecraft:item %s %d %s {Item:{id:\"%s\",count:1}}",
+                String.valueOf(s.x(0)), Scene.GROUND, String.valueOf(s.z(0)), Scene.GOOGLY);
         s.waitTicks(10);
-        s.shot("Just after picking up a Googly Eye: a \"New Recipes Unlocked\" toast in the top right shows the Slimy Eye.");
+        s.shot(
+                "Just after picking up a Googly Eye: a \"New Recipes Unlocked\" toast in the top right shows the Slimy Eye.");
     }
 
     /** In-game: harvest from a red cow, add glowstone, slime it, apply it, and harvest again. */
@@ -115,17 +125,20 @@ public final class CraftingClientTests implements FabricClientGameTest {
         s.darkRoom();
         frameHeld(s, 0);
         s.cameraAt(0, 1.6, 1, 0, 1.5, -4);
-        s.shot("A dark room: the eye harvested after the full round trip has a red iris and glows.");
+        s.shot(
+                "A dark room: the eye harvested after the full round trip has a red iris and glows.");
     }
 
     /** In-game: open the Some Googly Eyes creative tab, and frame a creative Googly Eye. */
     private static void creativeTab(Scene s) {
         s.press(s.options().keyInventory);
         s.context.waitForScreen(CreativeModeInventoryScreen.class);
-        s.context.runOnClient(mc -> ((FabricCreativeInventoryScreen) mc.screen)
-                .setSelectedItemGroup(ModContent.CREATIVE_TAB.get()));
+        s.context.runOnClient(mc ->
+                ((FabricCreativeInventoryScreen) mc.screen)
+                        .setSelectedItemGroup(ModContent.CREATIVE_TAB.get()));
         s.waitTicks(5);
-        s.shot("The Some Googly Eyes creative tab: a Googly Eye, a Slimy Eye, and an Optometrist enchanted book.");
+        s.shot(
+                "The Some Googly Eyes creative tab: a Googly Eye, a Slimy Eye, and an Optometrist enchanted book.");
         s.closeScreen();
         s.frame(0, 1, -3, "south", "{id:\"" + Scene.GOOGLY + "\",count:1}", 0, false, false);
         s.cameraAt(0, 1.6, 1, 0, 1.5, -3);
@@ -134,15 +147,18 @@ public final class CraftingClientTests implements FabricClientGameTest {
 
     @Override
     public void runTest(ClientGameTestContext context) {
-        Scene.run(context, Scene.MAIN, s -> {
-            s.scenario("7.1", "Dye sets iris", () -> dye(s));
-            s.scenario("7.2", "Glow modifiers and cobweb", () -> glowModifiers(s));
-            s.scenario("7.3", "Modifiers stack", () -> stacking(s));
-            s.scenario("7.4", "Slime keeps appearance and name", () -> slimeKeepsName(s));
-            s.scenario("7.6", "Round trip keeps appearance", () -> roundTrip(s));
-            s.scenario("7.7", "Creative tab", () -> creativeTab(s));
-            // Last: it moves the class to a new survival world.
-            s.scenario("7.5", "Slimy Eye recipe unlocks", () -> recipeUnlock(s));
-        });
+        Scene.run(
+                context,
+                Scene.MAIN,
+                s -> {
+                    s.scenario("7.1", "Dye sets iris", () -> dye(s));
+                    s.scenario("7.2", "Glow modifiers and cobweb", () -> glowModifiers(s));
+                    s.scenario("7.3", "Modifiers stack", () -> stacking(s));
+                    s.scenario("7.4", "Slime keeps appearance and name", () -> slimeKeepsName(s));
+                    s.scenario("7.6", "Round trip keeps appearance", () -> roundTrip(s));
+                    s.scenario("7.7", "Creative tab", () -> creativeTab(s));
+                    // Last: it moves the class to a new survival world.
+                    s.scenario("7.5", "Slimy Eye recipe unlocks", () -> recipeUnlock(s));
+                });
     }
 }

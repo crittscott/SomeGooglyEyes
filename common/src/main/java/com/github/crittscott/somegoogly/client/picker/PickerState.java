@@ -1,15 +1,19 @@
 package com.github.crittscott.somegoogly.client.picker;
 
+import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ADULT;
+import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_BABY;
+
+import com.github.crittscott.somegoogly.client.platform.ClientNetworking;
 import com.github.crittscott.somegoogly.client.render.resolver.EyeAttachmentResolver;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
-import com.github.crittscott.somegoogly.eye.EyeDefinition;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.HeadConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
+import com.github.crittscott.somegoogly.eye.EyeDefinition;
 import com.github.crittscott.somegoogly.eye.EyePlacement;
 import com.github.crittscott.somegoogly.network.PickerFreezePacket;
-import com.github.crittscott.somegoogly.client.platform.ClientNetworking;
 import com.github.crittscott.somegoogly.picker.PickerFreezeService;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -17,7 +21,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
-import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -26,20 +29,19 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ADULT;
-import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_BABY;
+import javax.annotation.Nullable;
 
 /**
  * In-world eye-placement authoring state, driven by the {@code /sg} CLI and the keyboard picker,
- * which share this state. Creative operators only; works in single-player and from a remote client alike —
- * the operations that touch the server (mob freezing, export) go through the C2S picker packets and
- * are re-authorized server-side. Workflow: choose a mob, pick a part to use as the coordinate frame,
- * shape a <i>current eye</i> (position / rotation / properties), then save it to a flat, numbered
- * <i>eye list</i>. Re-select a saved eye to adjust it in place; export sends the list, grouped by
- * part, to the server to be written into the world datapack.
+ * which share this state. Creative operators only; works in single-player and from a remote client
+ * alike — the operations that touch the server (mob freezing, export) go through the C2S picker
+ * packets and are re-authorized server-side. Workflow: choose a mob, pick a part to use as the
+ * coordinate frame, shape a <i>current eye</i> (position / rotation / properties), then save it to
+ * a flat, numbered <i>eye list</i>. Re-select a saved eye to adjust it in place; export sends the
+ * list, grouped by part, to the server to be written into the world datapack.
  *
- * <p>Client-only singleton (static state). Each saved eye remembers its own attach part, so the list
- * can span multiple parts; export regroups by part into heads.
+ * <p>Client-only singleton (static state). Each saved eye remembers its own attach part, so the
+ * list can span multiple parts; export regroups by part into heads.
  */
 public final class PickerState {
 
@@ -55,31 +57,36 @@ public final class PickerState {
     private static int partIndex = 0;
 
     /**
-     * The placement variants of the mob currently being edited (1-based to the user); always at least
-     * one. Reassigned by {@link #lockOn()} to point at the chosen species and age's retained draft,
-     * so saves land directly in that entity's retained draft.
+     * The placement variants of the mob currently being edited (1-based to the user); always at
+     * least one. Reassigned by {@link #lockOn()} to point at the chosen species and age's retained
+     * draft, so saves land directly in that entity's retained draft.
      */
     private static List<DraftVariant> variants = new ArrayList<>(List.of(new DraftVariant()));
+
     /** Index into {@link #variants} of the variant currently being edited. */
     private static int variantIndex = 0;
 
     /**
-     * The eye being shaped right now, or {@code null} when no draft is being authored — the empty state.
-     * A never-configured mob (and a variant whose eyes are all deleted) sits here with no draft, so the
-     * preview/HUD show nothing until {@code /sg create} (or {@code select}) starts one. See {@link #clearDraft()}.
+     * The eye being shaped right now, or {@code null} when no draft is being authored — the empty
+     * state. A never-configured mob (and a variant whose eyes are all deleted) sits here with no
+     * draft, so the preview/HUD show nothing until {@code /sg create} (or {@code select}) starts
+     * one. See {@link #clearDraft()}.
      */
     private static EyeDraft currentEye = null;
+
     /** The part token used as the placement frame, or {@code null} for {@code none}. */
     private static String currentPart = null;
-    /** Index into the current variant's eye list that {@code save} writes back to, or {@link #NO_SELECTION} to append. */
+
+    /**
+     * Index into the current variant's eye list that {@code save} writes back to, or {@link
+     * #NO_SELECTION} to append.
+     */
     private static int selectedIndex = NO_SELECTION;
 
-    private PickerState() {
-    }
+    private PickerState() {}
 
     /** One retained draft with its complete species and life-stage identity. */
-    public record Draft(DraftKey key, List<DraftVariant> variants) {
-    }
+    public record Draft(DraftKey key, List<DraftVariant> variants) {}
 
     /** The species and life stage whose placements a draft describes. */
     public record DraftKey(ResourceLocation type, boolean baby) {
@@ -119,8 +126,9 @@ public final class PickerState {
         }
 
         /**
-         * Resolve eye {@code f}'s flat cross-target to a within-head index, or {@link EyePlacement#NO_CROSS_TARGET} when it has none, is
-         * out of range, points at itself, or points at an eye on a different part (cross-eye is same-head only).
+         * Resolve eye {@code f}'s flat cross-target to a within-head index, or {@link
+         * EyePlacement#NO_CROSS_TARGET} when it has none, is out of range, points at itself, or
+         * points at an eye on a different part (cross-eye is same-head only).
          */
         private static int resolveCrossTarget(DraftVariant dv, int f, int[] withinHead) {
             int flat = dv.eyes.get(f).eye.crossTarget;
@@ -136,20 +144,25 @@ public final class PickerState {
         }
 
         /** Select this species and age, seeding its arrangement only on its first selection. */
-        public Draft select(ResourceLocation type, boolean baby, Supplier<List<DraftVariant>> seed) {
+        public Draft select(
+                ResourceLocation type, boolean baby, Supplier<List<DraftVariant>> seed) {
             DraftKey key = new DraftKey(type, baby);
             current = authored.computeIfAbsent(key, identity -> new Draft(identity, seed.get()));
             return current;
         }
 
-        /** Group a draft's variants by part into heads, dropping any variant that ended up with no eyes. */
+        /**
+         * Group a draft's variants by part into heads, dropping any variant that ended up with no
+         * eyes.
+         */
         private static RuntimeConfig toConfig(List<DraftVariant> draftVariants) {
             RuntimeConfig config = new RuntimeConfig();
             config.enabled = true;
             config.variants = new ArrayList<>();
             for (DraftVariant dv : draftVariants) {
-                // Pre-pass: each eye's index within its own part group (= its on-disk within-head index),
-                // so a cross-target given as a flat list index can be translated to what the runtime uses.
+                // Pre-pass: each eye's index within its own part group (= its on-disk within-head
+                // index), so a cross-target given as a flat list index can be translated to what
+                // the runtime uses.
                 int[] withinHead = withinHeadIndices(dv);
 
                 LinkedHashMap<String, HeadConfig> grouped = new LinkedHashMap<>();
@@ -158,12 +171,15 @@ public final class PickerState {
                     if (le.part == null) {
                         continue;
                     }
-                    HeadConfig head = grouped.computeIfAbsent(le.part, t -> {
-                        HeadConfig h = new HeadConfig();
-                        h.attachPoint = t;
-                        h.eyes = new ArrayList<>();
-                        return h;
-                    });
+                    HeadConfig head =
+                            grouped.computeIfAbsent(
+                                    le.part,
+                                    t -> {
+                                        HeadConfig h = new HeadConfig();
+                                        h.attachPoint = t;
+                                        h.eyes = new ArrayList<>();
+                                        return h;
+                                    });
                     head.eyes.add(le.eye.toDefinition(resolveCrossTarget(dv, f, withinHead)));
                 }
                 if (grouped.isEmpty()) {
@@ -177,7 +193,10 @@ public final class PickerState {
             return config;
         }
 
-        /** For each eye in {@code dv}, its 0-based index within its own part group ({@code -1} for no part). */
+        /**
+         * For each eye in {@code dv}, its 0-based index within its own part group ({@code -1} for
+         * no part).
+         */
         private static int[] withinHeadIndices(DraftVariant dv) {
             int[] within = new int[dv.eyes.size()];
             Map<String, Integer> perPartCount = new LinkedHashMap<>();
@@ -195,7 +214,9 @@ public final class PickerState {
         }
     }
 
-    /** One weighted placement arrangement being authored: its relative weight plus its own eye list. */
+    /**
+     * One weighted placement arrangement being authored: its relative weight plus its own eye list.
+     */
     public static final class DraftVariant {
         public final List<ListedEye> eyes = new ArrayList<>();
         public double weight = 1.0;
@@ -223,9 +244,10 @@ public final class PickerState {
     }
 
     /**
-     * Drop the live draft, returning to the empty authoring state (no current eye, nothing selected).
-     * The preview/HUD then show only the saved eyes, so a variant with zero saved eyes looks empty
-     * rather than sprouting a phantom unsaved eye. Authoring resumes on {@code create}/{@code select}.
+     * Drop the live draft, returning to the empty authoring state (no current eye, nothing
+     * selected). The preview/HUD then show only the saved eyes, so a variant with zero saved eyes
+     * looks empty rather than sprouting a phantom unsaved eye. Authoring resumes on {@code
+     * create}/{@code select}.
      */
     public static void clearDraft() {
         currentEye = null;
@@ -263,8 +285,8 @@ public final class PickerState {
     }
 
     /**
-     * Borrowed view of the current variant's eye list. Rendering and feedback callers must not mutate the
-     * returned list or its entries.
+     * Borrowed view of the current variant's eye list. Rendering and feedback callers must not
+     * mutate the returned list or its entries.
      */
     public static List<ListedEye> currentEyes() {
         return currentVariant().eyes;
@@ -292,7 +314,10 @@ public final class PickerState {
         currentPart = parts.get(partIndex);
     }
 
-    /** Copy the saved eye at 1-based {@code oneBased} into the draft, adopting its part; false if out of range. */
+    /**
+     * Copy the saved eye at 1-based {@code oneBased} into the draft, adopting its part; false if
+     * out of range.
+     */
     private static boolean copyToDraft(int oneBased) {
         ListedEye listed = eyeAt(oneBased);
         if (listed == null) {
@@ -319,8 +344,9 @@ public final class PickerState {
     }
 
     /**
-     * The CLI {@code delete <n>} op (1-based): remove an eye from the current variant. Cross targets are flat list
-     * indexes, so every later eye's target moves down one and a target on the deleted eye is cleared.
+     * The CLI {@code delete <n>} op (1-based): remove an eye from the current variant. Cross
+     * targets are flat list indexes, so every later eye's target moves down one and a target on the
+     * deleted eye is cleared.
      */
     public static boolean delete(int oneBased) {
         List<ListedEye> eyes = currentEyes();
@@ -347,8 +373,8 @@ public final class PickerState {
     }
 
     /**
-     * The CLI {@code variant del <n>} op (1-based). Refuses to remove the last variant (there is always
-     * at least one). Returns false if out of range or it would empty the list.
+     * The CLI {@code variant del <n>} op (1-based). Refuses to remove the last variant (there is
+     * always at least one). Returns false if out of range or it would empty the list.
      */
     public static boolean deleteVariant(int oneBased) {
         int idx = oneBased - 1;
@@ -386,9 +412,9 @@ public final class PickerState {
 
     /**
      * Ask the server to hold the mob still while it's edited. The freeze itself — NoAi capture,
-     * restore, crash-proofing — is server-owned ({@code PickerFreezeService}, reached via
-     * {@link PickerFreezePacket}), so it works from a remote client and is undone even if this
-     * client disappears; the client only requests.
+     * restore, crash-proofing — is server-owned ({@code PickerFreezeService}, reached via {@link
+     * PickerFreezePacket}), so it works from a remote client and is undone even if this client
+     * disappears; the client only requests.
      */
     private static void freeze(LivingEntity clientEntity) {
         send(PickerFreezePacket.freeze(clientEntity.getUUID()));
@@ -428,26 +454,36 @@ public final class PickerState {
         parts = new ArrayList<>(vocabulary.tokens());
         partIndex = 0;
         currentPart = parts.get(0); // tokens is non-empty (checked above)
-        // Switch to this entity's own draft, so each mob keeps its saved eyes across switches and exportall
-        // can emit them all. On first sighting, seed from the mob's existing (synced) config so editing an
-        // existing placement starts from it rather than a blank slate; a never-configured mob gets an empty
-        // draft. The retained draft (computeIfAbsent) wins on re-choose, so in-session edits aren't lost.
+        // Switch to this entity's own draft, so each mob keeps its saved eyes across switches and
+        // exportall can emit them all. On first sighting, seed from the mob's existing (synced)
+        // config so editing an existing placement starts from it rather than a blank slate; a
+        // never-configured mob gets an empty draft. The retained draft (computeIfAbsent) wins on
+        // re-choose, so in-session edits aren't lost.
         boolean baby = living.isBaby();
-        variants = DRAFTS.select(newType, baby, () -> seedDraft(newType, baby, vocabulary)).variants();
+        variants =
+                DRAFTS.select(newType, baby, () -> seedDraft(newType, baby, vocabulary)).variants();
         variantIndex = 0;
-        clearDraft(); // start empty: saved eyes (if any) show, but no phantom draft until create/select
+        // Start empty: saved eyes (if any) show, but no phantom draft until create/select.
+        clearDraft();
         freeze(living);
         int kept = totalEyeCount();
         if (kept == 0) {
-            return Component.translatable("somegoogly.command.picker.choose_success", newType, parts.size());
+            return Component.translatable(
+                    "somegoogly.command.picker.choose_success", newType, parts.size());
         }
-        return Component.translatable(kept == 1
+        return Component.translatable(
+                kept == 1
                         ? "somegoogly.command.picker.choose_success_one_eye"
                         : "somegoogly.command.picker.choose_success_many_eyes",
-                newType, kept, parts.size());
+                newType,
+                kept,
+                parts.size());
     }
 
-    /** The CLI {@code variant new} op: append a fresh empty variant and switch to it. Returns its 1-based index. */
+    /**
+     * The CLI {@code variant new} op: append a fresh empty variant and switch to it. Returns its
+     * 1-based index.
+     */
     public static int newVariant() {
         variants.add(new DraftVariant());
         variantIndex = variants.size() - 1;
@@ -461,21 +497,21 @@ public final class PickerState {
     }
 
     /**
-     * Borrowed view of the chosen mob's selectable part tokens in enumeration order. Callers must not
-     * mutate the returned backing list.
+     * Borrowed view of the chosen mob's selectable part tokens in enumeration order. Callers must
+     * not mutate the returned backing list.
      */
     public static List<String> parts() {
         return parts;
     }
 
     /**
-     * Reset picker state to its construction state on disconnect, <b>without sending anything</b> — the
-     * connection may already be gone, and the server's own logout handling
-     * ({@link PickerFreezeService#unfreeze}) releases any frozen mob regardless.
+     * Reset picker state to its construction state on disconnect, <b>without sending anything</b> —
+     * the connection may already be gone, and the server's own logout handling ({@link
+     * PickerFreezeService#unfreeze}) releases any frozen mob regardless.
      *
-     * <p>The authored drafts go too, along with {@link #targetType()}. They were authored against — and
-     * seeded from — the server we're leaving, and {@code export} would happily send them to the next
-     * server we join, writing one world's eye configs into another's datapack.
+     * <p>The authored drafts go too, along with {@link #targetType()}. They were authored against —
+     * and seeded from — the server we're leaving, and {@code export} would happily send them to the
+     * next server we join, writing one world's eye configs into another's datapack.
      */
     public static void resetOnDisconnect() {
         active = false;
@@ -511,14 +547,15 @@ public final class PickerState {
     }
 
     /**
-     * Build a fresh draft for a mob being chosen for the first time this session. Seeds from its synced
-     * config for the given age ({@link ClientEyeConfigs}) so editing an existing placement starts from it;
-     * returns a single empty variant when the mob has no usable config. Attach tokens are canonicalized to
-     * the model's enumeration vocabulary (e.g. a bare {@code "head"} snaps to its full path {@code "root/head"}),
-     * so the seeded draft, HUD, and export all speak the same token the part picker shows.
+     * Build a fresh draft for a mob being chosen for the first time this session. Seeds from its
+     * synced config for the given age ({@link ClientEyeConfigs}) so editing an existing placement
+     * starts from it; returns a single empty variant when the mob has no usable config. Attach
+     * tokens are canonicalized to the model's enumeration vocabulary (e.g. a bare {@code "head"}
+     * snaps to its full path {@code "root/head"}), so the seeded draft, HUD, and export all speak
+     * the same token the part picker shows.
      */
-    private static List<DraftVariant> seedDraft(ResourceLocation type, boolean baby,
-                                                ModelPartVocabulary vocabulary) {
+    private static List<DraftVariant> seedDraft(
+            ResourceLocation type, boolean baby, ModelPartVocabulary vocabulary) {
         RuntimeConfig config = ClientEyeConfigs.get(type, baby);
         List<DraftVariant> seeded = new ArrayList<>();
         if (config != null && config.enabled) {
@@ -531,7 +568,8 @@ public final class PickerState {
                     for (EyeDefinition def : head.eyes) {
                         dv.eyes.add(new ListedEye(part, EyeDraft.fromDefinition(def)));
                     }
-                    // Translate each eye's on-disk within-head cross-target back to a flat draft index.
+                    // Translate each eye's on-disk within-head cross-target back to a flat draft
+                    // index.
                     for (int e = 0; e < head.eyes.size(); e++) {
                         int within = head.eyes.get(e).placement().crossTarget();
                         if (within >= 0 && within < head.eyes.size()) {
@@ -548,7 +586,10 @@ public final class PickerState {
         return seeded;
     }
 
-    /** The CLI {@code select <n>} op (1-based): load a saved eye from the current variant for adjustment. */
+    /**
+     * The CLI {@code select <n>} op (1-based): load a saved eye from the current variant for
+     * adjustment.
+     */
     public static boolean select(int oneBased) {
         if (!copyToDraft(oneBased)) {
             return false;
@@ -557,7 +598,10 @@ public final class PickerState {
         return true;
     }
 
-    /** The saved eyes a preview draws: those with a part, except the selected one, shown live as the draft. */
+    /**
+     * The saved eyes a preview draws: those with a part, except the selected one, shown live as the
+     * draft.
+     */
     public static List<ListedEye> previewEyes() {
         List<ListedEye> eyes = currentEyes();
         List<ListedEye> preview = new ArrayList<>(eyes.size());
@@ -575,7 +619,10 @@ public final class PickerState {
         return selectedIndex;
     }
 
-    /** The CLI {@code variant <n>} op (1-based): switch to a variant for editing; false if out of range. */
+    /**
+     * The CLI {@code variant <n>} op (1-based): switch to a variant for editing; false if out of
+     * range.
+     */
     public static boolean selectVariant(int oneBased) {
         int idx = oneBased - 1;
         if (idx < 0 || idx >= variants.size()) {
@@ -595,14 +642,14 @@ public final class PickerState {
 
     /** Set the current draft eye's configured cornea RGB channels. */
     public static void setCorneaColor(float r, float g, float b) {
-        currentEye.corneaColors = new float[]{r, g, b};
+        currentEye.corneaColors = new float[] {r, g, b};
     }
 
     /**
-     * The CLI {@code properties crosstarget <n>} op: point the current eye's cross-eye behavior at the eye
-     * at 1-based list index {@code oneBased} ({@code <= 0} clears it). The target must be a <i>different</i>
-     * eye that shares the current part — cross-eye is same-head only. Returns false if out of range, the
-     * edited eye itself, or on a different part.
+     * The CLI {@code properties crosstarget <n>} op: point the current eye's cross-eye behavior at
+     * the eye at 1-based list index {@code oneBased} ({@code <= 0} clears it). The target must be a
+     * <i>different</i> eye that shares the current part — cross-eye is same-head only. Returns
+     * false if out of range, the edited eye itself, or on a different part.
      */
     public static boolean setCrossTarget(int oneBased) {
         if (currentEye == null) {
@@ -614,7 +661,10 @@ public final class PickerState {
         }
         int idx = oneBased - 1;
         ListedEye target = eyeAt(oneBased);
-        if (target == null || idx == selectedIndex || currentPart == null || !currentPart.equals(target.part)) {
+        if (target == null
+                || idx == selectedIndex
+                || currentPart == null
+                || !currentPart.equals(target.part)) {
             return false;
         }
         currentEye.crossTarget = idx;
@@ -638,7 +688,7 @@ public final class PickerState {
 
     /** Set the current draft eye's configured iris RGB channels. */
     public static void setIrisColor(float r, float g, float b) {
-        currentEye.irisColors = new float[]{r, g, b};
+        currentEye.irisColors = new float[] {r, g, b};
     }
 
     /** Set the current draft eye's iris scale. */
@@ -647,9 +697,9 @@ public final class PickerState {
     }
 
     /**
-     * The CLI {@code part <name>} op; false if no such part. The typed token is suffix-matched against the
-     * enumerated path tokens, so a bare leaf (e.g. {@code head}) selects {@code root/body/head}; the
-     * selected {@code currentPart} is the full canonical path it matched.
+     * The CLI {@code part <name>} op; false if no such part. The typed token is suffix-matched
+     * against the enumerated path tokens, so a bare leaf (e.g. {@code head}) selects {@code
+     * root/body/head}; the selected {@code currentPart} is the full canonical path it matched.
      */
     public static boolean setPartByName(String token) {
         for (int i = 0; i < parts.size(); i++) {
@@ -673,7 +723,10 @@ public final class PickerState {
         return true;
     }
 
-    /** The CLI {@code move x y z} op: set absolute position; an empty value leaves that axis unchanged. */
+    /**
+     * The CLI {@code move x y z} op: set absolute position; an empty value leaves that axis
+     * unchanged.
+     */
     public static void setPosition(Optional<Float> x, Optional<Float> y, Optional<Float> z) {
         x.ifPresent(v -> currentEye.position[0] = v);
         y.ifPresent(v -> currentEye.position[1] = v);
@@ -703,7 +756,9 @@ public final class PickerState {
         }
     }
 
-    /** The mob currently being edited, or {@code null} when none is chosen or it has been unloaded. */
+    /**
+     * The mob currently being edited, or {@code null} when none is chosen or it has been unloaded.
+     */
     public static LivingEntity target() {
         return target.get();
     }
@@ -714,7 +769,9 @@ public final class PickerState {
         return draft == null ? null : draft.key().type();
     }
 
-    /** Build the runtime config for the mob being edited, grouped by part into heads (for export). */
+    /**
+     * Build the runtime config for the mob being edited, grouped by part into heads (for export).
+     */
     public static RuntimeConfig toConfig() {
         return DraftSession.toConfig(variants);
     }
@@ -750,8 +807,8 @@ public final class PickerState {
     }
 
     /**
-     * Borrowed view of the variants being authored for the chosen mob. Callers must not mutate the list
-     * or its elements; use the variant operations instead.
+     * Borrowed view of the variants being authored for the chosen mob. Callers must not mutate the
+     * list or its elements; use the variant operations instead.
      */
     public static List<DraftVariant> variants() {
         return variants;

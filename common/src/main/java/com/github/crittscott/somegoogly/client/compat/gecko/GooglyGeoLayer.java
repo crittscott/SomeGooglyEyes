@@ -8,10 +8,12 @@ import com.github.crittscott.somegoogly.client.render.GooglyEyeRenderer;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.mojang.blaze3d.vertex.PoseStack;
+
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
@@ -29,13 +31,15 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 
 /**
- * Captures eye and picker data during GeckoLib render-state extraction, then registers drawing tasks
- * at the animated attachment bones. Loaded only when GeckoLib is present.
+ * Captures eye and picker data during GeckoLib render-state extraction, then registers drawing
+ * tasks at the animated attachment bones. Loaded only when GeckoLib is present.
  */
-public final class GooglyGeoLayer<T extends Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState>
+public final class GooglyGeoLayer<
+                T extends Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState>
         extends GeoRenderLayer<T, Void, R> {
 
-    private static final DataTicket<Frame> FRAME = DataTicket.create("somegoogly:eyes", Frame.class);
+    private static final DataTicket<Frame> FRAME =
+            DataTicket.create("somegoogly:eyes", Frame.class);
 
     public GooglyGeoLayer(GeoRenderer<T, Void, R> renderer) {
         super(renderer);
@@ -57,8 +61,10 @@ public final class GooglyGeoLayer<T extends Entity & GeoAnimatable, R extends En
     }
 
     @Override
-    public void addPerBoneRender(R renderState, BakedGeoModel bakedModel,
-                                 BiConsumer<GeoBone, PerBoneRender<R>> consumer) {
+    public void addPerBoneRender(
+            R renderState,
+            BakedGeoModel bakedModel,
+            BiConsumer<GeoBone, PerBoneRender<R>> consumer) {
         Frame frame = renderState.getGeckolibData(FRAME);
         if (frame == null) {
             return;
@@ -86,14 +92,25 @@ public final class GooglyGeoLayer<T extends Entity & GeoAnimatable, R extends En
         }
         bones.remove(null);
         for (GeoBone bone : bones) {
-            consumer.accept(bone, (state, pose, attachment, renderType, buffers, light, overlay, color) -> {
-                boolean drew = frame.preview
-                        ? renderPreviewAt(pose, attachment, frame, buffers, light, overlay)
-                        : renderEyesAt(pose, attachment, frame, buffers, light, overlay, frame.partialTick);
-                if (drew && renderType != null) {
-                    buffers.getBuffer(renderType);
-                }
-            });
+            consumer.accept(
+                    bone,
+                    (state, pose, attachment, renderType, buffers, light, overlay, color) -> {
+                        boolean drew =
+                                frame.preview
+                                        ? renderPreviewAt(
+                                                pose, attachment, frame, buffers, light, overlay)
+                                        : renderEyesAt(
+                                                pose,
+                                                attachment,
+                                                frame,
+                                                buffers,
+                                                light,
+                                                overlay,
+                                                frame.partialTick);
+                        if (drew && renderType != null) {
+                            buffers.getBuffer(renderType);
+                        }
+                    });
         }
     }
 
@@ -107,7 +124,8 @@ public final class GooglyGeoLayer<T extends Entity & GeoAnimatable, R extends En
                 frame = new Frame();
                 frame.preview = true;
                 frame.currentPart = PickerState.currentPart();
-                frame.currentEye = PickerState.currentEye() == null ? null : PickerState.currentEye().copy();
+                frame.currentEye =
+                        PickerState.currentEye() == null ? null : PickerState.currentEye().copy();
                 frame.savedEyes = new ArrayList<>();
                 for (PickerState.ListedEye eye : PickerState.previewEyes()) {
                     frame.savedEyes.add(new PickerState.ListedEye(eye.part, eye.eye.copy()));
@@ -123,33 +141,57 @@ public final class GooglyGeoLayer<T extends Entity & GeoAnimatable, R extends En
         renderState.addGeckolibData(FRAME, frame);
     }
 
-    private boolean renderEyesAt(PoseStack poseStack, GeoBone bone, Frame frame, MultiBufferSource bufferSource,
-                                 int packedLight, int packedOverlay, float partialTick) {
+    private boolean renderEyesAt(
+            PoseStack poseStack,
+            GeoBone bone,
+            Frame frame,
+            MultiBufferSource bufferSource,
+            int packedLight,
+            int packedOverlay,
+            float partialTick) {
         boolean drew = false;
         for (int h = 0; h < frame.headBones.length; h++) {
             if (frame.headBones[h] != bone) {
                 continue;
             }
-            drew |= GooglyEyeRenderer.renderHead(poseStack, bufferSource, packedLight, packedOverlay,
-                    frame.tracker.eyes[h], frame.helper, frame.overrides, h, partialTick);
+            drew |=
+                    GooglyEyeRenderer.renderHead(
+                            poseStack,
+                            bufferSource,
+                            packedLight,
+                            packedOverlay,
+                            frame.tracker.eyes[h],
+                            frame.helper,
+                            frame.overrides,
+                            h,
+                            partialTick);
         }
         return drew;
     }
 
-    private boolean renderPreviewAt(PoseStack poseStack, GeoBone bone, Frame frame, MultiBufferSource bufferSource,
-                                    int packedLight, int packedOverlay) {
+    private boolean renderPreviewAt(
+            PoseStack poseStack,
+            GeoBone bone,
+            Frame frame,
+            MultiBufferSource bufferSource,
+            int packedLight,
+            int packedOverlay) {
         boolean drew = false;
         for (int i = 0; i < frame.savedEyeBones.length; i++) {
             if (frame.savedEyeBones[i] != bone) {
                 continue;
             }
-            GooglyEyeRenderer.renderPreviewEye(poseStack, bufferSource, packedLight, packedOverlay,
+            GooglyEyeRenderer.renderPreviewEye(
+                    poseStack,
+                    bufferSource,
+                    packedLight,
+                    packedOverlay,
                     frame.savedEyes.get(i).eye);
             drew = true;
         }
         if (frame.gizmoBone == bone) {
-            GooglyEyeRenderer.renderPreviewPlacement(poseStack, bufferSource, packedLight, packedOverlay,
-                    frame.currentEye);
+            GooglyEyeRenderer.renderPreviewPlacement(
+                    poseStack, bufferSource, packedLight, packedOverlay, frame.currentEye);
             drew = true;
         }
         return drew;

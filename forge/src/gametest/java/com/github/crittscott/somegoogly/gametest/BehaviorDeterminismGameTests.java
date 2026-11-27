@@ -8,8 +8,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
  */
 public final class BehaviorDeterminismGameTests {
 
-    private BehaviorDeterminismGameTests() {
-    }
+    private BehaviorDeterminismGameTests() {}
 
     public static void everyBehaviorIsSeedDeterministicOverItsRun(GameTestHelper helper) {
         BehaviorDeterminismGameTestsLogic.everyBehaviorIsSeedDeterministicOverItsRun(helper);

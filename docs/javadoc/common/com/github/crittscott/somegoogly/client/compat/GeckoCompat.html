@@ -93,10 +93,11 @@ loadScripts(document, 'script');</script>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Soft-dependency gate for the optional GeckoLib renderer integration.
 
- <p><a href="gecko/GeckoIntegration.html" title="class in com.github.crittscott.somegoogly.client.compat.gecko"><code>GeckoIntegration</code></a> and <a href="gecko/GeoBones.html" title="class in com.github.crittscott.somegoogly.client.compat.gecko"><code>GeoBones</code></a> — and the GeckoLib types they reference — are touched only
- after the <code>LOADED</code> check, so they never load when GeckoLib is absent. Bone enumeration runs other mods' model
- code against a GeckoLib that may be newer than the build's, so a failure there is logged once and leaves
- the picker without that mob's bones. Rendering through the GeckoLib layer is not guarded.</div>
+ <p><a href="gecko/GeckoIntegration.html" title="class in com.github.crittscott.somegoogly.client.compat.gecko"><code>GeckoIntegration</code></a> and <a href="gecko/GeoBones.html" title="class in com.github.crittscott.somegoogly.client.compat.gecko"><code>GeoBones</code></a> — and the GeckoLib types they reference — are
+ touched only after the <code>LOADED</code> check, so they never load when GeckoLib is absent. Bone
+ enumeration runs other mods' model code against a GeckoLib that may be newer than the build's, so
+ a failure there is logged once and leaves the picker without that mob's bones. Rendering through
+ the GeckoLib layer is not guarded.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -114,7 +115,8 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#clearCaches()" class="member-name-link">clearCaches</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Drop the GeckoLib model caches, if GeckoLib is present; called whenever the models are replaced.</div>
+<div class="block">Drop the GeckoLib model caches, if GeckoLib is present; called whenever the models are
+ replaced.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#enumerate(net.minecraft.client.renderer.entity.EntityRenderer,net.minecraft.world.entity.LivingEntity)" class="member-name-link">enumerate</a><wbr>(net.minecraft.client.renderer.entity.EntityRenderer&lt;?,<wbr>?&gt;&nbsp;renderer,
@@ -148,7 +150,8 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="clearCaches()">
 <h3>clearCaches</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">clearCaches</span>()</div>
-<div class="block">Drop the GeckoLib model caches, if GeckoLib is present; called whenever the models are replaced.</div>
+<div class="block">Drop the GeckoLib model caches, if GeckoLib is present; called whenever the models are
+ replaced.</div>
 </section>
 </li>
 <li>
@@ -163,8 +166,8 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="isLoaded()">
 <h3>isLoaded</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isLoaded</span>()</div>
-<div class="block">Whether GeckoLib is present. Loader code checks this before registering its GeckoLib render-layer
- listener, whose class names GeckoLib's loader-specific event type.</div>
+<div class="block">Whether GeckoLib is present. Loader code checks this before registering its GeckoLib
+ render-layer listener, whose class names GeckoLib's loader-specific event type.</div>
 </section>
 </li>
 </ul>

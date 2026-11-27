@@ -9,6 +9,7 @@ import com.github.crittscott.somegoogly.platform.neoforge.RegistrationImpl;
 import com.github.crittscott.somegoogly.registry.ModContent;
 import com.github.crittscott.somegoogly.server.neoforge.HeadEyesLootModifier;
 import com.github.crittscott.somegoogly.server.neoforge.NeoForgeServerEvents;
+
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;

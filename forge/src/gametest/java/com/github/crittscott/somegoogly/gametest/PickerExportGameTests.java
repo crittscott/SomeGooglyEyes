@@ -8,8 +8,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
  */
 public final class PickerExportGameTests {
 
-    private PickerExportGameTests() {
-    }
+    private PickerExportGameTests() {}
 
     public static void canonicalJsonWritesDefaultValuedFields(GameTestHelper helper) {
         PickerExportGameTestsLogic.canonicalJsonWritesDefaultValuedFields(helper);

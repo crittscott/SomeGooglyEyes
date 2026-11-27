@@ -1,5 +1,9 @@
 package com.github.crittscott.somegoogly.config;
 
+import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ADULT;
+import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ANY;
+import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_BABY;
+
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.ConfigFile;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
@@ -10,6 +14,7 @@ import com.github.crittscott.somegoogly.network.EyeConfigSyncPacket;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
+
 import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
@@ -28,17 +33,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ADULT;
-import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ANY;
-import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_BABY;
-
 /**
  * Loads eye geometry configs from datapacks: scans {@code data/<namespace>/eyes/*.json}, one file
  * per entity (the file path is the entity id). Each file contains versioned/age-selected entries;
  * reload selects the entries that match the currently loaded mod version for that namespace. When
- * no entry matches, the nearest generation is used instead ({@link VersionRangeMatcher#nearestVersion})
- * and the mismatch is logged — eyes are cosmetic, so degraded placement beats silently dropping the
- * file (which would also permanently store a no-eyes roll for mobs spawned during the window).
+ * no entry matches, the nearest generation is used instead ({@link
+ * VersionRangeMatcher#nearestVersion}) and the mismatch is logged — eyes are cosmetic, so degraded
+ * placement beats silently dropping the file (which would also permanently store a no-eyes roll for
+ * mobs spawned during the window).
  */
 public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<JsonElement> {
 
@@ -57,31 +59,41 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<Js
     }
 
     /**
-     * Construct the file path for {@code typeId}'s eye definition. Does not check filesystem containment;
-     * callers accepting a client-authored identifier must first require membership in the entity registry.
+     * Construct the file path for {@code typeId}'s eye definition. Does not check filesystem
+     * containment; callers accepting a client-authored identifier must first require membership in
+     * the entity registry.
      */
     public static Path eyeFile(Path packRoot, ResourceLocation typeId) {
         ResourceLocation file = EYE_FILES.idToFile(typeId);
-        return packRoot.resolve(PackType.SERVER_DATA.getDirectory()).resolve(file.getNamespace()).resolve(file.getPath());
+        return packRoot.resolve(PackType.SERVER_DATA.getDirectory())
+                .resolve(file.getNamespace())
+                .resolve(file.getPath());
     }
 
     @Override
-    protected void apply(Map<ResourceLocation, JsonElement> files, ResourceManager resourceManager, ProfilerFiller profiler) {
+    protected void apply(
+            Map<ResourceLocation, JsonElement> files,
+            ResourceManager resourceManager,
+            ProfilerFiller profiler) {
         Map<ResourceLocation, RuntimeConfigSet> selected = new HashMap<>();
         int skippedModNotInstalled = 0;
         int failedParse = 0;
         int rejected = 0;
         Map<Fallback, Integer> fallbacks = new LinkedHashMap<>();
         for (Map.Entry<ResourceLocation, JsonElement> entry : files.entrySet()) {
-            // Hard exclusion, not config: no config for the dragon may ever load, from any datapack.
+            // Hard exclusion, not config: no config for the dragon may ever load, from any
+            // datapack.
             if (ServerEyeConfigs.isExcluded(entry.getKey())) {
                 SomeGooglyCommon.LOGGER.warn(
-                        "Ignoring eye config {}; the ender dragon is hard-excluded from googly eyes", entry.getKey());
+                        "Ignoring eye config {}; the ender dragon is hard-excluded from googly eyes",
+                        entry.getKey());
                 continue;
             }
-            // A bundled definition for an absent optional mod is the common case, not an error: skip it
-            // quietly and account for it in the summary so the loaded/total gap doesn't read as data loss.
-            Optional<String> loadedVersion = ModVersionLookup.versionForNamespace(entry.getKey().getNamespace());
+            // A bundled definition for an absent optional mod is the common case, not an error:
+            // skip it quietly and account for it in the summary so the loaded/total gap doesn't
+            // read as data loss.
+            Optional<String> loadedVersion =
+                    ModVersionLookup.versionForNamespace(entry.getKey().getNamespace());
             if (loadedVersion.isEmpty()) {
                 skippedModNotInstalled++;
                 continue;
@@ -89,26 +101,33 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<Js
             // Every field is required, so a typo'd datapack fails to parse rather than quietly
             // decoding to defaults. Any decode error rejects the whole file: a partial result would
             // silently drop the bad entry, eye, or variant and load the rest.
-            DataResult<ConfigFile> parsed = ConfigFile.CODEC.parse(JsonOps.INSTANCE, entry.getValue());
+            DataResult<ConfigFile> parsed =
+                    ConfigFile.CODEC.parse(JsonOps.INSTANCE, entry.getValue());
             ConfigFile file = parsed.result().orElse(null);
             if (file == null) {
-                SomeGooglyCommon.LOGGER.error("Ignoring invalid eye config {}: {}",
-                        entry.getKey(), parsed.error().orElseThrow().message());
+                SomeGooglyCommon.LOGGER.error(
+                        "Ignoring invalid eye config {}: {}",
+                        entry.getKey(),
+                        parsed.error().orElseThrow().message());
                 failedParse++;
                 continue;
             }
-            RuntimeConfigSet config = selectForLoadedVersion(entry.getKey(), file, loadedVersion.get(), fallbacks);
+            RuntimeConfigSet config =
+                    selectForLoadedVersion(entry.getKey(), file, loadedVersion.get(), fallbacks);
             if (!config.hasAnyConfig()) {
-                SomeGooglyCommon.LOGGER.warn("Ignoring eye config {}: no usable entry", entry.getKey());
+                SomeGooglyCommon.LOGGER.warn(
+                        "Ignoring eye config {}: no usable entry", entry.getKey());
                 rejected++;
                 continue;
             }
-            EyeConfigLimits.Issue error = EyeConfigLimits.validateSync(Map.of(entry.getKey(), config));
+            EyeConfigLimits.Issue error =
+                    EyeConfigLimits.validateSync(Map.of(entry.getKey(), config));
             if (error == null) {
                 selected.put(entry.getKey(), config);
             } else {
                 rejected++;
-                SomeGooglyCommon.LOGGER.error("Ignoring unsafe eye config {}: {}", entry.getKey(), error.diagnostic());
+                SomeGooglyCommon.LOGGER.error(
+                        "Ignoring unsafe eye config {}: {}", entry.getKey(), error.diagnostic());
             }
         }
         int fallbackTotal = 0;
@@ -118,7 +137,10 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<Js
             SomeGooglyCommon.LOGGER.info(
                     "{} eye configs for '{}' have no entry for installed version {}; using entry version {}."
                             + " Placement may be off.",
-                    fallback.getValue(), key.namespace(), key.installed(), key.used());
+                    fallback.getValue(),
+                    key.namespace(),
+                    key.installed(),
+                    key.used());
         }
         EyeConfigSyncPacket packet = ServerEyeConfigs.packetFor(selected);
         EyeConfigLimits.Issue refusal = packet.refusal();
@@ -132,27 +154,42 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<Js
         SomeGooglyCommon.LOGGER.info(
                 "Eye config reload {}: {} selected eye configs from {} files ({} skipped: mod not installed,"
                         + " {} failed to parse, {} rejected: no usable entry or unsafe; {} using another version's entry)",
-                changed ? "applied" : "unchanged", selected.size(), files.size(), skippedModNotInstalled, failedParse,
-                rejected, fallbackTotal);
+                changed ? "applied" : "unchanged",
+                selected.size(),
+                files.size(),
+                skippedModNotInstalled,
+                failedParse,
+                rejected,
+                fallbackTotal);
         if (selected.isEmpty()) {
-            SomeGooglyCommon.LOGGER.warn("No eye configs are loaded, so no entity can have googly eyes");
+            SomeGooglyCommon.LOGGER.warn(
+                    "No eye configs are loaded, so no entity can have googly eyes");
         }
     }
 
-    private static RuntimeConfig choose(ResourceLocation entityId, String age, RuntimeConfig existing, RuntimeConfig next) {
+    private static RuntimeConfig choose(
+            ResourceLocation entityId, String age, RuntimeConfig existing, RuntimeConfig next) {
         if (existing != null) {
-            SomeGooglyCommon.LOGGER.warn("Multiple SomeGoogly entries match {} age {}; keeping the first", entityId, age);
+            SomeGooglyCommon.LOGGER.warn(
+                    "Multiple SomeGoogly entries match {} age {}; keeping the first",
+                    entityId,
+                    age);
             return existing;
         }
         return next;
     }
 
-    /** One namespace's version fallback during a reload; reloads count files per fallback and log each once. */
-    private record Fallback(String namespace, String installed, String used) {
-    }
+    /**
+     * One namespace's version fallback during a reload; reloads count files per fallback and log
+     * each once.
+     */
+    private record Fallback(String namespace, String installed, String used) {}
 
-    private static RuntimeConfigSet selectForLoadedVersion(ResourceLocation entityId, ConfigFile file, String loaded,
-                                                           Map<Fallback, Integer> fallbacks) {
+    private static RuntimeConfigSet selectForLoadedVersion(
+            ResourceLocation entityId,
+            ConfigFile file,
+            String loaded,
+            Map<Fallback, Integer> fallbacks) {
         List<VersionedEntry> validEntries = new ArrayList<>();
         for (VersionedEntry entry : file.entries) {
             if (VersionRangeMatcher.isValid(entry.version)) {
@@ -160,12 +197,16 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<Js
             } else {
                 SomeGooglyCommon.LOGGER.warn(
                         "Invalid eye config {} version range '{}'; entry will not match",
-                        entityId, entry.version);
+                        entityId,
+                        entry.version);
             }
         }
 
-        RuntimeConfigSet set = select(entityId, validEntries,
-                entry -> VersionRangeMatcher.matches(entry.version, loaded));
+        RuntimeConfigSet set =
+                select(
+                        entityId,
+                        validEntries,
+                        entry -> VersionRangeMatcher.matches(entry.version, loaded));
         if (set.hasAnyConfig()) {
             return set;
         }
@@ -186,9 +227,14 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<Js
         return select(entityId, validEntries, entry -> nearest.equals(entry.version));
     }
 
-    /** Run the age bucketing (adult/baby/any, first entry per bucket wins) over the accepted entries. */
-    private static RuntimeConfigSet select(ResourceLocation entityId, List<VersionedEntry> entries,
-                                           Predicate<VersionedEntry> versionFilter) {
+    /**
+     * Run the age bucketing (adult/baby/any, first entry per bucket wins) over the accepted
+     * entries.
+     */
+    private static RuntimeConfigSet select(
+            ResourceLocation entityId,
+            List<VersionedEntry> entries,
+            Predicate<VersionedEntry> versionFilter) {
         RuntimeConfigSet set = new RuntimeConfigSet();
         for (VersionedEntry entry : entries) {
             if (!versionFilter.test(entry)) {
@@ -201,8 +247,11 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<Js
                 case AGE_ADULT -> set.adult = choose(entityId, AGE_ADULT, set.adult, runtime);
                 case AGE_BABY -> set.baby = choose(entityId, AGE_BABY, set.baby, runtime);
                 case AGE_ANY -> set.any = choose(entityId, AGE_ANY, set.any, runtime);
-                default -> SomeGooglyCommon.LOGGER.warn(
-                        "Ignoring eye config {} with invalid age '{}'", entityId, entry.age);
+                default ->
+                        SomeGooglyCommon.LOGGER.warn(
+                                "Ignoring eye config {} with invalid age '{}'",
+                                entityId,
+                                entry.age);
             }
         }
         return set;
@@ -216,8 +265,8 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener<Js
     }
 
     /**
-     * Filter an entry's {@code variants} down to the usable ones (those with at least one head).
-     * A config left with none is not {@link RuntimeConfig#isUsable}.
+     * Filter an entry's {@code variants} down to the usable ones (those with at least one head). A
+     * config left with none is not {@link RuntimeConfig#isUsable}.
      */
     private static List<Variant> usableVariants(VersionedEntry entry) {
         List<Variant> result = new ArrayList<>();

@@ -7,8 +7,7 @@ import java.util.Optional;
 /** NeoForge implementation of the loaded-mod version lookup. */
 public final class ModVersionLookupImpl {
 
-    private ModVersionLookupImpl() {
-    }
+    private ModVersionLookupImpl() {}
 
     public static Optional<String> modVersion(String modId) {
         return ModList.get()

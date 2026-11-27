@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly;
 
 import net.minecraft.resources.ResourceLocation;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,8 +14,7 @@ public final class SomeGooglyCommon {
     public static final String MOD_NAME = "Some Googly Eyes";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-    private SomeGooglyCommon() {
-    }
+    private SomeGooglyCommon() {}
 
     /** An internal resource identifier in this mod's namespace. */
     public static ResourceLocation id(String path) {

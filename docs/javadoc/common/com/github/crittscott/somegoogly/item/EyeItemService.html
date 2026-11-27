@@ -128,9 +128,9 @@ loadScripts(document, 'script');</script>
  net.minecraft.world.entity.player.Player&nbsp;player,
  net.minecraft.world.entity.Entity&nbsp;target)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The Slimy Eye apply verb on either side: a target whose <a href="#verdictFor(net.minecraft.world.entity.Entity)"><code>verdict</code></a> is
- <a href="EyeItemService.Verdict.html#CAN_HAVE"><code>EyeItemService.Verdict.CAN_HAVE</code></a> gains eyes carrying the stack's appearance on a freshly rolled placement variant,
- consuming one eye.</div>
+<div class="block">The Slimy Eye apply verb on either side: a target whose <a href="#verdictFor(net.minecraft.world.entity.Entity)"><code>verdict</code></a>
+ is <a href="EyeItemService.Verdict.html#CAN_HAVE"><code>EyeItemService.Verdict.CAN_HAVE</code></a> gains eyes carrying the stack's appearance on a freshly rolled
+ placement variant, consuming one eye.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.world.InteractionResult</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#interact(net.minecraft.world.entity.player.Player,net.minecraft.world.level.Level,net.minecraft.world.InteractionHand,net.minecraft.world.entity.Entity)" class="member-name-link">interact</a><wbr>(net.minecraft.world.entity.player.Player&nbsp;player,
@@ -144,25 +144,25 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#markHeadDrop(net.minecraft.world.entity.LivingEntity,net.minecraft.world.item.ItemStack)" class="member-name-link">markHeadDrop</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;mob,
  net.minecraft.world.item.ItemStack&nbsp;stack)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Give a head item an eyed mob drops in its death loot the mob's whole eye state, when the head is the mob's
- own kind (<a href="../eye/state/SkullEyeState.html#entityFor(net.minecraft.world.level.block.Block)"><code>SkullEyeState.entityFor(net.minecraft.world.level.block.Block)</code></a>) and carries no eyes yet, so the placed head shows the mob's
- arrangement and colors.</div>
+<div class="block">Give a head item an eyed mob drops in its death loot the mob's whole eye state, when the head
+ is the mob's own kind (<a href="../eye/state/SkullEyeState.html#entityFor(net.minecraft.world.level.block.Block)"><code>SkullEyeState.entityFor(net.minecraft.world.level.block.Block)</code></a>) and carries no eyes yet, so the
+ placed head shows the mob's arrangement and colors.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#onDeath(net.minecraft.world.entity.LivingEntity,net.minecraft.world.damagesource.DamageSource,java.util.function.Consumer)" class="member-name-link">onDeath</a><wbr>(net.minecraft.world.entity.LivingEntity&nbsp;mob,
  net.minecraft.world.damagesource.DamageSource&nbsp;source,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;net.minecraft.world.item.ItemStack&gt;&nbsp;dropSink)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Attempt the shears-on-kill harvest, routing the resulting eye through each loader's death-loot
- phase: NeoForge and Forge add it to the <code>LivingDropsEvent</code> collection, Fabric spawns it
- from a <code>dropAllDeathLoot</code> mixin at the same point.</div>
+<div class="block">Attempt the shears-on-kill harvest, routing the resulting eye through each loader's
+ death-loot phase: NeoForge and Forge add it to the <code>LivingDropsEvent</code> collection,
+ Fabric spawns it from a <code>dropAllDeathLoot</code> mixin at the same point.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.world.InteractionResult</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#selfRemoveWithShears(net.minecraft.world.entity.player.Player,net.minecraft.world.InteractionHand)" class="member-name-link">selfRemoveWithShears</a><wbr>(net.minecraft.world.entity.player.Player&nbsp;player,
  net.minecraft.world.InteractionHand&nbsp;hand)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Sneak + right-click air with shears to shear your own eyes off — the self-serve counterpart to
- another player having applied a Slimy Eye to you.</div>
+<div class="block">Sneak + right-click air with shears to shear your own eyes off — the self-serve counterpart
+ to another player having applied a Slimy Eye to you.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static net.minecraft.world.InteractionResult</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#useOnSkull(net.minecraft.world.entity.player.Player,net.minecraft.world.level.Level,net.minecraft.world.InteractionHand,net.minecraft.world.phys.BlockHitResult)" class="member-name-link">useOnSkull</a><wbr>(net.minecraft.world.entity.player.Player&nbsp;player,
@@ -170,10 +170,10 @@ loadScripts(document, 'script');</script>
  net.minecraft.world.InteractionHand&nbsp;hand,
  net.minecraft.world.phys.BlockHitResult&nbsp;hit)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Right-click-on-block entry point for both eye items aimed at a placed mob head: a Slimy Eye on a head whose
- <a href="#verdictFor(net.minecraft.world.level.block.entity.SkullBlockEntity)"><code>verdict</code></a> is <a href="EyeItemService.Verdict.html#CAN_HAVE"><code>EyeItemService.Verdict.CAN_HAVE</code></a> goes to
- <code>applySlimyEye(ItemStack, ServerPlayer, SkullBlockEntity)</code>, Optometrist shears on an eyed head, with
- eyes enabled, to <code>harvestSkull(net.minecraft.server.level.ServerPlayer, net.minecraft.world.InteractionHand, net.minecraft.world.level.block.entity.SkullBlockEntity)</code>.</div>
+<div class="block">Right-click-on-block entry point for both eye items aimed at a placed mob head: a Slimy Eye
+ on a head whose <a href="#verdictFor(net.minecraft.world.level.block.entity.SkullBlockEntity)"><code>verdict</code></a> is <a href="EyeItemService.Verdict.html#CAN_HAVE"><code>EyeItemService.Verdict.CAN_HAVE</code></a>
+ goes to <code>applySlimyEye(ItemStack, ServerPlayer, SkullBlockEntity)</code>, Optometrist shears
+ on an eyed head, with eyes enabled, to <code>harvestSkull(net.minecraft.server.level.ServerPlayer, net.minecraft.world.InteractionHand, net.minecraft.world.level.block.entity.SkullBlockEntity)</code>.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="EyeItemService.Verdict.html" title="enum class in com.github.crittscott.somegoogly.item">EyeItemService.Verdict</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#verdictFor(net.minecraft.world.entity.Entity)" class="member-name-link">verdictFor</a><wbr>(net.minecraft.world.entity.Entity&nbsp;target)</code></div>
@@ -183,8 +183,8 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="EyeItemService.Verdict.html" title="enum class in com.github.crittscott.somegoogly.item">EyeItemService.Verdict</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#verdictFor(net.minecraft.world.level.block.entity.SkullBlockEntity)" class="member-name-link">verdictFor</a><wbr>(net.minecraft.world.level.block.entity.SkullBlockEntity&nbsp;skull)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Whether the placed head <code>skull</code> can receive eyes, by what its side knows: its mob needs an adult
- definition, which the head borrows, with eyes the head shows.</div>
+<div class="block">Whether the placed head <code>skull</code> can receive eyes, by what its side knows: its mob needs
+ an adult definition, which the head borrows, with eyes the head shows.</div>
 </div>
 </div>
 </div>
@@ -209,13 +209,14 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">net.minecraft.world.InteractionResult</span>&nbsp;<span class="element-name">applySlimyEye</span><wbr><span class="parameters">(net.minecraft.world.item.ItemStack&nbsp;stack,
  net.minecraft.world.entity.player.Player&nbsp;player,
  net.minecraft.world.entity.Entity&nbsp;target)</span></div>
-<div class="block">The Slimy Eye apply verb on either side: a target whose <a href="#verdictFor(net.minecraft.world.entity.Entity)"><code>verdict</code></a> is
- <a href="EyeItemService.Verdict.html#CAN_HAVE"><code>EyeItemService.Verdict.CAN_HAVE</code></a> gains eyes carrying the stack's appearance on a freshly rolled placement variant,
- consuming one eye. Any other target passes (<code>PASS</code>), so its own use (riding, trading, a chest) still
- happens; another player <code>mayAffect(net.minecraft.world.entity.player.Player, net.minecraft.world.entity.Entity)</code> protects refuses (<code>FAIL</code>). The client answers from the same
- verdict, so its <code>SUCCESS</code> predicts exactly the server's application. The mob and boat paths
- (<a href="#interact(net.minecraft.world.entity.player.Player,net.minecraft.world.level.Level,net.minecraft.world.InteractionHand,net.minecraft.world.entity.Entity)"><code>interact(net.minecraft.world.entity.player.Player, net.minecraft.world.level.Level, net.minecraft.world.InteractionHand, net.minecraft.world.entity.Entity)</code></a>) and the sneak self-apply (<code>SlimyEyeItem#use</code>) route through here. Vanilla records
- no item use for any of them, so this does.</div>
+<div class="block">The Slimy Eye apply verb on either side: a target whose <a href="#verdictFor(net.minecraft.world.entity.Entity)"><code>verdict</code></a>
+ is <a href="EyeItemService.Verdict.html#CAN_HAVE"><code>EyeItemService.Verdict.CAN_HAVE</code></a> gains eyes carrying the stack's appearance on a freshly rolled
+ placement variant, consuming one eye. Any other target passes (<code>PASS</code>), so its own use
+ (riding, trading, a chest) still happens; another player <code>mayAffect(net.minecraft.world.entity.player.Player, net.minecraft.world.entity.Entity)</code> protects refuses
+ (<code>FAIL</code>). The client answers from the same verdict, so its <code>SUCCESS</code> predicts
+ exactly the server's application. The mob and boat paths (<a href="#interact(net.minecraft.world.entity.player.Player,net.minecraft.world.level.Level,net.minecraft.world.InteractionHand,net.minecraft.world.entity.Entity)"><code>interact(net.minecraft.world.entity.player.Player, net.minecraft.world.level.Level, net.minecraft.world.InteractionHand, net.minecraft.world.entity.Entity)</code></a>) and the sneak
+ self-apply (<code>SlimyEyeItem#use</code>) route through here. Vanilla records no item use for any
+ of them, so this does.</div>
 </section>
 </li>
 <li>
@@ -225,11 +226,12 @@ loadScripts(document, 'script');</script>
  net.minecraft.world.level.Level&nbsp;level,
  net.minecraft.world.InteractionHand&nbsp;hand,
  net.minecraft.world.entity.Entity&nbsp;target)</span></div>
-<div class="block">Route supported entities through normal loader interaction hooks. Eligible application and harvesting are
- predicted on the client, so success also consumes the target's own use, and on Fabric the click's second
- interact packet: that packet's callback would otherwise find a just-harvested mob eyeless and let vanilla
- shear it. Irrelevant actions pass through to vanilla. Spectators pass here and at the other use entry
- points because the loaders' use hooks can fire before vanilla's spectator test.</div>
+<div class="block">Route supported entities through normal loader interaction hooks. Eligible application and
+ harvesting are predicted on the client, so success also consumes the target's own use, and on
+ Fabric the click's second interact packet: that packet's callback would otherwise find a
+ just-harvested mob eyeless and let vanilla shear it. Irrelevant actions pass through to
+ vanilla. Spectators pass here and at the other use entry points because the loaders' use
+ hooks can fire before vanilla's spectator test.</div>
 </section>
 </li>
 <li>
@@ -237,10 +239,11 @@ loadScripts(document, 'script');</script>
 <h3>markHeadDrop</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">markHeadDrop</span><wbr><span class="parameters">(net.minecraft.world.entity.LivingEntity&nbsp;mob,
  net.minecraft.world.item.ItemStack&nbsp;stack)</span></div>
-<div class="block">Give a head item an eyed mob drops in its death loot the mob's whole eye state, when the head is the mob's
- own kind (<a href="../eye/state/SkullEyeState.html#entityFor(net.minecraft.world.level.block.Block)"><code>SkullEyeState.entityFor(net.minecraft.world.level.block.Block)</code></a>) and carries no eyes yet, so the placed head shows the mob's
- arrangement and colors. Players are left out: their death drops are their inventory. Each loader routes
- every stack of the death-loot phase here; any other stack is left alone.</div>
+<div class="block">Give a head item an eyed mob drops in its death loot the mob's whole eye state, when the head
+ is the mob's own kind (<a href="../eye/state/SkullEyeState.html#entityFor(net.minecraft.world.level.block.Block)"><code>SkullEyeState.entityFor(net.minecraft.world.level.block.Block)</code></a>) and carries no eyes yet, so the
+ placed head shows the mob's arrangement and colors. Players are left out: their death drops
+ are their inventory. Each loader routes every stack of the death-loot phase here; any other
+ stack is left alone.</div>
 </section>
 </li>
 <li>
@@ -249,10 +252,10 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">onDeath</span><wbr><span class="parameters">(net.minecraft.world.entity.LivingEntity&nbsp;mob,
  net.minecraft.world.damagesource.DamageSource&nbsp;source,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;net.minecraft.world.item.ItemStack&gt;&nbsp;dropSink)</span></div>
-<div class="block">Attempt the shears-on-kill harvest, routing the resulting eye through each loader's death-loot
- phase: NeoForge and Forge add it to the <code>LivingDropsEvent</code> collection, Fabric spawns it
- from a <code>dropAllDeathLoot</code> mixin at the same point. Neither depends on <code>doMobLoot</code>, so the rule
- is checked here.</div>
+<div class="block">Attempt the shears-on-kill harvest, routing the resulting eye through each loader's
+ death-loot phase: NeoForge and Forge add it to the <code>LivingDropsEvent</code> collection,
+ Fabric spawns it from a <code>dropAllDeathLoot</code> mixin at the same point. Neither depends on
+ <code>doMobLoot</code>, so the rule is checked here.</div>
 </section>
 </li>
 <li>
@@ -260,14 +263,15 @@ loadScripts(document, 'script');</script>
 <h3>selfRemoveWithShears</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">net.minecraft.world.InteractionResult</span>&nbsp;<span class="element-name">selfRemoveWithShears</span><wbr><span class="parameters">(net.minecraft.world.entity.player.Player&nbsp;player,
  net.minecraft.world.InteractionHand&nbsp;hand)</span></div>
-<div class="block">Sneak + right-click air with shears to shear your own eyes off — the self-serve counterpart to
- another player having applied a Slimy Eye to you. One Googly Eye drops carrying your effective
- appearance and the shears lose one durability. Optometrist shears do it cleanly; plain shears
- additionally deal a bare-handed hit's worth (base attack damage, whatever the main hand holds) of
- <a href="../registry/ModContent.html#SELF_SHEAR"><code>ModContent.SELF_SHEAR</code></a> damage, which has no
- attacker so PvP and team rules don't cancel it. Returns <code>InteractionResult.PASS</code>
- when it doesn't apply (spectating, not sneaking, not shears, no eyes, <code>googlyEyesEnabled</code> off, or
- aimed at a block or entity, which a passed click on it also brings here) so the vanilla item use proceeds.</div>
+<div class="block">Sneak + right-click air with shears to shear your own eyes off — the self-serve counterpart
+ to another player having applied a Slimy Eye to you. One Googly Eye drops carrying your
+ effective appearance and the shears lose one durability. Optometrist shears do it cleanly;
+ plain shears additionally deal a bare-handed hit's worth (base attack damage, whatever the
+ main hand holds) of <a href="../registry/ModContent.html#SELF_SHEAR"><code>ModContent.SELF_SHEAR</code></a> damage, which has no attacker so PvP and
+ team rules don't cancel it. Returns <code>InteractionResult.PASS</code> when it doesn't apply
+ (spectating, not sneaking, not shears, no eyes, <code>googlyEyesEnabled</code> off, or aimed at a
+ block or entity, which a passed click on it also brings here) so the vanilla item use
+ proceeds.</div>
 </section>
 </li>
 <li>
@@ -277,17 +281,16 @@ loadScripts(document, 'script');</script>
  net.minecraft.world.level.Level&nbsp;level,
  net.minecraft.world.InteractionHand&nbsp;hand,
  net.minecraft.world.phys.BlockHitResult&nbsp;hit)</span></div>
-<div class="block">Right-click-on-block entry point for both eye items aimed at a placed mob head: a Slimy Eye on a head whose
- <a href="#verdictFor(net.minecraft.world.level.block.entity.SkullBlockEntity)"><code>verdict</code></a> is <a href="EyeItemService.Verdict.html#CAN_HAVE"><code>EyeItemService.Verdict.CAN_HAVE</code></a> goes to
- <code>applySlimyEye(ItemStack, ServerPlayer, SkullBlockEntity)</code>, Optometrist shears on an eyed head, with
- eyes enabled, to <code>harvestSkull(net.minecraft.server.level.ServerPlayer, net.minecraft.world.InteractionHand, net.minecraft.world.level.block.entity.SkullBlockEntity)</code>. Either needs the player allowed to use the item on that block, as
- building there would; otherwise both sides refuse (<code>InteractionResult.FAIL</code>) and nothing is spent.
- Both sides decide those cases from the state they hold, and the client answers
- <code>InteractionResult.SUCCESS</code> in exactly the allowed ones, so it neither runs nor sends the item's own
- use on top. Anything else, including plain shears, an eyed head, or a spectator's click, returns
- <code>InteractionResult.PASS</code>. The
- Slimy Eye comes here rather than through <code>Item#useOn</code> for the reason a mob's click does: a modded head
- block can have a use of its own that takes the click first.</div>
+<div class="block">Right-click-on-block entry point for both eye items aimed at a placed mob head: a Slimy Eye
+ on a head whose <a href="#verdictFor(net.minecraft.world.level.block.entity.SkullBlockEntity)"><code>verdict</code></a> is <a href="EyeItemService.Verdict.html#CAN_HAVE"><code>EyeItemService.Verdict.CAN_HAVE</code></a>
+ goes to <code>applySlimyEye(ItemStack, ServerPlayer, SkullBlockEntity)</code>, Optometrist shears
+ on an eyed head, with eyes enabled, to <code>harvestSkull(net.minecraft.server.level.ServerPlayer, net.minecraft.world.InteractionHand, net.minecraft.world.level.block.entity.SkullBlockEntity)</code>. Either needs the player allowed
+ to use the item on that block, as building there would; otherwise both sides refuse (<code>InteractionResult.FAIL</code>) and nothing is spent. Both sides decide those cases from the state
+ they hold, and the client answers <code>InteractionResult.SUCCESS</code> in exactly the allowed
+ ones, so it neither runs nor sends the item's own use on top. Anything else, including plain
+ shears, an eyed head, or a spectator's click, returns <code>InteractionResult.PASS</code>. The
+ Slimy Eye comes here rather than through <code>Item#useOn</code> for the reason a mob's click
+ does: a modded head block can have a use of its own that takes the click first.</div>
 </section>
 </li>
 <li>
@@ -301,8 +304,8 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="verdictFor(net.minecraft.world.level.block.entity.SkullBlockEntity)">
 <h3>verdictFor</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="EyeItemService.Verdict.html" title="enum class in com.github.crittscott.somegoogly.item">EyeItemService.Verdict</a></span>&nbsp;<span class="element-name">verdictFor</span><wbr><span class="parameters">(net.minecraft.world.level.block.entity.SkullBlockEntity&nbsp;skull)</span></div>
-<div class="block">Whether the placed head <code>skull</code> can receive eyes, by what its side knows: its mob needs an adult
- definition, which the head borrows, with eyes the head shows.</div>
+<div class="block">Whether the placed head <code>skull</code> can receive eyes, by what its side knows: its mob needs
+ an adult definition, which the head borrows, with eyes the head shows.</div>
 </section>
 </li>
 </ul>

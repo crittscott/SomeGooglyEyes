@@ -3,6 +3,7 @@ package com.github.crittscott.somegoogly.gametest;
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.github.crittscott.somegoogly.client.PresentationEyes;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
+
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.vehicle.AbstractBoat;
@@ -10,11 +11,13 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.UUID;
 
-/** Test-source facades for driving the production runtime's caches and clocks without a rendered client. */
+/**
+ * Test-source facades for driving the production runtime's caches and clocks without a rendered
+ * client.
+ */
 final class TestEyeRuntime {
 
-    private TestEyeRuntime() {
-    }
+    private TestEyeRuntime() {}
 
     static final class BoatCache {
         BoatCache() {

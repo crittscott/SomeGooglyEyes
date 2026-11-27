@@ -4,14 +4,15 @@ import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.github.crittscott.somegoogly.client.ClientLifecycle;
 import com.github.crittscott.somegoogly.client.ClientRenderLayers;
-import com.github.crittscott.somegoogly.client.render.GooglyEyeItemRenderer;
 import com.github.crittscott.somegoogly.client.SlimyEyeIrisTint;
+import com.github.crittscott.somegoogly.client.command.GooglyClientCommands;
 import com.github.crittscott.somegoogly.client.compat.GeckoCompat;
 import com.github.crittscott.somegoogly.client.picker.PickerHud;
 import com.github.crittscott.somegoogly.client.picker.PickerInput;
-import com.github.crittscott.somegoogly.client.command.GooglyClientCommands;
+import com.github.crittscott.somegoogly.client.render.GooglyEyeItemRenderer;
 import com.github.crittscott.somegoogly.config.forge.ForgeClientConfig;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
+
 import net.minecraft.client.color.item.ItemTintSources;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.special.SpecialModelRenderers;
@@ -34,19 +35,21 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 /** Physical-client registration kept out of the dedicated-server entry point. */
 public final class ForgeClientBootstrap {
 
-    private ForgeClientBootstrap() {
-    }
+    private ForgeClientBootstrap() {}
 
     /** Appended without an anchor, so the picker HUD draws after every vanilla HUD layer. */
     private static void addGuiLayers(AddGuiOverlayLayersEvent event) {
-        event.getLayeredDraw().add(
-                SomeGooglyCommon.id("picker"),
-                (graphics, deltaTracker) -> PickerHud.render(graphics, graphics.guiWidth()));
+        event.getLayeredDraw()
+                .add(
+                        SomeGooglyCommon.id("picker"),
+                        (graphics, deltaTracker) ->
+                                PickerHud.render(graphics, graphics.guiWidth()));
     }
 
     /**
      * Forge's event exposes renderers per type but not the set of types that have one, so walk the
-     * entity-type registry. The getter's living bound is generic only; non-living renderers come back too.
+     * entity-type registry. The getter's living bound is generic only; non-living renderers come
+     * back too.
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     private static void addRendererLayers(EntityRenderersEvent.AddLayers event) {
@@ -98,9 +101,12 @@ public final class ForgeClientBootstrap {
         registerItemModelTypes();
 
         FMLClientSetupEvent.getBus(modBusGroup).addListener(ForgeClientBootstrap::onClientSetup);
-        EntityRenderersEvent.AddLayers.getBus(modBusGroup).addListener(ForgeClientBootstrap::addRendererLayers);
-        AddGuiOverlayLayersEvent.getBus(modBusGroup).addListener(ForgeClientBootstrap::addGuiLayers);
-        RegisterKeyMappingsEvent.getBus(modBusGroup).addListener(ForgeClientBootstrap::registerKeyMappings);
+        EntityRenderersEvent.AddLayers.getBus(modBusGroup)
+                .addListener(ForgeClientBootstrap::addRendererLayers);
+        AddGuiOverlayLayersEvent.getBus(modBusGroup)
+                .addListener(ForgeClientBootstrap::addGuiLayers);
+        RegisterKeyMappingsEvent.getBus(modBusGroup)
+                .addListener(ForgeClientBootstrap::registerKeyMappings);
 
         RegisterClientCommandsEvent.BUS.addListener(ForgeClientBootstrap::registerClientCommands);
         TickEvent.ClientTickEvent.Post.BUS.addListener(ForgeClientBootstrap::onClientTick);
@@ -118,13 +124,14 @@ public final class ForgeClientBootstrap {
     }
 
     /**
-     * Forge has no registration event for item tint sources or special model renderers, so add ours to
-     * vanilla's type maps directly. Runs at mod construction, before the first resource reload resolves
-     * item definitions.
+     * Forge has no registration event for item tint sources or special model renderers, so add ours
+     * to vanilla's type maps directly. Runs at mod construction, before the first resource reload
+     * resolves item definitions.
      */
     private static void registerItemModelTypes() {
         ItemTintSources.ID_MAPPER.put(SlimyEyeIrisTint.ID, SlimyEyeIrisTint.MAP_CODEC);
-        SpecialModelRenderers.ID_MAPPER.put(GooglyEyeItemRenderer.ID, GooglyEyeItemRenderer.Unbaked.MAP_CODEC);
+        SpecialModelRenderers.ID_MAPPER.put(
+                GooglyEyeItemRenderer.ID, GooglyEyeItemRenderer.Unbaked.MAP_CODEC);
     }
 
     private static void registerKeyMappings(RegisterKeyMappingsEvent event) {

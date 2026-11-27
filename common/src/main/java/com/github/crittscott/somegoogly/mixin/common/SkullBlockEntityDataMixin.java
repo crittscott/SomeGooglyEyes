@@ -3,6 +3,7 @@ package com.github.crittscott.somegoogly.mixin.common;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import com.github.crittscott.somegoogly.registry.ModContent;
+
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentGetter;
 import net.minecraft.core.component.DataComponentMap;
@@ -10,6 +11,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -21,18 +23,16 @@ import javax.annotation.Nullable;
 
 /**
  * Gives the head block entity its eye-state compound ({@link SkullEyeState.Holder}), saved under
- * {@link SkullEyeState#DATA_KEY} while the head has eyes and replaced on every load, so the server's save and the
- * clients' update packets carry it; a load without the key clears it. The update tag carries the compound even
- * without eyes, so the client clears them. The head's item form carries the same
- * state as the {@link ModContent#HEAD_EYES} component, taken and given here as an implicit component, the way
- * the head's own profile is.
+ * {@link SkullEyeState#DATA_KEY} while the head has eyes and replaced on every load, so the
+ * server's save and the clients' update packets carry it; a load without the key clears it. The
+ * update tag carries the compound even without eyes, so the client clears them. The head's item
+ * form carries the same state as the {@link ModContent#HEAD_EYES} component, taken and given here
+ * as an implicit component, the way the head's own profile is.
  */
 @Mixin(SkullBlockEntity.class)
 abstract class SkullBlockEntityDataMixin implements SkullEyeState.Holder {
 
-    @Unique
-    @Nullable
-    private CompoundTag somegoogly$data;
+    @Unique @Nullable private CompoundTag somegoogly$data;
 
     @Override
     @Nullable
@@ -60,7 +60,8 @@ abstract class SkullBlockEntityDataMixin implements SkullEyeState.Holder {
     }
 
     @Inject(method = "collectImplicitComponents", at = @At("TAIL"))
-    private void somegoogly$collectComponents(DataComponentMap.Builder components, CallbackInfo callback) {
+    private void somegoogly$collectComponents(
+            DataComponentMap.Builder components, CallbackInfo callback) {
         if (somegoogly$data != null) {
             EyeState.Snapshot snapshot = EyeState.Snapshot.read(somegoogly$data);
             if (snapshot.hasEyes()) {
@@ -71,7 +72,9 @@ abstract class SkullBlockEntityDataMixin implements SkullEyeState.Holder {
 
     @Inject(method = "loadAdditional", at = @At("TAIL"))
     private void somegoogly$load(ValueInput input, CallbackInfo callback) {
-        somegoogly$data = SkullEyeState.loadedData(input.read(SkullEyeState.DATA_KEY, CompoundTag.CODEC).orElse(null));
+        somegoogly$data =
+                SkullEyeState.loadedData(
+                        input.read(SkullEyeState.DATA_KEY, CompoundTag.CODEC).orElse(null));
     }
 
     @Inject(method = "removeComponentsFromTag", at = @At("TAIL"))
@@ -87,7 +90,8 @@ abstract class SkullBlockEntityDataMixin implements SkullEyeState.Holder {
     }
 
     @Inject(method = "getUpdateTag", at = @At("RETURN"))
-    private void somegoogly$updateTag(HolderLookup.Provider registries, CallbackInfoReturnable<CompoundTag> callback) {
+    private void somegoogly$updateTag(
+            HolderLookup.Provider registries, CallbackInfoReturnable<CompoundTag> callback) {
         somegoogly$syncEyes(callback.getReturnValue());
     }
 }

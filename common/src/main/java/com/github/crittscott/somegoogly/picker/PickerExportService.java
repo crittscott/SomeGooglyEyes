@@ -1,5 +1,7 @@
 package com.github.crittscott.somegoogly.picker;
 
+import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ADULT;
+
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.config.EyeConfigLimits;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.ConfigFile;
@@ -11,6 +13,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
+
 import net.minecraft.SharedConstants;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -31,45 +34,47 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.UnaryOperator;
-import javax.annotation.Nullable;
 
-import static com.github.crittscott.somegoogly.config.EyeConfigModel.AGE_ADULT;
+import javax.annotation.Nullable;
 
 /**
  * Server-side half of {@code /sg export} (reached via {@code PickerExportPacket}): validates a
- * client-authored eye config, writes it as canonical datapack JSON into the world's
- * {@code somegoogly-picker} pack, and reloads datapacks as {@code /reload} does so it persists and re-syncs through the normal
- * path. Owning this on the server is what lets a remote client export.
+ * client-authored eye config, writes it as canonical datapack JSON into the world's {@code
+ * somegoogly-picker} pack, and reloads datapacks as {@code /reload} does so it persists and
+ * re-syncs through the normal path. Owning this on the server is what lets a remote client export.
  *
  * <p>The payload is <b>never trusted</b>: the entity id must parse and exist in the entity registry
  * (clients cannot supply an arbitrary unregistered id). Identifier syntax itself does not guarantee
- * filesystem containment; {@link EyeConfigReloadListener#eyeFile} constructs a path without checking it.
- * Renderer-excluded entity kinds are refused, and the config must
- * decode through {@code RuntimeConfig.CODEC} — whose fields are all required, so a malformed or
- * wrong-typed payload is rejected outright rather than decoding to an empty config — and contain at
- * least one usable eye. The declared version is resolved from the <b>server's</b> loaded mod version
- * — the one that matters for its datapack; client and server versions may legally differ (see
- * {@link ConfigFile#exportVersion}).
+ * filesystem containment; {@link EyeConfigReloadListener#eyeFile} constructs a path without
+ * checking it. Renderer-excluded entity kinds are refused, and the config must decode through
+ * {@code RuntimeConfig.CODEC} — whose fields are all required, so a malformed or wrong-typed
+ * payload is rejected outright rather than decoding to an empty config — and contain at least one
+ * usable eye. The declared version is resolved from the <b>server's</b> loaded mod version — the
+ * one that matters for its datapack; client and server versions may legally differ (see {@link
+ * ConfigFile#exportVersion}).
  *
- * <p>Every attempt passes the export throttles in {@link PickerGate#tryExport} before codec work, and a
- * success arms the longer per-player cooldown, since each one triggers a full datapack reload. Picker
- * use is very intermittent, so the brief reload lag and waits are acceptable. All entry points run on
- * the server thread.
+ * <p>Every attempt passes the export throttles in {@link PickerGate#tryExport} before codec work,
+ * and a success arms the longer per-player cooldown, since each one triggers a full datapack
+ * reload. Picker use is very intermittent, so the brief reload lag and waits are acceptable. All
+ * entry points run on the server thread.
  */
 public final class PickerExportService {
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final String PACK_NAME = "somegoogly-picker";
 
-    private PickerExportService() {
-    }
+    private PickerExportService() {}
 
     /**
      * Validate and perform one export. Returns localized feedback for the requesting player; the
      * caller ({@code PickerExportPacket}) has already authorized the sender.
      */
-    public static Component export(MinecraftServer server, UUID playerId, ResourceLocation typeId,
-                                   String age, CompoundTag configNbt) {
+    public static Component export(
+            MinecraftServer server,
+            UUID playerId,
+            ResourceLocation typeId,
+            String age,
+            CompoundTag configNbt) {
         Component throttled = PickerGate.tryExport(server, playerId);
         if (throttled != null) {
             return throttled;
@@ -81,18 +86,23 @@ public final class PickerExportService {
         if (ServerEyeConfigs.isExcluded(typeId)) {
             return Component.translatable("somegoogly.command.picker.export_rejected_ender_dragon");
         }
-        RuntimeConfig config = RuntimeConfig.CODEC.parse(NbtOps.INSTANCE, configNbt).result().orElse(null);
+        RuntimeConfig config =
+                RuntimeConfig.CODEC.parse(NbtOps.INSTANCE, configNbt).result().orElse(null);
         if (config == null) {
-            return Component.translatable("somegoogly.command.picker.export_rejected_malformed_payload");
+            return Component.translatable(
+                    "somegoogly.command.picker.export_rejected_malformed_payload");
         }
         // Draft tokens arrive already canonical (the picker authors in its enumeration vocabulary).
         RuntimeConfig pruned = RuntimeConfig.pruned(config, UnaryOperator.identity());
         if (pruned == null) {
-            return Component.translatable("somegoogly.command.picker.export_rejected_no_usable_eyes");
+            return Component.translatable(
+                    "somegoogly.command.picker.export_rejected_no_usable_eyes");
         }
         EyeConfigLimits.Issue limitsError = EyeConfigLimits.validateRuntimeConfig(pruned);
         if (limitsError != null) {
-            return Component.translatable("somegoogly.command.picker.export_rejected_unsafe_payload", limitsError.message());
+            return Component.translatable(
+                    "somegoogly.command.picker.export_rejected_unsafe_payload",
+                    limitsError.message());
         }
         Component syncRefusal = syncRefusal(typeId, age, pruned);
         if (syncRefusal != null) {
@@ -101,7 +111,8 @@ public final class PickerExportService {
         Optional<String> version = ConfigFile.exportVersion(typeId.getNamespace());
         if (version.isEmpty()) {
             return Component.translatable(
-                    "somegoogly.command.picker.export_rejected_unknown_namespace", typeId.getNamespace());
+                    "somegoogly.command.picker.export_rejected_unknown_namespace",
+                    typeId.getNamespace());
         }
         String versionDeclaration = version.get();
 
@@ -109,8 +120,12 @@ public final class PickerExportService {
         Path target = EyeConfigReloadListener.eyeFile(packDir, typeId);
 
         // A datapack file shadows the whole entity definition, so retain all untouched age buckets.
-        ConfigFile file = ConfigFile.overlay(ServerEyeConfigs.all().get(typeId), Map.of(age, pruned),
-                versionDeclaration, UnaryOperator.identity());
+        ConfigFile file =
+                ConfigFile.overlay(
+                        ServerEyeConfigs.all().get(typeId),
+                        Map.of(age, pruned),
+                        versionDeclaration,
+                        UnaryOperator.identity());
 
         try {
             file.writeJson(target);
@@ -119,36 +134,50 @@ public final class PickerExportService {
                 writePackMetadata(meta);
             }
         } catch (IOException e) {
-            SomeGooglyCommon.LOGGER.error("Failed to write picker export for {} to {}", typeId, target, e);
-            return Component.translatable("somegoogly.command.picker.export_failed", String.valueOf(e.getMessage()));
+            SomeGooglyCommon.LOGGER.error(
+                    "Failed to write picker export for {} to {}", typeId, target, e);
+            return Component.translatable(
+                    "somegoogly.command.picker.export_failed", String.valueOf(e.getMessage()));
         }
 
         PickerGate.exportSucceeded(server, playerId);
         ServerPlayer player = server.getPlayerList().getPlayer(playerId);
-        SomeGooglyCommon.LOGGER.info("Picker export by {} ({}) for {}; forcing datapack reload",
-                player != null ? player.getGameProfile().getName() : "unknown", playerId, typeId);
-        // Already on the server thread. Vanilla's /reload picks up a first export's new pack, then re-reads the
-        // datapacks and re-syncs them to every client.
-        server.getCommands().performPrefixedCommand(server.createCommandSourceStack().withSuppressedOutput(), "reload");
-        return Component.translatable("somegoogly.command.picker.export_success", typeId.toString(), PACK_NAME);
+        SomeGooglyCommon.LOGGER.info(
+                "Picker export by {} ({}) for {}; forcing datapack reload",
+                player != null ? player.getGameProfile().getName() : "unknown",
+                playerId,
+                typeId);
+        // Already on the server thread. Vanilla's /reload picks up a first export's new pack, then
+        // re-reads the datapacks and re-syncs them to every client.
+        server.getCommands()
+                .performPrefixedCommand(
+                        server.createCommandSourceStack().withSuppressedOutput(), "reload");
+        return Component.translatable(
+                "somegoogly.command.picker.export_success", typeId.toString(), PACK_NAME);
     }
 
     /**
-     * Why the installed definitions with this export applied could not be synchronized, or {@code null} if they
-     * can. The reload listener would refuse such a set, leaving the export on disk with no effect until a restart
-     * loads no definitions at all, so it has to be refused before anything is written.
+     * Why the installed definitions with this export applied could not be synchronized, or {@code
+     * null} if they can. The reload listener would refuse such a set, leaving the export on disk
+     * with no effect until a restart loads no definitions at all, so it has to be refused before
+     * anything is written.
      */
     @Nullable
-    private static Component syncRefusal(ResourceLocation typeId, String age, RuntimeConfig authored) {
+    private static Component syncRefusal(
+            ResourceLocation typeId, String age, RuntimeConfig authored) {
         Map<ResourceLocation, RuntimeConfigSet> next = new HashMap<>(ServerEyeConfigs.all());
         next.put(typeId, withAge(next.get(typeId), age, authored));
         EyeConfigLimits.Issue refusal = ServerEyeConfigs.packetFor(next).refusal();
-        return refusal == null ? null
-                : Component.translatable("somegoogly.command.picker.export_rejected_unsafe_payload", refusal.message());
+        return refusal == null
+                ? null
+                : Component.translatable(
+                        "somegoogly.command.picker.export_rejected_unsafe_payload",
+                        refusal.message());
     }
 
     /** {@code base} with its adult or baby config replaced by {@code authored}. */
-    private static RuntimeConfigSet withAge(@Nullable RuntimeConfigSet base, String age, RuntimeConfig authored) {
+    private static RuntimeConfigSet withAge(
+            @Nullable RuntimeConfigSet base, String age, RuntimeConfig authored) {
         RuntimeConfigSet set = new RuntimeConfigSet();
         if (base != null) {
             set.adult = base.adult;
@@ -164,15 +193,18 @@ public final class PickerExportService {
     }
 
     /**
-     * Write the export pack's metadata through vanilla's codec: a translated description and this server's
-     * data-pack format.
+     * Write the export pack's metadata through vanilla's codec: a translated description and this
+     * server's data-pack format.
      */
     private static void writePackMetadata(Path meta) throws IOException {
-        PackMetadataSection pack = new PackMetadataSection(
-                Component.translatable("somegoogly.pack.picker_description"),
-                SharedConstants.getCurrentVersion().packVersion(PackType.SERVER_DATA), Optional.empty());
+        PackMetadataSection pack =
+                new PackMetadataSection(
+                        Component.translatable("somegoogly.pack.picker_description"),
+                        SharedConstants.getCurrentVersion().packVersion(PackType.SERVER_DATA),
+                        Optional.empty());
         JsonObject json = new JsonObject();
-        json.add("pack", PackMetadataSection.CODEC.encodeStart(JsonOps.INSTANCE, pack).getOrThrow());
+        json.add(
+                "pack", PackMetadataSection.CODEC.encodeStart(JsonOps.INSTANCE, pack).getOrThrow());
         Files.writeString(meta, GSON.toJson(json) + "\n");
     }
 }

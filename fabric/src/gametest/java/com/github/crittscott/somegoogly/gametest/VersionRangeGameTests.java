@@ -4,8 +4,8 @@ import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 
 /**
- * Fabric GameTest entry points for {@link VersionRangeGameTestsLogic}; see that class for the actual
- * assertions.
+ * Fabric GameTest entry points for {@link VersionRangeGameTestsLogic}; see that class for the
+ * actual assertions.
  */
 public final class VersionRangeGameTests {
 
@@ -45,7 +45,6 @@ public final class VersionRangeGameTests {
     public void nearestHandlesExactAndMalformedDeclarations(GameTestHelper helper) {
         VersionRangeGameTestsLogic.nearestHandlesExactAndMalformedDeclarations(helper);
     }
-
 
     @GameTest(structure = TEMPLATE, maxTicks = 100)
     public void shorterVersionPadsWithZero(GameTestHelper helper) {

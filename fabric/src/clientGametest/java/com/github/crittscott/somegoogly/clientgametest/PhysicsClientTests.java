@@ -6,13 +6,17 @@ import net.minecraft.client.CameraType;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.world.entity.HumanoidArm;
 
-/** Client test plan section 2: pupil physics. Ambient expressions are off throughout, so only physics moves pupils. */
+/**
+ * Client test plan section 2: pupil physics. Ambient expressions are off throughout, so only
+ * physics moves pupils.
+ */
 public final class PhysicsClientTests implements FabricClientGameTest {
     private static final String RED_EYE = Scene.googly("{irisColor:" + Scene.RED + "}");
 
     /**
-     * In-game: row an eyed boat forward, back, and turning while a friend watches from the side; hit it; float it on
-     * bubble columns. Here the boat is pushed and turned by commands so a fixed camera can watch the eyed side.
+     * In-game: row an eyed boat forward, back, and turning while a friend watches from the side;
+     * hit it; float it on bubble columns. Here the boat is pushed and turned by commands so a fixed
+     * camera can watch the eyed side.
      */
     private static void boatMotion(Scene s) {
         s.water(-11, -4, 11, 4);
@@ -22,7 +26,8 @@ public final class PhysicsClientTests implements FabricClientGameTest {
         s.shot("A still eyed boat seen from its side: pupils hang toward world down.");
         s.server("data merge entity %s {Motion:[-0.8d,0d,0d]}", Scene.sel(boat));
         s.waitTicks(2);
-        s.shot("Just pushed bow-first (to the left): the eye stays on the hull; its pupil lags toward the stern.");
+        s.shot(
+                "Just pushed bow-first (to the left): the eye stays on the hull; its pupil lags toward the stern.");
         s.waitTicks(40);
         s.server("data merge entity %s {Motion:[0.8d,0d,0d]}", Scene.sel(boat));
         s.waitTicks(2);
@@ -37,7 +42,8 @@ public final class PhysicsClientTests implements FabricClientGameTest {
         s.cameraOn(0, 0.5, 2.5, boat);
         s.attack();
         s.cameraAt(0, 1, 4, 0, 0, 0);
-        s.shot("Just after a hit, seen from the side: the hull rocks; the eye stays attached and its pupil still hangs toward world down.");
+        s.shot(
+                "Just after a hit, seen from the side: the hull rocks; the eye stays attached and its pupil still hangs toward world down.");
         s.gamemode("creative");
         s.server("kill %s", Scene.sel(boat));
         for (String floor : new String[] {"minecraft:soul_sand", "minecraft:magma_block"}) {
@@ -48,14 +54,18 @@ public final class PhysicsClientTests implements FabricClientGameTest {
             s.useOnEntity(columnBoat, 0, 2.5, 2.5, Scene.SLIMY);
             s.waitTicks(10);
             s.cameraAt(0, 0.5, 5, 0, -0.5, 0);
-            s.shot(floor.endsWith("soul_sand")
-                    ? "A boat in an upward bubble column: eyes stay on the bobbing hull; pupils hang toward world down."
-                    : "A boat over a downward bubble column: eyes stay on the hull as it is pulled down.");
+            s.shot(
+                    floor.endsWith("soul_sand")
+                            ? "A boat in an upward bubble column: eyes stay on the bobbing hull; pupils hang toward world down."
+                            : "A boat over a downward bubble column: eyes stay on the hull as it is pulled down.");
             s.server("kill %s", Scene.sel(columnBoat));
         }
     }
 
-    /** In-game: with a still scene, look level, up, down, and in F5; pupils keep the same world direction. */
+    /**
+     * In-game: with a still scene, look level, up, down, and in F5; pupils keep the same world
+     * direction.
+     */
     private static void cameraIndependence(Scene s) {
         String cow = s.mob("minecraft:cow", -2, 0, 0);
         s.eyes(cow);
@@ -68,13 +78,17 @@ public final class PhysicsClientTests implements FabricClientGameTest {
         s.hotbar(0);
         s.waitTicks(40);
         s.camera(0, 1, 5, 180, 0);
-        s.shot("Level view of a cow, a framed eye, and an eyed boat, with a held eye: all pupils hang toward world down.");
+        s.shot(
+                "Level view of a cow, a framed eye, and an eyed boat, with a held eye: all pupils hang toward world down.");
         s.camera(0, 1, 5, 180, -40);
-        s.shot("Looking up at the same scene: every pupil points the same way relative to the world as in the level shot.");
+        s.shot(
+                "Looking up at the same scene: every pupil points the same way relative to the world as in the level shot.");
         s.camera(0, 1, 5, 180, 40);
-        s.shot("Looking down at the same scene: every pupil points the same way relative to the world as in the level shot.");
+        s.shot(
+                "Looking down at the same scene: every pupil points the same way relative to the world as in the level shot.");
         s.view(CameraType.THIRD_PERSON_BACK);
-        s.shot("F5 behind the player: pupils unchanged relative to the world, including the eye in the player's hand.");
+        s.shot(
+                "F5 behind the player: pupils unchanged relative to the world, including the eye in the player's hand.");
     }
 
     /** In-game: place eyed heads on the floor facing each direction and on walls. */
@@ -91,24 +105,34 @@ public final class PhysicsClientTests implements FabricClientGameTest {
         }
         s.waitTicks(40);
         s.cameraAt(0, 2.5, 5, 0, 0.5, -1);
-        s.shot("Floor heads turned four ways and wall heads: every pupil has settled toward world down.");
+        s.shot(
+                "Floor heads turned four ways and wall heads: every pupil has settled toward world down.");
     }
 
-    /** In-game: open the inventory with eyes in several slots, at two GUI scales and a resized window. */
+    /**
+     * In-game: open the inventory with eyes in several slots, at two GUI scales and a resized
+     * window.
+     */
     private static void guiPose(Scene s) {
         s.gamemode("survival");
-        for (String slot : new String[] {"hotbar.0", "hotbar.4", "inventory.0", "inventory.13", "inventory.26"}) {
+        for (String slot :
+                new String[] {
+                    "hotbar.0", "hotbar.4", "inventory.0", "inventory.13", "inventory.26"
+                }) {
             s.slot(slot, RED_EYE);
         }
         s.guiScale(2);
         s.press(s.options().keyInventory);
         s.context.waitForScreen(InventoryScreen.class);
         s.waitTicks(20);
-        s.shot("Inventory at GUI scale 2: in every eye icon the pupil sits at the bottom of the icon.");
+        s.shot(
+                "Inventory at GUI scale 2: in every eye icon the pupil sits at the bottom of the icon.");
         s.guiScale(4);
         s.waitTicks(10);
         s.shot("Inventory at GUI scale 4: pupils still at the bottom of each icon.");
-        int[] size = s.context.computeOnClient(mc -> new int[] {mc.getWindow().getWidth(), mc.getWindow().getHeight()});
+        int[] size =
+                s.context.computeOnClient(
+                        mc -> new int[] {mc.getWindow().getWidth(), mc.getWindow().getHeight()});
         s.input.resizeWindow(1280, 720);
         s.waitTicks(10);
         s.shot("After resizing the window: pupils still at the bottom of each icon.");
@@ -149,7 +173,10 @@ public final class PhysicsClientTests implements FabricClientGameTest {
         s.shot("The cow just turned its head: pupils swing with the turn.");
     }
 
-    /** In-game: hold eyes in both hands in F5 while still, swinging, sneaking, walking, swimming, and left-handed. */
+    /**
+     * In-game: hold eyes in both hands in F5 while still, swinging, sneaking, walking, swimming,
+     * and left-handed.
+     */
     private static void handMotion(Scene s) {
         s.clearInventory();
         s.give(RED_EYE);
@@ -182,47 +209,76 @@ public final class PhysicsClientTests implements FabricClientGameTest {
         s.waitTicks(10);
         s.shot("Left-handed: the hands swap sides; pupils toward world down in both.");
         s.camera(0, 0, 0, 0, 89);
-        s.shot("Looking straight down: the held eyes still render; pupil direction follows world down.");
+        s.shot(
+                "Looking straight down: the held eyes still render; pupil direction follows world down.");
     }
 
     @Override
     public void runTest(ClientGameTestContext context) {
-        Scene.run(context, Scene.MAIN, s -> {
-            s.scenario("2.1", "Mob pupils settle and lag", () -> {
-                s.config("ambientBehaviors", "false");
-                mobMotion(s);
-            });
-            s.scenario("2.2", "Camera never moves gravity", () -> {
-                s.config("ambientBehaviors", "false");
-                cameraIndependence(s);
-            });
-            s.scenario("2.3", "Boat pupils in motion", () -> {
-                s.config("ambientBehaviors", "false");
-                boatMotion(s);
-            });
-            for (String facing : new String[] {"north", "south", "east", "west", "up", "down"}) {
-                s.scenario("2.4", "Framed eyes facing " + facing, () -> {
-                    s.config("ambientBehaviors", "false");
-                    framedRow(s, facing);
+        Scene.run(
+                context,
+                Scene.MAIN,
+                s -> {
+                    s.scenario(
+                            "2.1",
+                            "Mob pupils settle and lag",
+                            () -> {
+                                s.config("ambientBehaviors", "false");
+                                mobMotion(s);
+                            });
+                    s.scenario(
+                            "2.2",
+                            "Camera never moves gravity",
+                            () -> {
+                                s.config("ambientBehaviors", "false");
+                                cameraIndependence(s);
+                            });
+                    s.scenario(
+                            "2.3",
+                            "Boat pupils in motion",
+                            () -> {
+                                s.config("ambientBehaviors", "false");
+                                boatMotion(s);
+                            });
+                    for (String facing :
+                            new String[] {"north", "south", "east", "west", "up", "down"}) {
+                        s.scenario(
+                                "2.4",
+                                "Framed eyes facing " + facing,
+                                () -> {
+                                    s.config("ambientBehaviors", "false");
+                                    framedRow(s, facing);
+                                });
+                    }
+                    s.scenario(
+                            "2.5",
+                            "Third-person hand pupils",
+                            () -> {
+                                s.config("ambientBehaviors", "false");
+                                handMotion(s);
+                            });
+                    s.scenario(
+                            "2.6",
+                            "GUI pupils follow the icon",
+                            () -> {
+                                s.config("ambientBehaviors", "false");
+                                guiPose(s);
+                            });
+                    s.scenario(
+                            "2.7",
+                            "First-person held eye",
+                            () -> {
+                                s.config("ambientBehaviors", "false");
+                                heldEyeMotion(s);
+                            });
+                    s.scenario(
+                            "2.8",
+                            "Placed head gravity",
+                            () -> {
+                                s.config("ambientBehaviors", "false");
+                                headGravity(s);
+                            });
                 });
-            }
-            s.scenario("2.5", "Third-person hand pupils", () -> {
-                s.config("ambientBehaviors", "false");
-                handMotion(s);
-            });
-            s.scenario("2.6", "GUI pupils follow the icon", () -> {
-                s.config("ambientBehaviors", "false");
-                guiPose(s);
-            });
-            s.scenario("2.7", "First-person held eye", () -> {
-                s.config("ambientBehaviors", "false");
-                heldEyeMotion(s);
-            });
-            s.scenario("2.8", "Placed head gravity", () -> {
-                s.config("ambientBehaviors", "false");
-                headGravity(s);
-            });
-        });
     }
 
     /** In-game: a row of frames facing one way, each eye at a different item rotation. */
@@ -233,8 +289,15 @@ public final class PhysicsClientTests implements FabricClientGameTest {
             int along = -7 + rotation * 2;
             int dy = facing.equals("down") ? 4 : facing.equals("up") ? 0 : 2;
             boolean alongX = facing.equals("north") || facing.equals("south") || !wall;
-            s.frame(alongX ? along : 0, dy, alongX ? 0 : along, facing, Scene.googlyNbt("{irisColor:" + Scene.RED + "}"),
-                    rotation, false, false);
+            s.frame(
+                    alongX ? along : 0,
+                    dy,
+                    alongX ? 0 : along,
+                    facing,
+                    Scene.googlyNbt("{irisColor:" + Scene.RED + "}"),
+                    rotation,
+                    false,
+                    false);
         }
         s.waitTicks(40);
         switch (facing) {
@@ -245,8 +308,13 @@ public final class PhysicsClientTests implements FabricClientGameTest {
             case "up" -> s.cameraAt(0, 9, 0.1, 0, 0, 0);
             default -> s.cameraAt(0, 0.5, 0.1, 0, 4, 0);
         }
-        s.shot(wall
-                ? "Eight wall frames facing " + facing + ", each eye at a different rotation: every pupil sits at the bottom of its eye."
-                : "Eight frames facing " + facing + ", each eye at a different rotation: pupil positions differ from frame to frame, with no shared direction.");
+        s.shot(
+                wall
+                        ? "Eight wall frames facing "
+                                + facing
+                                + ", each eye at a different rotation: every pupil sits at the bottom of its eye."
+                        : "Eight frames facing "
+                                + facing
+                                + ", each eye at a different rotation: pupil positions differ from frame to frame, with no shared direction.");
     }
 }

@@ -3,13 +3,12 @@ package com.github.crittscott.somegoogly.gametest;
 import net.minecraft.gametest.framework.GameTestHelper;
 
 /**
- * NeoForge GameTest entry points for {@link PickerExportGameTestsLogic}; see that class for the actual
- * assertions.
+ * NeoForge GameTest entry points for {@link PickerExportGameTestsLogic}; see that class for the
+ * actual assertions.
  */
 public final class PickerExportGameTests {
 
-    private PickerExportGameTests() {
-    }
+    private PickerExportGameTests() {}
 
     public static void canonicalJsonWritesDefaultValuedFields(GameTestHelper helper) {
         PickerExportGameTestsLogic.canonicalJsonWritesDefaultValuedFields(helper);

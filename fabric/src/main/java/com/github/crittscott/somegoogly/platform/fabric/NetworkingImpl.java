@@ -10,8 +10,7 @@ import net.minecraft.world.entity.Entity;
 /** Fabric clientbound sends; tracking fanout uses vanilla's tracking-and-self broadcast. */
 public final class NetworkingImpl {
 
-    private NetworkingImpl() {
-    }
+    private NetworkingImpl() {}
 
     public static void sendToAll(MinecraftServer server, CustomPacketPayload payload) {
         server.getPlayerList().broadcastAll(ServerPlayNetworking.createS2CPacket(payload));
@@ -22,7 +21,8 @@ public final class NetworkingImpl {
     }
 
     public static void sendTrackingAndSelf(Entity entity, CustomPacketPayload payload) {
-        ((ServerLevel) entity.level()).getChunkSource()
+        ((ServerLevel) entity.level())
+                .getChunkSource()
                 .broadcastAndSend(entity, ServerPlayNetworking.createS2CPacket(payload));
     }
 }

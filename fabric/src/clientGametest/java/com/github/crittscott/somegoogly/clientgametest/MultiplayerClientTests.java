@@ -6,7 +6,10 @@ import net.minecraft.client.gui.screens.PauseScreen;
 
 /** Client test plan section 11: a dedicated server with this client connected as an operator. */
 public final class MultiplayerClientTests implements FabricClientGameTest {
-    /** In-game: apply a tinted Slimy Eye on a server, reconnect, then leave tracking range and return. */
+    /**
+     * In-game: apply a tinted Slimy Eye on a server, reconnect, then leave tracking range and
+     * return.
+     */
     private static void joinAndTrack(Scene s) {
         String cow = s.mob("minecraft:cow", 0, 0, 0);
         s.useOnEntity(cow, 0, 1.6, 2.5, ApplyClientTests.slimy("{irisColor:" + Scene.GREEN + "}"));
@@ -27,7 +30,8 @@ public final class MultiplayerClientTests implements FabricClientGameTest {
         s.eyes(cow);
         s.cameraOn(0, 1.4, 3.5, cow);
         s.config("googlyEyesEnabled", "false");
-        s.shot("Master switch turned off on the server: the cow shows no eyes, without reconnecting.");
+        s.shot(
+                "Master switch turned off on the server: the cow shows no eyes, without reconnecting.");
         s.config("googlyEyesEnabled", "true");
         s.shot("Master switch back on: the cow's eyes are back.");
     }
@@ -46,10 +50,13 @@ public final class MultiplayerClientTests implements FabricClientGameTest {
 
     @Override
     public void runTest(ClientGameTestContext context) {
-        Scene.runDedicated(context, s -> {
-            s.scenario("11.1", "Joining and tracking see saved eyes", () -> joinAndTrack(s));
-            s.scenario("11.2", "Master switch reaches clients", () -> masterSwitch(s));
-            s.scenario("11.3", "Menus do not pause the server", () -> noPause(s));
-        });
+        Scene.runDedicated(
+                context,
+                s -> {
+                    s.scenario(
+                            "11.1", "Joining and tracking see saved eyes", () -> joinAndTrack(s));
+                    s.scenario("11.2", "Master switch reaches clients", () -> masterSwitch(s));
+                    s.scenario("11.3", "Menus do not pause the server", () -> noPause(s));
+                });
     }
 }

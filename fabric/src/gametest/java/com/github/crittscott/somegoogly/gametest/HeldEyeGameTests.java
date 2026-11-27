@@ -1,8 +1,8 @@
 package com.github.crittscott.somegoogly.gametest;
 
+import net.fabricmc.fabric.api.entity.FakePlayer;
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.fabricmc.fabric.api.entity.FakePlayer;
 
 /**
  * Fabric GameTest entry points for {@link HeldEyeGameTestsLogic}; see that class for the actual
@@ -19,7 +19,8 @@ public final class HeldEyeGameTests {
 
     @GameTest(structure = TEMPLATE, maxTicks = 100)
     public void heldEyeHonorsServerSettings(GameTestHelper helper) {
-        HeldEyeGameTestsLogic.heldEyeHonorsServerSettings(helper, FakePlayer.get(helper.getLevel()));
+        HeldEyeGameTestsLogic.heldEyeHonorsServerSettings(
+                helper, FakePlayer.get(helper.getLevel()));
     }
 
     @GameTest(structure = TEMPLATE, maxTicks = 100)
@@ -32,7 +33,10 @@ public final class HeldEyeGameTests {
         HeldEyeGameTestsLogic.heldEyeResetsWhenPutAway(helper, FakePlayer.get(helper.getLevel()));
     }
 
-    @GameTest(structure = TEMPLATE, maxTicks = 400, environment = "somegoogly:held_eye_swirls_when_healed")
+    @GameTest(
+            structure = TEMPLATE,
+            maxTicks = 400,
+            environment = "somegoogly:held_eye_swirls_when_healed")
     public void heldEyeSwirlsWhenHealed(GameTestHelper helper) {
         HeldEyeGameTestsLogic.heldEyeSwirlsWhenHealed(helper, FakePlayer.get(helper.getLevel()));
     }

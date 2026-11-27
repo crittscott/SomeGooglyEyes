@@ -14,11 +14,14 @@ public final class ReloadClientTests implements FabricClientGameTest {
         String boat = s.boat("minecraft:oak_boat", 2.5, 0, 90);
         s.useOnEntity(boat, 2.5, 2.5, 2.5, Scene.SLIMY);
         s.cameraAt(0, 1.6, 4, 0, 0.8, 0);
-        s.shot("Bundled layouts: the cow's eyes on its face (or flank), the boat's eyes near its front.");
+        s.shot(
+                "Bundled layouts: the cow's eyes on its face (or flank), the boat's eyes near its front.");
         s.datapack(TestPacks.LAYOUT_A);
-        s.shot("After a datapack raised the cow's eyes and reloaded: the cow's eyes sit higher on its face; nothing remains where they were.");
+        s.shot(
+                "After a datapack raised the cow's eyes and reloaded: the cow's eyes sit higher on its face; nothing remains where they were.");
         s.datapack(TestPacks.LAYOUT_B);
-        s.shot("After a second datapack enlarged the cow's eyes and moved the boat's toward the middle: both changed, with no trace of the old positions.");
+        s.shot(
+                "After a second datapack enlarged the cow's eyes and moved the boat's toward the middle: both changed, with no trace of the old positions.");
     }
 
     /** In-game: disable the cow definition, reload, then enable it again. */
@@ -41,14 +44,23 @@ public final class ReloadClientTests implements FabricClientGameTest {
         s.water(1, -1, 4, 1);
         String boat = s.boat("minecraft:oak_boat", 2.5, 0, 90);
         s.useOnEntity(boat, 2.5, 2.5, 2.5, Scene.SLIMY);
-        s.frame(0, 2, -3, "south", Scene.googlyNbt("{irisColor:" + Scene.RED + "}"), 0, false, false);
+        s.frame(
+                0,
+                2,
+                -3,
+                "south",
+                Scene.googlyNbt("{irisColor:" + Scene.RED + "}"),
+                0,
+                false,
+                false);
         s.clearInventory();
         s.give(Scene.googly("{irisColor:" + Scene.RED + "}"), 2);
         s.hotbar(0);
         s.hud(true);
         s.camera(0, 0.5, 5, 180, 10);
         s.view(CameraType.THIRD_PERSON_BACK);
-        s.shot("Before a resource reload: cow, head, boat, framed eye, held eye, and hotbar eye all show eyes.");
+        s.shot(
+                "Before a resource reload: cow, head, boat, framed eye, held eye, and hotbar eye all show eyes.");
         s.context.runOnClient(mc -> mc.reloadResourcePacks());
         s.context.waitFor(mc -> mc.getOverlay() == null, 1200);
         s.waitTicks(10);
@@ -57,10 +69,14 @@ public final class ReloadClientTests implements FabricClientGameTest {
 
     @Override
     public void runTest(ClientGameTestContext context) {
-        Scene.run(context, Scene.MAIN, s -> {
-            s.scenario("13.1", "Changed layouts apply on reload", () -> layoutChange(s));
-            s.scenario("13.2", "Disabled and restored definition", () -> disableAndRestore(s));
-            s.scenario("13.3", "Resource reload", () -> resourceReload(s));
-        });
+        Scene.run(
+                context,
+                Scene.MAIN,
+                s -> {
+                    s.scenario("13.1", "Changed layouts apply on reload", () -> layoutChange(s));
+                    s.scenario(
+                            "13.2", "Disabled and restored definition", () -> disableAndRestore(s));
+                    s.scenario("13.3", "Resource reload", () -> resourceReload(s));
+                });
     }
 }

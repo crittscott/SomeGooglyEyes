@@ -4,12 +4,13 @@ import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.github.crittscott.somegoogly.client.ClientLifecycle;
 import com.github.crittscott.somegoogly.client.ClientRenderLayers;
-import com.github.crittscott.somegoogly.client.render.GooglyEyeItemRenderer;
 import com.github.crittscott.somegoogly.client.SlimyEyeIrisTint;
 import com.github.crittscott.somegoogly.client.compat.GeckoCompat;
 import com.github.crittscott.somegoogly.client.picker.PickerHud;
 import com.github.crittscott.somegoogly.client.picker.PickerInput;
+import com.github.crittscott.somegoogly.client.render.GooglyEyeItemRenderer;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
+
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents;
@@ -28,54 +29,58 @@ import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.ResourceManager;
 
 /**
- * Fabric registration for eye render layers and their cache reset, client ticks, picker UI/input, eyed head
- * items' tooltips, and the eye items' tint and 3D renderer types.
+ * Fabric registration for eye render layers and their cache reset, client ticks, picker UI/input,
+ * eyed head items' tooltips, and the eye items' tint and 3D renderer types.
  */
 public final class FabricClientEvents {
 
-    private FabricClientEvents() {
-    }
+    private FabricClientEvents() {}
 
     /** Register the client's Fabric event callbacks. */
     public static void register() {
-        // Not helper.register: it appends after a slime's outer jelly layer, hiding the eyes behind it, so the
-        // shared installer inserts into the renderer's layer list itself.
+        // Not helper.register: it appends after a slime's outer jelly layer, hiding the eyes behind
+        // it, so the shared installer inserts into the renderer's layer list itself.
         LivingEntityFeatureRendererRegistrationCallback.EVENT.register(
-                (entityType, renderer, helper, context) ->
-                        ClientRenderLayers.install(renderer));
+                (entityType, renderer, helper, context) -> ClientRenderLayers.install(renderer));
         if (GeckoCompat.isLoaded()) {
             FabricGeckoLayers.register();
         }
-        ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(
-                new SimpleSynchronousResourceReloadListener() {
-                    @Override
-                    public ResourceLocation getFabricId() {
-                        return SomeGooglyCommon.id("attachment_caches");
-                    }
+        ResourceManagerHelper.get(PackType.CLIENT_RESOURCES)
+                .registerReloadListener(
+                        new SimpleSynchronousResourceReloadListener() {
+                            @Override
+                            public ResourceLocation getFabricId() {
+                                return SomeGooglyCommon.id("attachment_caches");
+                            }
 
-                    @Override
-                    public void onResourceManagerReload(ResourceManager manager) {
-                        ClientRenderLayers.clearCaches();
-                    }
-                });
+                            @Override
+                            public void onResourceManagerReload(ResourceManager manager) {
+                                ClientRenderLayers.clearCaches();
+                            }
+                        });
 
         PickerInput.KEYS.forEach(KeyBindingHelper::registerKeyBinding);
 
         ClientEntityEvents.ENTITY_UNLOAD.register((entity, level) -> {
             ClientEyeRuntime.onEntityRemoved(entity);
         });
-        ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register((client, level) -> ClientEyeRuntime.onLevelChanged());
+        ClientWorldEvents.AFTER_CLIENT_WORLD_CHANGE.register(
+                (client, level) -> ClientEyeRuntime.onLevelChanged());
         ClientTickEvents.END_CLIENT_TICK.register(client -> ClientLifecycle.tick());
-        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> ClientLifecycle.onDisconnect());
-        HudElementRegistry.attachElementAfter(VanillaHudElements.SUBTITLES,
-                ResourceLocation.fromNamespaceAndPath("somegoogly", "picker"), (graphics, partialTick) ->
-                        PickerHud.render(graphics, graphics.guiWidth()));
+        ClientPlayConnectionEvents.DISCONNECT.register(
+                (handler, client) -> ClientLifecycle.onDisconnect());
+        HudElementRegistry.attachElementAfter(
+                VanillaHudElements.SUBTITLES,
+                ResourceLocation.fromNamespaceAndPath("somegoogly", "picker"),
+                (graphics, partialTick) -> PickerHud.render(graphics, graphics.guiWidth()));
 
-        ItemTooltipCallback.EVENT.register((stack, context, flag, lines) ->
-                EyeItemProperties.appendHeadTooltip(stack, lines));
+        ItemTooltipCallback.EVENT.register(
+                (stack, context, flag, lines) -> EyeItemProperties.appendHeadTooltip(stack, lines));
 
-        // Fabric API has no registry for these; it widens vanilla's type maps for direct registration.
+        // Fabric API has no registry for these; it widens vanilla's type maps for direct
+        // registration.
         ItemTintSources.ID_MAPPER.put(SlimyEyeIrisTint.ID, SlimyEyeIrisTint.MAP_CODEC);
-        SpecialModelRenderers.ID_MAPPER.put(GooglyEyeItemRenderer.ID, GooglyEyeItemRenderer.Unbaked.MAP_CODEC);
+        SpecialModelRenderers.ID_MAPPER.put(
+                GooglyEyeItemRenderer.ID, GooglyEyeItemRenderer.Unbaked.MAP_CODEC);
     }
 }

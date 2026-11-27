@@ -6,35 +6,45 @@ import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.platform.DepthTestFunction;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ShapeRenderer;
 import net.minecraft.resources.ResourceLocation;
+
 import org.joml.Matrix4f;
 
 /**
- * Draws the Blockbench/Blender-style transform gizmo for the selected part: RGB = XYZ axes
- * (3 blocks each way), a cube only on each positive end, and an origin marker. Rendered in the
- * part's local frame with depth-testing off so the origin — buried
- * inside the mob mesh — stays visible.
+ * Draws the Blockbench/Blender-style transform gizmo for the selected part: RGB = XYZ axes (3
+ * blocks each way), a cube only on each positive end, and an origin marker. Rendered in the part's
+ * local frame with depth-testing off so the origin — buried inside the mob mesh — stays visible.
  */
 public final class Gizmo {
 
     private static final float AXIS_LEN = 3.0f;
     private static final float END_CUBE = 0.10f;
-    private static final RenderPipeline GIZMO_PIPELINE = RenderPipelines.register(
-            RenderPipeline.builder(RenderPipelines.LINES_SNIPPET)
-                    .withLocation(ResourceLocation.fromNamespaceAndPath("somegoogly", "pipeline/gizmo_lines"))
-                    .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
-                    .withDepthWrite(false)
-                    .withBlend(BlendFunction.TRANSLUCENT)
-                    .withCull(false)
-                    .build());
+    private static final RenderPipeline GIZMO_PIPELINE =
+            RenderPipelines.register(
+                    RenderPipeline.builder(RenderPipelines.LINES_SNIPPET)
+                            .withLocation(
+                                    ResourceLocation.fromNamespaceAndPath(
+                                            "somegoogly", "pipeline/gizmo_lines"))
+                            .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
+                            .withDepthWrite(false)
+                            .withBlend(BlendFunction.TRANSLUCENT)
+                            .withCull(false)
+                            .build());
     // The render type depends on the pipeline initialized above.
-    private static final RenderType GIZMO_LINES = RenderType.create(
-            "somegoogly_gizmo_lines", 256, false, false, GIZMO_PIPELINE,
-            RenderType.CompositeState.builder().createCompositeState(RenderType.OutlineProperty.NONE));
+    private static final RenderType GIZMO_LINES =
+            RenderType.create(
+                    "somegoogly_gizmo_lines",
+                    256,
+                    false,
+                    false,
+                    GIZMO_PIPELINE,
+                    RenderType.CompositeState.builder()
+                            .createCompositeState(RenderType.OutlineProperty.NONE));
     private static final float NEGATIVE_AXIS_BRIGHTNESS = 0.4f;
     private static final float ORIGIN_CUBE = 0.06f;
 
@@ -42,19 +52,37 @@ public final class Gizmo {
     private static final EyeColor Y_COLOR = new EyeColor(0.15f, 1.0f, 0.15f);
     private static final EyeColor Z_COLOR = new EyeColor(0.25f, 0.45f, 1.0f);
 
-    private Gizmo() {
-    }
+    private Gizmo() {}
 
-    private static void axis(PoseStack ps, VertexConsumer vc, float x, float y, float z,
-                             EyeColor color) {
+    private static void axis(
+            PoseStack ps, VertexConsumer vc, float x, float y, float z, EyeColor color) {
         float r = color.r(), g = color.g(), b = color.b();
-        line(ps, vc, 0, 0, 0, x, y, z, r, g, b);                       // positive (bright)
-        line(ps, vc, 0, 0, 0, -x, -y, -z, r * NEGATIVE_AXIS_BRIGHTNESS, g * NEGATIVE_AXIS_BRIGHTNESS, b * NEGATIVE_AXIS_BRIGHTNESS); // negative (dim)
+        line(ps, vc, 0, 0, 0, x, y, z, r, g, b); // positive (bright)
+        line(
+                ps,
+                vc,
+                0,
+                0,
+                0,
+                -x,
+                -y,
+                -z,
+                r * NEGATIVE_AXIS_BRIGHTNESS,
+                g * NEGATIVE_AXIS_BRIGHTNESS,
+                b * NEGATIVE_AXIS_BRIGHTNESS); // negative (dim)
     }
 
-    private static void cube(PoseStack ps, VertexConsumer vc, float cx, float cy, float cz,
-                             float h, EyeColor color) {
-        ShapeRenderer.renderLineBox(ps, vc, cx - h, cy - h, cz - h, cx + h, cy + h, cz + h, color.r(), color.g(), color.b(), 1.0f);
+    private static void cube(
+            PoseStack ps,
+            VertexConsumer vc,
+            float cx,
+            float cy,
+            float cz,
+            float h,
+            EyeColor color) {
+        ShapeRenderer.renderLineBox(
+                ps, vc, cx - h, cy - h, cz - h, cx + h, cy + h, cz + h, color.r(), color.g(),
+                color.b(), 1.0f);
     }
 
     /** Draw the axis gizmo at the current pose origin. */
@@ -75,9 +103,18 @@ public final class Gizmo {
         cube(poseStack, vc, 0, 0, 0, ORIGIN_CUBE, EyeColor.WHITE);
     }
 
-    private static void line(PoseStack ps, VertexConsumer vc,
-                             float x1, float y1, float z1, float x2, float y2, float z2,
-                             float r, float g, float b) {
+    private static void line(
+            PoseStack ps,
+            VertexConsumer vc,
+            float x1,
+            float y1,
+            float z1,
+            float x2,
+            float y2,
+            float z2,
+            float r,
+            float g,
+            float b) {
         Matrix4f m = ps.last().pose();
         PoseStack.Pose pose = ps.last();
         float nx = x2 - x1, ny = y2 - y1, nz = z2 - z1;

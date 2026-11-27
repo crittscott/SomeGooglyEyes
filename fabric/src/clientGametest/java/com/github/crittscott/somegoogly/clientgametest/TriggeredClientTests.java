@@ -19,9 +19,9 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * Client test plan section 4: triggered expressions. Each trigger below stages its mob, fires the trigger the way
- * play does, and takes one shot with the expectation it is given, so section 12 can run the same trigger with its
- * switch off and expect nothing.
+ * Client test plan section 4: triggered expressions. Each trigger below stages its mob, fires the
+ * trigger the way play does, and takes one shot with the expectation it is given, so section 12 can
+ * run the same trigger with its switch off and expect nothing.
  */
 public final class TriggeredClientTests implements FabricClientGameTest {
     private static final String OFFERS =
@@ -29,29 +29,33 @@ public final class TriggeredClientTests implements FabricClientGameTest {
     private static final String VILLAGER_DATA =
             "VillagerData:{profession:\"minecraft:farmer\",level:2,type:\"minecraft:plains\"}";
 
-    /** Stages a mob, fires a trigger on it, and takes a shot with the given expectation; returns the mob's tag. */
+    /**
+     * Stages a mob, fires a trigger on it, and takes a shot with the given expectation; returns the
+     * mob's tag.
+     */
     @FunctionalInterface
     interface Fire {
         String fire(Scene s, String expect);
     }
 
     /** A behavior switch and the trigger it gates, for section 12.1.2. */
-    record Trigger(String configKey, String name, Fire fire) {
-    }
+    record Trigger(String configKey, String name, Fire fire) {}
 
     /** Every server behavior switch with its trigger. */
     static final Trigger[] SWITCHED = {
-            new Trigger("growOnMilk", "milking", TriggeredClientTests::milk),
-            new Trigger("growOnShear", "shearing", TriggeredClientTests::shear),
-            new Trigger("loveOnAffection", "feeding for love", TriggeredClientTests::love),
-            new Trigger("angryEyes", "an attacking zombie", TriggeredClientTests::anger),
-            new Trigger("squintOnSleep", "a sleeping fox", TriggeredClientTests::sleep),
-            new Trigger("squintOnRam", "a ramming goat", TriggeredClientTests::ram),
-            new Trigger("winkOnAim", "an aiming skeleton", TriggeredClientTests::aim),
-            new Trigger("rattleOnSwell", "a swelling creeper", TriggeredClientTests::swell),
-            new Trigger("pulseWhenCreepy", "a screaming enderman", TriggeredClientTests::creepy),
-            new Trigger("swirlOnTrade", "a villager trade", (s, e) -> trade(s, "minecraft:villager", e)),
-            new Trigger("swirlOnHeal", "healing", TriggeredClientTests::heal)};
+        new Trigger("growOnMilk", "milking", TriggeredClientTests::milk),
+        new Trigger("growOnShear", "shearing", TriggeredClientTests::shear),
+        new Trigger("loveOnAffection", "feeding for love", TriggeredClientTests::love),
+        new Trigger("angryEyes", "an attacking zombie", TriggeredClientTests::anger),
+        new Trigger("squintOnSleep", "a sleeping fox", TriggeredClientTests::sleep),
+        new Trigger("squintOnRam", "a ramming goat", TriggeredClientTests::ram),
+        new Trigger("winkOnAim", "an aiming skeleton", TriggeredClientTests::aim),
+        new Trigger("rattleOnSwell", "a swelling creeper", TriggeredClientTests::swell),
+        new Trigger("pulseWhenCreepy", "a screaming enderman", TriggeredClientTests::creepy),
+        new Trigger(
+                "swirlOnTrade", "a villager trade", (s, e) -> trade(s, "minecraft:villager", e)),
+        new Trigger("swirlOnHeal", "healing", TriggeredClientTests::heal)
+    };
 
     /** In-game: an eyed skeleton draws its bow on an iron golem. */
     static String aim(Scene s, String expect) {
@@ -62,10 +66,19 @@ public final class TriggeredClientTests implements FabricClientGameTest {
         return skeleton;
     }
 
-    /** Stages an eyed skeleton that has started drawing its bow on a still iron golem; returns its tag. */
+    /**
+     * Stages an eyed skeleton that has started drawing its bow on a still iron golem; returns its
+     * tag.
+     */
     private static String aimingSkeleton(Scene s) {
         // /summon with NBT skips spawn equipment, so the bow is given explicitly.
-        String skeleton = s.liveMob("minecraft:skeleton", 0, 0, 0, "equipment:{mainhand:{id:\"minecraft:bow\",count:1}}");
+        String skeleton =
+                s.liveMob(
+                        "minecraft:skeleton",
+                        0,
+                        0,
+                        0,
+                        "equipment:{mainhand:{id:\"minecraft:bow\",count:1}}");
         // The scenes are lit by noon sun, which would set the skeleton burning.
         s.server("effect give %s minecraft:fire_resistance infinite 0 true", Scene.sel(skeleton));
         s.eyes(skeleton);
@@ -141,7 +154,8 @@ public final class TriggeredClientTests implements FabricClientGameTest {
         s.eyes(goat);
         s.mob("minecraft:sheep", 3, 0, 0);
         s.camera(0, 2, 7, 180, 10);
-        if (!s.waitUntilTagged(goat, e -> ((LivingEntity) e).getBrain().isActive(Activity.RAM), 6000)) {
+        if (!s.waitUntilTagged(
+                goat, e -> ((LivingEntity) e).getBrain().isActive(Activity.RAM), 6000)) {
             throw new IllegalStateException("The goat did not start a ram within 6000 ticks");
         }
         s.waitTicks(5);
@@ -162,8 +176,8 @@ public final class TriggeredClientTests implements FabricClientGameTest {
 
     /** In-game: an eyed fox asleep in daylight (find one sleeping under a tree by day). */
     static String sleep(Scene s, String expect) {
-        // A fox falls asleep on its own only under cover, with nothing alarming nearby, after a random delay; the
-        // test summons one already asleep, the state a player finds it in.
+        // A fox falls asleep on its own only under cover, with nothing alarming nearby, after a
+        // random delay; the test summons one already asleep, the state a player finds it in.
         String fox = s.mob("minecraft:fox", 0, 0, 0, 0, "Sleeping:1b");
         s.eyes(fox);
         if (!s.waitUntilTagged(fox, e -> ((LivingEntity) e).isSleeping(), 20)) {
@@ -223,10 +237,14 @@ public final class TriggeredClientTests implements FabricClientGameTest {
         s.attack();
         s.server("damage %s 1 minecraft:generic", Scene.sel(other));
         s.cameraAt(0, 1.5, 4, 0, 1, 0);
-        s.shot("Left cow, punched by the player: eyes bulging. Right cow, damaged by a non-player source: eyes normal.");
+        s.shot(
+                "Left cow, punched by the player: eyes bulging. Right cow, damaged by a non-player source: eyes normal.");
     }
 
-    /** In-game: two cows in love, villagers breeding, a golem's flower, an ocelot's trust, and a tamed wolf. */
+    /**
+     * In-game: two cows in love, villagers breeding, a golem's flower, an ocelot's trust, and a
+     * tamed wolf.
+     */
     private static void affection(Scene s) {
         love(s, "A cow just fed wheat: pupils twice their normal size.");
         tamed(s);
@@ -241,7 +259,8 @@ public final class TriggeredClientTests implements FabricClientGameTest {
         String golem = s.mob("minecraft:iron_golem", 0, 0, 0);
         s.eyes(golem);
         s.mob("minecraft:villager", 2, 0, 0, 0, "Age:-24000");
-        // The golem's goal offers a flower on a 1-in-8000 chance per tick; the test calls the method that goal calls.
+        // The golem's goal offers a flower on a 1-in-8000 chance per tick; the test calls the
+        // method that goal calls.
         s.serverValue(sv -> {
             Scene.tagged(sv, golem).ifPresent(e -> ((IronGolem) e).offerFlower(true));
             return true;
@@ -262,8 +281,13 @@ public final class TriggeredClientTests implements FabricClientGameTest {
         s.clearInventory();
         s.give("minecraft:bone", 32);
         s.hotbar(0);
-        for (int i = 0; i < 30 && !s.serverValue(sv -> Scene.tagged(sv, wolf)
-                .map(e -> ((TamableAnimal) e).isTame()).orElse(false)); i++) {
+        for (int i = 0;
+                i < 30
+                        && !s.serverValue(sv ->
+                                Scene.tagged(sv, wolf)
+                                        .map(e -> ((TamableAnimal) e).isTame())
+                                        .orElse(false));
+                i++) {
             s.useHeldOn(wolf, 0, 1, 2);
         }
         s.cameraOn(0, 1, 2.5, wolf);
@@ -282,7 +306,10 @@ public final class TriggeredClientTests implements FabricClientGameTest {
         for (int i = 0; i < 6; i++) {
             s.useHeldOn(ocelot, 0, 1, 2);
             s.cameraOn(0, 1, 2.5, ocelot);
-            s.shot("Feeding an ocelot cod, attempt " + (i + 1) + " of 6: once hearts appear (it trusts the player), its pupils are twice their normal size.");
+            s.shot(
+                    "Feeding an ocelot cod, attempt "
+                            + (i + 1)
+                            + " of 6: once hearts appear (it trusts the player), its pupils are twice their normal size.");
         }
     }
 
@@ -300,14 +327,23 @@ public final class TriggeredClientTests implements FabricClientGameTest {
         }
         s.camera(0, 4, 8, 180, 20);
         Vec3 centre = new Vec3(s.x(0), Scene.GROUND, s.z(0));
-        if (!s.waitUntil(sv -> sv.overworld().getEntitiesOfClass(Villager.class, AABB.ofSize(centre, 30, 10, 30))
-                .size() > 2, 6000)) {
+        if (!s.waitUntil(
+                sv ->
+                        sv.overworld()
+                                        .getEntitiesOfClass(
+                                                Villager.class, AABB.ofSize(centre, 30, 10, 30))
+                                        .size()
+                                > 2,
+                6000)) {
             throw new IllegalStateException("The villagers did not breed within 6000 ticks");
         }
-        s.shot("Two villagers that just bred, with their baby: the parents' pupils are twice their normal size.");
+        s.shot(
+                "Two villagers that just bred, with their baby: the parents' pupils are twice their normal size.");
     }
 
-    /** In-game: a villager asleep in a bed at night, and a fox asleep by day that is told to blink. */
+    /**
+     * In-game: a villager asleep in a bed at night, and a fox asleep by day that is told to blink.
+     */
     private static void sleeping(Scene s) {
         String fox = sleep(s, "A sleeping fox: eyes squinting.");
         s.admin(fox, "behavior blink");
@@ -319,8 +355,10 @@ public final class TriggeredClientTests implements FabricClientGameTest {
         s.setBlock(0, 0, -1, "minecraft:red_bed[facing=south,part=head]");
         s.setBlock(0, 0, 0, "minecraft:red_bed[facing=south,part=foot]");
         // The villager starts with the bed as its home, so it need not find and claim one first.
-        String home = String.format("Brain:{memories:{\"minecraft:home\":{value:{dimension:\"minecraft:overworld\",pos:[I;%d,%d,%d]}}}}",
-                (int) Math.floor(s.x(0)), Scene.GROUND, (int) Math.floor(s.z(-1)));
+        String home =
+                String.format(
+                        "Brain:{memories:{\"minecraft:home\":{value:{dimension:\"minecraft:overworld\",pos:[I;%d,%d,%d]}}}}",
+                        (int) Math.floor(s.x(0)), Scene.GROUND, (int) Math.floor(s.z(-1)));
         String villager = s.liveMob("minecraft:villager", 2, 0, 2, home);
         s.eyes(villager);
         s.camera(0, 3, 6, 180, 25);
@@ -331,9 +369,14 @@ public final class TriggeredClientTests implements FabricClientGameTest {
         s.shot("A villager asleep in a bed: tan lids lowered over its eyes.");
     }
 
-    /** In-game: an eyed skeleton aims at a golem; give yourself eyes and draw a bow in F5, both arms. */
+    /**
+     * In-game: an eyed skeleton aims at a golem; give yourself eyes and draw a bow in F5, both
+     * arms.
+     */
     private static void aimWink(Scene s) {
-        aim(s, "A skeleton drawing its bow (side view): the eye away from the bow arm is closed, the other open.");
+        aim(
+                s,
+                "A skeleton drawing its bow (side view): the eye away from the bow arm is closed, the other open.");
         s.area();
         s.useOnSelf(Scene.SLIMY);
         s.clearInventory();
@@ -344,7 +387,8 @@ public final class TriggeredClientTests implements FabricClientGameTest {
         s.view(CameraType.THIRD_PERSON_FRONT);
         s.hold(s.options().keyUse);
         s.waitTicks(10);
-        s.shot("Right-handed player drawing a bow, seen from the front: the eye away from the bow arm is closed.");
+        s.shot(
+                "Right-handed player drawing a bow, seen from the front: the eye away from the bow arm is closed.");
         s.release(s.options().keyUse);
         s.mainArm(HumanoidArm.LEFT);
         s.hold(s.options().keyUse);
@@ -353,7 +397,10 @@ public final class TriggeredClientTests implements FabricClientGameTest {
         s.release(s.options().keyUse);
     }
 
-    /** In-game: an attacking zombie and a wolf you hit both glare; switching to creative calms the zombie. */
+    /**
+     * In-game: an attacking zombie and a wolf you hit both glare; switching to creative calms the
+     * zombie.
+     */
     private static void angry(Scene s) {
         String zombie = anger(s, "A zombie targeting the player: red pupils.");
         s.gamemode("creative");
@@ -373,7 +420,10 @@ public final class TriggeredClientTests implements FabricClientGameTest {
         s.shot("A wolf the player hit: red pupils.");
     }
 
-    /** In-game: force expressions during a swell and an aim, and two expressions back to back on a cow. */
+    /**
+     * In-game: force expressions during a swell and an aim, and two expressions back to back on a
+     * cow.
+     */
     private static void layering(Scene s) {
         String creeper = s.mob("minecraft:creeper", -2, 0, 0, 0, "Fuse:80");
         s.eyes(creeper);
@@ -425,48 +475,86 @@ public final class TriggeredClientTests implements FabricClientGameTest {
 
     @Override
     public void runTest(ClientGameTestContext context) {
-        Scene.run(context, Scene.MAIN, s -> {
-            s.scenario("4.1", "Player damage bulges", () -> hit(s));
-            s.scenario("4.2", "Milking bulges", () -> {
-                milk(s, "A cow just milked: eyes bulging.");
-                s.area();
-                String mooshroom = s.mob("minecraft:mooshroom", 0, 0, 0);
-                s.eyes(mooshroom);
-                s.useOnEntity(mooshroom, 0, 1.6, 2.5, "minecraft:bucket");
-                s.cameraOn(0, 1.2, 3.5, mooshroom);
-                s.shot("A mooshroom just milked: eyes bulging.");
-                s.area();
-                String goat = s.mob("minecraft:goat", 0, 0, 0);
-                s.eyes(goat);
-                s.useOnEntity(goat, 0, 1.6, 2.5, "minecraft:bucket");
-                s.cameraOn(0, 1.2, 3.5, goat);
-                s.shot("A goat just milked: eyes bulging.");
-            });
-            s.scenario("4.3", "Shearing bulges", () -> shear(s, "A sheep just sheared: eyes bulging."));
-            s.scenario("4.4", "Affection grows pupils", () -> affection(s));
-            s.scenario("4.5", "Trades swirl", () -> {
-                trade(s, "minecraft:villager", "A villager just traded with: eyes swirling.");
-                s.area();
-                trade(s, "minecraft:wandering_trader", "A wandering trader just traded with: eyes swirling.");
-            });
-            s.scenario("4.6", "Healing swirls once per cooldown", () -> {
-                String cow = heal(s, "A cow just healed: eyes swirling.");
-                s.waitTicks(20);
-                s.server("damage %s 2 minecraft:generic", Scene.sel(cow));
-                s.waitTicks(15);
-                s.server("effect give %s minecraft:instant_health 1 0", Scene.sel(cow));
-                s.waitTicks(3);
-                s.shot("The same cow healed again within the cooldown: no swirl.");
-            });
-            s.scenario("4.7", "Sleepers squint", () -> sleeping(s));
-            s.scenario("4.8", "Ramming goat squints", () -> ram(s, "A goat mid-charge: eyes squinting."));
-            s.scenario("4.9", "Bow aim winks", () -> aimWink(s));
-            s.scenario("4.10", "Creeper rattle", () -> swell(s, "Pupils jump between consecutive shots, more late in the fuse than early."));
-            s.scenario("4.11", "Angry red pupils", () -> angry(s));
-            s.scenario("4.12", "Enderman throb", () -> creepy(s, "A screaming enderman: pupil size changes between consecutive shots."));
-            s.scenario("4.13", "Overlays layer on expressions", () -> layering(s));
-            s.scenario("4.14", "Boats do not react", () -> boatHit(s));
-            s.scenario("4.15", "Held eye hurt and heal", () -> heldReactions(s));
-        });
+        Scene.run(
+                context,
+                Scene.MAIN,
+                s -> {
+                    s.scenario("4.1", "Player damage bulges", () -> hit(s));
+                    s.scenario(
+                            "4.2",
+                            "Milking bulges",
+                            () -> {
+                                milk(s, "A cow just milked: eyes bulging.");
+                                s.area();
+                                String mooshroom = s.mob("minecraft:mooshroom", 0, 0, 0);
+                                s.eyes(mooshroom);
+                                s.useOnEntity(mooshroom, 0, 1.6, 2.5, "minecraft:bucket");
+                                s.cameraOn(0, 1.2, 3.5, mooshroom);
+                                s.shot("A mooshroom just milked: eyes bulging.");
+                                s.area();
+                                String goat = s.mob("minecraft:goat", 0, 0, 0);
+                                s.eyes(goat);
+                                s.useOnEntity(goat, 0, 1.6, 2.5, "minecraft:bucket");
+                                s.cameraOn(0, 1.2, 3.5, goat);
+                                s.shot("A goat just milked: eyes bulging.");
+                            });
+                    s.scenario(
+                            "4.3",
+                            "Shearing bulges",
+                            () -> shear(s, "A sheep just sheared: eyes bulging."));
+                    s.scenario("4.4", "Affection grows pupils", () -> affection(s));
+                    s.scenario(
+                            "4.5",
+                            "Trades swirl",
+                            () -> {
+                                trade(
+                                        s,
+                                        "minecraft:villager",
+                                        "A villager just traded with: eyes swirling.");
+                                s.area();
+                                trade(
+                                        s,
+                                        "minecraft:wandering_trader",
+                                        "A wandering trader just traded with: eyes swirling.");
+                            });
+                    s.scenario(
+                            "4.6",
+                            "Healing swirls once per cooldown",
+                            () -> {
+                                String cow = heal(s, "A cow just healed: eyes swirling.");
+                                s.waitTicks(20);
+                                s.server("damage %s 2 minecraft:generic", Scene.sel(cow));
+                                s.waitTicks(15);
+                                s.server(
+                                        "effect give %s minecraft:instant_health 1 0",
+                                        Scene.sel(cow));
+                                s.waitTicks(3);
+                                s.shot("The same cow healed again within the cooldown: no swirl.");
+                            });
+                    s.scenario("4.7", "Sleepers squint", () -> sleeping(s));
+                    s.scenario(
+                            "4.8",
+                            "Ramming goat squints",
+                            () -> ram(s, "A goat mid-charge: eyes squinting."));
+                    s.scenario("4.9", "Bow aim winks", () -> aimWink(s));
+                    s.scenario(
+                            "4.10",
+                            "Creeper rattle",
+                            () ->
+                                    swell(
+                                            s,
+                                            "Pupils jump between consecutive shots, more late in the fuse than early."));
+                    s.scenario("4.11", "Angry red pupils", () -> angry(s));
+                    s.scenario(
+                            "4.12",
+                            "Enderman throb",
+                            () ->
+                                    creepy(
+                                            s,
+                                            "A screaming enderman: pupil size changes between consecutive shots."));
+                    s.scenario("4.13", "Overlays layer on expressions", () -> layering(s));
+                    s.scenario("4.14", "Boats do not react", () -> boatHit(s));
+                    s.scenario("4.15", "Held eye hurt and heal", () -> heldReactions(s));
+                });
     }
 }

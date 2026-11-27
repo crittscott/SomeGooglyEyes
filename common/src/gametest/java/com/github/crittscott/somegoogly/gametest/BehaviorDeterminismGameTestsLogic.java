@@ -2,10 +2,11 @@ package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
-import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.github.crittscott.somegoogly.eye.behavior.EyeInfluence;
+import com.github.crittscott.somegoogly.eye.state.EyeState;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -17,36 +18,42 @@ import net.minecraft.world.entity.animal.Cow;
 import java.util.Arrays;
 
 /**
- * Every behavior must animate identically given the same seed — the contract that keeps all viewers of
- * one mob (and a mid-effect joiner catching up by age) in lock-step, since only the trigger (id,
- * duration, seed) crosses the wire. Drives the server-loadable half of a behavior ({@code onStart} plus
- * {@code influence}, which is a pure function of age + seeded params) on a {@link BehaviorInstance}. A
- * cow supplies a real {@link HeadInfo} so per-eye behaviors (blink's mask) have geometry to resolve
- * against.
+ * Every behavior must animate identically given the same seed — the contract that keeps all viewers
+ * of one mob (and a mid-effect joiner catching up by age) in lock-step, since only the trigger (id,
+ * duration, seed) crosses the wire. Drives the server-loadable half of a behavior ({@code onStart}
+ * plus {@code influence}, which is a pure function of age + seeded params) on a {@link
+ * BehaviorInstance}. A cow supplies a real {@link HeadInfo} so per-eye behaviors (blink's mask)
+ * have geometry to resolve against.
  */
 public final class BehaviorDeterminismGameTestsLogic {
 
-    private BehaviorDeterminismGameTestsLogic() {
-    }
+    private BehaviorDeterminismGameTestsLogic() {}
 
-    private static BehaviorInstance playTo(EyeBehavior behavior, HeadInfo helper, int ticks, long seed) {
+    private static BehaviorInstance playTo(
+            EyeBehavior behavior, HeadInfo helper, int ticks, long seed) {
         BehaviorInstance instance = BehaviorInstance.start(behavior, helper, 8, seed);
         instance.age = Math.max(0, Math.min(ticks, instance.duration));
         return instance;
     }
 
     private static boolean influenceEquals(EyeInfluence a, EyeInfluence b) {
-        return a.anchorX == b.anchorX && a.anchorY == b.anchorY && a.stiffness == b.stiffness
-                && a.eyeScaleMul == b.eyeScaleMul && a.squashY == b.squashY
-                && a.tintAmount == b.tintAmount && Arrays.equals(a.corneaTint, b.corneaTint);
+        return a.anchorX == b.anchorX
+                && a.anchorY == b.anchorY
+                && a.stiffness == b.stiffness
+                && a.eyeScaleMul == b.eyeScaleMul
+                && a.squashY == b.squashY
+                && a.tintAmount == b.tintAmount
+                && Arrays.equals(a.corneaTint, b.corneaTint);
     }
 
     /**
      * Two same-seed instances must resolve identical seeded params and produce identical per-eye
      * {@link EyeInfluence} at every eye — the whole observable output of a behavior at a given age.
      */
-    private static boolean statesMatch(EyeBehavior behavior, BehaviorInstance a, BehaviorInstance b, HeadInfo helper) {
-        if (a.age != b.age || a.dirSign != b.dirSign
+    private static boolean statesMatch(
+            EyeBehavior behavior, BehaviorInstance a, BehaviorInstance b, HeadInfo helper) {
+        if (a.age != b.age
+                || a.dirSign != b.dirSign
                 || !Arrays.equals(a.tintColor, b.tintColor)
                 || !Arrays.deepEquals(a.mask, b.mask)) {
             return false;
@@ -68,18 +75,22 @@ public final class BehaviorDeterminismGameTestsLogic {
     }
 
     /**
-     * Every behavior animates identically from the same seed. In game: with two players watching one eyed
-     * mob, run {@code /sg admin behavior <id>} for each of {@code blink}, {@code cross_eye}, {@code side_eye},
-     * {@code stare}, {@code grow}, {@code swirl}, and {@code color_change}; both screens show the same
-     * animation, direction, and color.
+     * Every behavior animates identically from the same seed. In game: with two players watching
+     * one eyed mob, run {@code /sg admin behavior <id>} for each of {@code blink}, {@code
+     * cross_eye}, {@code side_eye}, {@code stare}, {@code grow}, {@code swirl}, and {@code
+     * color_change}; both screens show the same animation, direction, and color.
      */
     public static void everyBehaviorIsSeedDeterministicOverItsRun(GameTestHelper helper) {
         HeadInfo headInfo = helperFor(helper);
         for (EyeBehavior behavior : EyeBehavior.values()) {
             BehaviorInstance a = playTo(behavior, headInfo, 8, 4242L);
             BehaviorInstance b = playTo(behavior, headInfo, 8, 4242L);
-            helper.assertTrue(statesMatch(behavior, a, b, headInfo),
-                    Component.literal("behavior " + behavior.id() + " must reach identical state from the same seed"));
+            helper.assertTrue(
+                    statesMatch(behavior, a, b, headInfo),
+                    Component.literal(
+                            "behavior "
+                                    + behavior.id()
+                                    + " must reach identical state from the same seed"));
         }
         helper.succeed();
     }
