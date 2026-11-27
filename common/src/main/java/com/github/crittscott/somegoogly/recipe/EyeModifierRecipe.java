@@ -5,9 +5,10 @@ import com.github.crittscott.somegoogly.eye.state.EyeColor;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.registry.ModContent;
 import com.mojang.serialization.MapCodec;
+
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -19,9 +20,9 @@ import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Special crafting recipe that edits a harvested/looted googly eye's appearance: exactly one
- * {@code googly_eye} plus exactly one modifier ingredient (see {@link #modify}). There is no recipe
- * that <i>creates</i> an eye — this only transforms one you already have.
+ * Special crafting recipe that edits a harvested/looted googly eye's appearance: exactly one {@code
+ * googly_eye} plus exactly one modifier ingredient (see {@link #modify}). There is no recipe that
+ * <i>creates</i> an eye — this only transforms one you already have.
  *
  * <p>The output is a copy of the input eye (preserving unrelated data components) with the
  * modifier's delta folded onto its {@link AppearanceOverride}.
@@ -33,12 +34,10 @@ public class EyeModifierRecipe extends CustomRecipe {
     public static final StreamCodec<RegistryFriendlyByteBuf, EyeModifierRecipe> STREAM_CODEC =
             StreamCodec.unit(INSTANCE);
 
-    public EyeModifierRecipe() {
-    }
+    public EyeModifierRecipe() {}
 
     /** The eye and the modifier ingredient found in a grid. */
-    private record Match(ItemStack eye, ItemStack modifierStack) {
-    }
+    private record Match(ItemStack eye, ItemStack modifierStack) {}
 
     @Override
     public ItemStack assemble(CraftingInput input) {
@@ -53,10 +52,11 @@ public class EyeModifierRecipe extends CustomRecipe {
     }
 
     /**
-     * {@code current} with the modifier ingredient's change layered on, or {@code null} when
-     * {@code stack} is not a modifier: a dye (any item carrying the dye component) sets that dye's color on the
-     * iris (set, not blended), glowstone dust forces glow on, redstone dust forces it off, and a cobweb strips every
-     * override, leaving a bare eye that falls back to config appearance. Geometry stays in config.
+     * {@code current} with the modifier ingredient's change layered on, or {@code null} when {@code
+     * stack} is not a modifier: a dye (any item carrying the dye component) sets that dye's color
+     * on the iris (set, not blended), glowstone dust forces glow on, redstone dust forces it off,
+     * and a cobweb strips every override, leaving a bare eye that falls back to config appearance.
+     * Geometry stays in config.
      */
     @Nullable
     private static AppearanceOverride modify(AppearanceOverride current, ItemStack stack) {

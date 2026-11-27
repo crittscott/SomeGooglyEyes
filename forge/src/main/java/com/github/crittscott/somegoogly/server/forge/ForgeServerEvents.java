@@ -4,6 +4,7 @@ import com.github.crittscott.somegoogly.command.GooglyServerCommands;
 import com.github.crittscott.somegoogly.eye.behavior.ServerBehaviorScheduler;
 import com.github.crittscott.somegoogly.item.EyeItemService;
 import com.github.crittscott.somegoogly.server.ServerServices;
+
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -26,12 +27,11 @@ import net.minecraftforge.eventbus.api.listener.Priority;
 /** Forge event wiring for the loader-neutral authoritative server services. */
 public final class ForgeServerEvents {
 
-    private ForgeServerEvents() {
-    }
+    private ForgeServerEvents() {}
 
     /**
-     * Record a handled interaction's result and report whether to cancel the event, so the vanilla interaction
-     * does not run after ours.
+     * Record a handled interaction's result and report whether to cancel the event, so the vanilla
+     * interaction does not run after ours.
      */
     private static boolean consumed(PlayerInteractEvent event, InteractionResult result) {
         if (result == InteractionResult.PASS) {
@@ -41,7 +41,9 @@ public final class ForgeServerEvents {
         return true;
     }
 
-    /** A joining player gets the current view; a reload broadcasts once, only if something changed. */
+    /**
+     * A joining player gets the current view; a reload broadcasts once, only if something changed.
+     */
     private static void onDatapackSync(OnDatapackSyncEvent event) {
         ServerPlayer player = event.getPlayer();
         if (player != null) {
@@ -57,8 +59,9 @@ public final class ForgeServerEvents {
      * {@code EntityInteract} event, so this listens to {@code EntityInteractSpecific}.
      */
     private static boolean onEntityInteract(PlayerInteractEvent.EntityInteractSpecific event) {
-        InteractionResult result = EyeItemService.interact(
-                event.getEntity(), event.getLevel(), event.getHand(), event.getTarget());
+        InteractionResult result =
+                EyeItemService.interact(
+                        event.getEntity(), event.getLevel(), event.getHand(), event.getTarget());
         return consumed(event, result);
     }
 
@@ -81,12 +84,20 @@ public final class ForgeServerEvents {
         for (ItemEntity drop : event.getDrops()) {
             EyeItemService.markHeadDrop(living, drop.getItem());
         }
-        EyeItemService.onDeath(living, event.getSource(), stack -> {
-            ItemEntity drop = new ItemEntity(
-                    living.level(), living.getX(), living.getY(), living.getZ(), stack);
-            drop.setDefaultPickUpDelay();
-            event.getDrops().add(drop);
-        });
+        EyeItemService.onDeath(
+                living,
+                event.getSource(),
+                stack -> {
+                    ItemEntity drop =
+                            new ItemEntity(
+                                    living.level(),
+                                    living.getX(),
+                                    living.getY(),
+                                    living.getZ(),
+                                    stack);
+                    drop.setDefaultPickUpDelay();
+                    event.getDrops().add(drop);
+                });
     }
 
     private static void onLivingHeal(LivingHealEvent event) {
@@ -95,7 +106,9 @@ public final class ForgeServerEvents {
 
     /** Respawning or leaving the End replaces the player. */
     private static void onPlayerClone(PlayerEvent.Clone event) {
-        ServerServices.onPlayerCloned((ServerPlayer) event.getOriginal(), (ServerPlayer) event.getEntity(),
+        ServerServices.onPlayerCloned(
+                (ServerPlayer) event.getOriginal(),
+                (ServerPlayer) event.getEntity(),
                 !event.isWasDeath());
     }
 
@@ -107,18 +120,23 @@ public final class ForgeServerEvents {
         GooglyServerCommands.register(event.getDispatcher(), event.getBuildContext());
     }
 
-    /** Lowest priority, like entity interaction, so protection mods that cancel block use get first refusal. */
+    /**
+     * Lowest priority, like entity interaction, so protection mods that cancel block use get first
+     * refusal.
+     */
     private static boolean onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
         if (event.getUseItem() == Result.DENY) {
             return false;
         }
-        InteractionResult result = EyeItemService.useOnSkull(
-                event.getEntity(), event.getLevel(), event.getHand(), event.getHitVec());
+        InteractionResult result =
+                EyeItemService.useOnSkull(
+                        event.getEntity(), event.getLevel(), event.getHand(), event.getHitVec());
         return consumed(event, result);
     }
 
     private static boolean onRightClickItem(PlayerInteractEvent.RightClickItem event) {
-        InteractionResult result = EyeItemService.selfRemoveWithShears(event.getEntity(), event.getHand());
+        InteractionResult result =
+                EyeItemService.selfRemoveWithShears(event.getEntity(), event.getHand());
         return consumed(event, result);
     }
 
@@ -142,12 +160,18 @@ public final class ForgeServerEvents {
         ServerBehaviorScheduler.onTrade(event.getAbstractVillager());
     }
 
-    /** Subscribe the server listeners to their game events' buses; called once from the mod constructor. */
+    /**
+     * Subscribe the server listeners to their game events' buses; called once from the mod
+     * constructor.
+     */
     public static void register() {
         RegisterCommandsEvent.BUS.addListener(ForgeServerEvents::onRegisterCommands);
-        PlayerInteractEvent.EntityInteractSpecific.BUS.addListener(Priority.LOWEST, ForgeServerEvents::onEntityInteract);
-        PlayerInteractEvent.RightClickBlock.BUS.addListener(Priority.LOWEST, ForgeServerEvents::onRightClickBlock);
-        PlayerInteractEvent.RightClickItem.BUS.addListener(Priority.LOWEST, ForgeServerEvents::onRightClickItem);
+        PlayerInteractEvent.EntityInteractSpecific.BUS.addListener(
+                Priority.LOWEST, ForgeServerEvents::onEntityInteract);
+        PlayerInteractEvent.RightClickBlock.BUS.addListener(
+                Priority.LOWEST, ForgeServerEvents::onRightClickBlock);
+        PlayerInteractEvent.RightClickItem.BUS.addListener(
+                Priority.LOWEST, ForgeServerEvents::onRightClickItem);
         // Late enough to see the heads other mods add to the drops.
         LivingDropsEvent.BUS.addListener(Priority.LOWEST, ForgeServerEvents::onLivingDrops);
         EntityJoinLevelEvent.BUS.addListener(ForgeServerEvents::onEntityJoinLevel);

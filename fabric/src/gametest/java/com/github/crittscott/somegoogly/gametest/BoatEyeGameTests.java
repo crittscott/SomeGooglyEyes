@@ -41,7 +41,8 @@ public final class BoatEyeGameTests {
 
     @GameTest(structure = TEMPLATE, maxTicks = 100)
     public void boatsHonorCreativeConsumption(GameTestHelper helper) {
-        BoatEyeGameTestsLogic.boatsHonorCreativeConsumption(helper, FakePlayer.get(helper.getLevel()));
+        BoatEyeGameTestsLogic.boatsHonorCreativeConsumption(
+                helper, FakePlayer.get(helper.getLevel()));
     }
 
     @GameTest(structure = TEMPLATE, maxTicks = 100)
@@ -51,7 +52,8 @@ public final class BoatEyeGameTests {
 
     @GameTest(structure = TEMPLATE, maxTicks = 100)
     public void boatsReceiveAppearanceAndRefuseRestyling(GameTestHelper helper) {
-        BoatEyeGameTestsLogic.boatsReceiveAppearanceAndRefuseRestyling(helper, FakePlayer.get(helper.getLevel()));
+        BoatEyeGameTestsLogic.boatsReceiveAppearanceAndRefuseRestyling(
+                helper, FakePlayer.get(helper.getLevel()));
     }
 
     @GameTest(structure = TEMPLATE, maxTicks = 100)
@@ -73,6 +75,4 @@ public final class BoatEyeGameTests {
     public void boatsSaveAndSynchronizeSnapshots(GameTestHelper helper) {
         BoatEyeGameTestsLogic.boatsSaveAndSynchronizeSnapshots(helper);
     }
-
-
 }

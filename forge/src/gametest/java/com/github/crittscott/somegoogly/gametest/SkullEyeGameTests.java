@@ -7,23 +7,24 @@ import net.minecraftforge.common.util.Result;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 /**
- * Forge GameTest entry points for {@link SkullEyeGameTestsLogic}; see that class for the actual assertions.
+ * Forge GameTest entry points for {@link SkullEyeGameTestsLogic}; see that class for the actual
+ * assertions.
  */
 public final class SkullEyeGameTests {
 
-    private SkullEyeGameTests() {
-    }
+    private SkullEyeGameTests() {}
 
     public static void placedHeadUsesSharedAmbientSlots(GameTestHelper helper) {
         SkullEyeGameTestsLogic.placedHeadUsesSharedAmbientSlots(helper);
     }
 
     public static void brokenHeadKeepsItsEyes(GameTestHelper helper) {
-        SkullEyeGameTestsLogic.brokenHeadKeepsItsEyes(helper, SomeGooglyGameTests.survivalPlayer(helper));
+        SkullEyeGameTestsLogic.brokenHeadKeepsItsEyes(
+                helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
 
-    // TODO: eyedMobDropsAnEyedHead fails on both loaders for reasons not yet understood, though an eyed mob's
-    // head keeps its eyes in game; disabled until the cause is found.
+    // TODO: eyedMobDropsAnEyedHead fails on both loaders for reasons not yet understood, though an
+    // eyed mob's head keeps its eyes in game; disabled until the cause is found.
     // public static void eyedMobDropsAnEyedHead(GameTestHelper helper) {
     //     SkullEyeGameTestsLogic.eyedMobDropsAnEyedHead(helper);
     // }
@@ -33,11 +34,13 @@ public final class SkullEyeGameTests {
     }
 
     public static void optometristHarvestsAPlacedHead(GameTestHelper helper) {
-        SkullEyeGameTestsLogic.optometristHarvestsAPlacedHead(helper, SomeGooglyGameTests.survivalPlayer(helper));
+        SkullEyeGameTestsLogic.optometristHarvestsAPlacedHead(
+                helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
 
     public static void slimyEyeGivesAPlacedHeadEyes(GameTestHelper helper) {
-        SkullEyeGameTestsLogic.slimyEyeGivesAPlacedHeadEyes(helper, SomeGooglyGameTests.survivalPlayer(helper));
+        SkullEyeGameTestsLogic.slimyEyeGivesAPlacedHeadEyes(
+                helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
 
     public static void slimyEyeRefusesUnconfiguredHeadsAndTheSwitch(GameTestHelper helper) {
@@ -47,17 +50,24 @@ public final class SkullEyeGameTests {
 
     public static void deniedItemUseLeavesHeadsUntouched(GameTestHelper helper) {
         var player = SomeGooglyGameTests.survivalPlayer(helper);
-        SkullEyeGameTestsLogic.deniedItemUseLeavesHeadsUntouched(helper, player, (hit, denied) -> {
-            var event = new PlayerInteractEvent.RightClickBlock(
-                    player, InteractionHand.MAIN_HAND, hit.getBlockPos(), hit);
-            if (denied) {
-                event.setUseItem(Result.DENY);
-            }
-            boolean cancelled = PlayerInteractEvent.RightClickBlock.BUS.post(event);
-            if (denied) {
-                helper.assertTrue(!cancelled, Component.literal("the adapter must preserve a noncanceled item denial"));
-            }
-        });
+        SkullEyeGameTestsLogic.deniedItemUseLeavesHeadsUntouched(
+                helper,
+                player,
+                (hit, denied) -> {
+                    var event =
+                            new PlayerInteractEvent.RightClickBlock(
+                                    player, InteractionHand.MAIN_HAND, hit.getBlockPos(), hit);
+                    if (denied) {
+                        event.setUseItem(Result.DENY);
+                    }
+                    boolean cancelled = PlayerInteractEvent.RightClickBlock.BUS.post(event);
+                    if (denied) {
+                        helper.assertTrue(
+                                !cancelled,
+                                Component.literal(
+                                        "the adapter must preserve a noncanceled item denial"));
+                    }
+                });
     }
 
     public static void adventureCanPlaceOnReadsTheClickedHead(GameTestHelper helper) {

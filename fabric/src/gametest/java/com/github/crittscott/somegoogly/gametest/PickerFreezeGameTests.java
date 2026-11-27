@@ -4,8 +4,8 @@ import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 
 /**
- * Fabric GameTest entry points for {@link PickerFreezeGameTestsLogic}; see that class for the actual
- * assertions.
+ * Fabric GameTest entry points for {@link PickerFreezeGameTestsLogic}; see that class for the
+ * actual assertions.
  */
 public final class PickerFreezeGameTests {
 

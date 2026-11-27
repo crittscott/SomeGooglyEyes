@@ -8,8 +8,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
  */
 public final class VariantSelectionGameTests {
 
-    private VariantSelectionGameTests() {
-    }
+    private VariantSelectionGameTests() {}
 
     public static void cumulativeWeightBoundariesPickExpectedVariant(GameTestHelper helper) {
         VariantSelectionGameTestsLogic.cumulativeWeightBoundariesPickExpectedVariant(helper);

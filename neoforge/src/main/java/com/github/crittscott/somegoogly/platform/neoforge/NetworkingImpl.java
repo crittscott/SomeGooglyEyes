@@ -6,11 +6,12 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-/** NeoForge clientbound sends; tracking fanout goes through the authoritative chunk-map distributor. */
+/**
+ * NeoForge clientbound sends; tracking fanout goes through the authoritative chunk-map distributor.
+ */
 public final class NetworkingImpl {
 
-    private NetworkingImpl() {
-    }
+    private NetworkingImpl() {}
 
     public static void sendToAll(MinecraftServer server, CustomPacketPayload payload) {
         PacketDistributor.sendToAllPlayers(payload);

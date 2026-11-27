@@ -3,6 +3,7 @@ package com.github.crittscott.somegoogly.gametest;
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
 import com.github.crittscott.somegoogly.platform.EntityPersistentData;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
@@ -10,31 +11,37 @@ import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.cow.Cow;
 
 /**
- * The at-spawn eye roll is probabilistic, but its endpoints are deterministic: {@code globalPercent = 100}
- * always grants eyes to an eligible mob, {@code 0} never does. Driven by forcing {@link ServerConfig#GLOBAL_PERCENT}
- * (restored afterwards) and reading the persisted flag the join handler writes. The decision fires
- * synchronously on entity join, so the flag is set by the time {@code spawn} returns.
+ * The at-spawn eye roll is probabilistic, but its endpoints are deterministic: {@code globalPercent
+ * = 100} always grants eyes to an eligible mob, {@code 0} never does. Driven by forcing {@link
+ * ServerConfig#GLOBAL_PERCENT} (restored afterwards) and reading the persisted flag the join
+ * handler writes. The decision fires synchronously on entity join, so the flag is set by the time
+ * {@code spawn} returns.
  */
 public final class SpawnGatingGameTestsLogic {
 
-    private SpawnGatingGameTestsLogic() {
-    }
+    private SpawnGatingGameTestsLogic() {}
 
     /**
      * {@code globalPercent = 100} always grants eyes and {@code 0} never does. In game: with no
-     * {@code entityOverrides}, set {@code globalPercent = 100} and every spawned cow has eyes; set it to
-     * {@code 0} and none of the new ones do.
+     * {@code entityOverrides}, set {@code globalPercent = 100} and every spawned cow has eyes; set
+     * it to {@code 0} and none of the new ones do.
      */
     public static void fullPercentGrantsEyesAndZeroDeniesThem(GameTestHelper helper) {
         int original = ServerConfig.GLOBAL_PERCENT.get();
         try {
             ServerConfig.GLOBAL_PERCENT.set(100);
             Cow eyed = helper.spawnWithNoFreeWill(EntityTypes.COW, new BlockPos(2, 2, 2));
-            helper.assertTrue(EyeState.hasEyes(eyed), Component.literal("an eligible cow at globalPercent=100 should spawn with eyes"));
+            helper.assertTrue(
+                    EyeState.hasEyes(eyed),
+                    Component.literal(
+                            "an eligible cow at globalPercent=100 should spawn with eyes"));
 
             ServerConfig.GLOBAL_PERCENT.set(0);
             Cow bare = helper.spawnWithNoFreeWill(EntityTypes.COW, new BlockPos(4, 2, 2));
-            helper.assertTrue(!EyeState.hasEyes(bare), Component.literal("an eligible cow at globalPercent=0 should spawn without eyes"));
+            helper.assertTrue(
+                    !EyeState.hasEyes(bare),
+                    Component.literal(
+                            "an eligible cow at globalPercent=0 should spawn without eyes"));
         } finally {
             ServerConfig.GLOBAL_PERCENT.set(original);
         }
@@ -42,26 +49,32 @@ public final class SpawnGatingGameTestsLogic {
     }
 
     /**
-     * Only a mob that gets eyes stores a placement roll, and one switched on later draws its own. In game: set
-     * {@code globalPercent = 0}, spawn a pig, and on NeoForge or Forge {@code /data get entity <pig>} shows no
-     * {@code somegoogly:eyeVariantRoll} key in {@code NeoForgeData} or {@code ForgeData}. Aiming at it and
-     * running {@code /sg admin eyes true} gives it eyes and the key.
+     * Only a mob that gets eyes stores a placement roll, and one switched on later draws its own.
+     * In game: set {@code globalPercent = 0}, spawn a pig, and on NeoForge or Forge {@code /data
+     * get entity <pig>} shows no {@code somegoogly:eyeVariantRoll} key in {@code NeoForgeData} or
+     * {@code ForgeData}. Aiming at it and running {@code /sg admin eyes true} gives it eyes and the
+     * key.
      */
     public static void onlyEyedMobsStoreAVariantRoll(GameTestHelper helper) {
         int original = ServerConfig.GLOBAL_PERCENT.get();
         try {
             ServerConfig.GLOBAL_PERCENT.set(0);
             Cow cow = helper.spawnWithNoFreeWill(EntityTypes.COW, new BlockPos(2, 2, 2));
-            helper.assertTrue(!EntityPersistentData.get(cow).contains(EyeState.VARIANT_ROLL),
+            helper.assertTrue(
+                    !EntityPersistentData.get(cow).contains(EyeState.VARIANT_ROLL),
                     Component.literal("an eyeless spawn should store no variant roll"));
             EyeState.setHasEyes(cow, true);
-            helper.assertTrue(EntityPersistentData.get(cow).contains(EyeState.VARIANT_ROLL),
+            helper.assertTrue(
+                    EntityPersistentData.get(cow).contains(EyeState.VARIANT_ROLL),
                     Component.literal("switching eyes on should draw a variant roll"));
             float roll = EyeState.getVariantRoll(cow);
-            helper.assertTrue(roll >= 0.0F && roll < 1.0F, Component.literal("variant roll should be in [0, 1), got " + roll));
+            helper.assertTrue(
+                    roll >= 0.0F && roll < 1.0F,
+                    Component.literal("variant roll should be in [0, 1), got " + roll));
             EyeState.setHasEyes(cow, false);
             EyeState.setHasEyes(cow, true);
-            helper.assertTrue(EyeState.getVariantRoll(cow) == roll,
+            helper.assertTrue(
+                    EyeState.getVariantRoll(cow) == roll,
                     Component.literal("switching eyes back on should keep the roll"));
         } finally {
             ServerConfig.GLOBAL_PERCENT.set(original);

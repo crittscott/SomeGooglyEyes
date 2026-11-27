@@ -1,8 +1,7 @@
 package com.github.crittscott.somegoogly.platform.forge;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
-import java.util.function.Function;
-import java.util.function.Supplier;
+
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -13,6 +12,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.registries.DeferredRegister;
+
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /** Forge implementation of the shared registration boundary, through deferred registers. */
 public final class RegistrationImpl {
@@ -26,10 +28,11 @@ public final class RegistrationImpl {
     private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS =
             DeferredRegister.create(Registries.RECIPE_SERIALIZER, SomeGooglyCommon.MOD_ID);
 
-    private RegistrationImpl() {
-    }
+    private RegistrationImpl() {}
 
-    /** Attach every deferred register to the mod bus group; called once from the mod constructor. */
+    /**
+     * Attach every deferred register to the mod bus group; called once from the mod constructor.
+     */
     public static void attach(BusGroup modBusGroup) {
         CREATIVE_TABS.register(modBusGroup);
         DATA_COMPONENTS.register(modBusGroup);
@@ -37,26 +40,34 @@ public final class RegistrationImpl {
         RECIPE_SERIALIZERS.register(modBusGroup);
     }
 
-    public static Supplier<CreativeModeTab> creativeTab(String name, Component title, Supplier<ItemStack> icon,
-                                                        CreativeModeTab.DisplayItemsGenerator displayItems) {
-        return CREATIVE_TABS.register(name, () -> CreativeModeTab.builder()
-                .title(title)
-                .icon(icon)
-                .displayItems(displayItems)
-                .build());
+    public static Supplier<CreativeModeTab> creativeTab(
+            String name,
+            Component title,
+            Supplier<ItemStack> icon,
+            CreativeModeTab.DisplayItemsGenerator displayItems) {
+        return CREATIVE_TABS.register(
+                name,
+                () ->
+                        CreativeModeTab.builder()
+                                .title(title)
+                                .icon(icon)
+                                .displayItems(displayItems)
+                                .build());
     }
 
-    public static <T> Supplier<DataComponentType<T>> dataComponent(String name,
-                                                                  Supplier<DataComponentType<T>> factory) {
+    public static <T> Supplier<DataComponentType<T>> dataComponent(
+            String name, Supplier<DataComponentType<T>> factory) {
         return DATA_COMPONENTS.register(name, factory);
     }
 
-    public static <T extends Item> Supplier<T> item(String name, Function<Item.Properties, T> factory) {
+    public static <T extends Item> Supplier<T> item(
+            String name, Function<Item.Properties, T> factory) {
         ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, SomeGooglyCommon.id(name));
         return ITEMS.register(name, () -> factory.apply(new Item.Properties().setId(key)));
     }
 
-    public static <T extends RecipeSerializer<?>> Supplier<T> recipeSerializer(String name, Supplier<T> factory) {
+    public static <T extends RecipeSerializer<?>> Supplier<T> recipeSerializer(
+            String name, Supplier<T> factory) {
         return RECIPE_SERIALIZERS.register(name, factory);
     }
 }

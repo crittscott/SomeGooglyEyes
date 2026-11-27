@@ -75,9 +75,9 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">GeckoIntegration</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">GeckoLib-referencing entry points, reached only via <code>GeckoCompat</code> or from loader listeners registered
-after its presence check (so this class — and the GeckoLib classes it touches — load only when GeckoLib is
-present).</div>
+<div class="block">GeckoLib-referencing entry points, reached only via <code>GeckoCompat</code> or from loader listeners
+registered after its presence check (so this class — and the GeckoLib classes it touches — load
+only when GeckoLib is present).</div>
 </div>
 </section>
 <section class="summary">
@@ -96,15 +96,15 @@ present).</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#compileLayers(com.geckolib.event.GeoRenderEvent.Entity.CompileRenderLayers)" class="member-name-link">compileLayers</a><wbr>(com.geckolib.event.GeoRenderEvent.Entity.CompileRenderLayers&nbsp;event)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Add the googly-eye layer from a loader's GeckoLib entity compile-render-layers event, which fires once per
-renderer.</div>
+<div class="block">Add the googly-eye layer from a loader's GeckoLib entity compile-render-layers event, which
+fires once per renderer.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#enumerate(net.minecraft.client.renderer.entity.EntityRenderer,net.minecraft.world.entity.LivingEntity)" class="member-name-link">enumerate</a><wbr>(net.minecraft.client.renderer.entity.EntityRenderer&lt;?,<wbr>?&gt;&nbsp;renderer,
  net.minecraft.world.entity.LivingEntity&nbsp;living)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The bone names of <code>living</code>'s GeckoLib model, or an empty list for a non-GeckoLib renderer or unbaked
-model.</div>
+<div class="block">The bone names of <code>living</code>'s GeckoLib model, or an empty list for a non-GeckoLib
+renderer or unbaked model.</div>
 </div>
 </div>
 </div>
@@ -129,8 +129,8 @@ model.</div>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">enumerate</span><wbr><span class="parameters">(net.minecraft.client.renderer.entity.EntityRenderer&lt;?,<wbr>?&gt;&nbsp;renderer,
  net.minecraft.world.entity.LivingEntity&nbsp;living)</span></div>
-<div class="block">The bone names of <code>living</code>'s GeckoLib model, or an empty list for a non-GeckoLib renderer or unbaked
-model.</div>
+<div class="block">The bone names of <code>living</code>'s GeckoLib model, or an empty list for a non-GeckoLib
+renderer or unbaked model.</div>
 </div>
 </section>
 </li>
@@ -139,8 +139,9 @@ model.</div>
 <h3>compileLayers</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">compileLayers</span><wbr><span class="parameters">(com.geckolib.event.GeoRenderEvent.Entity.CompileRenderLayers&nbsp;event)</span></div>
-<div class="block">Add the googly-eye layer from a loader's GeckoLib entity compile-render-layers event, which fires once per
-renderer. A failure is logged once and leaves that renderer without eyes rather than breaking rendering.</div>
+<div class="block">Add the googly-eye layer from a loader's GeckoLib entity compile-render-layers event, which
+fires once per renderer. A failure is logged once and leaves that renderer without eyes
+rather than breaking rendering.</div>
 </div>
 </section>
 </li>

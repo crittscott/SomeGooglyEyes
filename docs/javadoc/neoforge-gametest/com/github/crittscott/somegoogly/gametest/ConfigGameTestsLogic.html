@@ -87,9 +87,10 @@ loadScripts(document, 'script');</script>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Checks on the datapack-loaded <code>ServerEyeConfigs</code> (the shipped configs are loaded by the
 gametest server — the manual <code>somegoogly-test-datapack</code> is not mounted here), the reload
-listener's exact Minecraft-version selection, and the pure <code>ServerConfig.percentFor(Identifier)</code> resolution.
-Tests that mutate shared state (config values via their public <code>set</code>, the loaded eye configs
-via <a href="TestEyeConfigs.html" title="class in com.github.crittscott.somegoogly.gametest"><code>TestEyeConfigs</code></a>) restore the originals in a <code>finally</code> so later tests aren't affected.</div>
+listener's exact Minecraft-version selection, and the pure <code>ServerConfig.percentFor(Identifier)</code>
+resolution. Tests that mutate shared state (config values via their public <code>set</code>, the
+loaded eye configs via <a href="TestEyeConfigs.html" title="class in com.github.crittscott.somegoogly.gametest"><code>TestEyeConfigs</code></a>) restore the originals in a <code>finally</code> so
+later tests aren't affected.</div>
 </div>
 </section>
 <section class="summary">
@@ -123,19 +124,20 @@ via <a href="TestEyeConfigs.html" title="class in com.github.crittscott.somegoog
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#listSettingWithNoValidEntryUsesDefault(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">listSettingWithNoValidEntryUsesDefault</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">A list setting drops its invalid entries, and a list with no valid entry means the default, on every
-loader.</div>
+<div class="block">A list setting drops its invalid entries, and a list with no valid entry means the default,
+on every loader.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#percentForResolvesExactBeforeWildcard(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">percentForResolvesExactBeforeWildcard</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">An exact <code>entityOverrides</code> id wins over a wildcard, and an unmatched id uses <code>globalPercent</code>.</div>
+<div class="block">An exact <code>entityOverrides</code> id wins over a wildcard, and an unmatched id uses <code>
+globalPercent</code>.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#percentForResolvesWildcardsInListOrder(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">percentForResolvesWildcardsInListOrder</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block"><code>entityOverrides</code>: an exact id always wins; among wildcards, the first matching list entry
-wins.</div>
+<div class="block"><code>entityOverrides</code>: an exact id always wins; among wildcards, the first matching list
+entry wins.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reloadFallsBackToNearestGeneration(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadFallsBackToNearestGeneration</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
@@ -151,24 +153,26 @@ nothing.</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reloadRejectsFileWithMalformedEntry(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadRejectsFileWithMalformedEntry</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">A file with one entry the codec cannot decode is rejected whole, not loaded without that entry.</div>
+<div class="block">A file with one entry the codec cannot decode is rejected whole, not loaded without that
+entry.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reloadReplacesConfigsOnlyOnContentChange(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadReplacesConfigsOnlyOnContentChange</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">A reload installs a new config set only when the resolved content changes; server stop clears the
-installed set.</div>
+<div class="block">A reload installs a new config set only when the resolved content changes; server stop clears
+the installed set.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#reloadToleratesBadFilesAndDuplicates(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">reloadToleratesBadFilesAndDuplicates</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">One malformed file, a duplicate age/version entry, and an invalid age string never abort the reload.</div>
+<div class="block">One malformed file, a duplicate age/version entry, and an invalid age string never abort the
+reload.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#spawnAllDefaultsOff(net.minecraft.gametest.framework.GameTestHelper)" class="member-name-link">spawnAllDefaultsOff</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block"><code>/sg spawnall</code> terraforms and mass-spawns with no undo, so its server-config gate must ship
-opt-in.</div>
+<div class="block"><code>/sg spawnall</code> terraforms and mass-spawns with no undo, so its server-config gate must
+ship opt-in.</div>
 </div>
 </div>
 </div>
@@ -192,10 +196,10 @@ opt-in.</div>
 <h3>percentForResolvesExactBeforeWildcard</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">percentForResolvesExactBeforeWildcard</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">An exact <code>entityOverrides</code> id wins over a wildcard, and an unmatched id uses <code>globalPercent</code>.
-In game: set <code>globalPercent = 2</code> and
-<code>entityOverrides = ["minecraft:zombie,100", "minecraft:*,50"]</code> in the server config, then spawn
-mobs from eggs: every zombie has eyes, about half of the cows do, and only the occasional modded mob.</div>
+<div class="block">An exact <code>entityOverrides</code> id wins over a wildcard, and an unmatched id uses <code>
+globalPercent</code>. In game: set <code>globalPercent = 2</code> and <code>entityOverrides =
+["minecraft:zombie,100", "minecraft:*,50"]</code> in the server config, then spawn mobs from eggs:
+every zombie has eyes, about half of the cows do, and only the occasional modded mob.</div>
 </div>
 </section>
 </li>
@@ -204,10 +208,10 @@ mobs from eggs: every zombie has eyes, about half of the cows do, and only the o
 <h3>configSectionsMatchReleasedFiles</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">configSectionsMatchReleasedFiles</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Shared schema constants name the sections used by the immediately preceding release. This checks
-names only; the loader-specific scenarios exercise native file correction. In game: open a world
-saved by the 26.1.2 release whose server config sets <code>globalPercent = 17</code>; that value remains
-after the file gains newly introduced keys.</div>
+<div class="block">Shared schema constants name the sections used by the immediately preceding release. This
+checks names only; the loader-specific scenarios exercise native file correction. In game:
+open a world saved by the 26.1.2 release whose server config sets <code>globalPercent = 17</code>;
+that value remains after the file gains newly introduced keys.</div>
 </div>
 </section>
 </li>
@@ -216,13 +220,13 @@ after the file gains newly introduced keys.</div>
 <h3>spawnAllDefaultsOff</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">spawnAllDefaultsOff</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block"><code>/sg spawnall</code> terraforms and mass-spawns with no undo, so its server-config gate must ship
-opt-in. MineColonies and Create entities require spawn context this command does not provide, so
-those namespaces must ship excluded, and so must Ice and Fire's dragon egg, which crashes the server on
-its first tick when spawned without a dragon color. In game: in a new world, the generated
-<code>serverconfig/somegoogly-server.toml</code> has <code>allowSpawnAll = false</code>,
-<code>spawnExcludedMods = ["minecolonies", "create"]</code> and
-<code>spawnExcludedEntities = ["iceandfire:dragon_egg"]</code>, and <code>/sg spawnall</code> refuses to run.</div>
+<div class="block"><code>/sg spawnall</code> terraforms and mass-spawns with no undo, so its server-config gate must
+ship opt-in. MineColonies and Create entities require spawn context this command does not
+provide, so those namespaces must ship excluded, and so must Ice and Fire's dragon egg, which
+crashes the server on its first tick when spawned without a dragon color. In game: in a new
+world, the generated <code>serverconfig/somegoogly-server.toml</code> has <code>allowSpawnAll =
+false</code>, <code>spawnExcludedMods = ["minecolonies", "create"]</code> and <code>
+spawnExcludedEntities = ["iceandfire:dragon_egg"]</code>, and <code>/sg spawnall</code> refuses to run.</div>
 </div>
 </section>
 </li>
@@ -231,9 +235,10 @@ its first tick when spawned without a dragon color. In game: in a new world, the
 <h3>everyShippedMinecraftDefinitionLoads</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">everyShippedMinecraftDefinitionLoads</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">Every bundled Minecraft eye definition loads and is usable for each age it declares. In game: set
-<code>globalPercent = 100</code>, spawn one of each mob that has a file under <code>data/minecraft/eyes</code>,
-and every one of them has eyes; the server log reports no invalid or unsafe eye config.</div>
+<div class="block">Every bundled Minecraft eye definition loads and is usable for each age it declares. In game:
+set <code>globalPercent = 100</code>, spawn one of each mob that has a file under <code>
+data/minecraft/eyes</code>, and every one of them has eyes; the server log reports no invalid or
+unsafe eye config.</div>
 </div>
 </section>
 </li>
@@ -243,10 +248,10 @@ and every one of them has eyes; the server log reports no invalid or unsafe eye 
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">exactMinecraftGenerationIsSelected</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 <div class="block">Minecraft-version selection, end to end, including paired adult/baby entries. In game: add a
-datapack with <code>data/minecraft/eyes/zombie.json</code> holding an adult entry for
-<code>"[1.20,1.21)"</code> with blue irises and adult and baby entries for the running version with red
-irises, run <code>/reload</code>, and set <code>entityOverrides = ["minecraft:zombie,100"]</code>; adult and
-baby zombies spawn with red irises.</div>
+datapack with <code>data/minecraft/eyes/zombie.json</code> holding an adult entry for <code>
+"[1.20,1.21)"</code> with blue irises and adult and baby entries for the running version with red
+irises, run <code>/reload</code>, and set <code>entityOverrides = ["minecraft:zombie,100"]</code>;
+adult and baby zombies spawn with red irises.</div>
 </div>
 </section>
 </li>
@@ -255,10 +260,10 @@ baby zombies spawn with red irises.</div>
 <h3>percentForResolvesWildcardsInListOrder</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">percentForResolvesWildcardsInListOrder</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block"><code>entityOverrides</code>: an exact id always wins; among wildcards, the first matching list entry
-wins. In game: set <code>globalPercent = 2</code> and
-<code>entityOverrides = ["*:*_horse,50", "minecraft:*,10"]</code>, then spawn mobs from eggs: about half
-of the skeleton horses have eyes, about one zombie in ten, and only the occasional modded mob.</div>
+<div class="block"><code>entityOverrides</code>: an exact id always wins; among wildcards, the first matching list
+entry wins. In game: set <code>globalPercent = 2</code> and <code>entityOverrides =
+["*:*_horse,50", "minecraft:*,10"]</code>, then spawn mobs from eggs: about half of the skeleton
+horses have eyes, about one zombie in ten, and only the occasional modded mob.</div>
 </div>
 </section>
 </li>
@@ -267,9 +272,9 @@ of the skeleton horses have eyes, about one zombie in ten, and only the occasion
 <h3>reloadHardExcludesEnderDragon</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">reloadHardExcludesEnderDragon</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">No datapack, from any namespace, may install an eye config for the ender dragon. In game: add a
-datapack with <code>data/minecraft/eyes/ender_dragon.json</code> and run <code>/reload</code>; the server log
-reports the dragon file refused.</div>
+<div class="block">No datapack, from any namespace, may install an eye config for the ender dragon. In game: add
+a datapack with <code>data/minecraft/eyes/ender_dragon.json</code> and run <code>/reload</code>; the
+server log reports the dragon file refused.</div>
 </div>
 </section>
 </li>
@@ -278,10 +283,10 @@ reports the dragon file refused.</div>
 <h3>listSettingWithNoValidEntryUsesDefault</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">listSettingWithNoValidEntryUsesDefault</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">A list setting drops its invalid entries, and a list with no valid entry means the default, on every
-loader. In game: set <code>ambientBehaviorPool = ["not a behavior"]</code> in the server config and restart;
-eyed mobs still blink, cross their eyes, side-eye, and stare, and on Fabric the log says the key has no
-valid entries.</div>
+<div class="block">A list setting drops its invalid entries, and a list with no valid entry means the default,
+on every loader. In game: set <code>ambientBehaviorPool = ["not a behavior"]</code> in the server
+config and restart; eyed mobs still blink, cross their eyes, side-eye, and stare, and on
+Fabric the log says the key has no valid entries.</div>
 </div>
 </section>
 </li>
@@ -290,10 +295,11 @@ valid entries.</div>
 <h3>reloadRejectsFileWithMalformedEntry</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">reloadRejectsFileWithMalformedEntry</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">A file with one entry the codec cannot decode is rejected whole, not loaded without that entry. In
-game: add a datapack whose <code>zombie.json</code> has a valid adult entry for the running version beside
-an entry with no <code>"version"</code> field, and run <code>/reload</code>; the log names the file as invalid,
-the summary counts it as failed to parse, and new zombies spawn without eyes.</div>
+<div class="block">A file with one entry the codec cannot decode is rejected whole, not loaded without that
+entry. In game: add a datapack whose <code>zombie.json</code> has a valid adult entry for the
+running version beside an entry with no <code>"version"</code> field, and run <code>/reload</code>; the
+log names the file as invalid, the summary counts it as failed to parse, and new zombies
+spawn without eyes.</div>
 </div>
 </section>
 </li>
@@ -302,11 +308,12 @@ the summary counts it as failed to parse, and new zombies spawn without eyes.</d
 <h3>reloadToleratesBadFilesAndDuplicates</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">reloadToleratesBadFilesAndDuplicates</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">One malformed file, a duplicate age/version entry, and an invalid age string never abort the reload.
-In game: add a datapack whose <code>zombie.json</code> has two adult entries for the same version,
-whose <code>creeper.json</code> is <code>{ "entries": 5 }</code>, and whose <code>skeleton.json</code> has an
-<code>"elder"</code> entry beside a valid adult one; <code>/reload</code> logs the problems and completes, and
-zombies and skeletons still get eyes, the zombies from the first entry.</div>
+<div class="block">One malformed file, a duplicate age/version entry, and an invalid age string never abort the
+reload. In game: add a datapack whose <code>zombie.json</code> has two adult entries for the same
+version, whose <code>creeper.json</code> is <code>{ "entries": 5 }</code>, and whose <code>
+skeleton.json</code> has an <code>"elder"</code> entry beside a valid adult one; <code>/reload</code> logs
+the problems and completes, and zombies and skeletons still get eyes, the zombies from the
+first entry.</div>
 </div>
 </section>
 </li>
@@ -316,8 +323,8 @@ zombies and skeletons still get eyes, the zombies from the first entry.</div>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">reloadFallsBackToNearestGeneration</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
 <div class="block">An entry with no range covering the loaded version degrades to its nearest generation, not to
-nothing. In game: add a datapack whose <code>zombie.json</code> has a single entry for
-<code>"[1.16,1.17)"</code>, run <code>/reload</code>, and zombies still spawn with those eyes.</div>
+nothing. In game: add a datapack whose <code>zombie.json</code> has a single entry for <code>
+"[1.16,1.17)"</code>, run <code>/reload</code>, and zombies still spawn with those eyes.</div>
 </div>
 </section>
 </li>
@@ -326,10 +333,10 @@ nothing. In game: add a datapack whose <code>zombie.json</code> has a single ent
 <h3>reloadReplacesConfigsOnlyOnContentChange</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">reloadReplacesConfigsOnlyOnContentChange</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper)</span></div>
-<div class="block">A reload installs a new config set only when the resolved content changes; server stop clears the
-installed set. In game: near some eyed mobs, run <code>/reload</code> with no datapack changes; their
-pupils keep moving without resetting. Change an eye definition and <code>/reload</code> again, and every
-eye resets to the new definition.</div>
+<div class="block">A reload installs a new config set only when the resolved content changes; server stop clears
+the installed set. In game: near some eyed mobs, run <code>/reload</code> with no datapack
+changes; their pupils keep moving without resetting. Change an eye definition and <code>
+/reload</code> again, and every eye resets to the new definition.</div>
 </div>
 </section>
 </li>

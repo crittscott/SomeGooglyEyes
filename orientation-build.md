@@ -8,7 +8,7 @@ This document describes the build's entry points, module layout, version authori
 
 `build-env/` is a reference snapshot of the repository's build environment: every checked-in Gradle build input including the wrapper, plus the agent instructions, the build-runner script, the Git settings, and outlines of the three orientation files. It preserves repository-relative paths so that files can be compared or restored without guessing where they belong. The active files at the repository root and under `common/`, `fabric/`, `forge/`, `neoforge/`, and `gradle/` remain authoritative; Gradle does not read the copies. Keep the snapshot and this description synchronized whenever an active file it covers changes.
 
-The snapshot holds verbatim copies of the manually maintained files that define or launch this Gradle build (Gradle scripts, Gradle properties, wrapper launchers, and wrapper files), the shared agent instructions (`CLAUDE.md`, `AGENTS.md`, `code-review.md`, `code-conventions.md`, `code-review-decisions.md`), this checkout's `platform-notes.md`, `gradlews.ps1`, which runs the standard Gradle task sequence and reports each step's result, and the Git settings (`.gitignore`, `.gitattributes`). The orientation entries are outlines, not copies: each holds its file's fixed header followed by every heading in order, with no body text, so it records the files' format without duplicating content that changes with the code. It should not contain caches, generated output, IDE state, run directories, resolved dependency JARs, mod source or resources, GameTest fixtures, loader manifests, or release notes. The wrapper JAR is the sole binary because it is itself a checked-in build launcher.
+The snapshot holds verbatim copies of the files in the table below. The orientation entries are outlines, not copies: each holds its file's fixed header followed by every heading in order, with no body text, so it records the files' format without duplicating content that changes with the code. It should not contain caches, generated output, IDE state, run directories, resolved dependency JARs, mod source or resources, GameTest fixtures, loader manifests, or release notes. The wrapper JAR is the sole binary because it is itself a checked-in build launcher.
 
 ## Snapshot contents
 
@@ -46,6 +46,8 @@ Each subproject has the Java plugin's standard production-source `javadoc` task.
 
 The root `collectJars` task copies each enabled loader's already-built production jar (`<archivesName>-<version>.jar` in its `build/libs`, not the dev, dev-shadow, or sources jars) into `../jars`, the directory shared by all version checkouts, for installing into a local launcher. It builds nothing and skips jars that have not been built; it overwrites same-named jars and leaves other versions' jars alone. `gradlews.ps1` runs `clean build`, `runGameTestServer`, `generateDocs`, and `collectJars` in sequence and reports each step's exit code. The root `cleanDev` task empties every module's `build/` and `run/` without removing the directories, and every `clean` empties `build/` rather than removing it, so the Dropbox ignore marks that `../dropbox-ignore.ps1` puts on those directories survive.
 
+The root project applies Spotless to every Java source set under `common`, `fabric`, `forge`, and `neoforge`. `spotlessApply` formats code and javadoc with google-java-format in AOSP style, reorders imports, trims trailing whitespace, and ends files with a newline; `// spotless:off` / `// spotless:on` keep the `/sg` Brigadier trees in their hand layout. `spotlessCheck` is not attached to `check`, so formatting never fails a build.
+
 ## Exact build versions
 
 | Component | Exact version or coordinate | Build role |
@@ -54,6 +56,8 @@ The root `collectJars` task copies each enabled loader's already-built productio
 | Architectury Loom | `1.17.493`, `dev.architectury.loom-no-remap` | Unobfuscated Minecraft development, runs, and transforms |
 | Architectury Gradle plugin | `3.5.170` | Common/Fabric/Forge/NeoForge project organization and `@ExpectPlatform` |
 | GradleUp Shadow plugin | `9.4.3` | Bundles transformed common output into loader JARs |
+| Spotless Gradle plugin | `8.12.0` | Runs the source formatter |
+| google-java-format | `2.0.0`, AOSP style | Java source and javadoc formatting; runs in the Gradle host JVM |
 | Java toolchain level | `25` | Compilation, Javadoc, and Java execution |
 | Minecraft | `26.2` | Compile and runtime target |
 | Forge | `net.minecraftforge:forge:26.2-65.1.0` | Exact Forge compile and development-run baseline |
@@ -89,6 +93,6 @@ Each loader expands its metadata (`fabric.mod.json`, `META-INF/mods.toml`, `META
 
 ## Resolution and version authorities
 
-`gradle.properties` is the authority for the Minecraft, mapping, loader, API, compatibility, integration, configuration-library, and mod versions. It also holds the Java toolchain level and the JSpecify and external Gradle plugin versions; `settings.gradle` applies the plugin versions through `pluginManagement`. The root `build.gradle` derives the Minecraft, Forge, and NeoForge metadata ranges from the exact versions, and `gradle/wrapper/gradle-wrapper.properties` pins Gradle itself. The loader scripts consume the root properties rather than restating dependency versions.
+`gradle.properties` is the authority for the Minecraft, mapping, loader, API, compatibility, integration, configuration-library, and mod versions. It also holds the Java toolchain level and the JSpecify, google-java-format, and external Gradle plugin versions; `settings.gradle` applies the plugin versions through `pluginManagement`. The root `build.gradle` derives the Minecraft, Forge, and NeoForge metadata ranges from the exact versions, and `gradle/wrapper/gradle-wrapper.properties` pins Gradle itself. The loader scripts consume the root properties rather than restating dependency versions.
 
 Plugin resolution uses Fabric Maven, Architectury Maven, Forge Maven, and the Gradle Plugin Portal. Every module declares Maven Central and GeckoLib’s Cloudsmith Maven, and the NeoForge module also declares NeoForge Maven; Loom supplies its standard Minecraft repositories. There is no Gradle version catalog, dependency-lock state, dependency-verification metadata, exact JDK distribution, or wrapper-distribution checksum in the repository. Consequently, the table above records every exact version deliberately declared by the build, but it is not a lock of every transitive artifact selected by Gradle and Loom.

@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.picker.PickerFreezeService;
 import com.github.crittscott.somegoogly.platform.EntityPersistentData;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
@@ -13,20 +14,19 @@ import java.util.UUID;
 /**
  * The server-owned freeze lifecycle ({@link PickerFreezeService}): NoAi capture and restore, the
  * one-editor-per-mob contention rule, releasing the previous mob when an editor switches, and the
- * persistent-marker crash recovery (a hard crash drops the live records but not the mob's marker tag,
- * which the next join restores from). Each test drives the service directly on the server thread —
- * the same calls the {@code PickerFreezePacket} handler and lifecycle events make — with a fresh
- * random "player" UUID, and releases everything it froze before succeeding.
+ * persistent-marker crash recovery (a hard crash drops the live records but not the mob's marker
+ * tag, which the next join restores from). Each test drives the service directly on the server
+ * thread — the same calls the {@code PickerFreezePacket} handler and lifecycle events make — with a
+ * fresh random "player" UUID, and releases everything it froze before succeeding.
  */
 public final class PickerFreezeGameTestsLogic {
 
-    private PickerFreezeGameTestsLogic() {
-    }
+    private PickerFreezeGameTestsLogic() {}
 
     /**
-     * A calm cow with NoAi off as the freeze baseline. {@code spawnWithNoFreeWill} strips AI goals and
-     * brain behaviors but leaves the NoAi flag untouched (false); set it explicitly anyway, since the
-     * flag is the very thing these tests exercise.
+     * A calm cow with NoAi off as the freeze baseline. {@code spawnWithNoFreeWill} strips AI goals
+     * and brain behaviors but leaves the NoAi flag untouched (false); set it explicitly anyway,
+     * since the flag is the very thing these tests exercise.
      */
     private static Cow spawnCow(GameTestHelper helper, BlockPos pos) {
         Cow cow = helper.spawnWithNoFreeWill(EntityTypes.COW, pos);
@@ -35,32 +35,40 @@ public final class PickerFreezeGameTestsLogic {
     }
 
     /**
-     * Choosing a mob freezes it, and releasing it restores its AI. In game: as a creative operator, press
-     * {@code K} to open the picker and {@code V} on a cow; it stops moving. Press {@code V} again and it wanders
-     * as before.
+     * Choosing a mob freezes it, and releasing it restores its AI. In game: as a creative operator,
+     * press {@code K} to open the picker and {@code V} on a cow; it stops moving. Press {@code V}
+     * again and it wanders as before.
      */
     public static void freezeCapturesAndUnfreezeRestores(GameTestHelper helper) {
         Cow cow = spawnCow(helper, new BlockPos(2, 2, 2));
         UUID editor = UUID.randomUUID();
 
         Component error = PickerFreezeService.freeze(helper.getLevel(), editor, cow.getUUID());
-        helper.assertTrue(error == null, Component.literal("freezing an unclaimed mob should succeed"));
-        helper.assertTrue(cow.isNoAi(), Component.literal("a frozen mob should have NoAi forced on"));
-        helper.assertTrue(EntityPersistentData.get(cow).contains(PickerFreezeService.PREV_NO_AI_TAG),
+        helper.assertTrue(
+                error == null, Component.literal("freezing an unclaimed mob should succeed"));
+        helper.assertTrue(
+                cow.isNoAi(), Component.literal("a frozen mob should have NoAi forced on"));
+        helper.assertTrue(
+                EntityPersistentData.get(cow).contains(PickerFreezeService.PREV_NO_AI_TAG),
                 Component.literal("freezing should write the recovery marker"));
-        helper.assertTrue(!EntityPersistentData.get(cow).getBooleanOr(PickerFreezeService.PREV_NO_AI_TAG, false),
+        helper.assertTrue(
+                !EntityPersistentData.get(cow)
+                        .getBooleanOr(PickerFreezeService.PREV_NO_AI_TAG, false),
                 Component.literal("the marker should hold the pre-freeze NoAi value (false)"));
 
         PickerFreezeService.unfreeze(helper.getLevel().getServer(), editor);
-        helper.assertTrue(!cow.isNoAi(), Component.literal("unfreezing should restore the pre-freeze NoAi value"));
-        helper.assertTrue(!EntityPersistentData.get(cow).contains(PickerFreezeService.PREV_NO_AI_TAG),
+        helper.assertTrue(
+                !cow.isNoAi(),
+                Component.literal("unfreezing should restore the pre-freeze NoAi value"));
+        helper.assertTrue(
+                !EntityPersistentData.get(cow).contains(PickerFreezeService.PREV_NO_AI_TAG),
                 Component.literal("unfreezing should strip the recovery marker"));
         helper.succeed();
     }
 
     /**
-     * A mob that had no AI before the picker keeps none after release. In game:
-     * {@code /summon cow ~ ~ ~ {NoAI:1b}}, choose it with {@code V}, and release it; it still stands still.
+     * A mob that had no AI before the picker keeps none after release. In game: {@code /summon cow
+     * ~ ~ ~ {NoAI:1b}}, choose it with {@code V}, and release it; it still stands still.
      */
     public static void freezePreservesAlreadyForcedNoAi(GameTestHelper helper) {
         // The "mob was already NoAi before the picker" case; forced explicitly, since
@@ -71,37 +79,48 @@ public final class PickerFreezeGameTestsLogic {
 
         PickerFreezeService.freeze(helper.getLevel(), editor, cow.getUUID());
         PickerFreezeService.unfreeze(helper.getLevel().getServer(), editor);
-        helper.assertTrue(cow.isNoAi(), Component.literal("a mob that was NoAi before freezing should stay NoAi after release"));
-        helper.assertTrue(!EntityPersistentData.get(cow).contains(PickerFreezeService.PREV_NO_AI_TAG),
+        helper.assertTrue(
+                cow.isNoAi(),
+                Component.literal(
+                        "a mob that was NoAi before freezing should stay NoAi after release"));
+        helper.assertTrue(
+                !EntityPersistentData.get(cow).contains(PickerFreezeService.PREV_NO_AI_TAG),
                 Component.literal("the marker should still be stripped on release"));
         helper.succeed();
     }
 
     /**
-     * Only one player may edit a mob at a time. In game: with two creative operators, one chooses a cow with
-     * {@code V}; the second's {@code V} on it is refused with a message, and the cow stays frozen until the
-     * first releases it.
+     * Only one player may edit a mob at a time. In game: with two creative operators, one chooses a
+     * cow with {@code V}; the second's {@code V} on it is refused with a message, and the cow stays
+     * frozen until the first releases it.
      */
     public static void freezeRefusesSecondEditor(GameTestHelper helper) {
         Cow cow = spawnCow(helper, new BlockPos(2, 2, 2));
         UUID first = UUID.randomUUID();
         UUID second = UUID.randomUUID();
 
-        helper.assertTrue(PickerFreezeService.freeze(helper.getLevel(), first, cow.getUUID()) == null,
+        helper.assertTrue(
+                PickerFreezeService.freeze(helper.getLevel(), first, cow.getUUID()) == null,
                 Component.literal("the first editor should freeze the mob"));
         Component refusal = PickerFreezeService.freeze(helper.getLevel(), second, cow.getUUID());
-        helper.assertTrue(refusal != null, Component.literal("a second editor must be refused (a second capture would read"
-                + " the forced NoAi as the original)"));
-        helper.assertTrue(cow.isNoAi(), Component.literal("the refused attempt must not disturb the freeze"));
+        helper.assertTrue(
+                refusal != null,
+                Component.literal(
+                        "a second editor must be refused (a second capture would read"
+                                + " the forced NoAi as the original)"));
+        helper.assertTrue(
+                cow.isNoAi(), Component.literal("the refused attempt must not disturb the freeze"));
 
         PickerFreezeService.unfreeze(helper.getLevel().getServer(), first);
-        helper.assertTrue(!cow.isNoAi(), Component.literal("the first editor's release should still restore the mob"));
+        helper.assertTrue(
+                !cow.isNoAi(),
+                Component.literal("the first editor's release should still restore the mob"));
         helper.succeed();
     }
 
     /**
-     * Choosing a new mob releases the previous one. In game: choose one cow with {@code V}, then another; the
-     * first starts wandering again while the second is frozen.
+     * Choosing a new mob releases the previous one. In game: choose one cow with {@code V}, then
+     * another; the first starts wandering again while the second is frozen.
      */
     public static void switchingMobsReleasesThePreviousOne(GameTestHelper helper) {
         Cow first = spawnCow(helper, new BlockPos(2, 2, 2));
@@ -110,52 +129,68 @@ public final class PickerFreezeGameTestsLogic {
 
         PickerFreezeService.freeze(helper.getLevel(), editor, first.getUUID());
         PickerFreezeService.freeze(helper.getLevel(), editor, second.getUUID());
-        helper.assertTrue(!first.isNoAi(), Component.literal("choosing a new mob should release the previous one"));
-        helper.assertTrue(!EntityPersistentData.get(first).contains(PickerFreezeService.PREV_NO_AI_TAG),
+        helper.assertTrue(
+                !first.isNoAi(),
+                Component.literal("choosing a new mob should release the previous one"));
+        helper.assertTrue(
+                !EntityPersistentData.get(first).contains(PickerFreezeService.PREV_NO_AI_TAG),
                 Component.literal("the previous mob's marker should be stripped"));
-        helper.assertTrue(second.isNoAi(), Component.literal("the newly chosen mob should be frozen"));
+        helper.assertTrue(
+                second.isNoAi(), Component.literal("the newly chosen mob should be frozen"));
 
         PickerFreezeService.unfreeze(helper.getLevel().getServer(), editor);
-        helper.assertTrue(!second.isNoAi(), Component.literal("release should restore the second mob"));
+        helper.assertTrue(
+                !second.isNoAi(), Component.literal("release should restore the second mob"));
         helper.succeed();
     }
 
     /**
-     * A mob left frozen by a crash recovers when it next loads. In game: choose a cow with {@code V}, run
-     * {@code /save-all}, then end the server process without a clean stop; after restarting and returning, the cow
-     * wanders again.
+     * A mob left frozen by a crash recovers when it next loads. In game: choose a cow with {@code
+     * V}, run {@code /save-all}, then end the server process without a clean stop; after restarting
+     * and returning, the cow wanders again.
      */
     public static void staleMarkerIsRestoredOnJoin(GameTestHelper helper) {
         Cow cow = spawnCow(helper, new BlockPos(2, 2, 2));
-        // What a hard crash leaves: the frozen mob and its marker, with no live record of the freeze.
+        // What a hard crash leaves: the frozen mob and its marker, with no live record of the
+        // freeze.
         cow.setNoAi(true);
         EntityPersistentData.get(cow).putBoolean(PickerFreezeService.PREV_NO_AI_TAG, false);
 
         PickerFreezeService.onMobJoin(cow);
-        helper.assertTrue(!cow.isNoAi(), Component.literal("a stale marker must restore the pre-freeze NoAi on next join"));
-        helper.assertTrue(!EntityPersistentData.get(cow).contains(PickerFreezeService.PREV_NO_AI_TAG),
+        helper.assertTrue(
+                !cow.isNoAi(),
+                Component.literal("a stale marker must restore the pre-freeze NoAi on next join"));
+        helper.assertTrue(
+                !EntityPersistentData.get(cow).contains(PickerFreezeService.PREV_NO_AI_TAG),
                 Component.literal("the stale marker must be stripped after recovery"));
         helper.succeed();
     }
 
     /**
-     * A chosen mob whose chunk reloads mid-edit stays frozen. In game: choose a cow with {@code V}, fly far
-     * enough away that its chunk unloads, and come back; it is still frozen, and releasing it with {@code V}
-     * lets it wander.
+     * A chosen mob whose chunk reloads mid-edit stays frozen. In game: choose a cow with {@code V},
+     * fly far enough away that its chunk unloads, and come back; it is still frozen, and releasing
+     * it with {@code V} lets it wander.
      */
     public static void joinDuringLiveEditReassertsTheFreeze(GameTestHelper helper) {
         Cow cow = spawnCow(helper, new BlockPos(2, 2, 2));
         UUID editor = UUID.randomUUID();
 
         PickerFreezeService.freeze(helper.getLevel(), editor, cow.getUUID());
-        // The mob's chunk reloading mid-edit re-fires the join event while the record is still live.
+        // The mob's chunk reloading mid-edit re-fires the join event while the record is still
+        // live.
         PickerFreezeService.onMobJoin(cow);
-        helper.assertTrue(cow.isNoAi(), Component.literal("a join during a live edit must keep the mob frozen"));
-        helper.assertTrue(EntityPersistentData.get(cow).contains(PickerFreezeService.PREV_NO_AI_TAG),
-                Component.literal("the marker must survive a live-edit join (it's still needed for crash recovery)"));
+        helper.assertTrue(
+                cow.isNoAi(),
+                Component.literal("a join during a live edit must keep the mob frozen"));
+        helper.assertTrue(
+                EntityPersistentData.get(cow).contains(PickerFreezeService.PREV_NO_AI_TAG),
+                Component.literal(
+                        "the marker must survive a live-edit join (it's still needed for crash recovery)"));
 
         PickerFreezeService.unfreeze(helper.getLevel().getServer(), editor);
-        helper.assertTrue(!cow.isNoAi(), Component.literal("release after the reload should still restore the mob"));
+        helper.assertTrue(
+                !cow.isNoAi(),
+                Component.literal("release after the reload should still restore the mob"));
         helper.succeed();
     }
 }

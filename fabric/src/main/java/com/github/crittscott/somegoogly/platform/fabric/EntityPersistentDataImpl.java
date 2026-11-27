@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.platform.fabric;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
+
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.minecraft.nbt.CompoundTag;
@@ -9,18 +10,18 @@ import net.minecraft.world.entity.Entity;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Fabric implementation of the shared entity-persistence boundary: a persistent data attachment holding
- * the same compound NeoForge and Forge keep in their entity persistent data.
+ * Fabric implementation of the shared entity-persistence boundary: a persistent data attachment
+ * holding the same compound NeoForge and Forge keep in their entity persistent data.
  */
 public final class EntityPersistentDataImpl {
 
-    private static final AttachmentType<CompoundTag> TYPE = AttachmentRegistry.<CompoundTag>builder()
-            .persistent(CompoundTag.CODEC)
-            .initializer(CompoundTag::new)
-            .buildAndRegister(SomeGooglyCommon.id("persistent_data"));
+    private static final AttachmentType<CompoundTag> TYPE =
+            AttachmentRegistry.<CompoundTag>builder()
+                    .persistent(CompoundTag.CODEC)
+                    .initializer(CompoundTag::new)
+                    .buildAndRegister(SomeGooglyCommon.id("persistent_data"));
 
-    private EntityPersistentDataImpl() {
-    }
+    private EntityPersistentDataImpl() {}
 
     /** The attached compound, if any; reading must not add a persistent attachment. */
     @Nullable
@@ -29,8 +30,7 @@ public final class EntityPersistentDataImpl {
     }
 
     /** Registers {@link #TYPE}; must run during mod initialization, before any entity loads. */
-    public static void register() {
-    }
+    public static void register() {}
 
     public static CompoundTag get(Entity entity) {
         return entity.getAttachedOrCreate(TYPE);

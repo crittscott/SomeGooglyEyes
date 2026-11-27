@@ -111,21 +111,22 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">GooglyTracker</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Per-entity client-side eye state: the <a href="GooglyTracker.EyeInfo.html" title="class in com.github.crittscott.somegoogly.client"><code>GooglyTracker.EyeInfo</code></a> pupil-physics simulator for every configured
-eye, plus which <a href="../eye/behavior/BehaviorInstance.html" title="class in com.github.crittscott.somegoogly.eye.behavior"><code>BehaviorInstance</code></a> (if any) is currently playing on that entity.
+<div class="block">Per-entity client-side eye state: the <a href="GooglyTracker.EyeInfo.html" title="class in com.github.crittscott.somegoogly.client"><code>GooglyTracker.EyeInfo</code></a> pupil-physics simulator for every
+configured eye, plus which <a href="../eye/behavior/BehaviorInstance.html" title="class in com.github.crittscott.somegoogly.eye.behavior"><code>BehaviorInstance</code></a> (if any) is currently playing on that entity.
 
 <p>One tracker is kept per tracked <code>LivingEntity</code> (see <a href="ClientEyeRuntime.html" title="class in com.github.crittscott.somegoogly.client"><code>ClientEyeRuntime</code></a>), matched
-against the entity's current placement via <a href="#matches(com.github.crittscott.somegoogly.eye.HeadInfo)"><code>matches(HeadInfo)</code></a>. <a href="#update(com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)"><code>update(BehaviorSettings)</code></a> steps every eye's physics once
-per client tick under the <a href="#active"><code>active</code></a> behavior, which <a href="ClientEyeRuntime.html" title="class in com.github.crittscott.somegoogly.client"><code>ClientEyeRuntime</code></a> installs from the server's
-trigger and ages by its own clock, so an expression keeps time while the entity is not drawn.
+against the entity's current placement via <a href="#matches(com.github.crittscott.somegoogly.eye.HeadInfo)"><code>matches(HeadInfo)</code></a>. <a href="#update(com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)"><code>update(BehaviorSettings)</code></a> steps every eye's
+physics once per client tick under the <a href="#active"><code>active</code></a> behavior, which <a href="ClientEyeRuntime.html" title="class in com.github.crittscott.somegoogly.client"><code>ClientEyeRuntime</code></a>
+installs from the server's trigger and ages by its own clock, so an expression keeps time while
+the entity is not drawn.
 
-<p>Each tick also folds in the <a href="../eye/behavior/OngoingBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior"><code>OngoingBehavior</code></a>s whose server switches are on, easing each one in or
-out over a few ticks: the sleeping squint, or a sleeping villager's lids closing to a slit; the ramming
-goat's squint; the archer's one-eyed aim, closing the eye away from the arm holding the weapon; the swelling
-creeper's rattle, kicking its pupils back into flight in proportion to the swell; red pupils for an attacking
-mob or one the server reports <a href="#angry"><code>angry</code></a>; and the creepy enderman's pupil pulse, at a frequency of its
-own. None of these blocks a behavior: each sits on top of whatever plays. A sleeping entity starts no new
-behavior whether or not its squint is on.</div>
+<p>Each tick also folds in the <a href="../eye/behavior/OngoingBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior"><code>OngoingBehavior</code></a>s whose server switches are on, easing each
+one in or out over a few ticks: the sleeping squint, or a sleeping villager's lids closing to a
+slit; the ramming goat's squint; the archer's one-eyed aim, closing the eye away from the arm
+holding the weapon; the swelling creeper's rattle, kicking its pupils back into flight in
+proportion to the swell; red pupils for an attacking mob or one the server reports <a href="#angry"><code>angry</code></a>; and the creepy enderman's pupil pulse, at a frequency of its own. None of these blocks a
+behavior: each sits on top of whatever plays. A sleeping entity starts no new behavior whether or
+not its squint is on.</div>
 </div>
 </section>
 <section class="summary">
@@ -143,8 +144,8 @@ behavior whether or not its squint is on.</div>
 <div class="col-second even-row-color"><code><a href="GooglyTracker.EyeInfo.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.client">GooglyTracker.EyeInfo</a></code></div>
 <div class="col-last even-row-color">
 <div class="block">Physics state for one pupil: its position and velocity in the eye's unit disk, the head
-orientation used to derive angular forcing, and the non-physical overlay values (grow/blink/tint)
-an active behavior writes each tick.</div>
+orientation used to derive angular forcing, and the non-physical overlay values
+(grow/blink/tint) an active behavior writes each tick.</div>
 </div>
 </div>
 </section>
@@ -233,8 +234,8 @@ EyeAngerPacket</code>); kept current by <a href="ClientNetworkHandler.html#handl
 <div class="col-first odd-row-color"><code><a href="../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></code></div>
 <div class="col-second odd-row-color"><code><a href="#overrides" class="member-name-link">overrides</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block">The entity's current appearance override, mirrored from <code>EyeStatePacket</code> so render layers
-don't re-read it from NBT every frame.</div>
+<div class="block">The entity's current appearance override, mirrored from <code>EyeStatePacket</code> so render
+layers don't re-read it from NBT every frame.</div>
 </div>
 <div class="col-first even-row-color"><code>final net.minecraft.world.entity.LivingEntity</code></div>
 <div class="col-second even-row-color"><code><a href="#parent" class="member-name-link">parent</a></code></div>
@@ -259,8 +260,8 @@ don't re-read it from NBT every frame.</div>
 <div class="col-first even-row-color"><code>static final float</code></div>
 <div class="col-second even-row-color"><code><a href="#SLEEP_LID_COVERAGE" class="member-name-link">SLEEP_LID_COVERAGE</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">How much of the eye each of a sleeping villager's lids covers when fully closed, leaving a slit
-between them across the middle.</div>
+<div class="block">How much of the eye each of a sleeping villager's lids covers when fully closed, leaving a
+slit between them across the middle.</div>
 </div>
 <div class="col-first odd-row-color"><code>static final int</code></div>
 <div class="col-second odd-row-color"><code><a href="#SLEEP_LID_EASE_TICKS" class="member-name-link">SLEEP_LID_EASE_TICKS</a></code></div>
@@ -307,8 +308,7 @@ between them across the middle.</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#markRendered(int)" class="member-name-link">markRendered</a><wbr>(int&nbsp;currentClientTick)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Stamp this tracker as rendered during <code>currentClientTick</code>, the
-<a href="ClientEyeRuntime.html#clientTicks()"><code>ClientEyeRuntime.clientTicks()</code></a> value (drives eviction and whether to simulate).</div>
+<div class="block">Stamp this tracker as rendered during <code>currentClientTick</code>, the <a href="ClientEyeRuntime.html#clientTicks()"><code>ClientEyeRuntime.clientTicks()</code></a> value (drives eviction and whether to simulate).</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#matches(com.github.crittscott.somegoogly.eye.HeadInfo)" class="member-name-link">matches</a><wbr>(<a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a>&nbsp;helper)</code></div>
@@ -318,8 +318,8 @@ between them across the middle.</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#update(com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings)" class="member-name-link">update</a><wbr>(<a href="../eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a>&nbsp;settings)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Advance one client tick: sample the entity's motion and step every eye under the active behavior, with
-the ongoing behaviors <code>settings</code> switches on folded in.</div>
+<div class="block">Advance one client tick: sample the entity's motion and step every eye under the active
+behavior, with the ongoing behaviors <code>settings</code> switches on folded in.</div>
 </div>
 </div>
 </div>
@@ -377,8 +377,8 @@ the ongoing behaviors <code>settings</code> switches on folded in.</div>
 <h3>SLEEP_LID_COVERAGE</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">SLEEP_LID_COVERAGE</span></div>
-<div class="block">How much of the eye each of a sleeping villager's lids covers when fully closed, leaving a slit
-between them across the middle.</div>
+<div class="block">How much of the eye each of a sleeping villager's lids covers when fully closed, leaving a
+slit between them across the middle.</div>
 <dl class="notes">
 <dt>See Also:</dt>
 <dd>
@@ -608,9 +608,9 @@ between them across the middle.</div>
 <h3>lastRenderTick</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">lastRenderTick</span></div>
-<div class="block">The client tick during which this tracker was last rendered. <a href="ClientEyeRuntime.html" title="class in com.github.crittscott.somegoogly.client"><code>ClientEyeRuntime</code></a> evicts the
-tracker once this goes stale and simulates it only while it is being rendered, so off-screen eyes
-freeze instead of wobbling unseen.</div>
+<div class="block">The client tick during which this tracker was last rendered. <a href="ClientEyeRuntime.html" title="class in com.github.crittscott.somegoogly.client"><code>ClientEyeRuntime</code></a> evicts
+the tracker once this goes stale and simulates it only while it is being rendered, so
+off-screen eyes freeze instead of wobbling unseen.</div>
 </div>
 </section>
 </li>
@@ -628,9 +628,9 @@ freeze instead of wobbling unseen.</div>
 <h3>overrides</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../eye/state/AppearanceOverride.html" title="class in com.github.crittscott.somegoogly.eye.state">AppearanceOverride</a></span>&nbsp;<span class="element-name">overrides</span></div>
-<div class="block">The entity's current appearance override, mirrored from <code>EyeStatePacket</code> so render layers
-don't re-read it from NBT every frame. Seeded from NBT at construction and kept current by
-<a href="ClientNetworkHandler.html#handleEyeState(com.github.crittscott.somegoogly.network.EyeStatePacket)"><code>ClientNetworkHandler.handleEyeState(EyeStatePacket)</code></a>.</div>
+<div class="block">The entity's current appearance override, mirrored from <code>EyeStatePacket</code> so render
+layers don't re-read it from NBT every frame. Seeded from NBT at construction and kept
+current by <a href="ClientNetworkHandler.html#handleEyeState(com.github.crittscott.somegoogly.network.EyeStatePacket)"><code>ClientNetworkHandler.handleEyeState(EyeStatePacket)</code></a>.</div>
 </div>
 </section>
 </li>
@@ -639,8 +639,8 @@ don't re-read it from NBT every frame. Seeded from NBT at construction and kept 
 <h3>active</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="../eye/behavior/BehaviorInstance.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorInstance</a></span>&nbsp;<span class="element-name">active</span></div>
-<div class="block">The behavior playing on this entity, or <code>null</code>. Advanced each tick and interpolated at render;
-client-only, since the server sends only the trigger.</div>
+<div class="block">The behavior playing on this entity, or <code>null</code>. Advanced each tick and interpolated at
+render; client-only, since the server sends only the trigger.</div>
 </div>
 </section>
 </li>
@@ -670,9 +670,9 @@ EyeAngerPacket</code>); kept current by <a href="ClientNetworkHandler.html#handl
  @NonNull <a href="../eye/HeadInfo.html" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a>&nbsp;helper,
  boolean&nbsp;angry,
  @NonNull <a href="../eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a>&nbsp;settings)</span></div>
-<div class="block">Build the tracker. <code>angry</code> is the server-reported anger already known for this entity, so a
-tracker built for an angry mob starts red, as one built for a sleeping mob starts squinted or lidded;
-<code>settings</code> says which ongoing behaviors are on.</div>
+<div class="block">Build the tracker. <code>angry</code> is the server-reported anger already known for this entity,
+so a tracker built for an angry mob starts red, as one built for a sleeping mob starts
+squinted or lidded; <code>settings</code> says which ongoing behaviors are on.</div>
 </div>
 </section>
 </li>
@@ -689,8 +689,7 @@ tracker built for an angry mob starts red, as one built for a sleeping mob start
 <h3>markRendered</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">markRendered</span><wbr><span class="parameters">(int&nbsp;currentClientTick)</span></div>
-<div class="block">Stamp this tracker as rendered during <code>currentClientTick</code>, the
-<a href="ClientEyeRuntime.html#clientTicks()"><code>ClientEyeRuntime.clientTicks()</code></a> value (drives eviction and whether to simulate).</div>
+<div class="block">Stamp this tracker as rendered during <code>currentClientTick</code>, the <a href="ClientEyeRuntime.html#clientTicks()"><code>ClientEyeRuntime.clientTicks()</code></a> value (drives eviction and whether to simulate).</div>
 </div>
 </section>
 </li>
@@ -708,8 +707,8 @@ tracker built for an angry mob starts red, as one built for a sleeping mob start
 <h3>update</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">update</span><wbr><span class="parameters">(<a href="../eye/behavior/BehaviorSettings.html" title="class in com.github.crittscott.somegoogly.eye.behavior">BehaviorSettings</a>&nbsp;settings)</span></div>
-<div class="block">Advance one client tick: sample the entity's motion and step every eye under the active behavior, with
-the ongoing behaviors <code>settings</code> switches on folded in.</div>
+<div class="block">Advance one client tick: sample the entity's motion and step every eye under the active
+behavior, with the ongoing behaviors <code>settings</code> switches on folded in.</div>
 </div>
 </section>
 </li>

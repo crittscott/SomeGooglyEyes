@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.config.neoforge;
 
 import com.github.crittscott.somegoogly.config.ClientConfig;
+
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.config.ModConfig;
@@ -12,6 +13,7 @@ public final class NeoForgeClientConfig {
 
     /** Copies the loaded file's values into {@link ClientConfig}. */
     private static final Runnable COPY_VALUES;
+
     private static final ModConfigSpec SPEC;
 
     static {
@@ -20,10 +22,12 @@ public final class NeoForgeClientConfig {
         SPEC = builder.build();
     }
 
-    private NeoForgeClientConfig() {
-    }
+    private NeoForgeClientConfig() {}
 
-    /** Register the CLIENT config spec and copy its values into {@code ClientConfig} on load and reload. */
+    /**
+     * Register the CLIENT config spec and copy its values into {@code ClientConfig} on load and
+     * reload.
+     */
     public static void register(IEventBus modBus, ModContainer modContainer) {
         modContainer.registerConfig(ModConfig.Type.CLIENT, SPEC, ClientConfig.FILE_NAME);
         modBus.addListener(NeoForgeClientConfig::onConfigChanged);
