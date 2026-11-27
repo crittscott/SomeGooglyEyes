@@ -7,6 +7,8 @@ import org.joml.Quaternionf;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 /**
  * Resolved view of one entity eye configuration after age and weighted placement-variant selection.
  * Storage, selection, serialization, caching, and rendering transforms are owned by their
@@ -15,32 +17,28 @@ import java.util.List;
  */
 public final class HeadInfo {
 
-    private final RuntimeConfig entityConfig;
+    @Nullable private final RuntimeConfig entityConfig;
     private final List<HeadConfig> heads;
 
     /** Each selected eye's aim, built on first draw so server-side views never compute it. */
     private final Quaternionf[][] orientations;
 
-    public HeadInfo(RuntimeConfig config, int variantIndex) {
+    public HeadInfo(@Nullable RuntimeConfig config, int variantIndex) {
         this.entityConfig = config;
         this.heads = headsOfVariant(config, variantIndex);
-        this.orientations = heads == null ? null : new Quaternionf[heads.size()][];
+        this.orientations = new Quaternionf[heads.size()][];
     }
 
     /**
      * Resolve only the selected variant's groups on one attachment, preserving within-group eye
      * indexes.
      */
-    public HeadInfo(RuntimeConfig config, int variantIndex, String attachToken) {
+    public HeadInfo(@Nullable RuntimeConfig config, int variantIndex, String attachToken) {
         this.entityConfig = config;
         List<HeadConfig> selected = headsOfVariant(config, variantIndex);
         this.heads =
-                selected == null
-                        ? null
-                        : selected.stream()
-                                .filter(head -> attachToken.equals(head.attachPoint))
-                                .toList();
-        this.orientations = heads == null ? null : new Quaternionf[heads.size()][];
+                selected.stream().filter(head -> attachToken.equals(head.attachPoint)).toList();
+        this.orientations = new Quaternionf[heads.size()][];
     }
 
     /** The selected eye's config appearance. */
@@ -69,12 +67,13 @@ public final class HeadInfo {
 
     /** Whether this view contains a usable enabled placement variant. */
     public boolean hasConfig() {
-        return entityConfig != null && entityConfig.enabled && heads != null && !heads.isEmpty();
+        return entityConfig != null && entityConfig.enabled && !heads.isEmpty();
     }
 
-    private static List<HeadConfig> headsOfVariant(RuntimeConfig config, int variantIndex) {
+    private static List<HeadConfig> headsOfVariant(
+            @Nullable RuntimeConfig config, int variantIndex) {
         if (config == null || config.variants.isEmpty()) {
-            return null;
+            return List.of();
         }
         return config.variants.get(variantIndex).heads;
     }

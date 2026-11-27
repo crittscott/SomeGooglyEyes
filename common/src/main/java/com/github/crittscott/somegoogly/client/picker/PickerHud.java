@@ -17,6 +17,8 @@ import net.minecraft.network.chat.Component;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 /**
  * Text HUD for the part picker: a live, read-only view of the locked mob, the selected part, and
  * the saved eye list (two lines per eye), with the eye currently being edited via {@code /sg}
@@ -39,7 +41,7 @@ public final class PickerHud {
     /**
      * The panel's text, rebuilt at most once per client tick; {@code null} while the picker is off.
      */
-    private static List<Component> cachedRows;
+    @Nullable private static List<Component> cachedRows;
 
     private static int cachedRowsTick;
 
@@ -95,6 +97,9 @@ public final class PickerHud {
         return key.getTranslatedKeyMessage();
     }
 
+    // lockOn publishes a selected draft with its live target; neither changes during this
+    // client-thread draw.
+    @SuppressWarnings("NullAway")
     private static List<Component> lines() {
         List<Component> out = new ArrayList<>();
         if (PickerState.target() == null) {
@@ -182,7 +187,7 @@ public final class PickerHud {
         return out;
     }
 
-    private static Component partOrNone(String part) {
+    private static Component partOrNone(@Nullable String part) {
         return part != null
                 ? Component.literal(part)
                 : Component.translatable("somegoogly.picker.hud.none");
@@ -216,7 +221,7 @@ public final class PickerHud {
                 BACKDROP);
         int y = TOP_MARGIN;
         for (Component row : rows) {
-            graphics.drawString(font, row, left, y, ChatFormatting.WHITE.getColor());
+            graphics.drawString(font, row, left, y, EyeColor.WHITE.toRgb24());
             y += lineHeight;
         }
     }

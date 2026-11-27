@@ -210,6 +210,8 @@ public final class PresentationEyes {
      * Step with the world's actual owner motion; render poses supply gravity and the eye-plane
      * basis.
      */
+    // A nonempty ambient pool installs slotBehavior before the current slot is evaluated.
+    @SuppressWarnings("NullAway")
     public void tick(long gameTime, BehaviorSettings behaviors, @Nullable Entity owner) {
         boolean resetMotion =
                 this.owner != owner || motionTick == Long.MIN_VALUE || gameTime != motionTick + 1;

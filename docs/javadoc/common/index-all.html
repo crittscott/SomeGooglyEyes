@@ -1620,7 +1620,9 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/github/crittscott/somegoogly/network/EyeBehaviorTriggerPacket.Target.html#forHand(net.minecraft.world.InteractionHand)" class="member-name-link">forHand(InteractionHand)</a> - Static method in enum class com.github.crittscott.somegoogly.network.<a href="com/github/crittscott/somegoogly/network/EyeBehaviorTriggerPacket.Target.html" title="enum class in com.github.crittscott.somegoogly.network">EyeBehaviorTriggerPacket.Target</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/resolver/Resolvers.html#forModel(net.minecraft.client.model.EntityModel)" class="member-name-link">forModel(EntityModel&lt;?&gt;)</a> - Static method in class com.github.crittscott.somegoogly.client.render.resolver.<a href="com/github/crittscott/somegoogly/client/render/resolver/Resolvers.html" title="class in com.github.crittscott.somegoogly.client.render.resolver">Resolvers</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">The specialized resolver for this model, or the child-map fallback.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/picker/ModelPartVocabulary.html#forType(net.minecraft.resources.ResourceLocation)" class="member-name-link">forType(ResourceLocation)</a> - Static method in class com.github.crittscott.somegoogly.client.picker.<a href="com/github/crittscott/somegoogly/client/picker/ModelPartVocabulary.html" title="class in com.github.crittscott.somegoogly.client.picker">ModelPartVocabulary</a></dt>
 <dd>
 <div class="block">Resolve a type through a throwaway client entity so export-all does not depend on nearby
@@ -2090,7 +2092,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns a hash code value for this object.</div>
 </dd>
-<dt><a href="com/github/crittscott/somegoogly/config/EyeConfigModel.HeadConfig.html#%3Cinit%3E()" class="member-name-link">HeadConfig()</a> - Constructor for class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/EyeConfigModel.HeadConfig.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.HeadConfig</a></dt>
+<dt><a href="com/github/crittscott/somegoogly/config/EyeConfigModel.HeadConfig.html#%3Cinit%3E(java.lang.String)" class="member-name-link">HeadConfig(String)</a> - Constructor for class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/EyeConfigModel.HeadConfig.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.HeadConfig</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/HeadInfo.html" class="type-name-link" title="class in com.github.crittscott.somegoogly.eye">HeadInfo</a> - Class in <a href="com/github/crittscott/somegoogly/eye/package-summary.html">com.github.crittscott.somegoogly.eye</a></dt>
 <dd>
@@ -2243,7 +2245,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/resolver/AgeableListResolver.html#index(java.util.List,java.lang.String,java.lang.Iterable,java.util.function.Consumer)" class="member-name-link">index(List&lt;ModelPartTreeResolver.NamedRoot&gt;, String, Iterable&lt;ModelPart&gt;, Consumer&lt;PoseStack&gt;)</a> - Static method in class com.github.crittscott.somegoogly.client.render.resolver.<a href="com/github/crittscott/somegoogly/client/render/resolver/AgeableListResolver.html" title="class in com.github.crittscott.somegoogly.client.render.resolver">AgeableListResolver</a></dt>
 <dd>
-<div class="block">Name a part group <code>base</code>, <code>base1</code>, <code>base2</code>, … in iteration order.</div>
+<div class="block">Name a part group with <code>base</code>, then successive numeric suffixes in iteration order.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/eye/behavior/EyeBehavior.html#influence(com.github.crittscott.somegoogly.eye.behavior.BehaviorInstance,int,int,com.github.crittscott.somegoogly.eye.behavior.EyeInfluence)" class="member-name-link">influence(BehaviorInstance, int, int, EyeInfluence)</a> - Method in enum class com.github.crittscott.somegoogly.eye.behavior.<a href="com/github/crittscott/somegoogly/eye/behavior/EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a></dt>
 <dd>
@@ -3527,7 +3529,9 @@ loadScripts(document, 'script');</script>
  the connection may already be gone, and the server's own logout handling (<a href="com/github/crittscott/somegoogly/picker/PickerFreezeService.html#unfreeze(net.minecraft.server.MinecraftServer,java.util.UUID)"><code>PickerFreezeService.unfreeze(net.minecraft.server.MinecraftServer, java.util.UUID)</code></a>) releases any frozen mob regardless.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/resolver/ModelMemo.Resolver.html#resolve(K,java.lang.String)" class="member-name-link">resolve(K, String)</a> - Method in interface com.github.crittscott.somegoogly.client.render.resolver.<a href="com/github/crittscott/somegoogly/client/render/resolver/ModelMemo.Resolver.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">ModelMemo.Resolver</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Resolve a token, or return <code>null</code> when it names nothing in the model.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/resolver/EyeAttachmentResolver.html#resolve(net.minecraft.client.model.EntityModel,java.lang.String)" class="member-name-link">resolve(EntityModel&lt;?&gt;, String)</a> - Method in interface com.github.crittscott.somegoogly.client.render.resolver.<a href="com/github/crittscott/somegoogly/client/render/resolver/EyeAttachmentResolver.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">EyeAttachmentResolver</a></dt>
 <dd>
 <div class="block">Find the part <code>partToken</code> names and return the transforms that reach it, or <code>
@@ -4610,7 +4614,9 @@ the order they are declared.</div>
  null</code> for every unlisted model.</div>
 </dd>
 <dt><a href="com/github/crittscott/somegoogly/client/render/resolver/Resolvers.html#wholeModelWrap(net.minecraft.client.model.EntityModel)" class="member-name-link">wholeModelWrap(EntityModel&lt;?&gt;)</a> - Static method in class com.github.crittscott.somegoogly.client.render.resolver.<a href="com/github/crittscott/somegoogly/client/render/resolver/Resolvers.html" title="class in com.github.crittscott.somegoogly.client.render.resolver">Resolvers</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">The whole-model transform outside this model's part tree, or <code>null</code>.</div>
+</dd>
 <dt><a href="com/github/crittscott/somegoogly/config/ServerConfig.html#WINK_ON_AIM" class="member-name-link">WINK_ON_AIM</a> - Static variable in class com.github.crittscott.somegoogly.config.<a href="com/github/crittscott/somegoogly/config/ServerConfig.html" title="class in com.github.crittscott.somegoogly.config">ServerConfig</a></dt>
 <dd>
 <div class="block">Whether an archer drawing its bow closes one eye.</div>

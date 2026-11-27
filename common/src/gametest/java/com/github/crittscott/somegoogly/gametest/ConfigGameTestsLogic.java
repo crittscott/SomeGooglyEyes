@@ -18,6 +18,9 @@ import net.minecraft.server.packs.resources.Resource;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+
+import javax.annotation.Nullable;
 
 /**
  * Checks on the datapack-loaded {@link ServerEyeConfigs} (the shipped configs are loaded by the
@@ -31,7 +34,7 @@ public final class ConfigGameTestsLogic {
 
     private ConfigGameTestsLogic() {}
 
-    private static boolean usable(RuntimeConfig config) {
+    private static boolean usable(@Nullable RuntimeConfig config) {
         return RuntimeConfig.isUsable(config);
     }
 
@@ -148,7 +151,7 @@ public final class ConfigGameTestsLogic {
                 continue;
             }
             RuntimeConfigSet set = ServerEyeConfigs.all().get(id);
-            helper.assertTrue(set != null, "shipped eye definition " + id + " failed to load");
+            Objects.requireNonNull(set, "shipped eye definition " + id + " failed to load");
             for (RuntimeConfig config : new RuntimeConfig[] {set.adult, set.baby, set.any}) {
                 helper.assertTrue(
                         config == null || usable(config),
@@ -192,7 +195,7 @@ public final class ConfigGameTestsLogic {
             new TestReloadListener().applyFiles(Map.of(id, json));
             RuntimeConfig adult = ServerEyeConfigs.get(id, false);
             RuntimeConfig baby = ServerEyeConfigs.get(id, true);
-            helper.assertTrue(adult != null, "the exact Minecraft generation must be selected");
+            Objects.requireNonNull(adult, "the exact Minecraft generation must be selected");
             helper.assertTrue(
                     adult.variants.get(0).weight == 2.0,
                     "exact selection must pick the running version's entry (weight 2), got "

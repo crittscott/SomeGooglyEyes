@@ -17,6 +17,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Real server reactions feed the same per-hand presentation used by first- and third-person draws.
@@ -82,7 +83,11 @@ public final class HeldEyeGameTestsLogic {
                         packet != null && packet.behavior() == EyeBehavior.GROW,
                         "each held eye receives a server grow");
                 ClientEyeRuntime.setHandBehavior(
-                        context.player, hand, packet.behavior(), packet.seed(), packet.elapsed());
+                        context.player,
+                        hand,
+                        Objects.requireNonNull(packet, "expected fixture value").behavior(),
+                        packet.seed(),
+                        packet.elapsed());
             }
             var main =
                     ClientEyeRuntime.handEyes(
@@ -104,7 +109,11 @@ public final class HeldEyeGameTestsLogic {
                 ClientEyeRuntime.tickWorld(time, BehaviorSettings.fromConfig());
             }
             helper.assertTrue(
-                    main != off && main.eye.scaleMul > 1F && off.eye.scaleMul > 1F,
+                    main != off
+                            && Objects.requireNonNull(main, "expected fixture value").eye.scaleMul
+                                    > 1F
+                            && Objects.requireNonNull(off, "expected fixture value").eye.scaleMul
+                                    > 1F,
                     "both independent hands display the real reaction");
         }
         helper.succeed();
@@ -155,6 +164,7 @@ public final class HeldEyeGameTestsLogic {
                         "stack copies and view changes select the same hand entry");
                 ClientEyeRuntime.tickWorld(tick, blink);
             }
+            Objects.requireNonNull(eye, "expected fixture value");
             helper.assertTrue(
                     eye.active != null && eye.active.behavior == EyeBehavior.BLINK,
                     "the hand uses deterministic ambient slots");
@@ -180,7 +190,9 @@ public final class HeldEyeGameTestsLogic {
                     ClientEyeRuntime.handEyes(context.player, InteractionHand.MAIN_HAND, eyeItem);
             ClientEyeRuntime.tickWorld(2L, BehaviorSettings.NONE);
             helper.assertTrue(
-                    after != before && after.active == null,
+                    after != before
+                            && Objects.requireNonNull(after, "expected fixture value").active
+                                    == null,
                     "reequipping starts a fresh hand presentation");
         }
         helper.succeed();
@@ -202,9 +214,12 @@ public final class HeldEyeGameTestsLogic {
                     "a real heal starts a server-held swirl");
             context.player.heal(1F);
             helper.assertTrue(
-                    ServerBehaviorScheduler.handBehavior(context.player, InteractionHand.MAIN_HAND)
+                    Objects.requireNonNull(
+                                            ServerBehaviorScheduler.handBehavior(
+                                                    context.player, InteractionHand.MAIN_HAND),
+                                            "expected fixture value")
                                     .seed()
-                            == first.seed(),
+                            == Objects.requireNonNull(first, "expected fixture value").seed(),
                     "a busy eye keeps its current reaction");
             helper.runAfterDelay(
                     EyeBehavior.SWIRL.defaultDuration() + 1,
@@ -274,6 +289,7 @@ public final class HeldEyeGameTestsLogic {
                         context.player.getMainHandItem());
                 ClientEyeRuntime.tickWorld(tick, settings);
             }
+            Objects.requireNonNull(eye, "expected fixture value");
             helper.assertTrue(
                     eye.active != null
                             && eye.active.behavior == EyeBehavior.BLINK

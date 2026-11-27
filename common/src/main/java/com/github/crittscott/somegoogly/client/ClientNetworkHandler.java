@@ -14,6 +14,8 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
+import javax.annotation.Nullable;
+
 /**
  * Applies the server-to-client payloads on the client game thread. Loader payload registration runs
  * on both distributions, so it reaches these handlers only from inside lambda bodies, which link
@@ -82,6 +84,7 @@ public final class ClientNetworkHandler {
         }
     }
 
+    @Nullable
     private static LivingEntity living(int entityId) {
         ClientLevel level = Minecraft.getInstance().level;
         if (level == null) {

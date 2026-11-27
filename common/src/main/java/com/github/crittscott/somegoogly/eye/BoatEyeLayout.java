@@ -8,6 +8,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.vehicle.Boat;
 
+import org.jetbrains.annotations.Contract;
+
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -40,6 +42,7 @@ public final class BoatEyeLayout {
      * Whether {@code boat} is a supported hull and {@code config} has a usable variant with eyes on
      * its attachment.
      */
+    @Contract("_, null -> false")
     public static boolean isEligible(Boat boat, @Nullable RuntimeConfig config) {
         return supports(boat)
                 && RuntimeConfig.isUsable(config)
@@ -64,7 +67,8 @@ public final class BoatEyeLayout {
     }
 
     /** Registry and wood checks exclude modded entities and loader-added boat variants. */
-    public static boolean supports(Entity entity) {
+    @Contract("null -> false")
+    public static boolean supports(@Nullable Entity entity) {
         return entity instanceof Boat boat
                 && (boat.getType() == EntityType.BOAT || boat.getType() == EntityType.CHEST_BOAT)
                 && TYPES.contains(boat.getVariant());

@@ -188,7 +188,9 @@ loadScripts(document, 'script');</script>
 <div class="block">An exact <code>entityOverrides</code> id wins over a wildcard, and an unmatched id uses <code>
  globalPercent</code>. In game: set <code>globalPercent = 2</code> and <code>entityOverrides =
  ["minecraft:zombie,100", "minecraft:*,50"]</code> in the server config, then spawn mobs from eggs:
- every zombie has eyes, about half of the cows do, and only the occasional modded mob.</div>
+ every zombie has eyes, about half of the cows do, and only the occasional modded mob. Add
+ malformed entries such as <code>"minecraft:cow,100,"</code>; they are rejected without changing
+ the valid overrides.</div>
 </section>
 </li>
 <li>

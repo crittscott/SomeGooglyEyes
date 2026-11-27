@@ -1,5 +1,7 @@
 package com.github.crittscott.somegoogly.eye.behavior;
 
+import javax.annotation.Nullable;
+
 /**
  * What a single active {@link EyeBehavior} exerts on one eye for one <b>simulation tick</b> (not
  * one frame). This is how behaviors participate in the physics model instead of overwriting it in
@@ -53,7 +55,7 @@ public final class EyeInfluence {
     public float squashY;
 
     /** Target cornea color to blend toward, or {@code null} for no color change. */
-    public float[] corneaTint;
+    @Nullable public float[] corneaTint;
 
     /** How far to blend the cornea toward {@link #corneaTint} (0..1). */
     public float tintAmount;

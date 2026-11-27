@@ -93,6 +93,7 @@ public final class EyeConfigLimits {
                 String.format(Locale.ROOT, diagnosticFormat, diagnostics));
     }
 
+    @Nullable
     private static Issue validateConfigSet(RuntimeConfigSet set, Budget budget) {
         if (!set.hasAnyConfig()) {
             return issue("no_age", "config set has no age configuration");
@@ -108,6 +109,7 @@ public final class EyeConfigLimits {
         return validateOptional(AGE_ANY, set.any, budget);
     }
 
+    @Nullable
     private static Issue validateEye(EyeDefinition eye, int eyeIndex, int eyeCount) {
         EyePlacement placement = eye.placement();
         if (!finiteBounded(placement.position().x, MAX_ABS_POSITION)
@@ -132,6 +134,7 @@ public final class EyeConfigLimits {
         return null;
     }
 
+    @Nullable
     private static Issue validateOptional(
             String age, @Nullable RuntimeConfig config, Budget budget) {
         if (config == null) {
@@ -149,6 +152,7 @@ public final class EyeConfigLimits {
         return validateRuntimeConfig(config, new Budget());
     }
 
+    @Nullable
     private static Issue validateRuntimeConfig(RuntimeConfig config, Budget budget) {
         if (config.variants.size() > MAX_VARIANTS_PER_CONFIG) {
             return issue(

@@ -72,10 +72,10 @@ public final class PickerState {
      * draft, so the preview/HUD show nothing until {@code /sg create} (or {@code select}) starts
      * one. See {@link #clearDraft()}.
      */
-    private static EyeDraft currentEye = null;
+    @Nullable private static EyeDraft currentEye = null;
 
     /** The part token used as the placement frame, or {@code null} for {@code none}. */
-    private static String currentPart = null;
+    @Nullable private static String currentPart = null;
 
     /**
      * Index into the current variant's eye list that {@code save} writes back to, or {@link
@@ -99,7 +99,7 @@ public final class PickerState {
     /** Retained picker drafts and selection, independent of crosshair and renderer lookup. */
     public static final class DraftSession {
         private final Map<DraftKey, Draft> authored = new LinkedHashMap<>();
-        private Draft current;
+        @Nullable private Draft current;
 
         /** Forget every retained arrangement and the current selection. */
         public void clear() {
@@ -108,6 +108,7 @@ public final class PickerState {
         }
 
         /** The selected draft, or null before selection and after clearing. */
+        @Nullable
         public Draft current() {
             return current;
         }
@@ -175,8 +176,7 @@ public final class PickerState {
                             grouped.computeIfAbsent(
                                     le.part,
                                     t -> {
-                                        HeadConfig h = new HeadConfig();
-                                        h.attachPoint = t;
+                                        HeadConfig h = new HeadConfig(t);
                                         h.eyes = new ArrayList<>();
                                         return h;
                                     });
@@ -269,12 +269,14 @@ public final class PickerState {
     }
 
     /** The life stage of the selected draft, or null before any selection. */
+    @Nullable
     public static String currentDraftAge() {
         Draft draft = DRAFTS.current();
         return draft == null ? null : draft.key().age();
     }
 
     /** The live draft eye, or {@code null} in the empty state. Mutate via the {@code set*} ops. */
+    @Nullable
     public static EyeDraft currentEye() {
         return currentEye;
     }
@@ -293,6 +295,7 @@ public final class PickerState {
     }
 
     /** The part token used as the placement frame, or {@code null} for {@code none}. */
+    @Nullable
     public static String currentPart() {
         return currentPart;
     }
@@ -641,6 +644,9 @@ public final class PickerState {
     }
 
     /** Set the current draft eye's configured cornea RGB channels. */
+    // Shaping commands call requireDraft before this operation; fixture callers create a draft
+    // first.
+    @SuppressWarnings("NullAway")
     public static void setCorneaColor(float r, float g, float b) {
         currentEye.corneaColors = new float[] {r, g, b};
     }
@@ -672,26 +678,41 @@ public final class PickerState {
     }
 
     /** Thickness multiplier along the look axis (1 = standard). */
+    // Shaping commands call requireDraft before this operation; fixture callers create a draft
+    // first.
+    @SuppressWarnings("NullAway")
     public static void setDepth(float v) {
         currentEye.depth = v;
     }
 
     /** Set the current draft eye's overall scale. */
+    // Shaping commands call requireDraft before this operation; fixture callers create a draft
+    // first.
+    @SuppressWarnings("NullAway")
     public static void setEyeScale(float v) {
         currentEye.eyeScale = v;
     }
 
     /** Set whether the current draft eye renders full-bright. */
+    // Shaping commands call requireDraft before this operation; fixture callers create a draft
+    // first.
+    @SuppressWarnings("NullAway")
     public static void setGlow(boolean v) {
         currentEye.glows = v;
     }
 
     /** Set the current draft eye's configured iris RGB channels. */
+    // Shaping commands call requireDraft before this operation; fixture callers create a draft
+    // first.
+    @SuppressWarnings("NullAway")
     public static void setIrisColor(float r, float g, float b) {
         currentEye.irisColors = new float[] {r, g, b};
     }
 
     /** Set the current draft eye's iris scale. */
+    // Shaping commands call requireDraft before this operation; fixture callers create a draft
+    // first.
+    @SuppressWarnings("NullAway")
     public static void setIrisScale(float v) {
         currentEye.irisScale = v;
     }
@@ -727,6 +748,9 @@ public final class PickerState {
      * The CLI {@code move x y z} op: set absolute position; an empty value leaves that axis
      * unchanged.
      */
+    // Shaping commands call requireDraft before this operation; fixture callers create a draft
+    // first.
+    @SuppressWarnings("NullAway")
     public static void setPosition(Optional<Float> x, Optional<Float> y, Optional<Float> z) {
         x.ifPresent(v -> currentEye.position[0] = v);
         y.ifPresent(v -> currentEye.position[1] = v);
@@ -734,6 +758,9 @@ public final class PickerState {
     }
 
     /** The CLI {@code rot inclination azimuth} op; an empty value leaves that angle unchanged. */
+    // Shaping commands call requireDraft before this operation; fixture callers create a draft
+    // first.
+    @SuppressWarnings("NullAway")
     public static void setRotation(Optional<Float> inclination, Optional<Float> azimuth) {
         inclination.ifPresent(v -> currentEye.inclination = v);
         azimuth.ifPresent(v -> currentEye.azimuth = v);
@@ -759,11 +786,13 @@ public final class PickerState {
     /**
      * The mob currently being edited, or {@code null} when none is chosen or it has been unloaded.
      */
+    @Nullable
     public static LivingEntity target() {
         return target.get();
     }
 
     /** The selected draft's entity type, or {@code null} before any mob has been chosen. */
+    @Nullable
     public static ResourceLocation targetType() {
         Draft draft = DRAFTS.current();
         return draft == null ? null : draft.key().type();

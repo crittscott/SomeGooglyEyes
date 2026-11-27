@@ -59,10 +59,13 @@ public final class VersionRangeMatcher {
         return trimmed.startsWith("[") || trimmed.startsWith("(");
     }
 
-    private record Token(BigInteger number, String text) implements Comparable<Token> {
+    private record Token(@Nullable BigInteger number, @Nullable String text)
+            implements Comparable<Token> {
         private static final Token ZERO = new Token(BigInteger.ZERO, null);
 
         @Override
+        // Private factories create either a number or text; two nonnumeric tokens both have text.
+        @SuppressWarnings("NullAway")
         public int compareTo(Token other) {
             if (number != null && other.number != null) {
                 return number.compareTo(other.number);

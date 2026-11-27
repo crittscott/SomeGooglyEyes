@@ -235,6 +235,8 @@ public final class GooglyEyeRenderer {
      * damage rocking, and bubble rotation. The caller retains the hull pose; ordinary boat
      * rendering and water masking stay with vanilla.
      */
+    // boatEyes returns only configured presentations, with helper and snapshot supplied together.
+    @SuppressWarnings("NullAway")
     public static void renderBoat(
             Boat boat, float partialTick, PoseStack pose, MultiBufferSource buffers, int light) {
         PresentationEyes eyes = ClientEyeRuntime.boatEyes(boat);

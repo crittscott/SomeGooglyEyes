@@ -55,6 +55,8 @@ public enum EyeBehavior {
      * wobbling underneath.
      */
     BLINK("blink", 1, 8) {
+        // BehaviorInstance.start builds the blink mask before this behavior can run.
+        @SuppressWarnings("NullAway")
         @Override
         public void influence(BehaviorInstance i, int head, int eye, EyeInfluence out) {
             if (i.mask[head][eye]) {

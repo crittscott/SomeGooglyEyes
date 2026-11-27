@@ -32,6 +32,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
+import org.jetbrains.annotations.Contract;
 import org.joml.Quaternionf;
 
 import java.lang.reflect.Field;
@@ -272,6 +273,7 @@ public final class SkullEyeRenderer {
     }
 
     /** Whether eyes of {@code entity}'s kind of head may show on this client now. */
+    @Contract("null -> false")
     private static boolean mayShow(@Nullable ResourceLocation entity) {
         return entity != null && ClientEyeConfigs.eyesVisible(entity);
     }
@@ -316,6 +318,9 @@ public final class SkullEyeRenderer {
         render(pose, bufferSource, packedLight, model, true);
     }
 
+    // Head factories supply helper/snapshot together; headPart is queried only after a presentation
+    // exists.
+    @SuppressWarnings("NullAway")
     private static void render(
             PoseStack pose,
             MultiBufferSource bufferSource,
@@ -339,7 +344,7 @@ public final class SkullEyeRenderer {
             }
             PresentationEyes eyes = ClientEyeRuntime.skullEyes(skull, entity);
             ModelPart head = eyes == null ? null : headPart(model);
-            if (head != null) {
+            if (eyes != null && head != null) {
                 eyes.markRendered(ClientEyeRuntime.clientTicks());
                 renderEyes(
                         pose,
@@ -365,7 +370,7 @@ public final class SkullEyeRenderer {
             ClientEyeRuntime.RestingHead resting =
                     framed == null ? ClientEyeRuntime.restingHead(stack, entity) : null;
             ModelPart head = framed == null && resting == null ? null : headPart(model);
-            if (head == null) {
+            if (head == null || (framed == null && resting == null)) {
                 return;
             }
             boolean fitted = usesFit(item.getBlock(), entity, trophy);

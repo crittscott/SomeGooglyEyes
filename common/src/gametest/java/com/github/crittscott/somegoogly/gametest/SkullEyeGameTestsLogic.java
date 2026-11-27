@@ -56,6 +56,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiConsumer;
@@ -83,8 +84,7 @@ public final class SkullEyeGameTestsLogic {
      * and its unpaired pupil never crosses.
      */
     public static void placedHeadUsesSharedAmbientSlots(GameTestHelper helper) {
-        HeadConfig head = new HeadConfig();
-        head.attachPoint = "head";
+        HeadConfig head = new HeadConfig("head");
         head.eyes =
                 List.of(
                         new EyeDefinition(
@@ -131,7 +131,9 @@ public final class SkullEyeGameTestsLogic {
         returning.tick(duration * 2L - 1, settings);
         helper.assertTrue(
                 returning.active != null
-                        && returning.active.behavior == watched.active.behavior
+                        && returning.active.behavior
+                                == Objects.requireNonNull(watched.active, "expected fixture value")
+                                        .behavior
                         && returning.active.age == watched.active.age,
                 "a newly visible head joins the expression at its current age");
         helper.succeed();
@@ -371,8 +373,8 @@ public final class SkullEyeGameTestsLogic {
                 !skull.saveWithoutMetadata().contains(SkullEyeState.DATA_KEY),
                 "a head without eyes saves no eye data, so its drop stacks with plain heads");
         CompoundTag update = ClientboundBlockEntityDataPacket.create(skull).getTag();
-        helper.assertTrue(
-                update != null, "the block update still carries a tag after the eyes come off");
+        Objects.requireNonNull(
+                update, "the block update still carries a tag after the eyes come off");
         watched.load(update);
         helper.assertTrue(
                 !SkullEyeState.hasEyes(watched), "the watching client's head loses its eyes too");
@@ -713,7 +715,9 @@ public final class SkullEyeGameTestsLogic {
 
     private static SkullBlockEntity placeHead(GameTestHelper helper, Block head) {
         helper.setBlock(HEAD, head);
-        return (SkullBlockEntity) helper.getBlockEntity(HEAD);
+        return (SkullBlockEntity)
+                Objects.requireNonNull(
+                        helper.getBlockEntity(HEAD), "placed skull fixture must exist");
     }
 
     private static Snapshot purpleEyes() {

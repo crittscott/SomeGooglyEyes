@@ -8,6 +8,8 @@ import net.minecraft.client.model.EntityModel;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import javax.annotation.Nullable;
+
 /**
  * Resolver for LLibrary-style models. Mowzie's Mobs ships its own fork of LLibrary's model toolkit
  * shaded at {@code com.ilexiconn.llibrary}, and its pre-GeckoLib mobs (Ferrous Wroughtnaut,
@@ -35,12 +37,12 @@ public class LLibraryResolver extends ReflectedBoxResolver {
     private static final Handles HANDLES = Handles.load();
 
     private record Handles(
-            Class<?> modelClass,
-            Class<?> boxClass,
-            Class<?> advancedBoxClass,
-            Field boxList,
-            Method getParent,
-            Method translateRotate) {
+            @Nullable Class<?> modelClass,
+            @Nullable Class<?> boxClass,
+            @Nullable Class<?> advancedBoxClass,
+            @Nullable Field boxList,
+            @Nullable Method getParent,
+            @Nullable Method translateRotate) {
         static final Handles ABSENT = new Handles(null, null, null, null, null, null);
 
         boolean available() {
@@ -78,6 +80,8 @@ public class LLibraryResolver extends ReflectedBoxResolver {
     }
 
     @Override
+    // Successful handle loading initializes the entire API; available() gates this access.
+    @SuppressWarnings("NullAway")
     protected Class<?> boxClass() {
         return HANDLES.boxClass();
     }
@@ -88,11 +92,15 @@ public class LLibraryResolver extends ReflectedBoxResolver {
     }
 
     @Override
+    // Successful handle loading initializes the entire API; available() gates this access.
+    @SuppressWarnings("NullAway")
     public boolean handles(EntityModel<?> model) {
         return available() && HANDLES.modelClass().isInstance(model) && !failed(model);
     }
 
     @Override
+    // Successful handle loading initializes the entire API; available() gates this access.
+    @SuppressWarnings("NullAway")
     protected Object rawParts(EntityModel<?> model) throws ReflectiveOperationException {
         return HANDLES.boxList().get(model);
     }
@@ -103,6 +111,9 @@ public class LLibraryResolver extends ReflectedBoxResolver {
     }
 
     @Override
+    // Successful handle loading initializes the entire API; available() gates this access.
+    @SuppressWarnings("NullAway")
+    @Nullable
     protected Object rawParent(Object part) throws ReflectiveOperationException {
         return HANDLES.advancedBoxClass().isInstance(part)
                 ? HANDLES.getParent().invoke(part)
@@ -110,6 +121,8 @@ public class LLibraryResolver extends ReflectedBoxResolver {
     }
 
     @Override
+    // Successful handle loading initializes the entire API; available() gates this access.
+    @SuppressWarnings("NullAway")
     protected void rawTransform(Object part, PoseStack poseStack)
             throws ReflectiveOperationException {
         HANDLES.translateRotate().invoke(part, poseStack);

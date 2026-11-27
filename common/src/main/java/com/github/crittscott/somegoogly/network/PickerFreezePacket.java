@@ -73,6 +73,8 @@ public class PickerFreezePacket implements Payload {
      * Freeze the requested mob for an authorized sender in range, or release the sender's frozen
      * mob.
      */
+    // Private factories and read guarantee mobId is present exactly when freeze is true.
+    @SuppressWarnings("NullAway")
     public static void handle(PickerFreezePacket packet, ServerPlayer sender) {
         if (packet.freeze) {
             if (!PickerGate.authorized(sender)) {

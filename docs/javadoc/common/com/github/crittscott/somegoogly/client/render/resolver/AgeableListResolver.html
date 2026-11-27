@@ -159,7 +159,7 @@ loadScripts(document, 'script');</script>
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Iterable.html" title="class or interface in java.lang" class="external-link">Iterable</a>&lt;net.minecraft.client.model.geom.ModelPart&gt;&nbsp;parts,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;com.mojang.blaze3d.vertex.PoseStack&gt;&nbsp;preTransform)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Name a part group <code>base</code>, <code>base1</code>, <code>base2</code>, … in iteration order.</div>
+<div class="block">Name a part group with <code>base</code>, then successive numeric suffixes in iteration order.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="Attachment.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">Attachment</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#resolve(net.minecraft.client.model.EntityModel,java.lang.String)" class="member-name-link">resolve</a><wbr>(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model,
@@ -264,8 +264,9 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">protected static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">index</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;com.github.crittscott.somegoogly.client.render.resolver.ModelPartTreeResolver.NamedRoot&gt;&nbsp;roots,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;base,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Iterable.html" title="class or interface in java.lang" class="external-link">Iterable</a>&lt;net.minecraft.client.model.geom.ModelPart&gt;&nbsp;parts,
+ @Nullable
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;com.mojang.blaze3d.vertex.PoseStack&gt;&nbsp;preTransform)</span></div>
-<div class="block">Name a part group <code>base</code>, <code>base1</code>, <code>base2</code>, … in iteration order.</div>
+<div class="block">Name a part group with <code>base</code>, then successive numeric suffixes in iteration order.</div>
 </section>
 </li>
 <li>
@@ -287,8 +288,6 @@ loadScripts(document, 'script');</script>
 <dt>Specified by:</dt>
 <dd><code><a href="ModelMemo.Resolver.html#resolve(K,java.lang.String)">resolve</a></code>&nbsp;in interface&nbsp;<code><a href="ModelMemo.Resolver.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">ModelMemo.Resolver</a>&lt;net.minecraft.client.model.EntityModel&lt;?&gt;,<wbr><a href="Attachment.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">Attachment</a>&gt;</code></dd>
 <dd><code>partToken</code> - the configured attachment token (a string part name, possibly camelCase)</dd>
-<dt>Returns:</dt>
-<dd>the resolved value, or <code>null</code> when the token names nothing in the model.</dd>
 </dl>
 </section>
 </li>

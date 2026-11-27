@@ -27,6 +27,8 @@ import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.providers.nbt.ContextNbtProvider;
 
+import org.jetbrains.annotations.Contract;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
@@ -300,7 +302,8 @@ public final class SkullEyeState {
     }
 
     /** Whether the placed head has eyes; cheap enough to ask every frame. */
-    public static boolean hasEyes(BlockEntity skull) {
+    @Contract("null -> false")
+    public static boolean hasEyes(@Nullable BlockEntity skull) {
         CompoundTag data = data(skull);
         return data != null && data.getBoolean(EyeState.HAS_EYES);
     }
@@ -479,6 +482,8 @@ public final class SkullEyeState {
      * Replace the placed head's eye state and send it to every client in range through a block
      * update; server side only.
      */
+    // Mutation callers supply a loaded head; its level owns the block update.
+    @SuppressWarnings("NullAway")
     public static void set(BlockEntity skull, Snapshot snapshot) {
         snapshot.write(((Holder) skull).somegoogly$get());
         skull.setChanged();

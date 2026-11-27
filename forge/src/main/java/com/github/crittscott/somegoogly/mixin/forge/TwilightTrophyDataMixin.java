@@ -30,6 +30,7 @@ abstract class TwilightTrophyDataMixin extends BlockEntity implements SkullEyeSt
     }
 
     @Override
+    @Nullable
     public CompoundTag somegoogly$find() {
         return somegoogly$data;
     }

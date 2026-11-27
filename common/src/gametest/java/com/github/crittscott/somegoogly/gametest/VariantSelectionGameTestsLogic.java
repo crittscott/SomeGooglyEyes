@@ -34,8 +34,7 @@ public final class VariantSelectionGameTestsLogic {
     private static Variant variantOf(double weight) {
         Variant variant = new Variant();
         variant.weight = weight;
-        HeadConfig head = new HeadConfig();
-        head.attachPoint = "head";
+        HeadConfig head = new HeadConfig("head");
         head.eyes = List.of(EyeDefinition.DEFAULT);
         variant.heads = List.of(head);
         return variant;

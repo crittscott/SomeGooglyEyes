@@ -23,6 +23,7 @@ import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeType;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -235,8 +236,8 @@ public final class RecipeGameTestsLogic {
                         .getServer()
                         .getAdvancements()
                         .getAdvancement(SLIMY_EYE_ADVANCEMENT);
-        helper.assertTrue(
-                advancement != null, "the Slimy Eye recipe should have an unlock advancement");
+        Objects.requireNonNull(
+                advancement, "the Slimy Eye recipe should have an unlock advancement");
         helper.assertTrue(
                 Arrays.asList(advancement.getRewards().getRecipes()).contains(SLIMY_EYE),
                 "the advancement should reward the Slimy Eye recipe");

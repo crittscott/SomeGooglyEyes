@@ -8,6 +8,8 @@ import net.minecraft.client.model.EntityModel;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import javax.annotation.Nullable;
+
 /**
  * Resolver for the {@code AdvancedEntityModel} / {@code AdvancedModelBox} toolkit, shipped by two
  * libraries under different package names: Citadel (Alex's Mobs, Ice and Fire) and Uranus (Ice and
@@ -57,12 +59,12 @@ public class AdvancedModelBoxResolver extends ReflectedBoxResolver {
     }
 
     private record Handles(
-            Class<?> modelClass,
-            Class<?> boxClass,
-            Method getAllParts,
-            Method getParent,
-            Method translateAndRotate,
-            Field boxName) {
+            @Nullable Class<?> modelClass,
+            @Nullable Class<?> boxClass,
+            @Nullable Method getAllParts,
+            @Nullable Method getParent,
+            @Nullable Method translateAndRotate,
+            @Nullable Field boxName) {
         static final Handles ABSENT = new Handles(null, null, null, null, null, null);
 
         boolean available() {
@@ -101,21 +103,29 @@ public class AdvancedModelBoxResolver extends ReflectedBoxResolver {
     }
 
     @Override
+    // Successful handle loading initializes the entire API; available() gates this access.
+    @SuppressWarnings("NullAway")
     protected Class<?> boxClass() {
         return api.boxClass();
     }
 
     @Override
+    // Successful handle loading initializes the entire API; available() gates this access.
+    @SuppressWarnings("NullAway")
     public boolean handles(EntityModel<?> model) {
         return available() && api.modelClass().isInstance(model) && !failed(model);
     }
 
     @Override
+    // Successful handle loading initializes the entire API; available() gates this access.
+    @SuppressWarnings("NullAway")
     protected Object rawParts(EntityModel<?> model) throws ReflectiveOperationException {
         return api.getAllParts().invoke(model);
     }
 
     @Override
+    // Successful handle loading initializes boxName; raw access is gated by available().
+    @SuppressWarnings("NullAway")
     protected String intrinsicName(Object part) {
         try {
             Object value = api.boxName().get(part);
@@ -128,11 +138,15 @@ public class AdvancedModelBoxResolver extends ReflectedBoxResolver {
     }
 
     @Override
+    // Successful handle loading initializes the entire API; available() gates this access.
+    @SuppressWarnings("NullAway")
     protected Object rawParent(Object part) throws ReflectiveOperationException {
         return api.getParent().invoke(part);
     }
 
     @Override
+    // Successful handle loading initializes the entire API; available() gates this access.
+    @SuppressWarnings("NullAway")
     protected void rawTransform(Object part, PoseStack poseStack)
             throws ReflectiveOperationException {
         api.translateAndRotate().invoke(part, poseStack);

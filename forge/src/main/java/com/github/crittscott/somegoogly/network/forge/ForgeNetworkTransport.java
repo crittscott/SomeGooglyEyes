@@ -12,6 +12,8 @@ import net.minecraftforge.network.simple.SimpleChannel;
 
 import java.util.function.Supplier;
 
+import javax.annotation.Nullable;
+
 /**
  * Required Forge payload channel and native packet distribution. The channel's version is the
  * network version, and both sides require it, so Forge refuses a client or server without a
@@ -56,6 +58,7 @@ public final class ForgeNetworkTransport {
                 .add();
     }
 
+    @Nullable
     private static ServerPlayer sender(Supplier<NetworkEvent.Context> context) {
         return context.get().getSender();
     }

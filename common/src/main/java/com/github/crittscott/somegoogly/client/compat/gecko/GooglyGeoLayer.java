@@ -23,6 +23,8 @@ import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 /**
  * GeckoLib render layer that draws googly eyes on named bones (the GeckoLib counterpart of {@code
  * LayerGooglyEyes}). Handles both normal rendering (from synced config, with iris physics) and the
@@ -49,7 +51,7 @@ public class GooglyGeoLayer<T extends Entity & GeoAnimatable> extends GeoRenderL
      * is not interleaved between entities, so one transient slot is safe. {@code null} means "draw
      * nothing".
      */
-    private Frame frame;
+    @Nullable private Frame frame;
 
     private final boolean vanillaPartSpace;
 
@@ -58,17 +60,17 @@ public class GooglyGeoLayer<T extends Entity & GeoAnimatable> extends GeoRenderL
         // Normal rendering: config + per-mob state, with each head's attach token resolved to a
         // bone (null where the token matched no bone in the model currently worn — see Ribbits
         // model swaps).
-        HeadInfo helper;
-        AppearanceOverride overrides;
-        GooglyTracker tracker;
-        GeoBone[] headBones;
+        @Nullable HeadInfo helper;
+        @Nullable AppearanceOverride overrides;
+        @Nullable GooglyTracker tracker;
+        @Nullable GeoBone[] headBones;
 
         // Picker preview: the edited variant's previewed eyes with the bone each attaches to, plus
         // the bone carrying the gizmo and the live eye.
         boolean preview;
-        List<PickerState.ListedEye> savedEyes;
-        GeoBone[] savedEyeBones;
-        GeoBone gizmoBone;
+        @Nullable List<PickerState.ListedEye> savedEyes;
+        @Nullable GeoBone[] savedEyeBones;
+        @Nullable GeoBone gizmoBone;
     }
 
     public GooglyGeoLayer(GeoRenderer<T> renderer) {
@@ -77,6 +79,8 @@ public class GooglyGeoLayer<T extends Entity & GeoAnimatable> extends GeoRenderL
     }
 
     @Override
+    // extract supplies helper and tracker together; this initializes only the chosen frame group.
+    @SuppressWarnings("NullAway")
     public void preRender(
             PoseStack poseStack,
             T animatable,
@@ -186,6 +190,8 @@ public class GooglyGeoLayer<T extends Entity & GeoAnimatable> extends GeoRenderL
         this.frame = null;
     }
 
+    // Only normal frames reach this method; preRender initializes their helper, tracker and bones.
+    @SuppressWarnings("NullAway")
     private boolean renderEyesAt(
             PoseStack poseStack,
             GeoBone bone,
@@ -214,6 +220,8 @@ public class GooglyGeoLayer<T extends Entity & GeoAnimatable> extends GeoRenderL
         return drew;
     }
 
+    // Only preview frames reach this method; preRender initializes their saved eyes and bones.
+    @SuppressWarnings("NullAway")
     private boolean renderPreviewAt(
             PoseStack poseStack,
             GeoBone bone,

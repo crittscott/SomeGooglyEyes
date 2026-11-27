@@ -36,6 +36,8 @@ public final class ForgeClientBootstrap {
      * Forge's event doesn't list its renderers and its getter casts to a living renderer, so this
      * reads the dispatcher's map, which the reload firing the event has just rebuilt.
      */
+    // Skin names come from this event's renderer map, so each lookup names an installed renderer.
+    @SuppressWarnings("NullAway")
     private static void addRendererLayers(EntityRenderersEvent.AddLayers event) {
         ClientRenderLayers.clearCaches();
         for (String skin : event.getSkins()) {

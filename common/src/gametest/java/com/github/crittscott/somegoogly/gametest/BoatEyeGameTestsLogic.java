@@ -115,8 +115,7 @@ public final class BoatEyeGameTestsLogic {
         Boat boat = Objects.requireNonNull(EntityType.BOAT.create(helper.getLevel()));
         var source = ServerEyeConfigs.get(EntityType.getKey(EntityType.BOAT), false);
         var state = new EyeState.Snapshot(true, 0F, AppearanceOverride.EMPTY);
-        HeadConfig pair = new HeadConfig();
-        pair.attachPoint = "hull";
+        HeadConfig pair = new HeadConfig("hull");
         pair.eyes =
                 List.of(
                         new EyeDefinition(
@@ -168,8 +167,7 @@ public final class BoatEyeGameTestsLogic {
                 firstAnchor * influence.anchorX < 0F,
                 "the paired pupils converge from opposite sides");
         for (int count : List.of(1, 2)) {
-            HeadConfig head = new HeadConfig();
-            head.attachPoint = "hull";
+            HeadConfig head = new HeadConfig("hull");
             head.eyes =
                     IntStream.range(0, count)
                             .mapToObj(index ->
@@ -226,7 +224,7 @@ public final class BoatEyeGameTestsLogic {
                     "recently rendered boats simulate");
             cache.tick(2L, blink);
             helper.assertTrue(
-                    eyes.active.age == 1,
+                    Objects.requireNonNull(eyes.active, "expected fixture value").age == 1,
                     "unrendered boats stop simulating after their grace tick");
             for (int tick = 0; tick < 12; tick++) {
                 cache.tick(3L + tick, blink);
@@ -252,7 +250,8 @@ public final class BoatEyeGameTestsLogic {
             boat.discard();
             cache.tick(100003L, blink);
             helper.assertTrue(
-                    cache.get(boat) == null, "removed boats cannot retain or rebuild a simulation");
+                    cache.find(boat) == null,
+                    "removed boats cannot retain or rebuild a simulation");
         } finally {
             ClientEyeConfigs.replaceAll(definitions);
             ClientEyeConfigs.applySettings(enabled, behaviors);
@@ -288,7 +287,11 @@ public final class BoatEyeGameTestsLogic {
                     var hullPose =
                             new Matrix3f()
                                     .scaling(-1F, -1F, 1F)
-                                    .rotate(eyes.helper.placementAt(0, index).orientation());
+                                    .rotate(
+                                            Objects.requireNonNull(
+                                                            eyes.helper, "expected fixture value")
+                                                    .placementAt(0, index)
+                                                    .orientation());
                     eyes.eyes[0][index].capturePose(hullPose, null);
                 }
             }
@@ -631,10 +634,12 @@ public final class BoatEyeGameTestsLogic {
                     ClientEyeRuntime.boatEyes(boat) != changed,
                     "geometry changes replace the layout");
             var current = ClientEyeRuntime.boatEyes(boat);
-            current.tick(1L, settings(List.of(EyeBehavior.BLINK)));
+            Objects.requireNonNull(current, "expected fixture value")
+                    .tick(1L, settings(List.of(EyeBehavior.BLINK)));
             ClientEyeRuntime.tick(helper.getLevel(), false, null);
             helper.assertTrue(
-                    current.active.age == 1, "pause leaves the cached expression unchanged");
+                    Objects.requireNonNull(current.active, "expected fixture value").age == 1,
+                    "pause leaves the cached expression unchanged");
             ClientEyeRuntime.onEntityRemoved(boat);
             helper.assertTrue(
                     ClientEyeRuntime.boatEyes(boat) != current,
@@ -687,7 +692,11 @@ public final class BoatEyeGameTestsLogic {
         RuntimeConfig hullOnly = new RuntimeConfig();
         Variant variant = new Variant();
         variant.heads =
-                config.variants.get(0).heads.stream()
+                Objects.requireNonNull(config, "expected fixture value")
+                        .variants
+                        .get(0)
+                        .heads
+                        .stream()
                         .filter(head -> head.attachPoint.equals("hull"))
                         .toList();
         hullOnly.variants = List.of(variant);

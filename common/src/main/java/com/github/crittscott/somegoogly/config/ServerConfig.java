@@ -376,7 +376,8 @@ public class ServerConfig {
     /**
      * One parsed override line. Exact entries match by string equality; wildcard entries by regex.
      */
-    private record SpawnOverride(boolean exact, String literalId, Pattern pattern, int percent) {}
+    private record SpawnOverride(
+            boolean exact, @Nullable String literalId, @Nullable Pattern pattern, int percent) {}
 
     private static <V extends ConfigValue<?>> V add(V setting) {
         SETTINGS.add(setting);
@@ -470,6 +471,8 @@ public class ServerConfig {
      * The configured eye chance (0–100) for the given entity: an exact override if one matches,
      * else the first matching wildcard override, else {@link #GLOBAL_PERCENT}.
      */
+    // parse installs a literal for exact entries and a compiled pattern for wildcard entries.
+    @SuppressWarnings("NullAway")
     public static int percentFor(ResourceLocation entityType) {
         String id = entityType.toString();
         SpawnOverride firstWildcard = null;

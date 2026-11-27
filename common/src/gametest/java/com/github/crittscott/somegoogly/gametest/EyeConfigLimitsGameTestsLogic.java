@@ -12,6 +12,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Semantic-bound coverage for {@link EyeConfigLimits#validateRuntimeConfig(RuntimeConfig)} — the
@@ -29,8 +30,7 @@ public final class EyeConfigLimitsGameTestsLogic {
     }
 
     private static HeadConfig head(EyeDefinition... eyes) {
-        HeadConfig head = new HeadConfig();
-        head.attachPoint = "head";
+        HeadConfig head = new HeadConfig("head");
         head.eyes = List.of(eyes);
         return head;
     }
@@ -69,7 +69,7 @@ public final class EyeConfigLimitsGameTestsLogic {
 
     private static void assertRejected(GameTestHelper helper, RuntimeConfig config, String reason) {
         EyeConfigLimits.Issue error = EyeConfigLimits.validateRuntimeConfig(config);
-        helper.assertTrue(error != null, "expected rejection for " + reason);
+        Objects.requireNonNull(error, "expected rejection for " + reason);
         while (!error.arguments().isEmpty()
                 && error.arguments().get(error.arguments().size() - 1)
                         instanceof EyeConfigLimits.Issue nested) {

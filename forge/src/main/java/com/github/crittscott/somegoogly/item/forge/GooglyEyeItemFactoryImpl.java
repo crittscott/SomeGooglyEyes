@@ -9,6 +9,8 @@ import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 
 import java.util.function.Consumer;
 
+import javax.annotation.Nullable;
+
 /**
  * Forge construction boundary for the registered Googly Eye item, with its 3D held-item renderer
  * attached through the {@code Item#initializeClient} override.
@@ -25,7 +27,7 @@ public final class GooglyEyeItemFactoryImpl {
                 // googly when held).
                 consumer.accept(
                         new IClientItemExtensions() {
-                            private GooglyEyeItemRenderer renderer;
+                            @Nullable private GooglyEyeItemRenderer renderer;
 
                             @Override
                             public BlockEntityWithoutLevelRenderer getCustomRenderer() {

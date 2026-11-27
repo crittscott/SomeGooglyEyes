@@ -443,8 +443,7 @@ public final class EligibilityGameTestsLogic {
     }
 
     private static RuntimeConfig usableConfig() {
-        HeadConfig head = new HeadConfig();
-        head.attachPoint = "head";
+        HeadConfig head = new HeadConfig("head");
         head.eyes = List.of();
         Variant variant = new Variant();
         variant.heads = List.of(head);

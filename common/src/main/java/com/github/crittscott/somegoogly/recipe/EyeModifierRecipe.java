@@ -32,8 +32,8 @@ public class EyeModifierRecipe extends CustomRecipe {
         super(id, category);
     }
 
-    /** The eye and the modifier ingredient found in a grid. */
-    private record Match(ItemStack eye, ItemStack modifierStack) {}
+    /** The eye and its validated modified appearance found in a grid. */
+    private record Match(ItemStack eye, AppearanceOverride appearance) {}
 
     @Override
     public ItemStack assemble(CraftingContainer input, RegistryAccess registries) {
@@ -43,7 +43,7 @@ public class EyeModifierRecipe extends CustomRecipe {
         }
         // Copy (not a fresh stack) so unrelated NBT on the eye survives the edit.
         ItemStack result = match.eye().copyWithCount(1);
-        EyeItemProperties.set(result, modify(EyeItemProperties.get(result), match.modifierStack()));
+        EyeItemProperties.set(result, match.appearance());
         return result;
     }
 
@@ -92,9 +92,6 @@ public class EyeModifierRecipe extends CustomRecipe {
                 eye = stack;
                 continue;
             }
-            if (modify(AppearanceOverride.EMPTY, stack) == null) {
-                return null; // an ingredient we don't understand
-            }
             if (!modifierStack.isEmpty()) {
                 return null; // more than one modifier
             }
@@ -104,7 +101,8 @@ public class EyeModifierRecipe extends CustomRecipe {
         if (eye.isEmpty() || modifierStack.isEmpty()) {
             return null;
         }
-        return new Match(eye, modifierStack);
+        AppearanceOverride appearance = modify(EyeItemProperties.get(eye), modifierStack);
+        return appearance == null ? null : new Match(eye, appearance);
     }
 
     @Override

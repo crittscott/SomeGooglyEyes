@@ -106,6 +106,9 @@ public class EyeConfigSyncPacket implements Payload {
      * {@link #configs} encoded through {@link RuntimeConfigSet#CODEC}; read-only. Server-built
      * packets only.
      */
+    // Only server-built packets expose encoded data; the receive-only constructor deliberately
+    // omits it.
+    @SuppressWarnings("NullAway")
     public Map<ResourceLocation, CompoundTag> encoded() {
         return encoded;
     }
@@ -178,6 +181,8 @@ public class EyeConfigSyncPacket implements Payload {
      * picker export, so an export is checked exactly as the reload it triggers will be.
      * Server-built packets only.
      */
+    // Reload and export validate server-built packets, whose constructor computes compressed bytes.
+    @SuppressWarnings("NullAway")
     @Nullable
     public EyeConfigLimits.Issue refusal() {
         EyeConfigLimits.Issue limits = EyeConfigLimits.validateSync(configs);

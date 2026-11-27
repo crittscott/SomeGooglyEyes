@@ -63,6 +63,16 @@ Other accepted suppressions require evidence specific to the declaration:
 - `ReferenceEquality`: review each comparison for the exact meaning of equality. Live owners, installed snapshots, and model bones can require object identity; a registry comparison requires its own registered-object rationale. Do not replace identity with `equals` mechanically or suppress the check across a class or package merely because this is a mod.
 - Mixin processor `target`: only for a verified loader-added target absent from common's compile classpath, with its exact descriptor and supporting platform evidence recorded. It must not hide an unverified or broken injection. Consult the checkout's `platform-notes.md`.
 
+## Nullability contracts
+
+Where NullAway is configured, use the existing `javax.annotation.Nullable` for a supported absent value and carry that contract through fields, parameters, and returns. Keep required codec/construction state non-null and supply it during construction; an empty collection can represent no selected entries when that is the model's meaning.
+
+A null-rejecting predicate can use JetBrains `@Contract("null -> false")`, with argument positions adjusted for its signature. Enable NullAway's `CheckContracts` when relying on these predicates so the implementation is checked against its promise. Use the annotations already supplied by the checkout's compile classpath; adding a dependency remains subject to the dependency rule.
+
+For a Mixin shadow that aliases an initialized target field, use field-local `@SuppressWarnings("NullAway.Init")` with that ownership reason. Do not invent a null initializer or pretend the transformed field is nullable. Other `NullAway` suppressions require the particular caller, producer, tagged-state, or callback-phase guarantee beside the consuming declaration; neither a Minecraft type nor a renderer alone establishes it.
+
+Positive GameTest fixtures should assert required lookup results before use. A required-result helper may use `Objects.requireNonNull` with a fixture message; preserve a nullable lookup for tests of absence. Do not add production null guards solely to satisfy a test or the analyzer.
+
 ## Removing what is not needed
 
 - When the last reader of a parameter, field, or branch goes, it goes too.

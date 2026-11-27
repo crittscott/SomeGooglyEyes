@@ -197,7 +197,8 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="isEligible(net.minecraft.world.entity.vehicle.Boat,com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig)">
 <h3>isEligible</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isEligible</span><wbr><span class="parameters">(net.minecraft.world.entity.vehicle.Boat&nbsp;boat,
+<div class="member-signature"><span class="annotations">@Contract("_, null -&gt; false")
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isEligible</span><wbr><span class="parameters">(net.minecraft.world.entity.vehicle.Boat&nbsp;boat,
  @Nullable
  <a href="../config/EyeConfigModel.RuntimeConfig.html" title="class in com.github.crittscott.somegoogly.config">EyeConfigModel.RuntimeConfig</a>&nbsp;config)</span></div>
 <div class="block">Whether <code>boat</code> is a supported hull and <code>config</code> has a usable variant with eyes on
@@ -217,7 +218,9 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="supports(net.minecraft.world.entity.Entity)">
 <h3>supports</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">supports</span><wbr><span class="parameters">(net.minecraft.world.entity.Entity&nbsp;entity)</span></div>
+<div class="member-signature"><span class="annotations">@Contract("null -&gt; false")
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">supports</span><wbr><span class="parameters">(@Nullable
+ net.minecraft.world.entity.Entity&nbsp;entity)</span></div>
 <div class="block">Registry and wood checks exclude modded entities and loader-added boat variants.</div>
 </section>
 </li>

@@ -148,7 +148,7 @@ public final class ClientEyeRuntime {
             this.eyes = eyes;
         }
 
-        boolean matches(Boat boat, RuntimeConfig current) {
+        boolean matches(Boat boat, @Nullable RuntimeConfig current) {
             return config == current && attachment.equals(BoatEyeLayout.attachment(boat));
         }
     }
@@ -367,6 +367,7 @@ public final class ClientEyeRuntime {
                                 1F));
     }
 
+    @Nullable
     public static PresentationEyes guiEyes(GuiKey key, ItemStack stack) {
         GuiEntry entry = GUI.get(key);
         if (entry == null || !entry.eyes.matches(stack)) {
@@ -413,6 +414,7 @@ public final class ClientEyeRuntime {
                 : new PresentationEyes.Draw(eyes, minecraft.getFrameTime());
     }
 
+    @Nullable
     public static PresentationEyes handEyes(
             LivingEntity holder, InteractionHand hand, ItemStack stack) {
         HandKey key = new HandKey(holder.getUUID(), hand);
@@ -450,6 +452,8 @@ public final class ClientEyeRuntime {
     }
 
     /** A boat's eye state arrived from the server; a differing state replaces its simulation. */
+    // BOATS contains only configured presentations created with a non-null snapshot.
+    @SuppressWarnings("NullAway")
     public static void onBoatState(Entity boat, EyeState.Snapshot snapshot) {
         BoatEntry entry = BOATS.get(boat);
         if (entry != null && !entry.eyes.snapshot.equals(snapshot)) {
@@ -589,7 +593,7 @@ public final class ClientEyeRuntime {
                 eyes = null;
             }
         }
-        if (eyes == null || !eyes.entity.equals(entity)) {
+        if (eyes == null || !entity.equals(eyes.entity)) {
             var snapshot = SkullEyeState.snapshot(skull);
             var layout = ClientEyeConfigs.resolveHead(entity, snapshot.variantRoll());
             int[] parts = SkullEyeState.headParts(entity, layout);

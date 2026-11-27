@@ -421,7 +421,9 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="hasEyes(net.minecraft.world.level.block.entity.BlockEntity)">
 <h3>hasEyes</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">hasEyes</span><wbr><span class="parameters">(net.minecraft.world.level.block.entity.BlockEntity&nbsp;skull)</span></div>
+<div class="member-signature"><span class="annotations">@Contract("null -&gt; false")
+</span><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">hasEyes</span><wbr><span class="parameters">(@Nullable
+ net.minecraft.world.level.block.entity.BlockEntity&nbsp;skull)</span></div>
 <div class="block">Whether the placed head has eyes; cheap enough to ask every frame.</div>
 </section>
 </li>

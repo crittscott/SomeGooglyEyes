@@ -17,6 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -63,7 +64,9 @@ public final class GuiItemEyeGameTestsLogic {
                 "the first UI tick joins its blink without consulting world time");
         cache.get(key, stack);
         cache.tick(view, blink);
-        helper.assertTrue(presentation.active.age == 2, "UI time advances independently");
+        helper.assertTrue(
+                Objects.requireNonNull(presentation.active, "expected fixture value").age == 2,
+                "UI time advances independently");
         helper.succeed();
     }
 
@@ -82,13 +85,13 @@ public final class GuiItemEyeGameTestsLogic {
         var restored = cache.get(key, eye());
         helper.assertTrue(restored != first, "reenabling creates fresh state");
         helper.assertTrue(
-                cache.get(key, new ItemStack(Items.DIAMOND)) == null,
+                cache.find(key, new ItemStack(Items.DIAMOND)) == null,
                 "ordinary items have no eye simulation");
         helper.assertTrue(
-                cache.get(key, new ItemStack(Items.SKELETON_SKULL)) == null,
+                cache.find(key, new ItemStack(Items.SKELETON_SKULL)) == null,
                 "plain heads have no eye simulation");
         helper.assertTrue(
-                cache.get(key, ItemStack.EMPTY) == null, "empty slots retire their presentation");
+                cache.find(key, ItemStack.EMPTY) == null, "empty slots retire their presentation");
         helper.succeed();
     }
 
@@ -258,7 +261,7 @@ public final class GuiItemEyeGameTestsLogic {
         Object view = new Object();
         ClientEyeRuntime.beginGuiPresentation(view, ClientEyeRuntime.GuiKind.SLOT, 3, eye());
         try {
-            var eyes = PresentationEyes.create(new UUID(1L, 2L), eye());
+            var eyes = TestEyeRuntime.presentation(new UUID(1L, 2L), eye());
             ClientEyeRuntime.beginItemDraw(new PresentationEyes.Draw(eyes, 0.5F));
             try {
                 ItemStack head = new ItemStack(Items.SKELETON_SKULL);
@@ -267,7 +270,11 @@ public final class GuiItemEyeGameTestsLogic {
                     var context = ClientEyeRuntime.currentDraw();
                     helper.assertTrue(
                             context.item() == head
-                                    && context.guiKey().view() == view
+                                    && Objects.requireNonNull(
+                                                            context.guiKey(),
+                                                            "expected fixture value")
+                                                    .view()
+                                            == view
                                     && context.draw().eyes() == eyes,
                             "a head bracket inherits both GUI identity and selected animation");
                 } finally {
@@ -281,7 +288,11 @@ public final class GuiItemEyeGameTestsLogic {
                 ClientEyeRuntime.endItemDraw();
             }
             helper.assertTrue(
-                    ClientEyeRuntime.currentDraw().guiKey().x() == 3,
+                    Objects.requireNonNull(
+                                            ClientEyeRuntime.currentDraw().guiKey(),
+                                            "expected fixture value")
+                                    .x()
+                            == 3,
                     "closing an item restores its GUI identity");
         } finally {
             ClientEyeRuntime.endItemDraw();

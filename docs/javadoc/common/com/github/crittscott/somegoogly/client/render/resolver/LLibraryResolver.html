@@ -293,7 +293,8 @@ loadScripts(document, 'script');</script>
 <li>
 <section class="detail" id="rawParent(java.lang.Object)">
 <h3>rawParent</h3>
-<div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">rawParent</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;part)</span>
+<div class="member-signature"><span class="annotations">@Nullable
+</span><span class="modifiers">protected</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span>&nbsp;<span class="element-name">rawParent</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;part)</span>
                     throws <span class="exceptions"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/ReflectiveOperationException.html" title="class or interface in java.lang" class="external-link">ReflectiveOperationException</a></span></div>
 <div class="block">The box's parent, or <code>null</code> for a root.</div>
 <dl class="notes">
@@ -389,8 +390,6 @@ loadScripts(document, 'script');</script>
 <dt>Specified by:</dt>
 <dd><code><a href="ModelMemo.Resolver.html#resolve(K,java.lang.String)">resolve</a></code>&nbsp;in interface&nbsp;<code><a href="ModelMemo.Resolver.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">ModelMemo.Resolver</a>&lt;net.minecraft.client.model.EntityModel&lt;?&gt;,<wbr><a href="Attachment.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">Attachment</a>&gt;</code></dd>
 <dd><code>partToken</code> - the configured attachment token (a string part name, possibly camelCase)</dd>
-<dt>Returns:</dt>
-<dd>the resolved value, or <code>null</code> when the token names nothing in the model.</dd>
 </dl>
 </section>
 </li>

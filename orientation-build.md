@@ -4,7 +4,7 @@
 
 # Some Googly Eyes — build orientation
 
-This document describes the build's entry points, module layout, version authorities, dependencies, and packaging. Active build files are authoritative.
+Active build files are authoritative for this snapshot of build entry points, modules, versions, dependencies, and packaging.
 
 `build-env/` snapshots the checked-in Gradle build inputs, wrapper, agent instructions, platform notes, build runner, Git settings, and orientation outlines at their repository-relative paths. Active files remain authoritative; Gradle does not read the copies. Keep the snapshot and this description synchronized when covered files change.
 
@@ -38,7 +38,7 @@ Each loader module compiles against common through the `common` configuration. F
 
 On Windows, use `gradlew.bat`; `gradlew` is the POSIX launcher. The wrapper selects Gradle; the machine's Java configuration selects its host JVM. That host, including IntelliJ's Gradle JVM, must be Java 21 or newer for google-java-format. The Java 17 toolchain from `java_version` controls ordinary compilation, Javadoc, and game execution, and sets Fabric's minimum Java. Error Prone overrides only its compilation tasks. Sources and Javadoc use UTF-8. Every module produces a sources JAR; each loader includes common's main sources before remapping.
 
-Each subproject has a production `javadoc` task. Each loader's `gametestJavadoc` includes the shared package-private GameTest assertions. Root `generateDocs` derives loaders from `enabled_platforms` and synchronizes these tasks' HTML into committed `docs/javadoc/<module>/` and `docs/javadoc/<loader>-gametest/` trees, separating overlapping class names. `docs/index.html` is the hand-maintained landing page; `docs/.nojekyll` makes GitHub Pages serve generated files unchanged. These files are not build inputs, generated docs are excluded from `build-env/`, and no Javadoc JARs are produced.
+Each subproject has a production `javadoc` task. Each loader's `gametestJavadoc` includes the shared package-private GameTest assertions. Root `generateDocs` derives loaders from `enabled_platforms` and synchronizes these tasks' HTML into committed `docs/javadoc/<module>/` and `docs/javadoc/<loader>-gametest/` trees, separating overlapping class names. `docs/index.html` is the hand-maintained landing page; `docs/.nojekyll` makes GitHub Pages serve generated files unchanged. Generated docs are not build inputs, are excluded from `build-env/`, and have no Javadoc JARs.
 
 The root `collectJars` task copies each enabled loader's already-built production jar (`<archivesName>-<version>.jar` in its `build/libs`, not the dev, dev-shadow, or sources jars) into `../jars`, the directory shared by all version checkouts, for installing into a local launcher. It builds nothing and skips jars that have not been built; it overwrites same-named jars and leaves other versions' jars alone. `gradlews.ps1` runs `clean build`, `runGameTestServer`, `generateDocs`, and `collectJars` in sequence and reports each step's exit code. The root `cleanDev` task empties every module's `build/` and `run/` without removing the directories, and every `clean` empties `build/` rather than removing it, so the Dropbox ignore marks that `../dropbox-ignore.ps1` puts on those directories survive.
 
@@ -46,11 +46,11 @@ Forge owns its native loot declarations. Native `processResources` copies common
 
 The root project applies Spotless to the Java sources under `common/src`, `fabric/src`, and `forge/src`, every source set included. It formats code and javadoc with google-java-format in AOSP style (4-space indent), reorders imports, trims trailing whitespace, ends files with a newline, and honors `// spotless:off` / `// spotless:on`, which keep the `/sg` Brigadier trees in their hand layout. `spotlessApply` rewrites the files; `spotlessCheck` reports unformatted files but is not attached to `check`, so formatting never fails a build.
 
-Compiler analysis is opt-in for all production and GameTest source sets. `-Pquality=compiler` enables `-Xlint:all` with Java 17. `-Pquality=errorprone` adds Error Prone's default checks, using JDK 21 with `--release 17`, treating checker errors as warnings and reporting up to 1,000 compiler warnings. Game execution remains on Java 17; there is no `-Werror` or source rewriting. Unsupported quality values fail configuration; omitting the property uses ordinary Java 17 compilation.
+Analysis covers all source sets. `-Pquality=compiler` enables javac lint on Java 17; `-Pquality=errorprone` adds Error Prone defaults; `-Pquality=nullaway` also adds NullAway. Checker modes use JDK 21 with `--release 17`; ordinary builds and game runs use Java 17. Checks are advisory, with no `-Werror` or rewriting. Local exceptions follow `code-conventions.md`; unknown modes fail configuration.
 
-Error Prone is a routine advisory check alongside Spotless; local exceptions follow `code-conventions.md`.
+Capture with `.\gradlew.bat compileJava compileGametestJava -Pquality=nullaway --rerun-tasks --console=plain *> nullaway.log`. Checker modes add the Error Prone plugin, core processor and compile-only contract annotations. Only NullAway mode adds its processor. Mixin processing and refmaps remain enabled; `test`/`gametest` are marked as test code. Mode changes invalidate compilation. `errorprone_max_warnings` caps diagnostics. Checker dependencies are not bundled.
 
-Run `.\gradlew.bat compileJava compileGametestJava -Pquality=errorprone` to check production and GameTest sources. Only this mode applies the Error Prone plugin to subprojects and adds its core to the existing processor paths plus its annotations to each source set's compile-only classpath. Mixin processing and refmaps remain enabled; `test` and `gametest` are marked as test code. Compiler/tool arguments are task inputs, so mode changes invalidate compilation; add `--rerun-tasks` to repeat an unchanged run. Error Prone dependencies are not bundled or required at game runtime.
+NullAway checks `com.github.crittscott.somegoogly` with non-null defaults and existing `javax.annotation.Nullable`. It honors dependency nullability and verifies JetBrains predicate `@Contract` annotations with `CheckContracts`; unannotated APIs remain optimistic. JSpecify mode is off.
 
 ## Exact build versions
 
@@ -63,6 +63,7 @@ Run `.\gradlew.bat compileJava compileGametestJava -Pquality=errorprone` to chec
 | Spotless Gradle plugin | `8.12.0` | Runs the source formatter |
 | Error Prone Gradle plugin | `5.2.0` | Optional compiler integration |
 | Error Prone core and annotations | `2.53.0` | Default analysis checks and compile-only library contracts |
+| NullAway | `0.14.4` | Optional nullability checker on the processor path |
 | Error Prone compiler level | `21`, `--release 17` | Analysis compilation only; Minecraft runs on Java 17 |
 | google-java-format | `2.0.0`, AOSP style | Java source and javadoc formatting; runs in the Gradle host JVM |
 | Java toolchain level | `17` | Ordinary compilation, Javadoc, and Java execution |
@@ -102,6 +103,6 @@ Each loader expands its metadata (`fabric.mod.json`, `META-INF/mods.toml`) from 
 
 ## Resolution and version authorities
 
-`gradle.properties` is the authority for the Minecraft, mapping, loader, API, compatibility, integration, and mod versions. It also holds Java toolchain levels, the JSR 305, google-java-format, Error Prone, and external Gradle plugin versions, and the analysis warning limit; `settings.gradle` applies plugin versions through `pluginManagement`. Root `build.gradle` derives Minecraft and Forge metadata ranges, and `gradle/wrapper/gradle-wrapper.properties` pins Gradle. Loader scripts consume root properties rather than restating versions.
+`gradle.properties` is the authority for the Minecraft, mapping, loader, API, compatibility, integration, and mod versions. It also holds Java toolchain levels, the JSR 305, google-java-format, Error Prone, NullAway, and external Gradle plugin versions, and the analysis warning limit; `settings.gradle` applies plugin versions through `pluginManagement`. Root `build.gradle` derives Minecraft and Forge metadata ranges, and `gradle/wrapper/gradle-wrapper.properties` pins Gradle. Loader scripts consume root properties rather than restating versions.
 
 Plugin resolution uses Fabric Maven, Architectury Maven, Forge Maven, and the Gradle Plugin Portal. Every module declares Maven Central, Parchment Maven, and GeckoLib's Cloudsmith Maven; Forge also declares Modrinth Maven, exclusively for the `maven.modrinth` group, and CurseMaven, exclusively for the `curse.maven` group; Loom supplies its standard Minecraft repositories. There is no Gradle version catalog, dependency-lock state, dependency-verification metadata, exact JDK distribution, or wrapper-distribution checksum in the repository. Consequently, the table above records every exact version deliberately declared by the build, but it is not a lock of every transitive artifact selected by Gradle and Loom.

@@ -290,7 +290,10 @@ public final class PickerSpawnService {
      *     namespace that was dropped and why — a debugging aid for mods whose mobs don't appear.
      * @return the number of mobs spawned
      */
-    public static int spawn(CommandSourceStack source, ServerPlayer player, String modFilter) {
+    // filtering is true exactly when modFilter is present; only those branches format it.
+    @SuppressWarnings("NullAway")
+    public static int spawn(
+            CommandSourceStack source, ServerPlayer player, @Nullable String modFilter) {
         ServerLevel level = player.serverLevel();
 
         boolean filtering = modFilter != null && !modFilter.isBlank();

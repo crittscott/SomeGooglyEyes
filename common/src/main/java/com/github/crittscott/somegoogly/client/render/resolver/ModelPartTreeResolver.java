@@ -123,7 +123,7 @@ abstract class ModelPartTreeResolver implements EyeAttachmentResolver {
             List<NamedRoot> roots,
             String base,
             Iterable<ModelPart> parts,
-            Consumer<PoseStack> preTransform) {
+            @Nullable Consumer<PoseStack> preTransform) {
         int i = 0;
         for (ModelPart part : parts) {
             roots.add(new NamedRoot(i == 0 ? base : base + i, part, preTransform));

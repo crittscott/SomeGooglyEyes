@@ -53,6 +53,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
@@ -192,7 +193,8 @@ public final class SerializationGameTestsLogic {
         try {
             EyeBehaviorTriggerPacket.read(unknown);
         } catch (DecoderException e) {
-            rejected = e.getMessage().contains("Unknown eye behavior");
+            String message = e.getMessage();
+            rejected = message != null && message.contains("Unknown eye behavior");
         } finally {
             unknown.release();
         }
@@ -275,7 +277,12 @@ public final class SerializationGameTestsLogic {
         Map<ResourceLocation, RuntimeConfigSet> large = new HashMap<>();
         for (int i = 0; i < 1_200; i++) {
             RuntimeConfigSet set = sampleConfigSet();
-            set.any.variants.get(0).heads.get(0).eyes =
+            Objects.requireNonNull(set.any, "expected fixture value")
+                            .variants
+                            .get(0)
+                            .heads
+                            .get(0)
+                            .eyes =
                     Collections.nCopies(4, EyeDefinition.DEFAULT);
             large.put(new ResourceLocation("somegoogly", "sync_test_" + i), set);
         }
@@ -346,17 +353,24 @@ public final class SerializationGameTestsLogic {
                 "invalid gzip must be refused");
 
         RuntimeConfigSet tooManyVariants = sampleConfigSet();
-        tooManyVariants.any.variants =
+        Objects.requireNonNull(tooManyVariants.any, "expected fixture value").variants =
                 Collections.nCopies(
                         EyeConfigLimits.MAX_VARIANTS_PER_CONFIG + 1,
-                        tooManyVariants.any.variants.get(0));
+                        Objects.requireNonNull(tooManyVariants.any, "expected fixture value")
+                                .variants
+                                .get(0));
         FriendlyByteBuf counted = singleConfigPayload(tooManyVariants);
         helper.assertTrue(
                 rejectsConfig(counted, "variant count"),
                 "config sync must reject a config over the variant limit");
 
         RuntimeConfigSet unsafe = sampleConfigSet();
-        HeadConfig head = unsafe.any.variants.get(0).heads.get(0);
+        HeadConfig head =
+                Objects.requireNonNull(unsafe.any, "expected fixture value")
+                        .variants
+                        .get(0)
+                        .heads
+                        .get(0);
         head.eyes =
                 List.of(
                         new EyeDefinition(
@@ -632,7 +646,8 @@ public final class SerializationGameTestsLogic {
             EyeConfigSyncPacket.read(buffer);
             return false;
         } catch (DecoderException e) {
-            return e.getMessage().contains(diagnostic);
+            String message = e.getMessage();
+            return message != null && message.contains(diagnostic);
         } finally {
             buffer.release();
         }
@@ -656,8 +671,7 @@ public final class SerializationGameTestsLogic {
     }
 
     private static RuntimeConfigSet sampleConfigSet() {
-        HeadConfig head = new HeadConfig();
-        head.attachPoint = "head";
+        HeadConfig head = new HeadConfig("head");
         head.eyes = List.of(EyeDefinition.DEFAULT);
         Variant variant = new Variant();
         variant.weight = 1.0;

@@ -68,6 +68,8 @@ public final class PickerExportService {
      * Validate and perform one export. Returns localized feedback for the requesting player; the
      * caller ({@code PickerExportPacket}) has already authorized the sender.
      */
+    // A validated nonempty authored age survives overlay, so this export always has a file.
+    @SuppressWarnings("NullAway")
     public static Component export(
             MinecraftServer server,
             UUID playerId,

@@ -74,7 +74,7 @@ public final class ServerBehaviorScheduler {
     private ServerBehaviorScheduler() {}
 
     private static final class HandState {
-        EyeBehavior behavior;
+        @Nullable EyeBehavior behavior;
         long healReadyAt;
         final ItemStack item;
         long readyAt;
@@ -88,7 +88,7 @@ public final class ServerBehaviorScheduler {
 
     /** Per-mob schedule state. {@code busyUntil == 0} means idle. */
     private static final class MobState {
-        EyeBehavior activeBehavior; // the playing behavior (for mid-join catch-up)
+        @Nullable EyeBehavior activeBehavior; // the playing behavior (for mid-join catch-up)
         long activeSeed;
         boolean angry; // the anger last sent to this mob's trackers
         int ambientCooldown; // idle ticks remaining before the next ambient roll
@@ -100,6 +100,8 @@ public final class ServerBehaviorScheduler {
     }
 
     /** {@code mob}'s playing behavior for a viewer joining it partway through. */
+    // Only busy MobState entries are sent; start installs activeBehavior before making them busy.
+    @SuppressWarnings("NullAway")
     private static EyeBehaviorTriggerPacket catchUpPacket(LivingEntity mob, MobState state) {
         return new EyeBehaviorTriggerPacket(
                 mob.getId(),
@@ -120,6 +122,8 @@ public final class ServerBehaviorScheduler {
     }
 
     /** The active server clock shared by scheduling, cooldowns, and catch-up. */
+    // Scheduler entry points and tracked state are server-side, so their levels have a server.
+    @SuppressWarnings("NullAway")
     private static long clock(LivingEntity mob) {
         return mob.level().getServer().getTickCount();
     }
@@ -131,6 +135,7 @@ public final class ServerBehaviorScheduler {
      * is not a target. Returns {@code null} (caller no-ops) otherwise — so reactions never fire for
      * off-screen or eyeless mobs.
      */
+    @Nullable
     private static MobState eventTarget(LivingEntity mob) {
         MobState state = STATES.get(mob);
         if (!ServerConfig.GOOGLY_EYES_ENABLED.get() || state == null || !EyeState.hasEyes(mob)) {
@@ -151,6 +156,8 @@ public final class ServerBehaviorScheduler {
                 : null;
     }
 
+    // A hand packet is sent only for an installed, still-active expression.
+    @SuppressWarnings("NullAway")
     private static EyeBehaviorTriggerPacket handPacket(
             LivingEntity holder, InteractionHand hand, HandState state) {
         return new EyeBehaviorTriggerPacket(

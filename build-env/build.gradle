@@ -100,10 +100,11 @@ allprojects {
 
 // Compiler diagnostics are opt-in for every module and source set.
 def qualityLevel = providers.gradleProperty('quality').orNull
-if (qualityLevel != null && !(qualityLevel in ['compiler', 'errorprone'])) {
-    throw new GradleException("Unknown quality level '$qualityLevel'; use -Pquality=compiler, -Pquality=errorprone, or omit -Pquality.")
+if (qualityLevel != null && !(qualityLevel in ['compiler', 'errorprone', 'nullaway'])) {
+    throw new GradleException("Unknown quality level '$qualityLevel'; use -Pquality=compiler, -Pquality=errorprone, -Pquality=nullaway, or omit -Pquality.")
 }
-def errorProneEnabled = qualityLevel == 'errorprone'
+def nullAwayEnabled = qualityLevel == 'nullaway'
+def errorProneEnabled = qualityLevel in ['errorprone', 'nullaway']
 
 subprojects {
     if (errorProneEnabled) {
@@ -150,6 +151,9 @@ subprojects {
         if (errorProneEnabled) {
             errorprone "com.google.errorprone:error_prone_core:$rootProject.errorprone_version"
         }
+        if (nullAwayEnabled) {
+            errorprone "com.uber.nullaway:nullaway:$rootProject.nullaway_version"
+        }
     }
 
     java {
@@ -173,6 +177,12 @@ subprojects {
             options.compilerArgs.add('-XDaddTypeAnnotationsToSymbol=true')
             options.compilerArgs.addAll(['-Xmaxwarns', rootProject.errorprone_max_warnings])
             options.errorprone.allErrorsAsWarnings = true
+        }
+        if (nullAwayEnabled) {
+            options.errorprone.warn('NullAway')
+            options.errorprone.option('NullAway:AnnotatedPackages', 'com.github.crittscott.somegoogly')
+            options.errorprone.option('NullAway:AcknowledgeRestrictiveAnnotations', 'true')
+            options.errorprone.option('NullAway:CheckContracts', 'true')
         }
     }
     if (errorProneEnabled) {

@@ -9,6 +9,8 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 
+import javax.annotation.Nullable;
+
 /**
  * Server-to-client transient expression on an entity's applied eyes or one specified held hand.
  * Each scope carries its behavior, seed, and elapsed time; newly tracking viewers receive the
@@ -31,6 +33,7 @@ public record EyeBehaviorTriggerPacket(
             this.wireId = wireId;
         }
 
+        @Nullable
         public static Target byWireId(int wireId) {
             for (Target target : values()) if (target.wireId == wireId) return target;
             return null;

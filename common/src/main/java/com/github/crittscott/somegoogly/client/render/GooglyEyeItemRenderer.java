@@ -99,7 +99,7 @@ public class GooglyEyeItemRenderer extends BlockEntityWithoutLevelRenderer {
             animated.itemGravity = false;
             animated.capturePose(EYE_LOCAL_POSE, null);
         }
-        if (presented != null && !isFirstPersonHand(ctx)) {
+        if (animated != null && !isFirstPersonHand(ctx)) {
             animated.itemGravity = ctx != ItemDisplayContext.GUI;
             GooglyEyeRenderer.captureGravity(pose, animated);
         }

@@ -54,6 +54,8 @@ public final class PickerExporter {
      * codec-encode the draft; all real validation — and the authoritative feedback — is the
      * server's ({@code PickerExportService}).
      */
+    // targetType and currentDraftAge describe the same retained draft on this client-thread call.
+    @SuppressWarnings("NullAway")
     public static Component export() {
         ResourceLocation type = PickerState.targetType();
         if (type == null || PickerState.totalEyeCount() == 0) {

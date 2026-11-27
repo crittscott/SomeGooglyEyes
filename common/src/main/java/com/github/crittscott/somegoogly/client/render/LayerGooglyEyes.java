@@ -69,6 +69,8 @@ public class LayerGooglyEyes<T extends LivingEntity, M extends EntityModel<T>>
         }
     }
 
+    // The caller gates on data.helper; extract creates helper and tracker together.
+    @SuppressWarnings("NullAway")
     private void renderEyes(
             PoseStack poseStack,
             MultiBufferSource bufferSource,

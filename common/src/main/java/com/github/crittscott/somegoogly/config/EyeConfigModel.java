@@ -10,6 +10,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.resources.ResourceLocation;
 
+import org.jetbrains.annotations.Contract;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -236,8 +238,7 @@ public final class EyeConfigModel {
                                 .apply(
                                         inst,
                                         (attachPoint, eyes) -> {
-                                            HeadConfig head = new HeadConfig();
-                                            head.attachPoint = attachPoint;
+                                            HeadConfig head = new HeadConfig(attachPoint);
                                             head.eyes = eyes;
                                             return head;
                                         }));
@@ -247,6 +248,10 @@ public final class EyeConfigModel {
 
         /** Required eye list; installed heads contain at least one eye. */
         public List<EyeDefinition> eyes = List.of();
+
+        public HeadConfig(String attachPoint) {
+            this.attachPoint = attachPoint;
+        }
     }
 
     /** Runtime structure selected by version and age, then synchronized to clients. */
@@ -280,6 +285,7 @@ public final class EyeConfigModel {
         public List<Variant> variants = List.of();
 
         /** Whether a config is present, enabled, and has at least one variant. */
+        @Contract("null -> false")
         public static boolean isUsable(@Nullable RuntimeConfig config) {
             return config != null && config.enabled && !config.variants.isEmpty();
         }
@@ -302,8 +308,7 @@ public final class EyeConfigModel {
                     if (sourceHead.eyes.isEmpty()) {
                         continue;
                     }
-                    HeadConfig head = new HeadConfig();
-                    head.attachPoint = canon.apply(sourceHead.attachPoint);
+                    HeadConfig head = new HeadConfig(canon.apply(sourceHead.attachPoint));
                     head.eyes = sourceHead.eyes;
                     heads.add(head);
                 }

@@ -9,6 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Cow;
 
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -96,8 +97,8 @@ public final class PickerFreezeGameTestsLogic {
                 PickerFreezeService.freeze(helper.getLevel(), first, cow.getUUID()) == null,
                 "the first editor should freeze the mob");
         Component refusal = PickerFreezeService.freeze(helper.getLevel(), second, cow.getUUID());
-        helper.assertTrue(
-                refusal != null,
+        Objects.requireNonNull(
+                refusal,
                 "a second editor must be refused (a second capture would read"
                         + " the forced NoAi as the original)");
         helper.assertTrue(cow.isNoAi(), "the refused attempt must not disturb the freeze");

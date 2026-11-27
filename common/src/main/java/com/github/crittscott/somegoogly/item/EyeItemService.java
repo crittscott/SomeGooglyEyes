@@ -172,6 +172,8 @@ public final class EyeItemService {
      * the head loses its eyes, the shears in {@code hand} lose one durability, the shearing sound
      * plays, and {@link GameEvent#SHEAR} is emitted.
      */
+    // useOnSkull accepts a registered, loaded head before invoking this harvest path.
+    @SuppressWarnings("NullAway")
     private static InteractionResult harvestSkull(
             ServerPlayer player, InteractionHand hand, BlockEntity skull) {
         ItemStack shears = player.getItemInHand(hand);
@@ -479,6 +481,8 @@ public final class EyeItemService {
      * Whether the placed head {@code skull} can receive eyes, by what its side knows: its mob needs
      * an adult definition, which the head borrows, with eyes the head shows.
      */
+    // Block-use callers supply a loaded head; its level is attached for the interaction.
+    @SuppressWarnings("NullAway")
     public static Verdict verdictFor(BlockEntity skull) {
         Level level = skull.getLevel();
         ResourceLocation entity = SkullEyeState.entityFor(skull.getBlockState().getBlock());

@@ -100,6 +100,7 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
     protected abstract String intrinsicName(Object part);
 
     /** The box's parent, or {@code null} for a root. */
+    @Nullable
     protected abstract Object rawParent(Object part) throws ReflectiveOperationException;
 
     /** Apply the box's local pose transform (the family's translate+rotate). */
@@ -132,6 +133,7 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
      * The parent box of {@code model}'s {@code part}, or {@code null} for a root or on reflection
      * failure.
      */
+    @Nullable
     private Object parentOf(EntityModel<?> model, Object part) {
         try {
             Object parent = rawParent(part);
@@ -243,6 +245,7 @@ abstract class ReflectedBoxResolver implements EyeAttachmentResolver {
         return EyeConfigModel.attachmentPath(segments);
     }
 
+    @Nullable
     private String segmentName(Object box, IdentityHashMap<Object, String> fallbackNames) {
         String named = intrinsicName(box);
         if (!EyeAttachmentResolver.normalize(named).isEmpty()) {

@@ -39,8 +39,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.function.UnaryOperator;
+
+import javax.annotation.Nullable;
 
 /**
  * The server-side export validation ({@link PickerExportService}) and the canonical JSON it emits.
@@ -81,8 +84,7 @@ public final class PickerExportGameTestsLogic {
      * and open any exported JSON; every eye lists {@code "crossTarget"}, including {@code -1}.
      */
     public static void canonicalJsonWritesDefaultValuedFields(GameTestHelper helper) {
-        HeadConfig head = new HeadConfig();
-        head.attachPoint = "head";
+        HeadConfig head = new HeadConfig("head");
         head.eyes = List.of(EyeDefinition.DEFAULT);
         Variant variant = new Variant();
         variant.heads = List.of(head);
@@ -148,31 +150,34 @@ public final class PickerExportGameTestsLogic {
                 session.select(cow, false, () -> draft(99F)) == adult,
                 "returning to an adult reuses only its adult draft");
         helper.assertTrue(
-                session.current().key().age().equals(AGE_ADULT), "adult draft keeps its age");
+                Objects.requireNonNull(session.current(), "selected draft must remain installed")
+                        .key()
+                        .age()
+                        .equals(AGE_ADULT),
+                "adult draft keeps its age");
         helper.assertTrue(
                 session.select(cow, true, () -> draft(99F)) == baby,
                 "returning to a baby reuses only its baby draft");
         helper.assertTrue(
-                session.current().key().age().equals(AGE_BABY), "baby draft keeps its age");
+                Objects.requireNonNull(session.current(), "selected draft must remain installed")
+                        .key()
+                        .age()
+                        .equals(AGE_BABY),
+                "baby draft keeps its age");
         Map<ResourceLocation, Map<String, RuntimeConfig>> exports = session.exports();
+        Map<String, RuntimeConfig> cowExports =
+                Objects.requireNonNull(exports.get(cow), "cow drafts must be exported");
+        RuntimeConfig adultExport =
+                Objects.requireNonNull(cowExports.get(AGE_ADULT), "adult draft must be exported");
+        RuntimeConfig babyExport =
+                Objects.requireNonNull(cowExports.get(AGE_BABY), "baby draft must be exported");
+
         helper.assertTrue(
-                exports.size() == 2 && exports.get(cow).size() == 2,
+                exports.size() == 2 && cowExports.size() == 2,
                 "export retains both cow ages and the other species");
         helper.assertTrue(
-                exports.get(cow)
-                                        .get(AGE_ADULT)
-                                        .variants
-                                        .get(0)
-                                        .heads
-                                        .get(0)
-                                        .eyes
-                                        .get(0)
-                                        .placement()
-                                        .position()
-                                        .x
-                                == 4F
-                        && exports.get(cow)
-                                        .get(AGE_BABY)
+                adultExport.variants.get(0).heads.get(0).eyes.get(0).placement().position().x == 4F
+                        && babyExport
                                         .variants
                                         .get(0)
                                         .heads
@@ -192,8 +197,7 @@ public final class PickerExportGameTestsLogic {
     }
 
     private static RuntimeConfig exportConfig(float x, double weight, boolean enabled) {
-        HeadConfig head = new HeadConfig();
-        head.attachPoint = "head";
+        HeadConfig head = new HeadConfig("head");
         head.eyes =
                 List.of(
                         new EyeDefinition(
@@ -445,8 +449,7 @@ public final class PickerExportGameTestsLogic {
      * forged export packet.
      */
     public static void exportRejectsUnsafeNumericConfig(GameTestHelper helper) {
-        HeadConfig head = new HeadConfig();
-        head.attachPoint = "head";
+        HeadConfig head = new HeadConfig("head");
         head.eyes =
                 List.of(
                         new EyeDefinition(
@@ -465,7 +468,8 @@ public final class PickerExportGameTestsLogic {
         config.variants = List.of(variant);
         EyeConfigLimits.Issue error = EyeConfigLimits.validateRuntimeConfig(config);
         helper.assertTrue(
-                error.message()
+                Objects.requireNonNull(error, "expected fixture value")
+                        .message()
                         .equals(
                                 Component.translatable(
                                         "somegoogly.validation.eye_context",
@@ -509,8 +513,7 @@ public final class PickerExportGameTestsLogic {
     // Retain 1.20.1 identifier constructors; Forge's warning concerns porting to 1.21.
     @SuppressWarnings("removal")
     public static void exportRejectsWhatTheSyncCouldNotCarry(GameTestHelper helper) {
-        HeadConfig head = new HeadConfig();
-        head.attachPoint = "head";
+        HeadConfig head = new HeadConfig("head");
         head.eyes = List.of(EyeDefinition.DEFAULT);
         Variant variant = new Variant();
         variant.heads = List.of(head);
@@ -528,8 +531,7 @@ public final class PickerExportGameTestsLogic {
         for (int part = 0;
                 part < EyeConfigLimits.MAX_TOTAL_EYES_PER_SYNC / EyeConfigLimits.MAX_EYES_PER_HEAD;
                 part++) {
-            HeadConfig fullHead = new HeadConfig();
-            fullHead.attachPoint = "head";
+            HeadConfig fullHead = new HeadConfig("head");
             fullHead.eyes =
                     Collections.nCopies(EyeConfigLimits.MAX_EYES_PER_HEAD, EyeDefinition.DEFAULT);
             Variant fullVariant = new Variant();
@@ -561,7 +563,8 @@ public final class PickerExportGameTestsLogic {
         helper.succeed();
     }
 
-    private static ConfigFile roundTripFile(ConfigFile file) {
+    private static ConfigFile roundTripFile(@Nullable ConfigFile file) {
+        Objects.requireNonNull(file, "authored fixture must produce an export");
         return ConfigFile.CODEC
                 .parse(
                         JsonOps.INSTANCE,

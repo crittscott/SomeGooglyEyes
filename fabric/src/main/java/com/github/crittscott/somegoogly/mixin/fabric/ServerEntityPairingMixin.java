@@ -22,7 +22,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ServerEntity.class)
 abstract class ServerEntityPairingMixin {
 
-    @Shadow @Final private Entity entity;
+    // Mixin aliases the initialized ServerEntity field; this class never constructs it.
+    @SuppressWarnings("NullAway.Init")
+    @Shadow
+    @Final
+    private Entity entity;
 
     // Mixin invokes this handler; unused parameters preserve its injection signature.
     @SuppressWarnings({"UnusedMethod", "UnusedVariable"})

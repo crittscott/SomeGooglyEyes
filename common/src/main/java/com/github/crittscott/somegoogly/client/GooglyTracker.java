@@ -355,7 +355,7 @@ public final class GooglyTracker {
         public float tintAmount, prevTintAmount;
 
         /** Color-change target color; see {@link #scaleMul}. */
-        public float[] tintColor;
+        @Nullable public float[] tintColor;
 
         /** How far the pupil is blended toward {@link #ANGER_IRIS_COLOR}; see {@link #scaleMul}. */
         public float irisTintAmount, prevIrisTintAmount;

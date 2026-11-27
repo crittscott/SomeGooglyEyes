@@ -208,12 +208,11 @@ public class GooglyClientCommands {
     private static int move(CommandContext<?> ctx) throws CommandSyntaxException {
         requireAuthorized();
         requireChosen();
-        requireDraft();
+        EyeDraft e = requireDraft();
         PickerState.setPosition(
                 MaybeFloatArgumentType.get(ctx, "x"),
                 MaybeFloatArgumentType.get(ctx, "y"),
                 MaybeFloatArgumentType.get(ctx, "z"));
-        EyeDraft e = PickerState.currentEye();
         feedback(
                 "somegoogly.command.picker.position",
                 position(e.position[0]),
@@ -222,6 +221,8 @@ public class GooglyClientCommands {
         return 1;
     }
 
+    // A successful setPart operation installs the selected token before this feedback.
+    @SuppressWarnings("NullAway")
     private static int part(CommandContext<?> ctx) throws CommandSyntaxException {
         requireAuthorized();
         requireChosen();
@@ -247,7 +248,7 @@ public class GooglyClientCommands {
     private static int posrot(CommandContext<?> ctx) throws CommandSyntaxException {
         requireAuthorized();
         requireChosen();
-        requireDraft();
+        EyeDraft e = requireDraft();
         PickerState.setPosition(
                 MaybeFloatArgumentType.get(ctx, "x"),
                 MaybeFloatArgumentType.get(ctx, "y"),
@@ -255,7 +256,6 @@ public class GooglyClientCommands {
         PickerState.setRotation(
                 MaybeFloatArgumentType.get(ctx, "inclination"),
                 MaybeFloatArgumentType.get(ctx, "azimuth"));
-        EyeDraft e = PickerState.currentEye();
         feedback(
                 "somegoogly.command.picker.posrot",
                 position(e.position[0]),
@@ -276,12 +276,12 @@ public class GooglyClientCommands {
     private static int propCrossTarget(CommandContext<?> ctx) throws CommandSyntaxException {
         requireAuthorized();
         requireChosen();
-        requireDraft();
+        EyeDraft eye = requireDraft();
         int n = IntegerArgumentType.getInteger(ctx, "v");
         if (!PickerState.setCrossTarget(n)) {
             throw BAD_CROSS_TARGET.create(n);
         }
-        int target = PickerState.currentEye().crossTarget;
+        int target = eye.crossTarget;
         if (target == EyePlacement.NO_CROSS_TARGET) {
             feedback("somegoogly.command.picker.cross_target_cleared");
         } else {
@@ -492,10 +492,12 @@ public class GooglyClientCommands {
      * Guard the shaping verbs (move/rot/properties/save): they need a live draft, never auto-vivify
      * one.
      */
-    private static void requireDraft() throws CommandSyntaxException {
-        if (!PickerState.hasDraft()) {
+    private static EyeDraft requireDraft() throws CommandSyntaxException {
+        EyeDraft draft = PickerState.currentEye();
+        if (draft == null) {
             throw NO_DRAFT.create();
         }
+        return draft;
     }
 
     private static void requireAuthorized() throws CommandSyntaxException {
@@ -519,11 +521,10 @@ public class GooglyClientCommands {
     private static int rot(CommandContext<?> ctx) throws CommandSyntaxException {
         requireAuthorized();
         requireChosen();
-        requireDraft();
+        EyeDraft e = requireDraft();
         PickerState.setRotation(
                 MaybeFloatArgumentType.get(ctx, "inclination"),
                 MaybeFloatArgumentType.get(ctx, "azimuth"));
-        EyeDraft e = PickerState.currentEye();
         feedback("somegoogly.command.picker.rotation", angle(e.inclination), angle(e.azimuth));
         return 1;
     }

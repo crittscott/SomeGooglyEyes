@@ -1,6 +1,5 @@
 package com.github.crittscott.somegoogly.gametest;
 
-import com.github.crittscott.somegoogly.client.PresentationEyes;
 import com.github.crittscott.somegoogly.config.ClientEyeConfigs;
 import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
@@ -57,7 +56,8 @@ public final class HandItemEyeGameTestsLogic {
         var localToWorld = new Matrix3f().rotationZ((float) (Math.PI / 2D)).scale(4F);
         var viewPose =
                 new Matrix3f().rotationX(pitch).rotateY(yaw + (float) Math.PI).mul(localToWorld);
-        var rotated = PresentationEyes.create(FIRST, new ItemStack(ModContent.GOOGLY_EYE.get()));
+        var rotated =
+                TestEyeRuntime.presentation(FIRST, new ItemStack(ModContent.GOOGLY_EYE.get()));
         rotated.eye.capturePose(viewPose, camera);
         helper.assertTrue(
                 Math.abs(rotated.eye.gravX - 1F) < PHYSICS_TOLERANCE
@@ -74,7 +74,8 @@ public final class HandItemEyeGameTestsLogic {
         helper.assertTrue(
                 rotated.eye.deltaX > 0.5F && Math.abs(rotated.eye.deltaY) < 0.1F,
                 "the pupil falls along projected world-down");
-        var horizontal = PresentationEyes.create(FIRST, new ItemStack(ModContent.GOOGLY_EYE.get()));
+        var horizontal =
+                TestEyeRuntime.presentation(FIRST, new ItemStack(ModContent.GOOGLY_EYE.get()));
         horizontal.eye.capturePose(new Matrix3f().rotationX((float) (Math.PI / 2D)), null);
         helper.assertTrue(
                 Math.abs(horizontal.eye.gravX) < PHYSICS_TOLERANCE
@@ -155,18 +156,18 @@ public final class HandItemEyeGameTestsLogic {
                 cache.get(firstHolder, InteractionHand.MAIN_HAND, copy) != changed,
                 "hiding eyes clears hand animation, so showing them again starts fresh");
         helper.assertTrue(
-                cache.get(
+                cache.find(
                                 firstHolder,
                                 InteractionHand.MAIN_HAND,
                                 new ItemStack(Items.SKELETON_SKULL))
                         == null,
                 "plain heads do not acquire eyes");
         helper.assertTrue(
-                cache.get(firstHolder, InteractionHand.MAIN_HAND, new ItemStack(Items.DIAMOND))
+                cache.find(firstHolder, InteractionHand.MAIN_HAND, new ItemStack(Items.DIAMOND))
                         == null,
                 "ordinary items are unsupported");
         helper.assertTrue(
-                cache.get(firstHolder, InteractionHand.MAIN_HAND, ItemStack.EMPTY) == null,
+                cache.find(firstHolder, InteractionHand.MAIN_HAND, ItemStack.EMPTY) == null,
                 "empty hands are unsupported");
         helper.succeed();
     }
@@ -258,7 +259,9 @@ public final class HandItemEyeGameTestsLogic {
                 eye.active != null && eye.active.age == 1, "world time selects expression age");
         cache.get(firstHolder, InteractionHand.MAIN_HAND, eye());
         cache.tick(2L, false, blink);
-        helper.assertTrue(eye.active.age == 1, "pause freezes the hand expression");
+        helper.assertTrue(
+                Objects.requireNonNull(eye.active, "expected fixture value").age == 1,
+                "pause freezes the hand expression");
         cache.get(firstHolder, InteractionHand.MAIN_HAND, eye());
         cache.tick(2L, true, blink);
         helper.assertTrue(eye.active.age == 2, "resume follows world time");

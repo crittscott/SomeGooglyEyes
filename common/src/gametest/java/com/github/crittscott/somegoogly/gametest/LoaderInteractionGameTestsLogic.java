@@ -23,6 +23,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 
@@ -78,7 +79,9 @@ public final class LoaderInteractionGameTestsLogic {
 
     private static EyeState.Snapshot snapshot(
             @Nullable Entity entity, @Nullable BlockEntity block) {
-        return block == null ? EyeState.snapshot(entity) : SkullEyeState.snapshot(block);
+        return block == null
+                ? EyeState.snapshot(Objects.requireNonNull(entity, "entity interaction fixture"))
+                : SkullEyeState.snapshot(block);
     }
 
     /**
@@ -115,7 +118,9 @@ public final class LoaderInteractionGameTestsLogic {
                 }
                 Entity stateTarget = kind.equals("self") ? player : target;
                 if (block != null) SkullEyeState.set(block, EyeState.Snapshot.NONE);
-                else EyeState.disableAndClearProperties(stateTarget);
+                else
+                    EyeState.disableAndClearProperties(
+                            Objects.requireNonNull(stateTarget, "entity interaction fixture"));
                 player.setShiftKeyDown(kind.equals("self"));
                 if (kind.equals("self")) {
                     // The self-shear acts only when aimed at nothing; this player is discarded

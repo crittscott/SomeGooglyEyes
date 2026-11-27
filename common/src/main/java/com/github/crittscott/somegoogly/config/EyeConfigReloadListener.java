@@ -33,6 +33,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import javax.annotation.Nullable;
+
 /**
  * Loads eye geometry configs from datapacks: scans {@code data/<namespace>/eyes/*.json}, one file
  * per entity (the file path is the entity id). Each file contains versioned/age-selected entries;
@@ -80,8 +82,8 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
     @Override
     protected void apply(
             Map<ResourceLocation, JsonElement> files,
-            ResourceManager resourceManager,
-            ProfilerFiller profiler) {
+            @Nullable ResourceManager resourceManager,
+            @Nullable ProfilerFiller profiler) {
         Map<ResourceLocation, RuntimeConfigSet> selected = new HashMap<>();
         int skippedModNotInstalled = 0;
         int failedParse = 0;
@@ -175,7 +177,10 @@ public class EyeConfigReloadListener extends SimpleJsonResourceReloadListener {
     }
 
     private static RuntimeConfig choose(
-            ResourceLocation entityId, String age, RuntimeConfig existing, RuntimeConfig next) {
+            ResourceLocation entityId,
+            String age,
+            @Nullable RuntimeConfig existing,
+            RuntimeConfig next) {
         if (existing != null) {
             SomeGooglyCommon.LOGGER.warn(
                     "Multiple SomeGoogly entries match {} age {}; keeping the first",

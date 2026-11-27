@@ -1,0 +1,1429 @@
+
+> Configure project :
+Architect Plugin: 3.5.170
+Architectury Loom: 1.17.493
+
+> Task :fabric:processResources
+> Task :forge:processResources
+
+> Task :common:compileJava
+warning: No processor claimed any of these annotations: /javax.annotation.Nonnull,/javax.annotation.Nullable,/dev.architectury.injectables.annotations.ExpectPlatform,/org.spongepowered.asm.mixin.Unique
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\config\EyeConfigModel.java:246: warning: [NullAway] @NonNull field 'EyeConfigModel$HeadConfig.attachPoint' not initialized
+        public String attachPoint;
+                      ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\ClientEyeRuntime.java:152: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+            return config == current && attachment.equals(BoatEyeLayout.attachment(boat));
+                          ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'return Objects.equals(config, current) && attachment.equals(BoatEyeLayout.attachment(boat));' or 'return config.equals(current) && attachment.equals(BoatEyeLayout.attachment(boat));'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\ClientEyeRuntime.java:231: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+                draw == current.draw()
+                     ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'Objects.equals(draw, current.draw())' or 'draw.equals(current.draw())'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\ClientEyeRuntime.java:424: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+        if (entry == null || entry.holder != holder || !entry.eyes.matches(stack)) {
+                                          ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'if (entry == null || !Objects.equals(entry.holder, holder) || !entry.eyes.matches(stack)) {' or 'if (entry == null || !entry.holder.equals(holder) || !entry.eyes.matches(stack)) {'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\ClientEyeRuntime.java:585: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+        if (eyes != null && eyes.headData != data) {
+                                          ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'if (eyes != null && !Objects.equals(eyes.headData, data)) {' or 'if (eyes != null && !eyes.headData.equals(data)) {'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\ClientEyeRuntime.java:646: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+        if (tracker.receivedBehavior != received) {
+                                     ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'if (!Objects.equals(tracker.receivedBehavior, received)) {' or 'if (!tracker.receivedBehavior.equals(received)) {'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\ClientEyeRuntime.java:710: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+                (key, entry) -> key.view() != HUD && key.view() != view,
+                                                                ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean '(key, entry) -> key.view() != HUD && !Objects.equals(key.view(), view),' or '(key, entry) -> key.view() != HUD && !key.view().equals(view),'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\ClientEyeRuntime.java:251: warning: [NullAway] passing @Nullable parameter 'config' where @NonNull is required
+        if (entry == null || !entry.matches(boat, config)) {
+                                                  ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\ClientEyeRuntime.java:261: warning: [NullAway] passing @Nullable parameter 'config' where @NonNull is required
+                            config,
+                            ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\ClientEyeRuntime.java:376: warning: [NullAway] returning @Nullable expression from method with @NonNull return type
+                return null;
+                ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\ClientEyeRuntime.java:421: warning: [NullAway] returning @Nullable expression from method with @NonNull return type
+            return null;
+            ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\ClientEyeRuntime.java:429: warning: [NullAway] returning @Nullable expression from method with @NonNull return type
+                return null;
+                ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\ClientEyeRuntime.java:455: warning: [NullAway] dereferenced expression 'entry.eyes.snapshot' is @Nullable
+        if (entry != null && !entry.eyes.snapshot.equals(snapshot)) {
+                                                 ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\ClientEyeRuntime.java:592: warning: [NullAway] dereferenced expression 'eyes.entity' is @Nullable
+        if (eyes == null || !eyes.entity.equals(entity)) {
+                                        ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\ClientEyeRuntime.java:754: warning: [NullAway] passing @Nullable parameter 'ClientEyeConfigs.get(
+                                        ClientEyeConfigs.get(
+                                                            ^
+                                                  EntityType.getKey(boat.getType()), false)' where @NonNull is required
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\eye\behavior\EyeBehavior.java:60: warning: [NullAway] dereferenced expression 'i.mask' is @Nullable
+            if (i.mask[head][eye]) {
+                      ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\eye\behavior\EyeBehavior.java:132: warning: [NullAway] assigning @Nullable expression to @NonNull field
+            out.corneaTint = i.tintColor;
+                           ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\PresentationEyes.java:215: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+                this.owner != owner || motionTick == Long.MIN_VALUE || gameTime != motionTick + 1;
+                           ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean '!Objects.equals(this.owner, owner) || motionTick == Long.MIN_VALUE || gameTime != motionTick + 1;' or '!this.owner.equals(owner) || motionTick == Long.MIN_VALUE || gameTime != motionTick + 1;'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\PresentationEyes.java:232: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+        if (settings != behaviors) {
+                     ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'if (!Objects.equals(settings, behaviors)) {' or 'if (!settings.equals(behaviors)) {'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\PresentationEyes.java:263: warning: [NullAway] dereferenced expression 'slotBehavior' is @Nullable
+            if (elapsed >= 0 && elapsed < slotBehavior.defaultDuration()) {
+                                                      ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\eye\HeadInfo.java:27: warning: [NullAway] assigning @Nullable expression to @NonNull field
+        this.orientations = heads == null ? null : new Quaternionf[heads.size()][];
+                          ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\eye\HeadInfo.java:37: warning: [NullAway] assigning @Nullable expression to @NonNull field
+        this.heads =
+                   ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\eye\HeadInfo.java:43: warning: [NullAway] assigning @Nullable expression to @NonNull field
+        this.orientations = heads == null ? null : new Quaternionf[heads.size()][];
+                          ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\eye\HeadInfo.java:77: warning: [NullAway] returning @Nullable expression from method with @NonNull return type
+            return null;
+            ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\GooglyTracker.java:746: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+        return this.helper.headsRef() == helper.headsRef();
+                                      ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'return Objects.equals(this.helper.headsRef(), helper.headsRef());' or 'return this.helper.headsRef().equals(helper.headsRef());'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\GooglyTracker.java:392: warning: [NullAway] initializer method does not guarantee @NonNull field 'tintColor' (line 358) is initialized along all control-flow paths (remember to check for exceptions or early returns).
+        public EyeInfo() {
+               ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\eye\behavior\EyeInfluence.java:61: warning: [NullAway] initializer method does not guarantee @NonNull field 'corneaTint' (line 56) is initialized along all control-flow paths (remember to check for exceptions or early returns).
+    public EyeInfluence() {
+           ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\eye\behavior\EyeInfluence.java:73: warning: [NullAway] assigning @Nullable expression to @NonNull field
+        corneaTint = null;
+                   ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\ClientNetworkHandler.java:71: warning: [NullAway] passing @Nullable parameter 'entity' where @NonNull is required
+        if (!(entity instanceof LivingEntity) && !BoatEyeLayout.supports(entity)) {
+                                                                         ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\ClientNetworkHandler.java:74: warning: [NullAway] passing @Nullable parameter 'entity' where @NonNull is required
+        EyeState.applySnapshot(entity, packet.snapshot());
+                               ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\ClientNetworkHandler.java:81: warning: [NullAway] passing @Nullable parameter 'entity' where @NonNull is required
+            ClientEyeRuntime.onBoatState(entity, packet.snapshot());
+                                         ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\ClientNetworkHandler.java:88: warning: [NullAway] returning @Nullable expression from method with @NonNull return type
+            return null;
+            ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\ClientNetworkHandler.java:91: warning: [NullAway] returning @Nullable expression from method with @NonNull return type
+        return entity instanceof LivingEntity living ? living : null;
+        ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\network\EyeBehaviorTriggerPacket.java:36: warning: [NullAway] returning @Nullable expression from method with @NonNull return type
+            return null;
+            ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\network\EyeConfigSyncPacket.java:110: warning: [NullAway] returning @Nullable expression from method with @NonNull return type
+        return encoded;
+        ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\network\EyeConfigSyncPacket.java:190: warning: [NullAway] dereferenced expression 'compressed' is @Nullable
+            size = compressed.length;
+                             ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\config\EyeConfigLimits.java:132: warning: [NullAway] returning @Nullable expression from method with @NonNull return type
+        return null;
+        ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\config\EyeConfigLimits.java:138: warning: [NullAway] returning @Nullable expression from method with @NonNull return type
+            return null;
+            ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\config\EyeConfigLimits.java:141: warning: [NullAway] returning @Nullable expression from method with @NonNull return type
+        return error == null
+        ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\config\EyeConfigLimits.java:239: warning: [NullAway] returning @Nullable expression from method with @NonNull return type
+        return null;
+        ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\picker\PickerState.java:435: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+        return active && entity == target.get();
+                                ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'return active && Objects.equals(entity, target.get());' or 'return active && entity.equals(target.get());'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\picker\PickerState.java:75: warning: [NullAway] assigning @Nullable expression to @NonNull field
+    private static EyeDraft currentEye = null;
+                            ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\picker\PickerState.java:78: warning: [NullAway] assigning @Nullable expression to @NonNull field
+    private static String currentPart = null;
+                          ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\picker\PickerState.java:102: warning: [NullAway] @NonNull field 'PickerState$DraftSession.current' not initialized
+        private Draft current;
+                      ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\picker\PickerState.java:107: warning: [NullAway] assigning @Nullable expression to @NonNull field
+            current = null;
+                    ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\picker\PickerState.java:253: warning: [NullAway] assigning @Nullable expression to @NonNull field
+        currentEye = null;
+                   ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\picker\PickerState.java:259: warning: [NullAway] assigning @Nullable expression to @NonNull field
+        currentPart = null;
+                    ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\picker\PickerState.java:274: warning: [NullAway] returning @Nullable expression from method with @NonNull return type
+        return draft == null ? null : draft.key().age();
+        ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\picker\PickerState.java:524: warning: [NullAway] assigning @Nullable expression to @NonNull field
+        currentPart = null;
+                    ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\picker\PickerState.java:763: warning: [NullAway] returning @Nullable expression from method with @NonNull return type
+        return target.get();
+        ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\picker\PickerState.java:769: warning: [NullAway] returning @Nullable expression from method with @NonNull return type
+        return draft == null ? null : draft.key().type();
+        ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\network\PickerFreezePacket.java:89: warning: [NullAway] passing @Nullable parameter 'packet.mobId' where @NonNull is required
+                            sender.serverLevel(), sender.getUUID(), packet.mobId);
+                                                                          ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\compat\gecko\GooglyGeoLayer.java:199: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+            if (frame.headBones[h] != bone) {
+                                   ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'if (!Objects.equals(frame.headBones[h], bone)) {' or 'if (!frame.headBones[h].equals(bone)) {'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\compat\gecko\GooglyGeoLayer.java:226: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+            if (frame.savedEyeBones[i] != bone) {
+                                       ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'if (!Objects.equals(frame.savedEyeBones[i], bone)) {' or 'if (!frame.savedEyeBones[i].equals(bone)) {'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\compat\gecko\GooglyGeoLayer.java:237: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+        if (frame.gizmoBone == bone) {
+                            ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'if (Objects.equals(frame.gizmoBone, bone)) {' or 'if (frame.gizmoBone.equals(bone)) {'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\compat\gecko\GooglyGeoLayer.java:74: warning: [NullAway] initializer method does not guarantee @NonNull field 'frame' (line 52) is initialized along all control-flow paths (remember to check for exceptions or early returns).
+    public GooglyGeoLayer(GeoRenderer<T> renderer) {
+           ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\compat\gecko\GooglyGeoLayer.java:61: warning: [NullAway] @NonNull field 'GooglyGeoLayer$Frame.helper' not initialized
+        HeadInfo helper;
+                 ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\compat\gecko\GooglyGeoLayer.java:62: warning: [NullAway] @NonNull field 'GooglyGeoLayer$Frame.overrides' not initialized
+        AppearanceOverride overrides;
+                           ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\compat\gecko\GooglyGeoLayer.java:63: warning: [NullAway] @NonNull field 'GooglyGeoLayer$Frame.tracker' not initialized
+        GooglyTracker tracker;
+                      ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\compat\gecko\GooglyGeoLayer.java:64: warning: [NullAway] @NonNull field 'GooglyGeoLayer$Frame.headBones' not initialized
+        GeoBone[] headBones;
+                  ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\compat\gecko\GooglyGeoLayer.java:69: warning: [NullAway] @NonNull field 'GooglyGeoLayer$Frame.savedEyes' not initialized
+        List<PickerState.ListedEye> savedEyes;
+                                    ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\compat\gecko\GooglyGeoLayer.java:70: warning: [NullAway] @NonNull field 'GooglyGeoLayer$Frame.savedEyeBones' not initialized
+        GeoBone[] savedEyeBones;
+                  ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\compat\gecko\GooglyGeoLayer.java:71: warning: [NullAway] @NonNull field 'GooglyGeoLayer$Frame.gizmoBone' not initialized
+        GeoBone gizmoBone;
+                ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\compat\gecko\GooglyGeoLayer.java:90: warning: [NullAway] assigning @Nullable expression to @NonNull field
+        this.frame = null;
+                   ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\compat\gecko\GooglyGeoLayer.java:105: warning: [NullAway] assigning @Nullable expression to @NonNull field
+                frame.gizmoBone = GeoBones.findBone(bakedModel, PickerState.currentPart());
+                                ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\compat\gecko\GooglyGeoLayer.java:120: warning: [NullAway] assigning @Nullable expression to @NonNull field
+        frame.tracker = data.tracker();
+                      ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\compat\gecko\GooglyGeoLayer.java:186: warning: [NullAway] assigning @Nullable expression to @NonNull field
+        this.frame = null;
+                   ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\item\EyeItemService.java:306: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+        return !(target instanceof Player victim) || victim == actor || actor.canHarmPlayer(victim);
+                                                            ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'return !(target instanceof Player victim) || Objects.equals(victim, actor) || actor.canHarmPlayer(victim);' or 'return !(target instanceof Player victim) || victim.equals(actor) || actor.canHarmPlayer(victim);'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\item\EyeItemService.java:182: warning: [NullAway] passing @Nullable parameter 'entity' where @NonNull is required
+        HeadInfo helper = ServerEyeConfigs.resolveHead(entity, state.variantRoll());
+                                                       ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\item\EyeItemService.java:183: warning: [NullAway] passing @Nullable parameter 'entity' where @NonNull is required
+        int[] parts = SkullEyeState.headParts(entity, helper);
+                                              ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\item\EyeItemService.java:485: warning: [NullAway] passing @Nullable parameter 'level' where @NonNull is required
+        if (!enabled(level)
+                     ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\item\EyeItemService.java:487: warning: [NullAway] passing @Nullable parameter 'level' where @NonNull is required
+                || !SkullEyeState.canHaveEyes(entity, config(level, entity, false))) {
+                                                             ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\picker\PickerHud.java:42: warning: [NullAway] @NonNull static field 'cachedRows' not initialized
+    private static List<Component> cachedRows;
+                                   ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\picker\PickerHud.java:194: warning: [NullAway] assigning @Nullable expression to @NonNull field
+            cachedRows = null;
+                       ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\picker\PickerHud.java:219: warning: [NullAway] unboxing of a @Nullable expression 'ChatFormatting.WHITE.getColor()'
+            graphics.drawString(font, row, left, y, ChatFormatting.WHITE.getColor());
+                                                                                 ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\picker\PickerInput.java:73: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+        if (key == TOGGLE) {
+                ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'if (Objects.equals(key, TOGGLE)) {' or 'if (key.equals(TOGGLE)) {'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\picker\PickerInput.java:94: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+        if (key == LOCK) {
+                ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'if (Objects.equals(key, LOCK)) {' or 'if (key.equals(LOCK)) {'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\picker\PickerInput.java:101: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+        } else if (key == PART_PREV) {
+                       ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean '} else if (Objects.equals(key, PART_PREV)) {' or '} else if (key.equals(PART_PREV)) {'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\picker\PickerInput.java:103: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+        } else if (key == PART_NEXT) {
+                       ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean '} else if (Objects.equals(key, PART_NEXT)) {' or '} else if (key.equals(PART_NEXT)) {'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\render\GooglyEyeItemRenderer.java:103: warning: [NullAway] dereferenced expression 'animated' is @Nullable
+            animated.itemGravity = ctx != ItemDisplayContext.GUI;
+                    ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\render\GooglyEyeRenderer.java:251: warning: [NullAway] passing @Nullable parameter 'eyes.helper' where @NonNull is required
+                    eyes.helper,
+                        ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\render\GooglyEyeRenderer.java:252: warning: [NullAway] dereferenced expression 'eyes.snapshot' is @Nullable
+                    eyes.snapshot.properties(),
+                                 ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\render\LayerGooglyEyes.java:86: warning: [NullAway] dereferenced expression 'tracker' is @Nullable
+        AppearanceOverride overrides = tracker.overrides;
+                                              ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\render\LayerGooglyEyes.java:89: warning: [NullAway] dereferenced expression 'helper' is @Nullable
+        int headCount = helper.getHeadCount();
+                              ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\render\resolver\AdvancedModelBoxResolver.java:66: warning: [NullAway] passing @Nullable parameter 'null' where @NonNull is required
+        static final Handles ABSENT = new Handles(null, null, null, null, null, null);
+                                                  ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\render\resolver\AdvancedModelBoxResolver.java:66: warning: [NullAway] passing @Nullable parameter 'null' where @NonNull is required
+        static final Handles ABSENT = new Handles(null, null, null, null, null, null);
+                                                        ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\render\resolver\AdvancedModelBoxResolver.java:66: warning: [NullAway] passing @Nullable parameter 'null' where @NonNull is required
+        static final Handles ABSENT = new Handles(null, null, null, null, null, null);
+                                                              ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\render\resolver\AdvancedModelBoxResolver.java:66: warning: [NullAway] passing @Nullable parameter 'null' where @NonNull is required
+        static final Handles ABSENT = new Handles(null, null, null, null, null, null);
+                                                                    ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\render\resolver\AdvancedModelBoxResolver.java:66: warning: [NullAway] passing @Nullable parameter 'null' where @NonNull is required
+        static final Handles ABSENT = new Handles(null, null, null, null, null, null);
+                                                                          ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\render\resolver\AdvancedModelBoxResolver.java:66: warning: [NullAway] passing @Nullable parameter 'null' where @NonNull is required
+        static final Handles ABSENT = new Handles(null, null, null, null, null, null);
+                                                                                ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\render\resolver\ReflectedBoxResolver.java:138: warning: [NullAway] returning @Nullable expression from method with @NonNull return type
+            return boxClass().isInstance(parent) ? parent : null;
+            ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\render\resolver\ReflectedBoxResolver.java:141: warning: [NullAway] returning @Nullable expression from method with @NonNull return type
+            return null;
+            ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\render\resolver\ReflectedBoxResolver.java:251: warning: [NullAway] returning @Nullable expression from method with @NonNull return type
+        return fallbackNames.get(box);
+        ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\render\resolver\AgeableListResolver.java:48: warning: [NullAway] passing @Nullable parameter 'ThirdPartyModelWraps.groupTransform(ageable, EyeConfigModel.PART_HEAD)' where @NonNull is required
+                ThirdPartyModelWraps.groupTransform(ageable, EyeConfigModel.PART_HEAD));
+                                                   ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\render\resolver\AgeableListResolver.java:53: warning: [NullAway] passing @Nullable parameter 'ThirdPartyModelWraps.groupTransform(ageable, EyeConfigModel.PART_BODY)' where @NonNull is required
+                ThirdPartyModelWraps.groupTransform(ageable, EyeConfigModel.PART_BODY));
+                                                   ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\render\resolver\LLibraryResolver.java:44: warning: [NullAway] passing @Nullable parameter 'null' where @NonNull is required
+        static final Handles ABSENT = new Handles(null, null, null, null, null, null);
+                                                  ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\render\resolver\LLibraryResolver.java:44: warning: [NullAway] passing @Nullable parameter 'null' where @NonNull is required
+        static final Handles ABSENT = new Handles(null, null, null, null, null, null);
+                                                        ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\render\resolver\LLibraryResolver.java:44: warning: [NullAway] passing @Nullable parameter 'null' where @NonNull is required
+        static final Handles ABSENT = new Handles(null, null, null, null, null, null);
+                                                              ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\render\resolver\LLibraryResolver.java:44: warning: [NullAway] passing @Nullable parameter 'null' where @NonNull is required
+        static final Handles ABSENT = new Handles(null, null, null, null, null, null);
+                                                                    ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\render\resolver\LLibraryResolver.java:44: warning: [NullAway] passing @Nullable parameter 'null' where @NonNull is required
+        static final Handles ABSENT = new Handles(null, null, null, null, null, null);
+                                                                          ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\render\resolver\LLibraryResolver.java:44: warning: [NullAway] passing @Nullable parameter 'null' where @NonNull is required
+        static final Handles ABSENT = new Handles(null, null, null, null, null, null);
+                                                                                ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\render\resolver\LLibraryResolver.java:107: warning: [NullAway] returning @Nullable expression from method with @NonNull return type
+        return HANDLES.advancedBoxClass().isInstance(part)
+        ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\render\SkullEyeRenderer.java:340: warning: [NullAway] passing @Nullable parameter 'entity' where @NonNull is required
+            PresentationEyes eyes = ClientEyeRuntime.skullEyes(skull, entity);
+                                                                      ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\render\SkullEyeRenderer.java:343: warning: [NullAway] dereferenced expression 'eyes' is @Nullable
+                eyes.markRendered(ClientEyeRuntime.clientTicks());
+                    ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\render\SkullEyeRenderer.java:351: warning: [NullAway] passing @Nullable parameter 'entity' where @NonNull is required
+                        entity,
+                        ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\render\SkullEyeRenderer.java:352: warning: [NullAway] passing @Nullable parameter 'eyes.helper' where @NonNull is required
+                        eyes.helper,
+                            ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\render\SkullEyeRenderer.java:350: warning: [NullAway] passing @Nullable parameter 'entity' where @NonNull is required
+                        usesFit(block, entity, trophy),
+                                       ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\render\SkullEyeRenderer.java:355: warning: [NullAway] dereferenced expression 'eyes.snapshot' is @Nullable
+                        eyes.snapshot.properties(),
+                                     ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\render\SkullEyeRenderer.java:366: warning: [NullAway] passing @Nullable parameter 'entity' where @NonNull is required
+                    framed == null ? ClientEyeRuntime.restingHead(stack, entity) : null;
+                                                                         ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\render\SkullEyeRenderer.java:371: warning: [NullAway] passing @Nullable parameter 'entity' where @NonNull is required
+            boolean fitted = usesFit(item.getBlock(), entity, trophy);
+                                                      ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\render\SkullEyeRenderer.java:380: warning: [NullAway] passing @Nullable parameter 'entity' where @NonNull is required
+                        entity,
+                        ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\render\SkullEyeRenderer.java:381: warning: [NullAway] passing @Nullable parameter 'framed.helper' where @NonNull is required
+                        framed.helper,
+                              ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\render\SkullEyeRenderer.java:394: warning: [NullAway] passing @Nullable parameter 'entity' where @NonNull is required
+                        entity,
+                        ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\render\SkullEyeRenderer.java:395: warning: [NullAway] passing @Nullable parameter 'resting.helper()' where @NonNull is required
+                        resting.helper(),
+                                      ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\client\render\SkullEyeRenderer.java:395: warning: [NullAway] dereferenced expression 'resting' is @Nullable
+                        resting.helper(),
+                               ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\command\GooglyServerCommands.java:211: warning: [NullAway] passing @Nullable parameter 'modFilter' where @NonNull is required
+        return PickerSpawnService.spawn(source, player, modFilter);
+                                                        ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\config\ClientEyeConfigs.java:75: warning: [NullAway] passing @Nullable parameter 'config' where @NonNull is required
+        HeadInfo created = new HeadInfo(config, variant);
+                                        ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\config\EyeConfigReloadListener.java:254: warning: [NullAway] passing @Nullable parameter 'set.adult' where @NonNull is required
+                case AGE_ADULT -> set.adult = choose(entityId, AGE_ADULT, set.adult, runtime);
+                                                                             ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\config\EyeConfigReloadListener.java:255: warning: [NullAway] passing @Nullable parameter 'set.baby' where @NonNull is required
+                case AGE_BABY -> set.baby = choose(entityId, AGE_BABY, set.baby, runtime);
+                                                                          ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\config\EyeConfigReloadListener.java:256: warning: [NullAway] passing @Nullable parameter 'set.any' where @NonNull is required
+                case AGE_ANY -> set.any = choose(entityId, AGE_ANY, set.any, runtime);
+                                                                       ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\config\ServerConfig.java:446: warning: [NullAway] passing @Nullable parameter 'null' where @NonNull is required
+                ? new SpawnOverride(true, pattern, null, percent)
+                                                   ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\config\ServerConfig.java:447: warning: [NullAway] passing @Nullable parameter 'null' where @NonNull is required
+                : new SpawnOverride(false, null, Pattern.compile(globToRegex(pattern)), percent);
+                                           ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\config\ServerEyeConfigs.java:134: warning: [NullAway] passing @Nullable parameter 'config' where @NonNull is required
+        return new HeadInfo(config, EyeConfigModel.chooseVariantIndex(config, variantRoll));
+                            ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\config\ServerEyeConfigs.java:143: warning: [NullAway] passing @Nullable parameter 'config' where @NonNull is required
+        return new HeadInfo(config, SkullEyeState.variantIndex(entity, config, variantRoll));
+                            ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\config\VersionRangeMatcher.java:63: warning: [NullAway] passing @Nullable parameter 'null' where @NonNull is required
+        private static final Token ZERO = new Token(BigInteger.ZERO, null);
+                                                                     ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\config\VersionRangeMatcher.java:81: warning: [NullAway] passing @Nullable parameter 'null' where @NonNull is required
+                return new Token(new BigInteger(value), null);
+                                                        ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\config\VersionRangeMatcher.java:83: warning: [NullAway] passing @Nullable parameter 'null' where @NonNull is required
+                return new Token(null, value);
+                                 ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\eye\behavior\ServerBehaviorScheduler.java:84: warning: [NullAway] initializer method does not guarantee @NonNull field 'behavior' (line 77) is initialized along all control-flow paths (remember to check for exceptions or early returns).
+        HandState(ItemStack item) {
+        ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\eye\behavior\ServerBehaviorScheduler.java:91: warning: [NullAway] @NonNull field 'ServerBehaviorScheduler$MobState.activeBehavior' not initialized
+        EyeBehavior activeBehavior; // the playing behavior (for mid-join catch-up)
+                    ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\eye\behavior\ServerBehaviorScheduler.java:124: warning: [NullAway] dereferenced expression 'mob.level().getServer()' is @Nullable
+        return mob.level().getServer().getTickCount();
+                                      ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\eye\behavior\ServerBehaviorScheduler.java:137: warning: [NullAway] returning @Nullable expression from method with @NonNull return type
+            return null;
+            ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\eye\behavior\ServerBehaviorScheduler.java:450: warning: [NullAway] assigning @Nullable expression to @NonNull field
+                state.activeBehavior = null;
+                                     ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\eye\BoatEyeLayout.java:69: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+                && (boat.getType() == EntityType.BOAT || boat.getType() == EntityType.CHEST_BOAT)
+                                   ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean '&& (Objects.equals(boat.getType(), EntityType.BOAT) || boat.getType() == EntityType.CHEST_BOAT)' or '&& (boat.getType().equals(EntityType.BOAT) || boat.getType() == EntityType.CHEST_BOAT)'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\eye\BoatEyeLayout.java:69: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+                && (boat.getType() == EntityType.BOAT || boat.getType() == EntityType.CHEST_BOAT)
+                                                                        ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean '&& (boat.getType() == EntityType.BOAT || Objects.equals(boat.getType(), EntityType.CHEST_BOAT))' or '&& (boat.getType() == EntityType.BOAT || boat.getType().equals(EntityType.CHEST_BOAT))'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\eye\BoatEyeLayout.java:46: warning: [NullAway] dereferenced expression 'config' is @Nullable
+                && config.variants.stream().anyMatch(variant -> matches(variant, attachment(boat)));
+                         ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\eye\BoatEyeLayout.java:61: warning: [NullAway] passing @Nullable parameter 'config' where @NonNull is required
+                config,
+                ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\eye\state\SkullEyeState.java:210: warning: [NullAway] dereferenced expression 'config' is @Nullable
+        for (Variant variant : config.variants) {
+                                     ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\eye\state\SkullEyeState.java:331: warning: [NullAway] passing @Nullable parameter 'context.getParamOrNull(LootContextParams.BLOCK_ENTITY)' where @NonNull is required
+        if (!hasEyes(context.getParamOrNull(LootContextParams.BLOCK_ENTITY))) {
+                                           ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\eye\state\SkullEyeState.java:486: warning: [NullAway] dereferenced expression 'skull.getLevel()' is @Nullable
+        skull.getLevel().sendBlockUpdated(skull.getBlockPos(), state, state, Block.UPDATE_CLIENTS);
+                        ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\picker\PickerExportService.java:130: warning: [NullAway] dereferenced expression 'file' is @Nullable
+            file.writeJson(target);
+                ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\picker\PickerSpawnService.java:181: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+                    return member == entity
+                                  ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'return Objects.equals(member, entity)' or 'return member.equals(entity)'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\recipe\EyeModifierRecipe.java:46: warning: [NullAway] passing @Nullable parameter 'modify(EyeItemProperties.get(result), match.modifierStack())' where @NonNull is required
+        EyeItemProperties.set(result, modify(EyeItemProperties.get(result), match.modifierStack()));
+                                            ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\main\java\com\github\crittscott\somegoogly\server\ServerServices.java:76: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+        if (sentEyeConfigs != ServerEyeConfigs.all()) {
+                           ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'if (!Objects.equals(sentEyeConfigs, ServerEyeConfigs.all())) {' or 'if (!sentEyeConfigs.equals(ServerEyeConfigs.all())) {'?
+144 warnings
+
+> Task :common:processResources
+> Task :common:classes
+> Task :common:jar
+
+> Task :fabric:compileJava
+warning: No processor claimed any of these annotations: /org.spongepowered.asm.mixin.Final,/javax.annotation.Nullable
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\fabric\src\main\java\com\github\crittscott\somegoogly\network\fabric\FabricNetworkTransport.java:124: warning: [NullAway] returning @Nullable expression from method with @NonNull return type
+        return PACKET_TYPES.get(id);
+        ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\fabric\src\main\java\com\github\crittscott\somegoogly\mixin\fabric\ServerEntityPairingMixin.java:25: warning: [NullAway] @NonNull field 'entity' not initialized
+    @Shadow @Final private Entity entity;
+                                  ^
+    (see http://t.uber.com/nullaway )
+3 warnings
+
+> Task :fabric:classes
+
+> Task :forge:compileJava
+warning: No processor claimed any of these annotations: /javax.annotation.Nullable,/net.minecraftforge.fml.common.Mod,/org.spongepowered.asm.mixin.Pseudo,/org.spongepowered.asm.mixin.Unique,/org.spongepowered.asm.mixin.injection.Coerce
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\forge\src\main\java\com\github\crittscott\somegoogly\client\forge\ForgeClientBootstrap.java:42: warning: [NullAway] passing @Nullable parameter 'event.getSkin(skin)' where @NonNull is required
+            ClientRenderLayers.install(event.getSkin(skin));
+                                                    ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\forge\src\main\java\com\github\crittscott\somegoogly\config\forge\ForgeClientConfig.java:28: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+        if (event instanceof ModConfigEvent.Unloading || event.getConfig().getSpec() != SPEC) {
+                                                                                     ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'if (event instanceof ModConfigEvent.Unloading || !Objects.equals(event.getConfig().getSpec(), SPEC)) {' or 'if (event instanceof ModConfigEvent.Unloading || !event.getConfig().getSpec().equals(SPEC)) {'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\forge\src\main\java\com\github\crittscott\somegoogly\config\forge\ForgeServerConfig.java:37: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+        if (event.getConfig().getSpec() != SPEC) {
+                                        ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'if (!Objects.equals(event.getConfig().getSpec(), SPEC)) {' or 'if (!event.getConfig().getSpec().equals(SPEC)) {'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\forge\src\main\java\com\github\crittscott\somegoogly\item\forge\GooglyEyeItemFactoryImpl.java:28: warning: [NullAway] @NonNull field 'GooglyEyeItemFactoryImpl$1$1.renderer' not initialized
+                            private GooglyEyeItemRenderer renderer;
+                                                          ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\forge\src\main\java\com\github\crittscott\somegoogly\mixin\forge\TwilightSkullConversionMixin.java:74: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+                && level.getBlockEntity(candle.getBlockPos()) == candle) {
+                                                              ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean '&& Objects.equals(level.getBlockEntity(candle.getBlockPos()), candle)) {' or '&& level.getBlockEntity(candle.getBlockPos()).equals(candle)) {'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\forge\src\main\java\com\github\crittscott\somegoogly\mixin\forge\TwilightTrophyDataMixin.java:34: warning: [NullAway] returning @Nullable expression from method with @NonNull return type
+        return somegoogly$data;
+        ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\forge\src\main\java\com\github\crittscott\somegoogly\network\forge\ForgeNetworkTransport.java:60: warning: [NullAway] returning @Nullable expression from method with @NonNull return type
+        return context.get().getSender();
+        ^
+    (see http://t.uber.com/nullaway )
+8 warnings
+
+> Task :forge:classes
+
+> Task :fabric:compileGametestJava
+warning: No processor claimed any of these annotations: /net.minecraft.gametest.framework.GameTest,/org.jetbrains.annotations.Nullable,/javax.annotation.Nullable
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\BehaviorSchedulerGameTestsLogic.java:412: warning: [NullAway] dereferenced expression 'replacement' is @Nullable
+            replacement.setId(zombie.getId());
+                       ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\BehaviorSchedulerGameTestsLogic.java:1150: warning: [NullAway] dereferenced expression 'ClientEyeRuntime.get(zombie, info).active' is @Nullable
+                    ClientEyeRuntime.get(zombie, info).active.age == 5,
+                                                             ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\BoatEyeGameTestsLogic.java:406: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+                first.eyes[0][0] != second.eyes[0][0], "boats never share mutable pupil state");
+                                 ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean '!Objects.equals(first.eyes[0][0], second.eyes[0][0]), "boats never share mutable pupil state");' or '!first.eyes[0][0].equals(second.eyes[0][0]), "boats never share mutable pupil state");'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\BoatEyeGameTestsLogic.java:229: warning: [NullAway] dereferenced expression 'eyes.active' is @Nullable
+                    eyes.active.age == 1,
+                               ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\BoatEyeGameTestsLogic.java:291: warning: [NullAway] dereferenced expression 'eyes.helper' is @Nullable
+                                    .rotate(eyes.helper.placementAt(0, index).orientation());
+                                                       ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\BoatEyeGameTestsLogic.java:634: warning: [NullAway] dereferenced expression 'current' is @Nullable
+            current.tick(1L, settings(List.of(EyeBehavior.BLINK)));
+                   ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\BoatEyeGameTestsLogic.java:637: warning: [NullAway] dereferenced expression 'current.active' is @Nullable
+                    current.active.age == 1, "pause leaves the cached expression unchanged");
+                                  ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\BoatEyeGameTestsLogic.java:690: warning: [NullAway] dereferenced expression 'config' is @Nullable
+                config.variants.get(0).heads.stream()
+                      ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\ConfigGameTestsLogic.java:469: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+                    ServerEyeConfigs.all() == afterFirst,
+                                           ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'Objects.equals(ServerEyeConfigs.all(), afterFirst),' or 'ServerEyeConfigs.all().equals(afterFirst),'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\ConfigGameTestsLogic.java:475: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+                    ServerEyeConfigs.all() != afterFirst,
+                                           ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean '!Objects.equals(ServerEyeConfigs.all(), afterFirst),' or '!ServerEyeConfigs.all().equals(afterFirst),'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\ConfigGameTestsLogic.java:152: warning: [NullAway] dereferenced expression 'set' is @Nullable
+            for (RuntimeConfig config : new RuntimeConfig[] {set.adult, set.baby, set.any}) {
+                                                                ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\ConfigGameTestsLogic.java:169: warning: [NullAway] passing @Nullable parameter 'null' where @NonNull is required
+            apply(files, null, null);
+                         ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\ConfigGameTestsLogic.java:169: warning: [NullAway] passing @Nullable parameter 'null' where @NonNull is required
+            apply(files, null, null);
+                               ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\ConfigGameTestsLogic.java:197: warning: [NullAway] dereferenced expression 'adult' is @Nullable
+                    adult.variants.get(0).weight == 2.0,
+                         ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\ConfigGameTestsLogic.java:314: warning: [NullAway] passing @Nullable parameter 'ServerEyeConfigs.get(zombie, false)' where @NonNull is required
+                    usable(ServerEyeConfigs.get(zombie, false)),
+                                               ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\ConfigGameTestsLogic.java:441: warning: [NullAway] passing @Nullable parameter 'ServerEyeConfigs.get(zombie, false)' where @NonNull is required
+                    usable(ServerEyeConfigs.get(zombie, false)),
+                                               ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\EyeConfigLimitsGameTestsLogic.java:73: warning: [NullAway] dereferenced expression 'error' is @Nullable
+        while (!error.arguments().isEmpty()
+                     ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\EyeItemServiceGameTestsLogic.java:284: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+            if (result.enchantment == ModContent.OPTOMETRIST.get()) {
+                                   ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'if (Objects.equals(result.enchantment, ModContent.OPTOMETRIST.get())) {' or 'if (result.enchantment.equals(ModContent.OPTOMETRIST.get())) {'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\FramedEyeGameTestsLogic.java:79: warning: [NullAway] dereferenced expression 'left' is @Nullable
+        left.eye.gravX = -1F;
+            ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\FramedEyeGameTestsLogic.java:80: warning: [NullAway] dereferenced expression 'right' is @Nullable
+        right.eye.gravX = 1F;
+             ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\FramedEyeGameTestsLogic.java:106: warning: [NullAway] dereferenced expression 'eye' is @Nullable
+        eye.tick(0L, shortSlots);
+           ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\FramedEyeGameTestsLogic.java:112: warning: [NullAway] dereferenced expression 'eye.active' is @Nullable
+                eye.active == first && eye.active.age == duration - 1,
+                                                 ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\FramedEyeGameTestsLogic.java:138: warning: [NullAway] dereferenced expression 'eye' is @Nullable
+        eye.tick(0L, settings(true, 1, List.of(EyeBehavior.BLINK)));
+           ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\FramedEyeGameTestsLogic.java:169: warning: [NullAway] dereferenced expression 'eye' is @Nullable
+            eye.tick(tick, settings);
+               ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\FramedEyeGameTestsLogic.java:172: warning: [NullAway] dereferenced expression 'eye.active.mask' is @Nullable
+                        eye.active.behavior == EyeBehavior.BLINK && eye.active.mask[0][0],
+                                                                                   ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\FramedEyeGameTestsLogic.java:197: warning: [NullAway] dereferenced expression 'original' is @Nullable
+            original.tick(tick, settings);
+                    ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\FramedEyeGameTestsLogic.java:202: warning: [NullAway] dereferenced expression 'arriving' is @Nullable
+                arriving.tick(tick, settings);
+                        ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\FramedEyeGameTestsLogic.java:233: warning: [NullAway] dereferenced expression 'eye' is @Nullable
+            eye.tick(tick, settings);
+               ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\FramedEyeGameTestsLogic.java:260: warning: [NullAway] dereferenced expression 'first' is @Nullable
+            first.tick(tick, settings);
+                 ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\FramedEyeGameTestsLogic.java:261: warning: [NullAway] dereferenced expression 'second' is @Nullable
+            second.tick(tick, settings);
+                  ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\FramedEyeGameTestsLogic.java:293: warning: [NullAway] dereferenced expression 'frame' is @Nullable
+                frame.tick(tick, settings);
+                     ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\FramedEyeGameTestsLogic.java:335: warning: [NullAway] dereferenced expression 'frame' is @Nullable
+                    !frame.matches(eyedHead(Items.CREEPER_HEAD, snapshot)),
+                          ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\FramedEyeGameTestsLogic.java:360: warning: [NullAway] dereferenced expression 'PresentationEyes.create(
+                                    .matches(stack),
+                                    ^
+                                              FIRST_FRAME, new ItemStack(ModContent.GOOGLY_EYE.get()))' is @Nullable
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\FramedEyeGameTestsLogic.java:384: warning: [NullAway] dereferenced expression 'original' is @Nullable
+                original.tick(tick, settings);
+                        ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\FramedEyeGameTestsLogic.java:392: warning: [NullAway] dereferenced expression 'arriving' is @Nullable
+                    arriving.tick(tick, settings);
+                            ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\FramedEyeGameTestsLogic.java:424: warning: [NullAway] dereferenced expression 'frame' is @Nullable
+                    snapshot.equals(frame.snapshot),
+                                         ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\FramedEyeGameTestsLogic.java:429: warning: [NullAway] dereferenced expression 'frame.helper' is @Nullable
+                        frame.eyes[part].length == frame.helper.getEyeCount(part),
+                                                               ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\GuiItemEyeGameTestsLogic.java:270: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+                                    && context.guiKey().view() == view
+                                                               ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean '&& Objects.equals(context.guiKey().view(), view)' or '&& context.guiKey().view().equals(view)'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\GuiItemEyeGameTestsLogic.java:66: warning: [NullAway] dereferenced expression 'presentation.active' is @Nullable
+        helper.assertTrue(presentation.active.age == 2, "UI time advances independently");
+                                             ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\GuiItemEyeGameTestsLogic.java:154: warning: [NullAway] passing @Nullable parameter 'null' where @NonNull is required
+            cache.tick(null, BehaviorSettings.NONE);
+                       ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\GuiItemEyeGameTestsLogic.java:270: warning: [NullAway] dereferenced expression 'context.guiKey()' is @Nullable
+                                    && context.guiKey().view() == view
+                                                       ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\GuiItemEyeGameTestsLogic.java:284: warning: [NullAway] dereferenced expression 'ClientEyeRuntime.currentDraw().guiKey()' is @Nullable
+                    ClientEyeRuntime.currentDraw().guiKey().x() == 3,
+                                                           ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\HandItemEyeGameTestsLogic.java:61: warning: [NullAway] dereferenced expression 'rotated' is @Nullable
+        rotated.eye.capturePose(viewPose, camera);
+               ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\HandItemEyeGameTestsLogic.java:78: warning: [NullAway] dereferenced expression 'horizontal' is @Nullable
+        horizontal.eye.capturePose(new Matrix3f().rotationX((float) (Math.PI / 2D)), null);
+                  ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\HandItemEyeGameTestsLogic.java:261: warning: [NullAway] dereferenced expression 'eye.active' is @Nullable
+        helper.assertTrue(eye.active.age == 1, "pause freezes the hand expression");
+                                    ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\HeldEyeGameTestsLogic.java:85: warning: [NullAway] dereferenced expression 'packet' is @Nullable
+                        context.player, hand, packet.behavior(), packet.seed(), packet.elapsed());
+                                                    ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\HeldEyeGameTestsLogic.java:206: warning: [NullAway] dereferenced expression 'ServerBehaviorScheduler.handBehavior(context.player, InteractionHand.MAIN_HAND)' is @Nullable
+                                    .seed()
+                                    ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\HeldEyeGameTestsLogic.java:207: warning: [NullAway] dereferenced expression 'first' is @Nullable
+                            == first.seed(),
+                                    ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\LoaderInteractionGameTestsLogic.java:81: warning: [NullAway] passing @Nullable parameter 'entity' where @NonNull is required
+        return block == null ? EyeState.snapshot(entity) : SkullEyeState.snapshot(block);
+                                                 ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\LoaderInteractionGameTestsLogic.java:118: warning: [NullAway] passing @Nullable parameter 'stateTarget' where @NonNull is required
+                else EyeState.disableAndClearProperties(stateTarget);
+                                                        ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerExportGameTestsLogic.java:148: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+                session.select(cow, false, () -> draft(99F)) == adult,
+                                                             ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'Objects.equals(session.select(cow, false, () -> draft(99F)), adult),' or 'session.select(cow, false, () -> draft(99F)).equals(adult),'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerExportGameTestsLogic.java:153: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+                session.select(cow, true, () -> draft(99F)) == baby,
+                                                            ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'Objects.equals(session.select(cow, true, () -> draft(99F)), baby),' or 'session.select(cow, true, () -> draft(99F)).equals(baby),'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerExportGameTestsLogic.java:159: warning: [NullAway] dereferenced expression 'exports.get(cow)' is @Nullable
+                exports.size() == 2 && exports.get(cow).size() == 2,
+                                                       ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerExportGameTestsLogic.java:164: warning: [NullAway] dereferenced expression 'exports.get(cow)
+                                        .variants
+                                        ^
+                                          .get(AGE_ADULT)' is @Nullable
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerExportGameTestsLogic.java:163: warning: [NullAway] dereferenced expression 'exports.get(cow)' is @Nullable
+                                        .get(AGE_ADULT)
+                                        ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerExportGameTestsLogic.java:176: warning: [NullAway] dereferenced expression 'exports.get(cow)
+                                        .variants
+                                        ^
+                                          .get(AGE_BABY)' is @Nullable
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerExportGameTestsLogic.java:234: warning: [NullAway] passing @Nullable parameter 'ConfigFile.overlay(base, drafts, "1.20.1", token -> "root/" + token)' where @NonNull is required
+                roundTripFile(ConfigFile.overlay(base, drafts, "1.20.1", token -> "root/" + token));
+                                                ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerExportGameTestsLogic.java:240: warning: [NullAway] passing @Nullable parameter 'ConfigFile.overlay(null, drafts, "1.20.1", UnaryOperator.identity())' where @NonNull is required
+                roundTripFile(ConfigFile.overlay(null, drafts, "1.20.1", UnaryOperator.identity()));
+                                                ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerExportGameTestsLogic.java:246: warning: [NullAway] passing @Nullable parameter 'ConfigFile.overlay(
+                        ConfigFile.overlay(
+                                          ^
+                                  base, Map.of(AGE_BABY, baby), "1.20.1", token -> "root/" + token)' where @NonNull is required
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerExportGameTestsLogic.java:278: warning: [NullAway] passing @Nullable parameter 'ConfigFile.overlay(
+                            ConfigFile.overlay(
+                                              ^
+                                      base,
+                                      Map.of(age, replacement),
+                                      "1.20.1",
+                                      UnaryOperator.identity())' where @NonNull is required
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerExportGameTestsLogic.java:468: warning: [NullAway] dereferenced expression 'error' is @Nullable
+                error.message()
+                     ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerSpawnServiceGameTestsLogic.java:61: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+                if (type != EntityType.COW && type != EntityType.PIG && type != EntityType.SHEEP) {
+                         ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'if (!Objects.equals(type, EntityType.COW) && type != EntityType.PIG && type != EntityType.SHEEP) {' or 'if (!type.equals(EntityType.COW) && type != EntityType.PIG && type != EntityType.SHEEP) {'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerSpawnServiceGameTestsLogic.java:61: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+                if (type != EntityType.COW && type != EntityType.PIG && type != EntityType.SHEEP) {
+                                                   ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'if (type != EntityType.COW && !Objects.equals(type, EntityType.PIG) && type != EntityType.SHEEP) {' or 'if (type != EntityType.COW && !type.equals(EntityType.PIG) && type != EntityType.SHEEP) {'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerSpawnServiceGameTestsLogic.java:61: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+                if (type != EntityType.COW && type != EntityType.PIG && type != EntityType.SHEEP) {
+                                                                             ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'if (type != EntityType.COW && type != EntityType.PIG && !Objects.equals(type, EntityType.SHEEP)) {' or 'if (type != EntityType.COW && type != EntityType.PIG && !type.equals(EntityType.SHEEP)) {'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerSpawnServiceGameTestsLogic.java:118: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+                    LookTarget.livingInCrosshair(player, LookTarget.DEFAULT_REACH) == cow,
+                                                                                   ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'Objects.equals(LookTarget.livingInCrosshair(player, LookTarget.DEFAULT_REACH), cow),' or 'LookTarget.livingInCrosshair(player, LookTarget.DEFAULT_REACH).equals(cow),'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerSpawnServiceGameTestsLogic.java:151: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+                if (type != EntityType.COW && type != EntityType.SQUID) {
+                         ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'if (!Objects.equals(type, EntityType.COW) && type != EntityType.SQUID) {' or 'if (!type.equals(EntityType.COW) && type != EntityType.SQUID) {'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerSpawnServiceGameTestsLogic.java:151: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+                if (type != EntityType.COW && type != EntityType.SQUID) {
+                                                   ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'if (type != EntityType.COW && !Objects.equals(type, EntityType.SQUID)) {' or 'if (type != EntityType.COW && !type.equals(EntityType.SQUID)) {'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerSpawnServiceGameTestsLogic.java:180: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+                    helper.getLevel().getBlockEntity(skull.getBlockPos()) == skull
+                                                                          ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'Objects.equals(helper.getLevel().getBlockEntity(skull.getBlockPos()), skull)' or 'helper.getLevel().getBlockEntity(skull.getBlockPos()).equals(skull)'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerSpawnServiceGameTestsLogic.java:164: warning: [NullAway] passing @Nullable parameter 'skull' where @NonNull is required
+            SkullEyeState.set(skull, eyes);
+                              ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerSpawnServiceGameTestsLogic.java:180: warning: [NullAway] dereferenced expression 'skull' is @Nullable
+                    helper.getLevel().getBlockEntity(skull.getBlockPos()) == skull
+                                                          ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerSpawnServiceGameTestsLogic.java:278: warning: [NullAway] initializer method does not guarantee @NonNull fields 'positionAtFinalize' (line 275), 'spawnType' (line 276) are initialized along all control-flow paths (remember to check for exceptions or early returns).
+        private TrackingCow(Level level) {
+                ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\RecipeGameTestsLogic.java:241: warning: [NullAway] dereferenced expression 'advancement' is @Nullable
+                Arrays.asList(advancement.getRewards().getRecipes()).contains(SLIMY_EYE),
+                                         ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\SerializationGameTestsLogic.java:195: warning: [NullAway] dereferenced expression 'e.getMessage()' is @Nullable
+            rejected = e.getMessage().contains("Unknown eye behavior");
+                                     ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\SerializationGameTestsLogic.java:278: warning: [NullAway] dereferenced expression 'set.any' is @Nullable
+            set.any.variants.get(0).heads.get(0).eyes =
+                   ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\SerializationGameTestsLogic.java:349: warning: [NullAway] dereferenced expression 'tooManyVariants.any' is @Nullable
+        tooManyVariants.any.variants =
+                           ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\SerializationGameTestsLogic.java:352: warning: [NullAway] dereferenced expression 'tooManyVariants.any' is @Nullable
+                        tooManyVariants.any.variants.get(0));
+                                           ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\SerializationGameTestsLogic.java:359: warning: [NullAway] dereferenced expression 'unsafe.any' is @Nullable
+        HeadConfig head = unsafe.any.variants.get(0).heads.get(0);
+                                    ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\SerializationGameTestsLogic.java:635: warning: [NullAway] dereferenced expression 'e.getMessage()' is @Nullable
+            return e.getMessage().contains(diagnostic);
+                                 ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\SkullEyeGameTestsLogic.java:134: warning: [NullAway] dereferenced expression 'watched.active' is @Nullable
+                        && returning.active.behavior == watched.active.behavior
+                                                                      ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\SkullEyeGameTestsLogic.java:716: warning: [NullAway] returning @Nullable expression from method with @NonNull return type
+        return (SkullBlockEntity) helper.getBlockEntity(HEAD);
+        ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\SomeGooglyGameTestsLogic.java:71: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+                                    Cow.class, area, cow -> cow.getType() == EntityType.COW);
+                                                                          ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'Cow.class, area, cow -> Objects.equals(cow.getType(), EntityType.COW));' or 'Cow.class, area, cow -> cow.getType().equals(EntityType.COW));'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\TestEyeRuntime.java:28: warning: [NullAway] returning @Nullable expression from method with @NonNull return type
+            return ClientEyeRuntime.boatEyes(boat);
+            ^
+    (see http://t.uber.com/nullaway )
+83 warnings
+
+> Task :forge:compileGametestJava
+warning: No processor claimed any of these annotations: /javax.annotation.Nullable,/net.minecraftforge.gametest.PrefixGameTestTemplate,/net.minecraftforge.gametest.GameTestHolder,/net.minecraftforge.fml.common.Mod,/net.minecraft.gametest.framework.GameTest,/org.jetbrains.annotations.Nullable
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\forge\src\gametest\java\com\github\crittscott\somegoogly\gametest\EyeItemServiceGameTests.java:150: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+                    if (event.getEntity() == player) {
+                                          ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'if (Objects.equals(event.getEntity(), player)) {' or 'if (event.getEntity().equals(player)) {'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\forge\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerAuthGameTests.java:83: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+                    if (event.getEntity().getType() == EntityType.COW
+                                                    ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'if (Objects.equals(event.getEntity().getType(), EntityType.COW)' or 'if (event.getEntity().getType().equals(EntityType.COW)'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\forge\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerAuthGameTests.java:84: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+                            || event.getEntity().getType() == EntityType.SQUID) {
+                                                           ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean '|| Objects.equals(event.getEntity().getType(), EntityType.SQUID)) {' or '|| event.getEntity().getType().equals(EntityType.SQUID)) {'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\forge\src\gametest\java\com\github\crittscott\somegoogly\gametest\SomeGooglyGameTests.java:86: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+                                if (event.getEntity() == player) event.setCanceled(true);
+                                                      ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'if (Objects.equals(event.getEntity(), player)) event.setCanceled(true);' or 'if (event.getEntity().equals(player)) event.setCanceled(true);'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\forge\src\gametest\java\com\github\crittscott\somegoogly\gametest\TwilightHeadGameTests.java:63: warning: [NullAway] dereferenced expression 'candle' is @Nullable
+        candle.load(candle.saveWithFullMetadata());
+              ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\forge\src\gametest\java\com\github\crittscott\somegoogly\gametest\TwilightHeadGameTests.java:63: warning: [NullAway] dereferenced expression 'candle' is @Nullable
+        candle.load(candle.saveWithFullMetadata());
+                          ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\forge\src\gametest\java\com\github\crittscott\somegoogly\gametest\TwilightHeadGameTests.java:82: warning: [NullAway] passing @Nullable parameter 'helper.getBlockEntity(HEAD)' where @NonNull is required
+        SkullEyeState.set(helper.getBlockEntity(HEAD), EYES);
+                                               ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\forge\src\gametest\java\com\github\crittscott\somegoogly\gametest\TwilightHeadGameTests.java:90: warning: [NullAway] dereferenced expression 'dispenser' is @Nullable
+        dispenser.setItem(0, new ItemStack(Items.RED_CANDLE));
+                 ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\forge\src\gametest\java\com\github\crittscott\somegoogly\gametest\TwilightHeadGameTests.java:109: warning: [NullAway] dereferenced expression 'placed' is @Nullable
+        helper.assertTrue(placed.getUpdatePacket() != null, "the trophy sends live updates");
+                                ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\forge\src\gametest\java\com\github\crittscott\somegoogly\gametest\TwilightHeadGameTests.java:122: warning: [NullAway] passing @Nullable parameter 'helper.getBlockEntity(HEAD)' where @NonNull is required
+                !SkullEyeState.hasEyes(helper.getBlockEntity(HEAD)),
+                                                            ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\forge\src\gametest\java\com\github\crittscott\somegoogly\gametest\TwilightHeadGameTests.java:142: warning: [NullAway] passing @Nullable parameter 'helper.getBlockEntity(HEAD)' where @NonNull is required
+        SkullEyeState.set(helper.getBlockEntity(HEAD), EYES);
+                                               ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\forge\src\gametest\java\com\github\crittscott\somegoogly\gametest\TwilightHeadGameTests.java:161: warning: [NullAway] dereferenced expression 'candle' is @Nullable
+        var tag = candle.getUpdateTag();
+                        ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\BehaviorSchedulerGameTestsLogic.java:412: warning: [NullAway] dereferenced expression 'replacement' is @Nullable
+            replacement.setId(zombie.getId());
+                       ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\BehaviorSchedulerGameTestsLogic.java:1150: warning: [NullAway] dereferenced expression 'ClientEyeRuntime.get(zombie, info).active' is @Nullable
+                    ClientEyeRuntime.get(zombie, info).active.age == 5,
+                                                             ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\BoatEyeGameTestsLogic.java:406: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+                first.eyes[0][0] != second.eyes[0][0], "boats never share mutable pupil state");
+                                 ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean '!Objects.equals(first.eyes[0][0], second.eyes[0][0]), "boats never share mutable pupil state");' or '!first.eyes[0][0].equals(second.eyes[0][0]), "boats never share mutable pupil state");'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\BoatEyeGameTestsLogic.java:229: warning: [NullAway] dereferenced expression 'eyes.active' is @Nullable
+                    eyes.active.age == 1,
+                               ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\BoatEyeGameTestsLogic.java:291: warning: [NullAway] dereferenced expression 'eyes.helper' is @Nullable
+                                    .rotate(eyes.helper.placementAt(0, index).orientation());
+                                                       ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\BoatEyeGameTestsLogic.java:634: warning: [NullAway] dereferenced expression 'current' is @Nullable
+            current.tick(1L, settings(List.of(EyeBehavior.BLINK)));
+                   ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\BoatEyeGameTestsLogic.java:637: warning: [NullAway] dereferenced expression 'current.active' is @Nullable
+                    current.active.age == 1, "pause leaves the cached expression unchanged");
+                                  ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\BoatEyeGameTestsLogic.java:690: warning: [NullAway] dereferenced expression 'config' is @Nullable
+                config.variants.get(0).heads.stream()
+                      ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\ConfigGameTestsLogic.java:469: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+                    ServerEyeConfigs.all() == afterFirst,
+                                           ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'Objects.equals(ServerEyeConfigs.all(), afterFirst),' or 'ServerEyeConfigs.all().equals(afterFirst),'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\ConfigGameTestsLogic.java:475: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+                    ServerEyeConfigs.all() != afterFirst,
+                                           ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean '!Objects.equals(ServerEyeConfigs.all(), afterFirst),' or '!ServerEyeConfigs.all().equals(afterFirst),'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\ConfigGameTestsLogic.java:152: warning: [NullAway] dereferenced expression 'set' is @Nullable
+            for (RuntimeConfig config : new RuntimeConfig[] {set.adult, set.baby, set.any}) {
+                                                                ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\ConfigGameTestsLogic.java:169: warning: [NullAway] passing @Nullable parameter 'null' where @NonNull is required
+            apply(files, null, null);
+                         ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\ConfigGameTestsLogic.java:169: warning: [NullAway] passing @Nullable parameter 'null' where @NonNull is required
+            apply(files, null, null);
+                               ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\ConfigGameTestsLogic.java:197: warning: [NullAway] dereferenced expression 'adult' is @Nullable
+                    adult.variants.get(0).weight == 2.0,
+                         ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\ConfigGameTestsLogic.java:314: warning: [NullAway] passing @Nullable parameter 'ServerEyeConfigs.get(zombie, false)' where @NonNull is required
+                    usable(ServerEyeConfigs.get(zombie, false)),
+                                               ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\ConfigGameTestsLogic.java:441: warning: [NullAway] passing @Nullable parameter 'ServerEyeConfigs.get(zombie, false)' where @NonNull is required
+                    usable(ServerEyeConfigs.get(zombie, false)),
+                                               ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\EyeConfigLimitsGameTestsLogic.java:73: warning: [NullAway] dereferenced expression 'error' is @Nullable
+        while (!error.arguments().isEmpty()
+                     ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\EyeItemServiceGameTestsLogic.java:284: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+            if (result.enchantment == ModContent.OPTOMETRIST.get()) {
+                                   ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'if (Objects.equals(result.enchantment, ModContent.OPTOMETRIST.get())) {' or 'if (result.enchantment.equals(ModContent.OPTOMETRIST.get())) {'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\FramedEyeGameTestsLogic.java:79: warning: [NullAway] dereferenced expression 'left' is @Nullable
+        left.eye.gravX = -1F;
+            ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\FramedEyeGameTestsLogic.java:80: warning: [NullAway] dereferenced expression 'right' is @Nullable
+        right.eye.gravX = 1F;
+             ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\FramedEyeGameTestsLogic.java:106: warning: [NullAway] dereferenced expression 'eye' is @Nullable
+        eye.tick(0L, shortSlots);
+           ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\FramedEyeGameTestsLogic.java:112: warning: [NullAway] dereferenced expression 'eye.active' is @Nullable
+                eye.active == first && eye.active.age == duration - 1,
+                                                 ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\FramedEyeGameTestsLogic.java:138: warning: [NullAway] dereferenced expression 'eye' is @Nullable
+        eye.tick(0L, settings(true, 1, List.of(EyeBehavior.BLINK)));
+           ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\FramedEyeGameTestsLogic.java:169: warning: [NullAway] dereferenced expression 'eye' is @Nullable
+            eye.tick(tick, settings);
+               ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\FramedEyeGameTestsLogic.java:172: warning: [NullAway] dereferenced expression 'eye.active.mask' is @Nullable
+                        eye.active.behavior == EyeBehavior.BLINK && eye.active.mask[0][0],
+                                                                                   ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\FramedEyeGameTestsLogic.java:197: warning: [NullAway] dereferenced expression 'original' is @Nullable
+            original.tick(tick, settings);
+                    ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\FramedEyeGameTestsLogic.java:202: warning: [NullAway] dereferenced expression 'arriving' is @Nullable
+                arriving.tick(tick, settings);
+                        ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\FramedEyeGameTestsLogic.java:233: warning: [NullAway] dereferenced expression 'eye' is @Nullable
+            eye.tick(tick, settings);
+               ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\FramedEyeGameTestsLogic.java:260: warning: [NullAway] dereferenced expression 'first' is @Nullable
+            first.tick(tick, settings);
+                 ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\FramedEyeGameTestsLogic.java:261: warning: [NullAway] dereferenced expression 'second' is @Nullable
+            second.tick(tick, settings);
+                  ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\FramedEyeGameTestsLogic.java:293: warning: [NullAway] dereferenced expression 'frame' is @Nullable
+                frame.tick(tick, settings);
+                     ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\FramedEyeGameTestsLogic.java:335: warning: [NullAway] dereferenced expression 'frame' is @Nullable
+                    !frame.matches(eyedHead(Items.CREEPER_HEAD, snapshot)),
+                          ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\FramedEyeGameTestsLogic.java:360: warning: [NullAway] dereferenced expression 'PresentationEyes.create(
+                                    .matches(stack),
+                                    ^
+                                              FIRST_FRAME, new ItemStack(ModContent.GOOGLY_EYE.get()))' is @Nullable
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\FramedEyeGameTestsLogic.java:384: warning: [NullAway] dereferenced expression 'original' is @Nullable
+                original.tick(tick, settings);
+                        ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\FramedEyeGameTestsLogic.java:392: warning: [NullAway] dereferenced expression 'arriving' is @Nullable
+                    arriving.tick(tick, settings);
+                            ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\FramedEyeGameTestsLogic.java:424: warning: [NullAway] dereferenced expression 'frame' is @Nullable
+                    snapshot.equals(frame.snapshot),
+                                         ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\FramedEyeGameTestsLogic.java:429: warning: [NullAway] dereferenced expression 'frame.helper' is @Nullable
+                        frame.eyes[part].length == frame.helper.getEyeCount(part),
+                                                               ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\GuiItemEyeGameTestsLogic.java:270: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+                                    && context.guiKey().view() == view
+                                                               ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean '&& Objects.equals(context.guiKey().view(), view)' or '&& context.guiKey().view().equals(view)'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\GuiItemEyeGameTestsLogic.java:66: warning: [NullAway] dereferenced expression 'presentation.active' is @Nullable
+        helper.assertTrue(presentation.active.age == 2, "UI time advances independently");
+                                             ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\GuiItemEyeGameTestsLogic.java:154: warning: [NullAway] passing @Nullable parameter 'null' where @NonNull is required
+            cache.tick(null, BehaviorSettings.NONE);
+                       ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\GuiItemEyeGameTestsLogic.java:270: warning: [NullAway] dereferenced expression 'context.guiKey()' is @Nullable
+                                    && context.guiKey().view() == view
+                                                       ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\GuiItemEyeGameTestsLogic.java:284: warning: [NullAway] dereferenced expression 'ClientEyeRuntime.currentDraw().guiKey()' is @Nullable
+                    ClientEyeRuntime.currentDraw().guiKey().x() == 3,
+                                                           ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\HandItemEyeGameTestsLogic.java:61: warning: [NullAway] dereferenced expression 'rotated' is @Nullable
+        rotated.eye.capturePose(viewPose, camera);
+               ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\HandItemEyeGameTestsLogic.java:78: warning: [NullAway] dereferenced expression 'horizontal' is @Nullable
+        horizontal.eye.capturePose(new Matrix3f().rotationX((float) (Math.PI / 2D)), null);
+                  ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\HandItemEyeGameTestsLogic.java:261: warning: [NullAway] dereferenced expression 'eye.active' is @Nullable
+        helper.assertTrue(eye.active.age == 1, "pause freezes the hand expression");
+                                    ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\HeldEyeGameTestsLogic.java:85: warning: [NullAway] dereferenced expression 'packet' is @Nullable
+                        context.player, hand, packet.behavior(), packet.seed(), packet.elapsed());
+                                                    ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\HeldEyeGameTestsLogic.java:206: warning: [NullAway] dereferenced expression 'ServerBehaviorScheduler.handBehavior(context.player, InteractionHand.MAIN_HAND)' is @Nullable
+                                    .seed()
+                                    ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\HeldEyeGameTestsLogic.java:207: warning: [NullAway] dereferenced expression 'first' is @Nullable
+                            == first.seed(),
+                                    ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\LoaderInteractionGameTestsLogic.java:81: warning: [NullAway] passing @Nullable parameter 'entity' where @NonNull is required
+        return block == null ? EyeState.snapshot(entity) : SkullEyeState.snapshot(block);
+                                                 ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\LoaderInteractionGameTestsLogic.java:118: warning: [NullAway] passing @Nullable parameter 'stateTarget' where @NonNull is required
+                else EyeState.disableAndClearProperties(stateTarget);
+                                                        ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerExportGameTestsLogic.java:148: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+                session.select(cow, false, () -> draft(99F)) == adult,
+                                                             ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'Objects.equals(session.select(cow, false, () -> draft(99F)), adult),' or 'session.select(cow, false, () -> draft(99F)).equals(adult),'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerExportGameTestsLogic.java:153: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+                session.select(cow, true, () -> draft(99F)) == baby,
+                                                            ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'Objects.equals(session.select(cow, true, () -> draft(99F)), baby),' or 'session.select(cow, true, () -> draft(99F)).equals(baby),'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerExportGameTestsLogic.java:159: warning: [NullAway] dereferenced expression 'exports.get(cow)' is @Nullable
+                exports.size() == 2 && exports.get(cow).size() == 2,
+                                                       ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerExportGameTestsLogic.java:164: warning: [NullAway] dereferenced expression 'exports.get(cow)
+                                        .variants
+                                        ^
+                                          .get(AGE_ADULT)' is @Nullable
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerExportGameTestsLogic.java:163: warning: [NullAway] dereferenced expression 'exports.get(cow)' is @Nullable
+                                        .get(AGE_ADULT)
+                                        ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerExportGameTestsLogic.java:176: warning: [NullAway] dereferenced expression 'exports.get(cow)
+                                        .variants
+                                        ^
+                                          .get(AGE_BABY)' is @Nullable
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerExportGameTestsLogic.java:234: warning: [NullAway] passing @Nullable parameter 'ConfigFile.overlay(base, drafts, "1.20.1", token -> "root/" + token)' where @NonNull is required
+                roundTripFile(ConfigFile.overlay(base, drafts, "1.20.1", token -> "root/" + token));
+                                                ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerExportGameTestsLogic.java:240: warning: [NullAway] passing @Nullable parameter 'ConfigFile.overlay(null, drafts, "1.20.1", UnaryOperator.identity())' where @NonNull is required
+                roundTripFile(ConfigFile.overlay(null, drafts, "1.20.1", UnaryOperator.identity()));
+                                                ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerExportGameTestsLogic.java:246: warning: [NullAway] passing @Nullable parameter 'ConfigFile.overlay(
+                        ConfigFile.overlay(
+                                          ^
+                                  base, Map.of(AGE_BABY, baby), "1.20.1", token -> "root/" + token)' where @NonNull is required
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerExportGameTestsLogic.java:278: warning: [NullAway] passing @Nullable parameter 'ConfigFile.overlay(
+                            ConfigFile.overlay(
+                                              ^
+                                      base,
+                                      Map.of(age, replacement),
+                                      "1.20.1",
+                                      UnaryOperator.identity())' where @NonNull is required
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerExportGameTestsLogic.java:468: warning: [NullAway] dereferenced expression 'error' is @Nullable
+                error.message()
+                     ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerSpawnServiceGameTestsLogic.java:61: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+                if (type != EntityType.COW && type != EntityType.PIG && type != EntityType.SHEEP) {
+                         ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'if (!Objects.equals(type, EntityType.COW) && type != EntityType.PIG && type != EntityType.SHEEP) {' or 'if (!type.equals(EntityType.COW) && type != EntityType.PIG && type != EntityType.SHEEP) {'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerSpawnServiceGameTestsLogic.java:61: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+                if (type != EntityType.COW && type != EntityType.PIG && type != EntityType.SHEEP) {
+                                                   ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'if (type != EntityType.COW && !Objects.equals(type, EntityType.PIG) && type != EntityType.SHEEP) {' or 'if (type != EntityType.COW && !type.equals(EntityType.PIG) && type != EntityType.SHEEP) {'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerSpawnServiceGameTestsLogic.java:61: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+                if (type != EntityType.COW && type != EntityType.PIG && type != EntityType.SHEEP) {
+                                                                             ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'if (type != EntityType.COW && type != EntityType.PIG && !Objects.equals(type, EntityType.SHEEP)) {' or 'if (type != EntityType.COW && type != EntityType.PIG && !type.equals(EntityType.SHEEP)) {'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerSpawnServiceGameTestsLogic.java:118: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+                    LookTarget.livingInCrosshair(player, LookTarget.DEFAULT_REACH) == cow,
+                                                                                   ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'Objects.equals(LookTarget.livingInCrosshair(player, LookTarget.DEFAULT_REACH), cow),' or 'LookTarget.livingInCrosshair(player, LookTarget.DEFAULT_REACH).equals(cow),'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerSpawnServiceGameTestsLogic.java:151: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+                if (type != EntityType.COW && type != EntityType.SQUID) {
+                         ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'if (!Objects.equals(type, EntityType.COW) && type != EntityType.SQUID) {' or 'if (!type.equals(EntityType.COW) && type != EntityType.SQUID) {'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerSpawnServiceGameTestsLogic.java:151: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+                if (type != EntityType.COW && type != EntityType.SQUID) {
+                                                   ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'if (type != EntityType.COW && !Objects.equals(type, EntityType.SQUID)) {' or 'if (type != EntityType.COW && !type.equals(EntityType.SQUID)) {'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerSpawnServiceGameTestsLogic.java:180: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+                    helper.getLevel().getBlockEntity(skull.getBlockPos()) == skull
+                                                                          ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'Objects.equals(helper.getLevel().getBlockEntity(skull.getBlockPos()), skull)' or 'helper.getLevel().getBlockEntity(skull.getBlockPos()).equals(skull)'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerSpawnServiceGameTestsLogic.java:164: warning: [NullAway] passing @Nullable parameter 'skull' where @NonNull is required
+            SkullEyeState.set(skull, eyes);
+                              ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerSpawnServiceGameTestsLogic.java:180: warning: [NullAway] dereferenced expression 'skull' is @Nullable
+                    helper.getLevel().getBlockEntity(skull.getBlockPos()) == skull
+                                                          ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\PickerSpawnServiceGameTestsLogic.java:278: warning: [NullAway] initializer method does not guarantee @NonNull fields 'positionAtFinalize' (line 275), 'spawnType' (line 276) are initialized along all control-flow paths (remember to check for exceptions or early returns).
+        private TrackingCow(Level level) {
+                ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\RecipeGameTestsLogic.java:241: warning: [NullAway] dereferenced expression 'advancement' is @Nullable
+                Arrays.asList(advancement.getRewards().getRecipes()).contains(SLIMY_EYE),
+                                         ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\SerializationGameTestsLogic.java:195: warning: [NullAway] dereferenced expression 'e.getMessage()' is @Nullable
+            rejected = e.getMessage().contains("Unknown eye behavior");
+                                     ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\SerializationGameTestsLogic.java:278: warning: [NullAway] dereferenced expression 'set.any' is @Nullable
+            set.any.variants.get(0).heads.get(0).eyes =
+                   ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\SerializationGameTestsLogic.java:349: warning: [NullAway] dereferenced expression 'tooManyVariants.any' is @Nullable
+        tooManyVariants.any.variants =
+                           ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\SerializationGameTestsLogic.java:352: warning: [NullAway] dereferenced expression 'tooManyVariants.any' is @Nullable
+                        tooManyVariants.any.variants.get(0));
+                                           ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\SerializationGameTestsLogic.java:359: warning: [NullAway] dereferenced expression 'unsafe.any' is @Nullable
+        HeadConfig head = unsafe.any.variants.get(0).heads.get(0);
+                                    ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\SerializationGameTestsLogic.java:635: warning: [NullAway] dereferenced expression 'e.getMessage()' is @Nullable
+            return e.getMessage().contains(diagnostic);
+                                 ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\SkullEyeGameTestsLogic.java:134: warning: [NullAway] dereferenced expression 'watched.active' is @Nullable
+                        && returning.active.behavior == watched.active.behavior
+                                                                      ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\SkullEyeGameTestsLogic.java:716: warning: [NullAway] returning @Nullable expression from method with @NonNull return type
+        return (SkullBlockEntity) helper.getBlockEntity(HEAD);
+        ^
+    (see http://t.uber.com/nullaway )
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\SomeGooglyGameTestsLogic.java:71: warning: [ReferenceEquality] Comparison using reference equality instead of value equality
+                                    Cow.class, area, cow -> cow.getType() == EntityType.COW);
+                                                                          ^
+    (see https://errorprone.info/bugpattern/ReferenceEquality)
+  Did you mean 'Cow.class, area, cow -> Objects.equals(cow.getType(), EntityType.COW));' or 'Cow.class, area, cow -> cow.getType().equals(EntityType.COW));'?
+D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\common\src\gametest\java\com\github\crittscott\somegoogly\gametest\TestEyeRuntime.java:28: warning: [NullAway] returning @Nullable expression from method with @NonNull return type
+            return ClientEyeRuntime.boatEyes(boat);
+            ^
+    (see http://t.uber.com/nullaway )
+95 warnings
+
+[Incubating] Problems report is available at: file:///D:/Dropbox/Vault/code/minecraft/intellijprojects/SomeGooglyEyes/1.20.1/build/reports/problems/problems-report.html
+
+BUILD SUCCESSFUL in 59s
+9 actionable tasks: 9 executed
+Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.5.1/userguide/configuration_cache_enabling.html

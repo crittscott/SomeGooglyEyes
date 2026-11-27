@@ -120,6 +120,8 @@ public final class FabricNetworkTransport {
     }
 
     /** The single Fabric type for a shared payload id, used by registration and sends. */
+    // Registration installs every declared payload ID before any transport uses its type.
+    @SuppressWarnings("NullAway")
     public static PacketType<FabricPayload> type(ResourceLocation id) {
         return PACKET_TYPES.get(id);
     }

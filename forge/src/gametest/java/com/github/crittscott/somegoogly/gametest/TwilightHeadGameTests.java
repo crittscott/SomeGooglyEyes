@@ -34,6 +34,8 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
 
+import java.util.Objects;
+
 /**
  * Twilight Forest-only head scenarios: trophies and skull candles taking, keeping, and giving up
  * eyes. They need Twilight Forest loaded.
@@ -59,8 +61,11 @@ public final class TwilightHeadGameTests {
         use(helper, player, new ItemStack(Items.RED_CANDLE));
         checkCandle(helper, "skeleton_skull_candle");
 
-        BlockEntity candle = helper.getBlockEntity(HEAD);
-        candle.load(candle.saveWithFullMetadata());
+        BlockEntity candle =
+                Objects.requireNonNull(
+                        helper.getBlockEntity(HEAD), "placed block entity fixture must exist");
+        Objects.requireNonNull(candle, "expected fixture value")
+                .load(candle.saveWithFullMetadata());
         helper.assertTrue(EYES.equals(SkullEyeState.snapshot(candle)), "candle save keeps eyes");
         breakAndReplace(helper, player, Items.SKELETON_SKULL, Blocks.SKELETON_SKULL, EYES);
         helper.succeed();
@@ -79,15 +84,23 @@ public final class TwilightHeadGameTests {
                 Blocks.SKELETON_WALL_SKULL
                         .defaultBlockState()
                         .setValue(WallSkullBlock.FACING, Direction.NORTH));
-        SkullEyeState.set(helper.getBlockEntity(HEAD), EYES);
+        SkullEyeState.set(
+                Objects.requireNonNull(
+                        helper.getBlockEntity(HEAD), "placed block entity fixture must exist"),
+                EYES);
         BlockPos dispenserPos = HEAD.above();
         helper.setBlock(
                 dispenserPos,
                 Blocks.DISPENSER
                         .defaultBlockState()
                         .setValue(DispenserBlock.FACING, Direction.DOWN));
-        DispenserBlockEntity dispenser = (DispenserBlockEntity) helper.getBlockEntity(dispenserPos);
-        dispenser.setItem(0, new ItemStack(Items.RED_CANDLE));
+        DispenserBlockEntity dispenser =
+                (DispenserBlockEntity)
+                        Objects.requireNonNull(
+                                helper.getBlockEntity(dispenserPos),
+                                "placed block entity fixture must exist");
+        Objects.requireNonNull(dispenser, "expected fixture value")
+                .setItem(0, new ItemStack(Items.RED_CANDLE));
         helper.setBlock(dispenserPos.above(), Blocks.REDSTONE_BLOCK);
         helper.succeedWhen(() -> checkCandle(helper, "skeleton_wall_skull_candle"));
     }
@@ -103,10 +116,14 @@ public final class TwilightHeadGameTests {
         helper.setBlock(HEAD, trophy);
         Player player = SomeGooglyGameTests.survivalPlayer(helper);
         use(helper, player, new ItemStack(ModContent.SLIMY_EYE.get()));
-        BlockEntity placed = helper.getBlockEntity(HEAD);
+        BlockEntity placed =
+                Objects.requireNonNull(
+                        helper.getBlockEntity(HEAD), "placed block entity fixture must exist");
         Snapshot eyes = SkullEyeState.snapshot(placed);
         helper.assertTrue(eyes.hasEyes(), "a Slimy Eye gives the trophy eyes");
-        helper.assertTrue(placed.getUpdatePacket() != null, "the trophy sends live updates");
+        helper.assertTrue(
+                Objects.requireNonNull(placed, "expected fixture value").getUpdatePacket() != null,
+                "the trophy sends live updates");
         placed.load(placed.getUpdateTag());
         helper.assertTrue(
                 eyes.equals(SkullEyeState.snapshot(placed)), "the trophy update tag keeps eyes");
@@ -119,7 +136,10 @@ public final class TwilightHeadGameTests {
         shears.enchant(ModContent.OPTOMETRIST.get(), 1);
         use(helper, player, shears);
         helper.assertTrue(
-                !SkullEyeState.hasEyes(helper.getBlockEntity(HEAD)),
+                !SkullEyeState.hasEyes(
+                        Objects.requireNonNull(
+                                helper.getBlockEntity(HEAD),
+                                "placed block entity fixture must exist")),
                 "shearing removes the trophy eyes");
         helper.succeed();
     }
@@ -139,7 +159,10 @@ public final class TwilightHeadGameTests {
 
     private static void eyedSkull(GameTestHelper helper) {
         helper.setBlock(HEAD, Blocks.SKELETON_SKULL);
-        SkullEyeState.set(helper.getBlockEntity(HEAD), EYES);
+        SkullEyeState.set(
+                Objects.requireNonNull(
+                        helper.getBlockEntity(HEAD), "placed block entity fixture must exist"),
+                EYES);
     }
 
     private static void use(GameTestHelper helper, Player player, ItemStack stack) {
@@ -152,13 +175,15 @@ public final class TwilightHeadGameTests {
     }
 
     private static void checkCandle(GameTestHelper helper, String blockId) {
-        BlockEntity candle = helper.getBlockEntity(HEAD);
+        BlockEntity candle =
+                Objects.requireNonNull(
+                        helper.getBlockEntity(HEAD), "placed block entity fixture must exist");
         helper.assertTrue(
                 candle != null && candle.getBlockState().is(twilightBlock(blockId)),
                 "the skull was converted to a candle");
         helper.assertTrue(
                 EYES.equals(SkullEyeState.snapshot(candle)), "conversion keeps the eye snapshot");
-        var tag = candle.getUpdateTag();
+        var tag = Objects.requireNonNull(candle, "expected fixture value").getUpdateTag();
         helper.assertTrue(
                 tag.getInt("CandleAmount") == 1 && tag.contains("CandleColor"),
                 "the candle update still includes candle data");
@@ -195,7 +220,11 @@ public final class TwilightHeadGameTests {
         helper.setBlock(HEAD, replacement);
         BlockItem.updateCustomBlockEntityTag(helper.getLevel(), player, pos, stack);
         helper.assertTrue(
-                eyes.equals(SkullEyeState.snapshot(helper.getBlockEntity(HEAD))),
+                eyes.equals(
+                        SkullEyeState.snapshot(
+                                Objects.requireNonNull(
+                                        helper.getBlockEntity(HEAD),
+                                        "placed block entity fixture must exist"))),
                 "placement restores the eyes");
     }
 }

@@ -24,12 +24,13 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+
+import javax.annotation.Nullable;
 
 /**
  * The picker command-spawn lifecycle: which types the spawn commands accept, and the finalize
@@ -159,7 +160,10 @@ public final class PickerSpawnServiceGameTestsLogic {
             helper.setBlock(new BlockPos(2, 2, 0), Blocks.AIR);
             helper.setBlock(new BlockPos(2, 2, 3), Blocks.SKELETON_SKULL);
             SkullBlockEntity skull =
-                    (SkullBlockEntity) helper.getBlockEntity(new BlockPos(2, 2, 3));
+                    (SkullBlockEntity)
+                            Objects.requireNonNull(
+                                    helper.getBlockEntity(new BlockPos(2, 2, 3)),
+                                    "placed block entity fixture must exist");
             EyeState.Snapshot eyes = new EyeState.Snapshot(true, 0.5F, AppearanceOverride.EMPTY);
             SkullEyeState.set(skull, eyes);
             Map<BlockPos, BlockState> before = new LinkedHashMap<>();
@@ -272,8 +276,8 @@ public final class PickerSpawnServiceGameTestsLogic {
 
         private int finalizeCalls;
         private boolean noAiAtFinalize;
-        private BlockPos positionAtFinalize;
-        private MobSpawnType spawnType;
+        @Nullable private BlockPos positionAtFinalize;
+        @Nullable private MobSpawnType spawnType;
 
         private TrackingCow(Level level) {
             super(EntityType.COW, level);
