@@ -8,23 +8,25 @@ import net.minecraft.gametest.framework.GameTestHelper;
  */
 public final class HeldEyeGameTests {
 
-    private HeldEyeGameTests() {
-    }
+    private HeldEyeGameTests() {}
 
     public static void heldEyeBulgesWhenHurt(GameTestHelper helper) {
         HeldEyeGameTestsLogic.heldEyeBulgesWhenHurt(helper, helper.makeMockServerPlayerInLevel());
     }
 
     public static void heldEyeHonorsServerSettings(GameTestHelper helper) {
-        HeldEyeGameTestsLogic.heldEyeHonorsServerSettings(helper, helper.makeMockServerPlayerInLevel());
+        HeldEyeGameTestsLogic.heldEyeHonorsServerSettings(
+                helper, helper.makeMockServerPlayerInLevel());
     }
 
     public static void heldEyePlaysIdleBehaviors(GameTestHelper helper) {
-        HeldEyeGameTestsLogic.heldEyePlaysIdleBehaviors(helper, helper.makeMockServerPlayerInLevel());
+        HeldEyeGameTestsLogic.heldEyePlaysIdleBehaviors(
+                helper, helper.makeMockServerPlayerInLevel());
     }
 
     public static void heldEyeResetsWhenPutAway(GameTestHelper helper) {
-        HeldEyeGameTestsLogic.heldEyeResetsWhenPutAway(helper, helper.makeMockServerPlayerInLevel());
+        HeldEyeGameTestsLogic.heldEyeResetsWhenPutAway(
+                helper, helper.makeMockServerPlayerInLevel());
     }
 
     public static void heldEyeSwirlsWhenHealed(GameTestHelper helper) {

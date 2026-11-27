@@ -2,6 +2,7 @@ package com.github.crittscott.somegoogly.config.neoforge;
 
 import com.github.crittscott.somegoogly.config.ServerConfig;
 import com.github.crittscott.somegoogly.server.ServerServices;
+
 import net.minecraft.server.MinecraftServer;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -15,6 +16,7 @@ public final class NeoForgeServerConfig {
 
     /** Copies the loaded file's values into {@link ServerConfig}. */
     private static final Runnable COPY_VALUES;
+
     /** Native schema used to load and correct this loader's world server file. */
     public static final ModConfigSpec SPEC;
 
@@ -24,10 +26,12 @@ public final class NeoForgeServerConfig {
         SPEC = builder.build();
     }
 
-    private NeoForgeServerConfig() {
-    }
+    private NeoForgeServerConfig() {}
 
-    /** Register the SYNCED config spec and copy its values into {@link ServerConfig} on load and reload. */
+    /**
+     * Register the SYNCED config spec and copy its values into {@link ServerConfig} on load and
+     * reload.
+     */
     public static void register(IEventBus modBus, ModContainer modContainer) {
         modContainer.registerConfig(ModConfig.Type.SYNCED, SPEC, ServerConfig.FILE_NAME);
         modBus.addListener(NeoForgeServerConfig::onConfigChanged);
@@ -46,8 +50,9 @@ public final class NeoForgeServerConfig {
             ServerConfig.resetDefaults();
             return;
         }
-        // A reload arrives off the server thread from the file watcher, and can find clients connected, so the
-        // whole change is handed to the server thread: no tick sees it half copied.
+        // A reload arrives off the server thread from the file watcher, and can find clients
+        // connected, so the whole change is handed to the server thread: no tick sees it half
+        // copied.
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
         if (event instanceof ModConfigEvent.Reloading && server != null) {
             server.execute(() -> {

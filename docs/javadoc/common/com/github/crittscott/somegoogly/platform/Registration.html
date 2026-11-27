@@ -77,9 +77,9 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">Registration</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Registers the mod's content under its namespace the loader's way: Forge and NeoForge through deferred
-registers, Fabric directly into the vanilla registries. Each method returns the registered value's supplier,
-which is valid once the loader has run registration.</div>
+<div class="block">Registers the mod's content under its namespace the loader's way: Forge and NeoForge through
+deferred registers, Fabric directly into the vanilla registries. Each method returns the
+registered value's supplier, which is valid once the loader has run registration.</div>
 </div>
 </section>
 <section class="summary">
@@ -168,8 +168,8 @@ which is valid once the loader has run registration.</div>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T extends net.minecraft.world.item.Item&gt;</span>
 <span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;T&gt;</span>&nbsp;<span class="element-name">item</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;net.minecraft.world.item.Item.Properties, T&gt;&nbsp;factory)</span></div>
-<div class="block">Register an item. The factory receives properties already carrying the item's registry id, which
-<code>Item</code> requires at construction.</div>
+<div class="block">Register an item. The factory receives properties already carrying the item's registry id,
+which <code>Item</code> requires at construction.</div>
 </div>
 </section>
 </li>

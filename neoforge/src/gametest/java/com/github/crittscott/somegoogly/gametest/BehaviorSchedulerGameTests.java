@@ -4,13 +4,12 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.neoforged.neoforge.common.util.FakePlayerFactory;
 
 /**
- * NeoForge GameTest entry points for {@link BehaviorSchedulerGameTestsLogic}; see that class for the
- * actual assertions.
+ * NeoForge GameTest entry points for {@link BehaviorSchedulerGameTestsLogic}; see that class for
+ * the actual assertions.
  */
 public final class BehaviorSchedulerGameTests {
 
-    private BehaviorSchedulerGameTests() {
-    }
+    private BehaviorSchedulerGameTests() {}
 
     public static void affectionEventsPlayLove(GameTestHelper helper) {
         BehaviorSchedulerGameTestsLogic.affectionEventsPlayLove(
@@ -97,18 +96,22 @@ public final class BehaviorSchedulerGameTests {
     }
 
     public static void disabledEyesSuspendAutomaticBehaviors(GameTestHelper helper) {
-        BehaviorSchedulerGameTestsLogic.disabledEyesSuspendAutomaticBehaviors(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+        BehaviorSchedulerGameTestsLogic.disabledEyesSuspendAutomaticBehaviors(
+                helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
     }
 
     public static void completedTradeSwirlsEyes(GameTestHelper helper) {
-        BehaviorSchedulerGameTestsLogic.completedTradeSwirlsEyes(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+        BehaviorSchedulerGameTestsLogic.completedTradeSwirlsEyes(
+                helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
     }
 
     public static void healAtFullHealthPlaysNoSwirl(GameTestHelper helper) {
-        BehaviorSchedulerGameTestsLogic.healAtFullHealthPlaysNoSwirl(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+        BehaviorSchedulerGameTestsLogic.healAtFullHealthPlaysNoSwirl(
+                helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
     }
 
     public static void playerHitBulgesEyes(GameTestHelper helper) {
-        BehaviorSchedulerGameTestsLogic.playerHitBulgesEyes(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+        BehaviorSchedulerGameTestsLogic.playerHitBulgesEyes(
+                helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
     }
 }

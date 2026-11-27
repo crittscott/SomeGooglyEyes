@@ -79,30 +79,28 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">PickerSpawnService</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Authoring aid behind <code>/sg spawnall</code>: spawns one of every mob that <i>could</i> wear
-googly eyes — every summonable living entity, whether or not it has an eye config yet — so the
-picker can be used on any of them without hunting each one down in survival. The single-mob
-sibling <code>/sg spawn &lt;type&gt;</code> lands in <a href="#spawnOne(net.minecraft.commands.CommandSourceStack,net.minecraft.server.level.ServerPlayer,net.minecraft.world.entity.EntityType)"><code>spawnOne(CommandSourceStack, ServerPlayer, EntityType)</code></a>. The ender dragon
-(<a href="../config/ServerEyeConfigs.html#ENDER_DRAGON"><code>ServerEyeConfigs.ENDER_DRAGON</code></a>) is skipped: it's hard-excluded from eyes, and NoAi
-doesn't subdue it (its flight/phase logic ignores the flag), so spawning one wrecks the grid.
-Both verbs also skip any type an admin listed in the server config's <code>spawnExcludedMods</code> /
-<code>spawnExcludedEntities</code> (<a href="../config/ServerConfig.html#isSpawnExcluded(net.minecraft.resources.Identifier)"><code>ServerConfig.isSpawnExcluded(Identifier)</code></a>).
+<div class="block">Authoring aid behind <code>/sg spawnall</code>: spawns one of every mob that <i>could</i> wear googly
+eyes — every summonable living entity, whether or not it has an eye config yet — so the picker
+can be used on any of them without hunting each one down in survival. The single-mob sibling
+<code>/sg spawn &lt;type&gt;</code> lands in <a href="#spawnOne(net.minecraft.commands.CommandSourceStack,net.minecraft.server.level.ServerPlayer,net.minecraft.world.entity.EntityType)"><code>spawnOne(CommandSourceStack, ServerPlayer, EntityType)</code></a>. The ender dragon (<a href="../config/ServerEyeConfigs.html#ENDER_DRAGON"><code>ServerEyeConfigs.ENDER_DRAGON</code></a>) is skipped: it's hard-excluded from eyes, and NoAi doesn't subdue
+it (its flight/phase logic ignores the flag), so spawning one wrecks the grid. Both verbs also
+skip any type an admin listed in the server config's <code>spawnExcludedMods</code> / <code>
+spawnExcludedEntities</code> (<a href="../config/ServerConfig.html#isSpawnExcluded(net.minecraft.resources.Identifier)"><code>ServerConfig.isSpawnExcluded(Identifier)</code></a>).
 
-<p>The server-owned <code>/sg spawn</code> and <code>/sg spawnall</code> commands call
-<a href="#spawn(net.minecraft.commands.CommandSourceStack,net.minecraft.server.level.ServerPlayer,java.lang.String)"><code>spawn(CommandSourceStack, ServerPlayer, String)</code></a> /
-<a href="#spawnOne(net.minecraft.commands.CommandSourceStack,net.minecraft.server.level.ServerPlayer,net.minecraft.world.entity.EntityType)"><code>spawnOne(CommandSourceStack, ServerPlayer, EntityType)</code></a> on the server
-thread, so the verbs work from a remote client as well as in single-player.
+<p>The server-owned <code>/sg spawn</code> and <code>/sg spawnall</code> commands call <a href="#spawn(net.minecraft.commands.CommandSourceStack,net.minecraft.server.level.ServerPlayer,java.lang.String)"><code>spawn(CommandSourceStack, ServerPlayer, String)</code></a> / <a href="#spawnOne(net.minecraft.commands.CommandSourceStack,net.minecraft.server.level.ServerPlayer,net.minecraft.world.entity.EntityType)"><code>spawnOne(CommandSourceStack, ServerPlayer, EntityType)</code></a> on the server thread, so the verbs work from a remote client as well
+as in single-player.
 
-<p>Layout: mobs are grouped by mod, sorted by id within each mod. Each mod gets its own row heading
-in the cardinal direction nearest the player's facing (mobs spaced one cell apart), and each
-subsequent mod's row is shifted one cell counter-clockwise. Spawned mobs have their AI disabled, sit
-on the ground, face the player, and water-dwellers get a small water pocket. (Whether they actually
-show eyes still follows the server spawn-chance config; toggle the picker on to force eyes.)
+<p>Layout: mobs are grouped by mod, sorted by id within each mod. Each mod gets its own row
+heading in the cardinal direction nearest the player's facing (mobs spaced one cell apart), and
+each subsequent mod's row is shifted one cell counter-clockwise. Spawned mobs have their AI
+disabled, sit on the ground, face the player, and water-dwellers get a small water pocket.
+(Whether they actually show eyes still follows the server spawn-chance config; toggle the picker
+on to force eyes.)
 
-<p>If the player is standing over air when the command runs, the per-cell terrain is ignored and the
-whole grid is laid on a flat sandstone floor at the player's level — a 5x5 tile under each mob, with
-water mobs getting a walled 3x3 basin instead. This is a throwaway-test-world convenience and freely
-overwrites whatever blocks it lands on.</div>
+<p>If the player is standing over air when the command runs, the per-cell terrain is ignored and
+the whole grid is laid on a flat sandstone floor at the player's level — a 5x5 tile under each
+mob, with water mobs getting a walled 3x3 basin instead. This is a throwaway-test-world
+convenience and freely overwrites whatever blocks it lands on.</div>
 </div>
 </section>
 <section class="summary">
@@ -119,8 +117,7 @@ overwrites whatever blocks it lands on.</div>
 <div class="col-first even-row-color"><code>static enum&nbsp;</code></div>
 <div class="col-second even-row-color"><code><a href="PickerSpawnService.SpawnRefusal.html" class="type-name-link" title="enum class in com.github.crittscott.somegoogly.picker">PickerSpawnService.SpawnRefusal</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">Why <code>/sg spawn</code> and <code>/sg spawnall</code> refuse an entity type, in the order <a href="#refusal(net.minecraft.world.entity.EntityType)"><code>refusal(EntityType)</code></a>
-checks them, with the feedback each command gives.</div>
+<div class="block">Why <code>/sg spawn</code> and <code>/sg spawnall</code> refuse an entity type, in the order <a href="#refusal(net.minecraft.world.entity.EntityType)"><code>refusal(EntityType)</code></a> checks them, with the feedback each command gives.</div>
 </div>
 </div>
 </section>
@@ -139,7 +136,8 @@ checks them, with the feedback each command gives.</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#isSpawnable(net.minecraft.world.entity.EntityType)" class="member-name-link">isSpawnable</a><wbr>(net.minecraft.world.entity.EntityType&lt;?&gt;&nbsp;type)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Whether the authoring spawn commands may create <code>type</code>; the filter for their suggestions too.</div>
+<div class="block">Whether the authoring spawn commands may create <code>type</code>; the filter for their
+suggestions too.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#prepareForCommandSpawn(net.minecraft.server.level.ServerLevel,net.minecraft.world.entity.Entity,double,double,double,float)" class="member-name-link">prepareForCommandSpawn</a><wbr>(net.minecraft.server.level.ServerLevel&nbsp;level,
@@ -149,13 +147,14 @@ checks them, with the feedback each command gives.</div>
  double&nbsp;z,
  float&nbsp;yaw)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Put an entity at its destination and complete the normal command-spawn lifecycle before applying
-the picker's frozen display state.</div>
+<div class="block">Put an entity at its destination and complete the normal command-spawn lifecycle before
+applying the picker's frozen display state.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static @Nullable <a href="PickerSpawnService.SpawnRefusal.html" title="enum class in com.github.crittscott.somegoogly.picker">PickerSpawnService.SpawnRefusal</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#refusal(net.minecraft.world.entity.EntityType)" class="member-name-link">refusal</a><wbr>(net.minecraft.world.entity.EntityType&lt;?&gt;&nbsp;type)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The first reason the authoring spawn commands refuse <code>type</code>, or <code>null</code> if they don't.</div>
+<div class="block">The first reason the authoring spawn commands refuse <code>type</code>, or <code>null</code> if they
+don't.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static int</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#spawn(net.minecraft.commands.CommandSourceStack,net.minecraft.server.level.ServerPlayer,java.lang.String)" class="member-name-link">spawn</a><wbr>(net.minecraft.commands.CommandSourceStack&nbsp;source,
@@ -169,8 +168,7 @@ the picker's frozen display state.</div>
  net.minecraft.server.level.ServerPlayer&nbsp;player,
  net.minecraft.world.entity.EntityType&lt;?&gt;&nbsp;type)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Spawn a single <code>type</code> at the block the player is targeting (within 20.0
-blocks) — the <code>/sg spawn &lt;type&gt;</code> server-thread half.</div>
+<div class="block">Spawn a single <code>type</code> at the block the player is targeting (within 20.0 blocks) — the <code>/sg spawn &lt;type&gt;</code> server-thread half.</div>
 </div>
 </div>
 </div>
@@ -194,7 +192,8 @@ blocks) — the <code>/sg spawn &lt;type&gt;</code> server-thread half.</div>
 <h3>isSpawnable</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isSpawnable</span><wbr><span class="parameters">(net.minecraft.world.entity.EntityType&lt;?&gt;&nbsp;type)</span></div>
-<div class="block">Whether the authoring spawn commands may create <code>type</code>; the filter for their suggestions too.</div>
+<div class="block">Whether the authoring spawn commands may create <code>type</code>; the filter for their
+suggestions too.</div>
 </div>
 </section>
 </li>
@@ -203,7 +202,8 @@ blocks) — the <code>/sg spawn &lt;type&gt;</code> server-thread half.</div>
 <h3>refusal</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">@Nullable <a href="PickerSpawnService.SpawnRefusal.html" title="enum class in com.github.crittscott.somegoogly.picker">PickerSpawnService.SpawnRefusal</a></span>&nbsp;<span class="element-name">refusal</span><wbr><span class="parameters">(net.minecraft.world.entity.EntityType&lt;?&gt;&nbsp;type)</span></div>
-<div class="block">The first reason the authoring spawn commands refuse <code>type</code>, or <code>null</code> if they don't.</div>
+<div class="block">The first reason the authoring spawn commands refuse <code>type</code>, or <code>null</code> if they
+don't.</div>
 </div>
 </section>
 </li>
@@ -217,9 +217,9 @@ blocks) — the <code>/sg spawn &lt;type&gt;</code> server-thread half.</div>
 <div class="block">Spawn the grid around <code>player</code> (must run on the server thread). Reports the result.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>modFilter</code> - if non-null/blank, only spawn mobs whose namespace equals it (e.g. <code>"minecraft"</code>
-                 or <code>"exoticbirds"</code>), and additionally report each type in that namespace that was
-                 dropped and why — a debugging aid for mods whose mobs don't appear.</dd>
+<dd><code>modFilter</code> - if non-null/blank, only spawn mobs whose namespace equals it (e.g. <code>
+    "minecraft"</code> or <code>"exoticbirds"</code>), and additionally report each type in that
+    namespace that was dropped and why — a debugging aid for mods whose mobs don't appear.</dd>
 <dt>Returns:</dt>
 <dd>the number of mobs spawned</dd>
 </dl>
@@ -233,11 +233,11 @@ blocks) — the <code>/sg spawn &lt;type&gt;</code> server-thread half.</div>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">spawnOne</span><wbr><span class="parameters">(net.minecraft.commands.CommandSourceStack&nbsp;source,
  net.minecraft.server.level.ServerPlayer&nbsp;player,
  net.minecraft.world.entity.EntityType&lt;?&gt;&nbsp;type)</span></div>
-<div class="block">Spawn a single <code>type</code> at the block the player is targeting (within 20.0
-blocks) — the <code>/sg spawn &lt;type&gt;</code> server-thread half. Shares spawnall's conventions (NoAi +
-persistent, facing the player, ender dragon excluded) but never terraforms: water mobs spawn
-wherever the player aims, so aim into water to keep one alive. Fails with feedback when no block
-is targeted or the mob's bounding box doesn't fit at the target.</div>
+<div class="block">Spawn a single <code>type</code> at the block the player is targeting (within 20.0 blocks) — the <code>/sg spawn &lt;type&gt;</code> server-thread half. Shares spawnall's
+conventions (NoAi + persistent, facing the player, ender dragon excluded) but never
+terraforms: water mobs spawn wherever the player aims, so aim into water to keep one alive.
+Fails with feedback when no block is targeted or the mob's bounding box doesn't fit at the
+target.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>whether the mob spawned</dd>
@@ -255,15 +255,16 @@ is targeted or the mob's bounding box doesn't fit at the target.</div>
  double&nbsp;y,
  double&nbsp;z,
  float&nbsp;yaw)</span></div>
-<div class="block">Put an entity at its destination and complete the normal command-spawn lifecycle before applying
-the picker's frozen display state. Some modded mobs leave required persistent fields unset until
-<code>Mob.finalizeSpawn(ServerLevelAccessor, DifficultyInstance, EntitySpawnReason, SpawnGroupData)</code>; inserting a factory-created mob without this step can make it impossible
-to save. Finalization goes through the loader's finalize-spawn event, as <code>/summon</code> does, so
-other mods' listeners initialize the mob too. Public for the shared GameTest that checks this ordering,
-which lives in another module.</div>
+<div class="block">Put an entity at its destination and complete the normal command-spawn lifecycle before
+applying the picker's frozen display state. Some modded mobs leave required persistent fields
+unset until <code>Mob.finalizeSpawn(ServerLevelAccessor, DifficultyInstance, EntitySpawnReason, SpawnGroupData)</code>; inserting a factory-created mob without this step can
+make it impossible to save. Finalization goes through the loader's finalize-spawn event, as
+<code>/summon</code> does, so other mods' listeners initialize the mob too. Public for the shared
+GameTest that checks this ordering, which lives in another module.</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>false when a finalize-spawn listener cancelled the spawn; the entity must then not be added</dd>
+<dd>false when a finalize-spawn listener cancelled the spawn; the entity must then not be
+    added</dd>
 </dl>
 </div>
 </section>

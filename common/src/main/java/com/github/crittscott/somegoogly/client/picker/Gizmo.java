@@ -1,40 +1,48 @@
 package com.github.crittscott.somegoogly.client.picker;
 
 import com.github.crittscott.somegoogly.eye.state.EyeColor;
-import com.mojang.renderpearl.api.pipeline.BlendFunction;
-import com.mojang.renderpearl.api.pipeline.RenderPipeline;
-import com.mojang.renderpearl.api.pipeline.CompareOp;
-import com.mojang.renderpearl.api.pipeline.ColorTargetState;
-import com.mojang.renderpearl.api.pipeline.DepthStencilState;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.renderpearl.api.pipeline.BlendFunction;
+import com.mojang.renderpearl.api.pipeline.ColorTargetState;
+import com.mojang.renderpearl.api.pipeline.CompareOp;
+import com.mojang.renderpearl.api.pipeline.DepthStencilState;
+import com.mojang.renderpearl.api.pipeline.RenderPipeline;
+
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.rendertype.RenderSetup;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.rendertype.RenderSetup;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.resources.Identifier;
+
 import org.joml.Matrix4f;
 
 /**
- * Draws the Blockbench/Blender-style transform gizmo for the selected part: RGB = XYZ axes
- * (3 blocks each way), a cube only on each positive end, and an origin marker. Rendered in the
- * part's local frame with depth-testing off so the origin — buried
- * inside the mob mesh — stays visible.
+ * Draws the Blockbench/Blender-style transform gizmo for the selected part: RGB = XYZ axes (3
+ * blocks each way), a cube only on each positive end, and an origin marker. Rendered in the part's
+ * local frame with depth-testing off so the origin — buried inside the mob mesh — stays visible.
  */
 public final class Gizmo {
 
     private static final float AXIS_LEN = 3.0f;
     private static final float END_CUBE = 0.10f;
-    private static final RenderPipeline GIZMO_PIPELINE = RenderPipelines.register(
-            RenderPipeline.builder(RenderPipelines.LINES_SNIPPET)
-                    .withLocation(Identifier.fromNamespaceAndPath("somegoogly", "pipeline/gizmo_lines"))
-                    .withDepthStencilState(new DepthStencilState(CompareOp.ALWAYS_PASS, false, 0F, 0F))
-                    .withColorTargetState(0, new ColorTargetState(BlendFunction.TRANSLUCENT))
-                    .withCull(false)
-                    .build());
+    private static final RenderPipeline GIZMO_PIPELINE =
+            RenderPipelines.register(
+                    RenderPipeline.builder(RenderPipelines.LINES_SNIPPET)
+                            .withLocation(
+                                    Identifier.fromNamespaceAndPath(
+                                            "somegoogly", "pipeline/gizmo_lines"))
+                            .withDepthStencilState(
+                                    new DepthStencilState(CompareOp.ALWAYS_PASS, false, 0F, 0F))
+                            .withColorTargetState(
+                                    0, new ColorTargetState(BlendFunction.TRANSLUCENT))
+                            .withCull(false)
+                            .build());
     // The render type depends on the pipeline initialized above.
-    private static final RenderType GIZMO_LINES = RenderType.create(
-            "somegoogly_gizmo_lines", RenderSetup.builder(GIZMO_PIPELINE).createRenderSetup());
+    private static final RenderType GIZMO_LINES =
+            RenderType.create(
+                    "somegoogly_gizmo_lines",
+                    RenderSetup.builder(GIZMO_PIPELINE).createRenderSetup());
     private static final float LINE_WIDTH = 1.0f;
     private static final float NEGATIVE_AXIS_BRIGHTNESS = 0.4f;
     private static final float ORIGIN_CUBE = 0.06f;
@@ -43,18 +51,34 @@ public final class Gizmo {
     private static final EyeColor Y_COLOR = new EyeColor(0.15f, 1.0f, 0.15f);
     private static final EyeColor Z_COLOR = new EyeColor(0.25f, 0.45f, 1.0f);
 
-    private Gizmo() {
-    }
+    private Gizmo() {}
 
-    private static void axis(PoseStack.Pose pose, VertexConsumer vc, float x, float y, float z,
-                             EyeColor color) {
+    private static void axis(
+            PoseStack.Pose pose, VertexConsumer vc, float x, float y, float z, EyeColor color) {
         float r = color.r(), g = color.g(), b = color.b();
-        line(pose, vc, 0, 0, 0, x, y, z, r, g, b);                       // positive (bright)
-        line(pose, vc, 0, 0, 0, -x, -y, -z, r * NEGATIVE_AXIS_BRIGHTNESS, g * NEGATIVE_AXIS_BRIGHTNESS, b * NEGATIVE_AXIS_BRIGHTNESS); // negative (dim)
+        line(pose, vc, 0, 0, 0, x, y, z, r, g, b); // positive (bright)
+        line(
+                pose,
+                vc,
+                0,
+                0,
+                0,
+                -x,
+                -y,
+                -z,
+                r * NEGATIVE_AXIS_BRIGHTNESS,
+                g * NEGATIVE_AXIS_BRIGHTNESS,
+                b * NEGATIVE_AXIS_BRIGHTNESS); // negative (dim)
     }
 
-    private static void cube(PoseStack.Pose pose, VertexConsumer vc, float cx, float cy, float cz,
-                             float h, EyeColor color) {
+    private static void cube(
+            PoseStack.Pose pose,
+            VertexConsumer vc,
+            float cx,
+            float cy,
+            float cz,
+            float h,
+            EyeColor color) {
         float r = color.r(), g = color.g(), b = color.b();
         for (int first = -1; first <= 1; first += 2) {
             for (int second = -1; second <= 1; second += 2) {
@@ -86,9 +110,18 @@ public final class Gizmo {
         cube(pose, vc, 0, 0, 0, ORIGIN_CUBE, EyeColor.WHITE);
     }
 
-    private static void line(PoseStack.Pose pose, VertexConsumer vc,
-                             float x1, float y1, float z1, float x2, float y2, float z2,
-                             float r, float g, float b) {
+    private static void line(
+            PoseStack.Pose pose,
+            VertexConsumer vc,
+            float x1,
+            float y1,
+            float z1,
+            float x2,
+            float y2,
+            float z2,
+            float r,
+            float g,
+            float b) {
         Matrix4f m = pose.pose();
         float nx = x2 - x1, ny = y2 - y1, nz = z2 - z1;
         float len = (float) Math.sqrt(nx * nx + ny * ny + nz * nz);
@@ -97,7 +130,13 @@ public final class Gizmo {
             ny /= len;
             nz /= len;
         }
-        vc.addVertex(m, x1, y1, z1).setColor(r, g, b, 1.0f).setNormal(pose, nx, ny, nz).setLineWidth(LINE_WIDTH);
-        vc.addVertex(m, x2, y2, z2).setColor(r, g, b, 1.0f).setNormal(pose, nx, ny, nz).setLineWidth(LINE_WIDTH);
+        vc.addVertex(m, x1, y1, z1)
+                .setColor(r, g, b, 1.0f)
+                .setNormal(pose, nx, ny, nz)
+                .setLineWidth(LINE_WIDTH);
+        vc.addVertex(m, x2, y2, z2)
+                .setColor(r, g, b, 1.0f)
+                .setNormal(pose, nx, ny, nz)
+                .setLineWidth(LINE_WIDTH);
     }
 }

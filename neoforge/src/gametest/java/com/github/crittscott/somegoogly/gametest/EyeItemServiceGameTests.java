@@ -1,38 +1,39 @@
 package com.github.crittscott.somegoogly.gametest;
 
-import java.util.function.Consumer;
-import java.util.List;
-import java.util.ArrayList;
-import net.neoforged.neoforge.event.entity.player.PlayerDestroyItemEvent;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.bus.api.EventPriority;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.level.GameType;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.decoration.ArmorStand;
-import net.minecraft.world.entity.animal.cow.Cow;
-import net.minecraft.world.entity.EntityTypes;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.core.BlockPos;
-import com.github.crittscott.somegoogly.registry.ModContent;
-import com.github.crittscott.somegoogly.item.EyeItemService;
 import com.github.crittscott.somegoogly.eye.state.EyeState;
+import com.github.crittscott.somegoogly.item.EyeItemService;
+import com.github.crittscott.somegoogly.registry.ModContent;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.animal.cow.Cow;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.GameType;
+import net.minecraft.world.phys.Vec3;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.util.FakePlayerFactory;
+import net.neoforged.neoforge.event.entity.player.PlayerDestroyItemEvent;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
 /**
- * NeoForge GameTest entry points for {@link EyeItemServiceGameTestsLogic}; see that class for the actual
- * assertions.
+ * NeoForge GameTest entry points for {@link EyeItemServiceGameTestsLogic}; see that class for the
+ * actual assertions.
  */
 public final class EyeItemServiceGameTests {
 
-    private EyeItemServiceGameTests() {
-    }
+    private EyeItemServiceGameTests() {}
 
     public static void optometristInteractHarvestsEyesForOneDurability(GameTestHelper helper) {
         EyeItemServiceGameTestsLogic.optometristInteractHarvestsEyesForOneDurability(
@@ -58,8 +59,8 @@ public final class EyeItemServiceGameTests {
     }
 
     /**
-     * A harvest that breaks shears posts one native destruction event. In game, harvest an eyed cow with
-     * Optometrist shears on their final durability. The item breaks as the eye drops.
+     * A harvest that breaks shears posts one native destruction event. In game, harvest an eyed cow
+     * with Optometrist shears on their final durability. The item breaks as the eye drops.
      */
     public static void harvestBreakingShearsReportsThem(GameTestHelper helper) {
         ServerPlayer player = FakePlayerFactory.getMinecraft(helper.getLevel());
@@ -72,26 +73,32 @@ public final class EyeItemServiceGameTests {
         player.setItemInHand(InteractionHand.MAIN_HAND, shears);
 
         List<PlayerDestroyItemEvent> reports = new ArrayList<>();
-        Consumer<PlayerDestroyItemEvent> listener = event -> {
-            if (event.getEntity() == player) {
-                reports.add(event);
-            }
-        };
-        NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, PlayerDestroyItemEvent.class, listener);
+        Consumer<PlayerDestroyItemEvent> listener =
+                event -> {
+                    if (event.getEntity() == player) {
+                        reports.add(event);
+                    }
+                };
+        NeoForge.EVENT_BUS.addListener(
+                EventPriority.NORMAL, false, PlayerDestroyItemEvent.class, listener);
         try {
             EyeItemService.interact(player, helper.getLevel(), InteractionHand.MAIN_HAND, cow);
         } finally {
             NeoForge.EVENT_BUS.unregister(listener);
         }
 
-        helper.assertTrue(shears.isEmpty(), Component.literal("the last durability breaks the shears"));
-        helper.assertTrue(reports.size() == 1, Component.literal("the broken shears are reported once, got " + reports.size()));
+        helper.assertTrue(
+                shears.isEmpty(), Component.literal("the last durability breaks the shears"));
+        helper.assertTrue(
+                reports.size() == 1,
+                Component.literal("the broken shears are reported once, got " + reports.size()));
         helper.succeed();
     }
 
     /**
-     * A click on an armor stand reaches Optometrist before the stand can take the shears. In game, right-click
-     * an eyed armor stand with Optometrist shears. Its eyes come off and the stand does not equip the shears.
+     * A click on an armor stand reaches Optometrist before the stand can take the shears. In game,
+     * right-click an eyed armor stand with Optometrist shears. Its eyes come off and the stand does
+     * not equip the shears.
      */
     public static void optometristActsOnArmorStandBeforeItTakesTheShears(GameTestHelper helper) {
         ServerPlayer player = FakePlayerFactory.getMinecraft(helper.getLevel());
@@ -101,23 +108,32 @@ public final class EyeItemServiceGameTests {
 
         player.interactOn(stand, InteractionHand.MAIN_HAND, Vec3.ZERO);
 
-        helper.assertTrue(!EyeState.hasEyes(stand), Component.literal("the stand's eyes should come off"));
-        helper.assertTrue(stand.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty(), Component.literal("the stand should not take the shears"));
-        helper.assertTrue(player.getMainHandItem().is(Items.SHEARS), Component.literal("the player should keep the shears"));
+        helper.assertTrue(
+                !EyeState.hasEyes(stand), Component.literal("the stand's eyes should come off"));
+        helper.assertTrue(
+                stand.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty(),
+                Component.literal("the stand should not take the shears"));
+        helper.assertTrue(
+                player.getMainHandItem().is(Items.SHEARS),
+                Component.literal("the player should keep the shears"));
         helper.succeed();
     }
 
     private static ItemStack optometristShears(GameTestHelper helper) {
         ItemStack shears = new ItemStack(Items.SHEARS);
-        shears.enchant(helper.getLevel().registryAccess().lookupOrThrow(Registries.ENCHANTMENT)
-                .getOrThrow(ModContent.OPTOMETRIST), 1);
+        shears.enchant(
+                helper.getLevel()
+                        .registryAccess()
+                        .lookupOrThrow(Registries.ENCHANTMENT)
+                        .getOrThrow(ModContent.OPTOMETRIST),
+                1);
         return shears;
     }
 
     /**
-     * Using up the last Slimy Eye posts one native destruction event, as a hotbar-refill mod expects. In game, with
-     * a mod that refills an emptied hotbar slot, apply your last Slimy Eye to a cow in survival. The slot is
-     * refilled.
+     * Using up the last Slimy Eye posts one native destruction event, as a hotbar-refill mod
+     * expects. In game, with a mod that refills an emptied hotbar slot, apply your last Slimy Eye
+     * to a cow in survival. The slot is refilled.
      */
     public static void usingTheLastSlimyEyeReportsIt(GameTestHelper helper) {
         ServerPlayer player = FakePlayerFactory.getMinecraft(helper.getLevel());
@@ -125,26 +141,33 @@ public final class EyeItemServiceGameTests {
         player.setGameMode(GameType.SURVIVAL);
         Cow cow = helper.spawnWithNoFreeWill(EntityTypes.COW, new BlockPos(2, 2, 2));
         EyeState.setHasEyes(cow, false);
-        helper.assertTrue(EyeItemService.verdictFor(cow) == EyeItemService.Verdict.CAN_HAVE,
+        helper.assertTrue(
+                EyeItemService.verdictFor(cow) == EyeItemService.Verdict.CAN_HAVE,
                 Component.literal("the bundled cow definition lets a cow take eyes"));
         ItemStack eye = new ItemStack(ModContent.SLIMY_EYE.get());
         player.setItemInHand(InteractionHand.MAIN_HAND, eye);
 
         List<PlayerDestroyItemEvent> reports = new ArrayList<>();
-        Consumer<PlayerDestroyItemEvent> listener = event -> {
-            if (event.getEntity() == player) {
-                reports.add(event);
-            }
-        };
-        NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, PlayerDestroyItemEvent.class, listener);
+        Consumer<PlayerDestroyItemEvent> listener =
+                event -> {
+                    if (event.getEntity() == player) {
+                        reports.add(event);
+                    }
+                };
+        NeoForge.EVENT_BUS.addListener(
+                EventPriority.NORMAL, false, PlayerDestroyItemEvent.class, listener);
         try {
             EyeItemService.interact(player, helper.getLevel(), InteractionHand.MAIN_HAND, cow);
         } finally {
             NeoForge.EVENT_BUS.unregister(listener);
         }
 
-        helper.assertTrue(EyeState.hasEyes(cow) && eye.isEmpty(), Component.literal("the last Slimy Eye is applied and used up"));
-        helper.assertTrue(reports.size() == 1, Component.literal("the used-up Slimy Eye is reported once, got " + reports.size()));
+        helper.assertTrue(
+                EyeState.hasEyes(cow) && eye.isEmpty(),
+                Component.literal("the last Slimy Eye is applied and used up"));
+        helper.assertTrue(
+                reports.size() == 1,
+                Component.literal("the used-up Slimy Eye is reported once, got " + reports.size()));
         helper.succeed();
     }
 }

@@ -3,13 +3,12 @@ package com.github.crittscott.somegoogly.gametest;
 import net.minecraft.gametest.framework.GameTestHelper;
 
 /**
- * Forge GameTest entry points for {@link SerializationGameTestsLogic}; see that class for the actual
- * assertions.
+ * Forge GameTest entry points for {@link SerializationGameTestsLogic}; see that class for the
+ * actual assertions.
  */
 public final class SerializationGameTests {
 
-    private SerializationGameTests() {
-    }
+    private SerializationGameTests() {}
 
     public static void networkProtocolIdsAreUnique(GameTestHelper helper) {
         SerializationGameTestsLogic.networkProtocolIdsAreUnique(helper);

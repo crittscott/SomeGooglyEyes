@@ -89,18 +89,19 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">RootModelResolver</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
 implements <a href="EyeAttachmentResolver.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">EyeAttachmentResolver</a></span></div>
-<div class="block">Resolver for every model whose geometry hangs off <code>Model.root()</code> — all vanilla models and
-any third-party model built the vanilla way. It walks that tree by its name → child map, naming the root
-<code>root</code>, so tokens are slash-joined paths like <code>root/body/head</code>. Matching is a normalized
-<b>suffix</b> match (see <a href="EyeAttachmentResolver.html#pathMatches(java.lang.String,java.lang.String)"><code>EyeAttachmentResolver.pathMatches(String, String)</code></a>), so a stored <code>head</code> still
-attaches and a stored <code>body/head</code> disambiguates two same-named parts under different parents.
+<div class="block">Resolver for every model whose geometry hangs off <code>Model.root()</code> — all vanilla models
+and any third-party model built the vanilla way. It walks that tree by its name → child map,
+naming the root <code>root</code>, so tokens are slash-joined paths like <code>root/body/head</code>.
+Matching is a normalized <b>suffix</b> match (see <a href="EyeAttachmentResolver.html#pathMatches(java.lang.String,java.lang.String)"><code>EyeAttachmentResolver.pathMatches(String, String)</code></a>), so
+a stored <code>head</code> still attaches and a stored <code>body/head</code> disambiguates two same-named
+parts under different parents.
 
-<p>Resolving a token records the chain of parts from the root down to the attach part; applying that
-chain replays each part's <code>translateAndRotate</code> onto the live (this-frame, post-animation)
-<code>PoseStack</code>, so the resulting pose carries every ancestor's animation and scale. Baby models are
-separate model instances whose age scaling lives in their part poses, so the same replay places a
-baby's eyes. The descent mirrors <code>ModelPart.visit(PoseStack, ModelPart.Visitor)</code>, except that it does <b>not</b> skip cube-less
-pivot/group parts, so eyes can attach to a named empty joint.
+<p>Resolving a token records the chain of parts from the root down to the attach part; applying
+that chain replays each part's <code>translateAndRotate</code> onto the live (this-frame,
+post-animation) <code>PoseStack</code>, so the resulting pose carries every ancestor's animation and
+scale. Baby models are separate model instances whose age scaling lives in their part poses, so
+the same replay places a baby's eyes. The descent mirrors <code>ModelPart.visit(PoseStack, ModelPart.Visitor)</code>, except that it
+does <b>not</b> skip cube-less pivot/group parts, so eyes can attach to a named empty joint.
 
 <p>It handles every model, so <a href="Resolvers.html" title="class in com.github.crittscott.somegoogly.client.render.resolver"><code>Resolvers</code></a> tries it last.</div>
 </div>
@@ -144,14 +145,15 @@ pivot/group parts, so eyes can attach to a named empty joint.
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#canonicalToken(net.minecraft.client.model.EntityModel,java.lang.String)" class="member-name-link">canonicalToken</a><wbr>(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;storedToken)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Translate a (possibly differently-spelled or partial) stored attach token into the <i>canonical</i>
-path token this resolver would enumerate for the same part — the single vocabulary the picker, HUD,
-and exported configs all speak.</div>
+<div class="block">Translate a (possibly differently-spelled or partial) stored attach token into the
+<i>canonical</i> path token this resolver would enumerate for the same part — the single
+vocabulary the picker, HUD, and exported configs all speak.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#enumerateParts(net.minecraft.client.model.EntityModel)" class="member-name-link">enumerateParts</a><wbr>(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">List selectable attachment tokens for this model, in a stable order (used by the part picker).</div>
+<div class="block">List selectable attachment tokens for this model, in a stable order (used by the part
+picker).</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#handles(net.minecraft.client.model.EntityModel)" class="member-name-link">handles</a><wbr>(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model)</code></div>
@@ -162,8 +164,9 @@ and exported configs all speak.</div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#resolve(net.minecraft.client.model.EntityModel,java.lang.String)" class="member-name-link">resolve</a><wbr>(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;partToken)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Find the part <code>partToken</code> names and return the transforms that reach it, or <code>null</code> when
-the model has no such part (an unknown token, or a model whose worn variant lacks it).</div>
+<div class="block">Find the part <code>partToken</code> names and return the transforms that reach it, or <code>
+null</code> when the model has no such part (an unknown token, or a model whose worn variant lacks
+it).</div>
 </div>
 </div>
 </div>
@@ -221,8 +224,8 @@ the model has no such part (an unknown token, or a model whose worn variant lack
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;</span>&nbsp;<span class="element-name">enumerateParts</span><wbr><span class="parameters">(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model)</span></div>
 <div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="EyeAttachmentResolver.html#enumerateParts(net.minecraft.client.model.EntityModel)">EyeAttachmentResolver</a></code></span></div>
-<div class="block">List selectable attachment tokens for this model, in a stable order (used by the part picker).
-Default: none (the resolver doesn't support enumeration / picker authoring).</div>
+<div class="block">List selectable attachment tokens for this model, in a stable order (used by the part
+picker). Default: none (the resolver doesn't support enumeration / picker authoring).</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="EyeAttachmentResolver.html#enumerateParts(net.minecraft.client.model.EntityModel)">enumerateParts</a></code>&nbsp;in interface&nbsp;<code><a href="EyeAttachmentResolver.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">EyeAttachmentResolver</a></code></dd>
@@ -237,15 +240,15 @@ Default: none (the resolver doesn't support enumeration / picker authoring).</di
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">canonicalToken</span><wbr><span class="parameters">(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;storedToken)</span></div>
 <div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="EyeAttachmentResolver.html#canonicalToken(net.minecraft.client.model.EntityModel,java.lang.String)">EyeAttachmentResolver</a></code></span></div>
-<div class="block">Translate a (possibly differently-spelled or partial) stored attach token into the <i>canonical</i>
-path token this resolver would enumerate for the same part — the single vocabulary the picker, HUD,
-and exported configs all speak. That is the full slash path (<code>root/body/head</code>), with a
-positional segment (<code>#N</code>) only where a part has no obfuscation-stable name. Returns the token
-unchanged when it can't be resolved to a part (so unknown tokens pass through untouched rather than
-being silently remapped).
+<div class="block">Translate a (possibly differently-spelled or partial) stored attach token into the
+<i>canonical</i> path token this resolver would enumerate for the same part — the single
+vocabulary the picker, HUD, and exported configs all speak. That is the full slash path
+(<code>root/body/head</code>), with a positional segment (<code>#N</code>) only where a part has no
+obfuscation-stable name. Returns the token unchanged when it can't be resolved to a part (so
+unknown tokens pass through untouched rather than being silently remapped).
 
-<p>Default: identity (the resolver's enumeration vocabulary already matches stored tokens, e.g.
-named bones).</div>
+<p>Default: identity (the resolver's enumeration vocabulary already matches stored tokens,
+e.g. named bones).</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="EyeAttachmentResolver.html#canonicalToken(net.minecraft.client.model.EntityModel,java.lang.String)">canonicalToken</a></code>&nbsp;in interface&nbsp;<code><a href="EyeAttachmentResolver.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">EyeAttachmentResolver</a></code></dd>
@@ -260,12 +263,12 @@ named bones).</div>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">@Nullable <a href="Attachment.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">Attachment</a></span>&nbsp;<span class="element-name">resolve</span><wbr><span class="parameters">(net.minecraft.client.model.EntityModel&lt;?&gt;&nbsp;model,
  <a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;partToken)</span></div>
 <div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="EyeAttachmentResolver.html#resolve(net.minecraft.client.model.EntityModel,java.lang.String)">EyeAttachmentResolver</a></code></span></div>
-<div class="block">Find the part <code>partToken</code> names and return the transforms that reach it, or <code>null</code> when
-the model has no such part (an unknown token, or a model whose worn variant lacks it).
+<div class="block">Find the part <code>partToken</code> names and return the transforms that reach it, or <code>
+null</code> when the model has no such part (an unknown token, or a model whose worn variant lacks
+it).
 
-<p>The expensive half of the contract: a search of the model's part tree, matching each candidate
-path against the token. Called once per (model, token) — see <code>Resolvers.ATTACHMENTS</code> — so it
-may allocate and walk freely.</div>
+<p>The expensive half of the contract: a search of the model's part tree, matching each
+candidate path against the token. Called once per (model, token) — see <code>Resolvers.ATTACHMENTS</code> — so it may allocate and walk freely.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="EyeAttachmentResolver.html#resolve(net.minecraft.client.model.EntityModel,java.lang.String)">resolve</a></code>&nbsp;in interface&nbsp;<code><a href="EyeAttachmentResolver.html" title="interface in com.github.crittscott.somegoogly.client.render.resolver">EyeAttachmentResolver</a></code></dd>

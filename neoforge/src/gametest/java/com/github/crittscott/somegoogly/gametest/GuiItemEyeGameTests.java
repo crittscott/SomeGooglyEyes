@@ -3,13 +3,12 @@ package com.github.crittscott.somegoogly.gametest;
 import net.minecraft.gametest.framework.GameTestHelper;
 
 /**
- * NeoForge GameTest entry points for {@link GuiItemEyeGameTestsLogic}; see that class for the actual
- * assertions.
+ * NeoForge GameTest entry points for {@link GuiItemEyeGameTestsLogic}; see that class for the
+ * actual assertions.
  */
 public final class GuiItemEyeGameTests {
 
-    private GuiItemEyeGameTests() {
-    }
+    private GuiItemEyeGameTests() {}
 
     public static void guiEyesAdvanceWithoutWorldTicks(GameTestHelper helper) {
         GuiItemEyeGameTestsLogic.guiEyesAdvanceWithoutWorldTicks(helper);

@@ -8,8 +8,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
  */
 public final class PickerFreezeGameTests {
 
-    private PickerFreezeGameTests() {
-    }
+    private PickerFreezeGameTests() {}
 
     public static void freezeCapturesAndUnfreezeRestores(GameTestHelper helper) {
         PickerFreezeGameTestsLogic.freezeCapturesAndUnfreezeRestores(helper);

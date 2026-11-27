@@ -4,34 +4,39 @@ import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.github.crittscott.somegoogly.client.PresentationEyes;
 import com.github.crittscott.somegoogly.client.render.SkullEyeRenderer;
 import com.mojang.blaze3d.vertex.PoseStack;
+
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.world.item.ItemStack;
+
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import org.jspecify.annotations.Nullable;
-
 /**
- * Holds the stack an item render state was filled from ({@link SkullEyeRenderer.ItemHolder}) and the animation
- * chosen for it ({@link PresentationEyes.Holder}), and brackets the state's submission with them.
+ * Holds the stack an item render state was filled from ({@link SkullEyeRenderer.ItemHolder}) and
+ * the animation chosen for it ({@link PresentationEyes.Holder}), and brackets the state's
+ * submission with them.
  */
 @Mixin(ItemStackRenderState.class)
-abstract class ItemStackRenderStateMixin implements SkullEyeRenderer.ItemHolder, PresentationEyes.Holder {
+abstract class ItemStackRenderStateMixin
+        implements SkullEyeRenderer.ItemHolder, PresentationEyes.Holder {
 
-    @Unique
-    private PresentationEyes.Draw somegoogly$draw = PresentationEyes.Draw.NONE;
+    @Unique private PresentationEyes.Draw somegoogly$draw = PresentationEyes.Draw.NONE;
 
-    @Unique
-    @Nullable
-    private ItemStack somegoogly$item;
+    @Unique @Nullable private ItemStack somegoogly$item;
 
     @Inject(method = "submit", at = @At("HEAD"))
-    private void somegoogly$beginItem(PoseStack pose, SubmitNodeCollector collector, int packedLight,
-                                      int packedOverlay, int outlineColor, CallbackInfo callback) {
+    private void somegoogly$beginItem(
+            PoseStack pose,
+            SubmitNodeCollector collector,
+            int packedLight,
+            int packedOverlay,
+            int outlineColor,
+            CallbackInfo callback) {
         ClientEyeRuntime.beginItemState(somegoogly$item, somegoogly$draw);
     }
 
@@ -42,8 +47,13 @@ abstract class ItemStackRenderStateMixin implements SkullEyeRenderer.ItemHolder,
     }
 
     @Inject(method = "submit", at = @At("RETURN"))
-    private void somegoogly$endItem(PoseStack pose, SubmitNodeCollector collector, int packedLight,
-                                    int packedOverlay, int outlineColor, CallbackInfo callback) {
+    private void somegoogly$endItem(
+            PoseStack pose,
+            SubmitNodeCollector collector,
+            int packedLight,
+            int packedOverlay,
+            int outlineColor,
+            CallbackInfo callback) {
         ClientEyeRuntime.endItemDraw();
     }
 

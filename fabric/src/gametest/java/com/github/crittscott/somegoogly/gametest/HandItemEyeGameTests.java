@@ -1,6 +1,5 @@
 package com.github.crittscott.somegoogly.gametest;
 
-
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 

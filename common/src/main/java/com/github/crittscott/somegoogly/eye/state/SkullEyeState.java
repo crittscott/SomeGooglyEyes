@@ -1,13 +1,14 @@
 package com.github.crittscott.somegoogly.eye.state;
 
+import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.HeadConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfig;
 import com.github.crittscott.somegoogly.config.EyeConfigModel.Variant;
-import com.github.crittscott.somegoogly.config.EyeConfigModel;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot;
 import com.github.crittscott.somegoogly.registry.ModContent;
 import com.google.common.base.Suppliers;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
@@ -24,62 +25,70 @@ import net.minecraft.world.level.storage.loot.functions.CopyComponentsFunction;
 import net.minecraft.world.level.storage.loot.functions.LootItemFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
-import org.jspecify.annotations.Nullable;
 
 /**
- * Eye state of a placed mob head and of a head item. A head carries the same {@link Snapshot} a mob does,
- * in a compound a Mixin adds to the head block entity ({@link Holder}), saved under {@value #DATA_KEY} in
- * its data and replaced on every load, so the server's save and the clients' update packets carry it. A
- * head item carries it as the {@link ModContent#HEAD_EYES} component, which the block entity takes and gives
- * as an implicit component, as vanilla's head does its profile: placing the item hands it to the new block
- * entity, and the head's loot copies it back onto the dropped item.
+ * Eye state of a placed mob head and of a head item. A head carries the same {@link Snapshot} a mob
+ * does, in a compound a Mixin adds to the head block entity ({@link Holder}), saved under {@value
+ * #DATA_KEY} in its data and replaced on every load, so the server's save and the clients' update
+ * packets carry it. A head item carries it as the {@link ModContent#HEAD_EYES} component, which the
+ * block entity takes and gives as an implicit component, as vanilla's head does its profile:
+ * placing the item hands it to the new block entity, and the head's loot copies it back onto the
+ * dropped item.
  *
- * <p>A head type borrows its mob's adult eye definition and shows only the eyes attached to its model's head
- * part ({@link #headParts}). A head with no mob here (the dragon, other mods' heads) never has eyes.
+ * <p>A head type borrows its mob's adult eye definition and shows only the eyes attached to its
+ * model's head part ({@link #headParts}). A head with no mob here (the dragon, other mods' heads)
+ * never has eyes.
  *
- * <p>Server mutations end in a block update, which resends the block entity's data to every client in
- * range; clients only read the compound.
+ * <p>Server mutations end in a block update, which resends the block entity's data to every client
+ * in range; clients only read the compound.
  */
 public final class SkullEyeState {
 
     /** The key of the eye-state compound in a head block entity's saved data. */
     public static final String DATA_KEY = "somegoogly:data";
-    /**
-     * The loot function that copies a placed head's eye state onto a dropped item, as the
-     * {@link ModContent#HEAD_EYES} component the block entity reports; built on first use, because the component
-     * is not registered at class load.
-     */
-    private static final Supplier<LootItemFunction> HEAD_LOOT_COPY = Suppliers.memoize(() ->
-            CopyComponentsFunction.copyComponentsFromBlockEntity(LootContextParams.BLOCK_ENTITY)
-                    .include(ModContent.HEAD_EYES.get()).build());
-    private static final Map<SkullBlock.Type, EntityType<?>> MOBS = Map.of(
-            SkullBlock.Types.CREEPER, EntityTypes.CREEPER,
-            SkullBlock.Types.PIGLIN, EntityTypes.PIGLIN,
-            SkullBlock.Types.PLAYER, EntityTypes.PLAYER,
-            SkullBlock.Types.SKELETON, EntityTypes.SKELETON,
-            SkullBlock.Types.WITHER_SKELETON, EntityTypes.WITHER_SKELETON,
-            SkullBlock.Types.ZOMBIE, EntityTypes.ZOMBIE);
 
-    private SkullEyeState() {
-    }
+    /**
+     * The loot function that copies a placed head's eye state onto a dropped item, as the {@link
+     * ModContent#HEAD_EYES} component the block entity reports; built on first use, because the
+     * component is not registered at class load.
+     */
+    private static final Supplier<LootItemFunction> HEAD_LOOT_COPY =
+            Suppliers.memoize(() ->
+                    CopyComponentsFunction.copyComponentsFromBlockEntity(
+                                    LootContextParams.BLOCK_ENTITY)
+                            .include(ModContent.HEAD_EYES.get())
+                            .build());
+
+    private static final Map<SkullBlock.Type, EntityType<?>> MOBS =
+            Map.of(
+                    SkullBlock.Types.CREEPER, EntityTypes.CREEPER,
+                    SkullBlock.Types.PIGLIN, EntityTypes.PIGLIN,
+                    SkullBlock.Types.PLAYER, EntityTypes.PLAYER,
+                    SkullBlock.Types.SKELETON, EntityTypes.SKELETON,
+                    SkullBlock.Types.WITHER_SKELETON, EntityTypes.WITHER_SKELETON,
+                    SkullBlock.Types.ZOMBIE, EntityTypes.ZOMBIE);
+
+    private SkullEyeState() {}
 
     /** The head block entity's side of the eye-state compound, added by a Mixin. */
     public interface Holder {
 
         /** The compound, or {@code null} if the head has none; read it, don't write it. */
-        @Nullable
-        CompoundTag somegoogly$find();
+        @Nullable CompoundTag somegoogly$find();
 
         /** The live compound, created when absent; written in place. */
         CompoundTag somegoogly$get();
 
         /**
-         * Put the compound into the update tag {@code tag} whenever the head has one, eyes or not. The client skips
-         * an empty update tag, so a plain head that just lost its eyes would otherwise send nothing and keep them.
+         * Put the compound into the update tag {@code tag} whenever the head has one, eyes or not.
+         * The client skips an empty update tag, so a plain head that just lost its eyes would
+         * otherwise send nothing and keep them.
          */
         default void somegoogly$syncEyes(CompoundTag tag) {
             CompoundTag data = somegoogly$find();
@@ -90,8 +99,8 @@ public final class SkullEyeState {
     }
 
     /**
-     * Whether a head of {@code entity}'s kind can have eyes under that mob's adult {@code config}: it is usable and
-     * has a weighted variant with eyes on its head part.
+     * Whether a head of {@code entity}'s kind can have eyes under that mob's adult {@code config}:
+     * it is usable and has a weighted variant with eyes on its head part.
      */
     public static boolean canHaveEyes(@Nullable Identifier entity, @Nullable RuntimeConfig config) {
         if (entity == null || !RuntimeConfig.isUsable(config)) {
@@ -106,9 +115,9 @@ public final class SkullEyeState {
     }
 
     /**
-     * Breaking an eyed head copies its eye state onto the head items among {@code drops}, the loot rolled in
-     * {@code context}, where placing one restores it. Other drops are left alone. Every loader runs each finished
-     * loot roll through here.
+     * Breaking an eyed head copies its eye state onto the head items among {@code drops}, the loot
+     * rolled in {@code context}, where placing one restores it. Other drops are left alone. Every
+     * loader runs each finished loot roll through here.
      */
     public static void copyEyesOntoHeadLoot(List<ItemStack> drops, LootContext context) {
         if (!(context.getOptional(LootContextParams.BLOCK_ENTITY) instanceof SkullBlockEntity head)
@@ -123,16 +132,19 @@ public final class SkullEyeState {
         }
     }
 
-    /** The placed head's eye-state compound, or {@code null} if it has none; read it, don't write it. */
+    /**
+     * The placed head's eye-state compound, or {@code null} if it has none; read it, don't write
+     * it.
+     */
     @Nullable
     public static CompoundTag data(SkullBlockEntity skull) {
         return ((Holder) skull).somegoogly$find();
     }
 
     /**
-     * The eye-state validated copy of a head's stored eye-state compound, or {@code null} if absent. Only the state
-     * keys are kept: a block entity tag can come from a creative client's item, and whatever is kept here is
-     * saved and sent to everyone near the head.
+     * The eye-state validated copy of a head's stored eye-state compound, or {@code null} if
+     * absent. Only the state keys are kept: a block entity tag can come from a creative client's
+     * item, and whatever is kept here is saved and sent to everyone near the head.
      */
     @Nullable
     public static CompoundTag loadedData(@Nullable CompoundTag tag) {
@@ -144,7 +156,10 @@ public final class SkullEyeState {
         return data;
     }
 
-    /** The mob whose eye definition the head {@code block} uses, or {@code null} for any other block. */
+    /**
+     * The mob whose eye definition the head {@code block} uses, or {@code null} for any other
+     * block.
+     */
     @Nullable
     public static Identifier entityFor(Block block) {
         if (block instanceof AbstractSkullBlock skull) {
@@ -154,7 +169,10 @@ public final class SkullEyeState {
         return null;
     }
 
-    /** The mob whose eye definition the head item {@code stack} uses, or {@code null} for any other item. */
+    /**
+     * The mob whose eye definition the head item {@code stack} uses, or {@code null} for any other
+     * item.
+     */
     @Nullable
     public static Identifier entityFor(ItemStack stack) {
         return stack.getItem() instanceof BlockItem item ? entityFor(item.getBlock()) : null;
@@ -167,8 +185,9 @@ public final class SkullEyeState {
     }
 
     /**
-     * The indexes of {@code helper}'s heads that a head shows, in order: those attached to the model's head part
-     * (an attachment token whose last segment is {@value EyeConfigModel#PART_HEAD}).
+     * The indexes of {@code helper}'s heads that a head shows, in order: those attached to the
+     * model's head part (an attachment token whose last segment is {@value
+     * EyeConfigModel#PART_HEAD}).
      */
     public static int[] headParts(HeadInfo helper) {
         int[] parts = new int[helper.getHeadCount()];
@@ -181,9 +200,12 @@ public final class SkullEyeState {
         return Arrays.copyOf(parts, count);
     }
 
-    /** Whether eyes attached at {@code token} sit on the model's head part, the part a head shows. */
+    /**
+     * Whether eyes attached at {@code token} sit on the model's head part, the part a head shows.
+     */
     private static boolean isHeadPart(@Nullable String token) {
-        return token != null && EyeConfigModel.lastAttachmentSegment(token).equals(EyeConfigModel.PART_HEAD);
+        return token != null
+                && EyeConfigModel.lastAttachmentSegment(token).equals(EyeConfigModel.PART_HEAD);
     }
 
     /** Whether this item carries an enabled head-eye component. */
@@ -199,8 +221,8 @@ public final class SkullEyeState {
     }
 
     /**
-     * Replace the placed head's eye state and send it to every client in range through a block update; server
-     * side only.
+     * Replace the placed head's eye state and send it to every client in range through a block
+     * update; server side only.
      */
     public static void set(SkullBlockEntity skull, Snapshot snapshot) {
         snapshot.write(((Holder) skull).somegoogly$get());
@@ -225,15 +247,18 @@ public final class SkullEyeState {
         return data == null ? Snapshot.NONE : Snapshot.read(data);
     }
 
-    /** Store {@code snapshot} on the head item {@code stack}, where placing it hands it to the block entity. */
+    /**
+     * Store {@code snapshot} on the head item {@code stack}, where placing it hands it to the block
+     * entity.
+     */
     public static void stampItem(ItemStack stack, Snapshot snapshot) {
         stack.set(ModContent.HEAD_EYES.get(), snapshot);
     }
 
     /**
-     * The index of the variant of a mob's adult {@code config} that a head with {@code variantRoll} shows: the roll
-     * chooses among the variants with eyes on the head part, so a variant with eyes only elsewhere never leaves a
-     * head blank.
+     * The index of the variant of a mob's adult {@code config} that a head with {@code variantRoll}
+     * shows: the roll chooses among the variants with eyes on the head part, so a variant with eyes
+     * only elsewhere never leaves a head blank.
      */
     public static int variantIndex(@Nullable RuntimeConfig config, float variantRoll) {
         return EyeConfigModel.chooseVariantIndex(config, variantRoll, SkullEyeState::showsOnHead);

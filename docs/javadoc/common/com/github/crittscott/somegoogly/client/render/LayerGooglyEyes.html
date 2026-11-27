@@ -82,17 +82,17 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">LayerGooglyEyes&lt;S extends net.minecraft.client.renderer.entity.state.LivingEntityRenderState, M extends net.minecraft.client.model.EntityModel&lt;? super S&gt;&gt;</span>
 <span class="extends-implements">extends net.minecraft.client.renderer.entity.layers.RenderLayer&lt;S,<wbr>M&gt;</span></div>
-<div class="block">Eye layer for vanilla-style <code>LivingEntityRenderer</code>s. It draws from the <a href="EyeRenderData.html" title="class in com.github.crittscott.somegoogly.client.render"><code>EyeRenderData</code></a>
-taken at render-state extraction, which shares its visibility gate with the GeckoLib layer, resolves
-configured attachment tokens through <a href="resolver/Resolvers.html" title="class in com.github.crittscott.somegoogly.client.render.resolver"><code>Resolvers</code></a>, and delegates each eye's drawing to
-<a href="GooglyEyeRenderer.html" title="class in com.github.crittscott.somegoogly.client.render"><code>GooglyEyeRenderer</code></a>.
+<div class="block">Eye layer for vanilla-style <code>LivingEntityRenderer</code>s. It draws from the <a href="EyeRenderData.html" title="class in com.github.crittscott.somegoogly.client.render"><code>EyeRenderData</code></a> taken at render-state extraction, which shares its visibility gate with the
+GeckoLib layer, resolves configured attachment tokens through <a href="resolver/Resolvers.html" title="class in com.github.crittscott.somegoogly.client.render.resolver"><code>Resolvers</code></a>, and delegates
+each eye's drawing to <a href="GooglyEyeRenderer.html" title="class in com.github.crittscott.somegoogly.client.render"><code>GooglyEyeRenderer</code></a>.
 
-<p>For the picker's target the layer draws the authoring preview instead: the edited variant's saved
-eyes, the live draft eye, and the selection gizmo, with centered irises (no physics), since placement
-is what matters there.
+<p>For the picker's target the layer draws the authoring preview instead: the edited variant's
+saved eyes, the live draft eye, and the selection gizmo, with centered irises (no physics), since
+placement is what matters there.
 
-<p>Vanilla poses its shared entity model only when the submitted model is drawn, after every layer has
-submitted, so the layer poses the parent model for this render state itself before walking its parts.
+<p>Vanilla poses its shared entity model only when the submitted model is drawn, after every
+layer has submitted, so the layer poses the parent model for this render state itself before
+walking its parts.
 
 <p>The GeckoLib counterpart is <code>GooglyGeoLayer</code>, which makes the same split from GeckoLib's
 per-bone callback.</div>
