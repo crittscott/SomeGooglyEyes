@@ -6,10 +6,11 @@ import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
 import com.github.crittscott.somegoogly.config.ModVersionLookup;
 import com.github.crittscott.somegoogly.config.forge.ForgeServerConfig;
 import com.github.crittscott.somegoogly.network.forge.ForgeNetworkTransport;
-import com.github.crittscott.somegoogly.registry.ModContent;
 import com.github.crittscott.somegoogly.platform.forge.RegistrationImpl;
+import com.github.crittscott.somegoogly.registry.ModContent;
 import com.github.crittscott.somegoogly.server.forge.ForgeServerEvents;
 import com.github.crittscott.somegoogly.server.forge.HeadEyesLootModifier;
+
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
@@ -37,7 +38,9 @@ public final class SomeGooglyForge {
             ForgeClientBootstrap.register(context);
         }
 
-        SomeGooglyCommon.LOGGER.info("{} {} registered on Forge", SomeGooglyCommon.MOD_NAME,
+        SomeGooglyCommon.LOGGER.info(
+                "{} {} registered on Forge",
+                SomeGooglyCommon.MOD_NAME,
                 ModVersionLookup.modVersion(SomeGooglyCommon.MOD_ID).orElseThrow());
     }
 

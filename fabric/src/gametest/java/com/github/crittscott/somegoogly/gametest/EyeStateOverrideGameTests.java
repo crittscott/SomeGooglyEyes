@@ -15,16 +15,19 @@ public final class EyeStateOverrideGameTests implements FabricGameTest {
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void adminAppearanceCommands(GameTestHelper helper) {
-        EyeStateOverrideGameTestsLogic.adminAppearanceCommands(helper, FakePlayer.get(helper.getLevel()));
+        EyeStateOverrideGameTestsLogic.adminAppearanceCommands(
+                helper, FakePlayer.get(helper.getLevel()));
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void adminCommandsRefuseUnauthorizedOrInvalidUse(GameTestHelper helper) {
-        EyeStateOverrideGameTestsLogic.adminCommandsRefuseUnauthorizedOrInvalidUse(helper, FakePlayer.get(helper.getLevel()));
+        EyeStateOverrideGameTestsLogic.adminCommandsRefuseUnauthorizedOrInvalidUse(
+                helper, FakePlayer.get(helper.getLevel()));
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void adminEyesAndBehaviorCommands(GameTestHelper helper) {
-        EyeStateOverrideGameTestsLogic.adminEyesAndBehaviorCommands(helper, FakePlayer.get(helper.getLevel()));
+        EyeStateOverrideGameTestsLogic.adminEyesAndBehaviorCommands(
+                helper, FakePlayer.get(helper.getLevel()));
     }
 }

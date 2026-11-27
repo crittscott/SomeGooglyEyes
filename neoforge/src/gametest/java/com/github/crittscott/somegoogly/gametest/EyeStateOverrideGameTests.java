@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
+
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.neoforged.neoforge.common.util.FakePlayerFactory;
@@ -17,22 +18,23 @@ public final class EyeStateOverrideGameTests {
 
     private static final String TEMPLATE = "empty";
 
-    private EyeStateOverrideGameTests() {
-    }
+    private EyeStateOverrideGameTests() {}
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void adminAppearanceCommands(GameTestHelper helper) {
-        EyeStateOverrideGameTestsLogic.adminAppearanceCommands(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+        EyeStateOverrideGameTestsLogic.adminAppearanceCommands(
+                helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void adminCommandsRefuseUnauthorizedOrInvalidUse(GameTestHelper helper) {
-        EyeStateOverrideGameTestsLogic.adminCommandsRefuseUnauthorizedOrInvalidUse(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+        EyeStateOverrideGameTestsLogic.adminCommandsRefuseUnauthorizedOrInvalidUse(
+                helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 40)
     public static void adminEyesAndBehaviorCommands(GameTestHelper helper) {
-        EyeStateOverrideGameTestsLogic.adminEyesAndBehaviorCommands(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+        EyeStateOverrideGameTestsLogic.adminEyesAndBehaviorCommands(
+                helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
     }
 }
-

@@ -11,6 +11,7 @@ import com.github.crittscott.somegoogly.config.ServerEyeConfigs;
 import com.github.crittscott.somegoogly.eye.behavior.EyeBehavior;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
@@ -21,41 +22,54 @@ import java.util.Map;
 /**
  * Checks on the datapack-loaded {@link ServerEyeConfigs} (the shipped configs are loaded by the
  * gametest server — the manual {@code somegoogly-test-datapack} is not mounted here), the reload
- * listener's exact Minecraft-version selection, and the pure {@link ServerConfig#percentFor} resolution.
- * Tests that mutate shared state (config values via their public {@code set}, the loaded eye configs
- * via {@link TestEyeConfigs}) restore the originals in a {@code finally} so later tests aren't affected.
+ * listener's exact Minecraft-version selection, and the pure {@link ServerConfig#percentFor}
+ * resolution. Tests that mutate shared state (config values via their public {@code set}, the
+ * loaded eye configs via {@link TestEyeConfigs}) restore the originals in a {@code finally} so
+ * later tests aren't affected.
  */
 public final class ConfigGameTestsLogic {
 
-    private ConfigGameTestsLogic() {
-    }
+    private ConfigGameTestsLogic() {}
 
     private static boolean usable(RuntimeConfig config) {
         return RuntimeConfig.isUsable(config);
     }
 
     /**
-     * An exact {@code entityOverrides} id wins over a wildcard, and an unmatched id uses {@code globalPercent}.
-     * In game: set {@code globalPercent = 2} and
-     * {@code entityOverrides = ["minecraft:zombie,100", "minecraft:*,50"]} in the server config, then spawn
-     * mobs from eggs: every zombie has eyes, about half of the cows do, and only the occasional modded mob.
+     * An exact {@code entityOverrides} id wins over a wildcard, and an unmatched id uses {@code
+     * globalPercent}. In game: set {@code globalPercent = 2} and {@code entityOverrides =
+     * ["minecraft:zombie,100", "minecraft:*,50"]} in the server config, then spawn mobs from eggs:
+     * every zombie has eyes, about half of the cows do, and only the occasional modded mob.
      */
     public static void percentForResolvesExactBeforeWildcard(GameTestHelper helper) {
         int originalGlobal = ServerConfig.GLOBAL_PERCENT.get();
         List<String> originalOverrides = ServerConfig.ENTITY_OVERRIDES.get();
         try {
             ServerConfig.GLOBAL_PERCENT.set(2);
-            // List an exact id and a broad wildcard; the exact id must win regardless of list order, and
-            // an unmatched id must fall through to globalPercent.
+            // List an exact id and a broad wildcard; the exact id must win regardless of list
+            // order, and an unmatched id must fall through to globalPercent.
             ServerConfig.ENTITY_OVERRIDES.set(List.of("minecraft:zombie,100", "minecraft:*,50"));
 
-            int zombie = ServerConfig.percentFor(ResourceLocation.fromNamespaceAndPath("minecraft", "zombie"));
-            int cow = ServerConfig.percentFor(ResourceLocation.fromNamespaceAndPath("minecraft", "cow"));
-            int other = ServerConfig.percentFor(ResourceLocation.fromNamespaceAndPath("examplemod", "thing"));
+            int zombie =
+                    ServerConfig.percentFor(
+                            ResourceLocation.fromNamespaceAndPath("minecraft", "zombie"));
+            int cow =
+                    ServerConfig.percentFor(
+                            ResourceLocation.fromNamespaceAndPath("minecraft", "cow"));
+            int other =
+                    ServerConfig.percentFor(
+                            ResourceLocation.fromNamespaceAndPath("examplemod", "thing"));
 
-            helper.assertTrue(zombie == 100, "exact override should win (expected 100, got " + zombie + ")");
-            helper.assertTrue(cow == 50, "wildcard override should apply to cow (expected 50, got " + cow + ")");
-            helper.assertTrue(other == 2, "unmatched id should fall back to globalPercent (expected 2, got " + other + ")");
+            helper.assertTrue(
+                    zombie == 100, "exact override should win (expected 100, got " + zombie + ")");
+            helper.assertTrue(
+                    cow == 50,
+                    "wildcard override should apply to cow (expected 50, got " + cow + ")");
+            helper.assertTrue(
+                    other == 2,
+                    "unmatched id should fall back to globalPercent (expected 2, got "
+                            + other
+                            + ")");
         } finally {
             ServerConfig.GLOBAL_PERCENT.set(originalGlobal);
             ServerConfig.ENTITY_OVERRIDES.set(originalOverrides);
@@ -64,47 +78,55 @@ public final class ConfigGameTestsLogic {
     }
 
     /**
-     * Shared schema constants name the sections used by the immediately preceding release. This checks
-     * names only; the loader-specific scenarios exercise native file correction. In game: open a world
-     * saved by the 0.8.2 release for Minecraft 1.21.1 whose server config sets {@code globalPercent = 17}; that value remains
-     * after the file gains newly introduced keys.
+     * Shared schema constants name the sections used by the immediately preceding release. This
+     * checks names only; the loader-specific scenarios exercise native file correction. In game:
+     * open a world saved by the 0.8.2 release for Minecraft 1.21.1 whose server config sets {@code
+     * globalPercent = 17}; that value remains after the file gains newly introduced keys.
      */
     public static void configSectionsMatchReleasedFiles(GameTestHelper helper) {
-        helper.assertTrue(ServerConfig.SECTION_SERVER.equals("Server Settings")
+        helper.assertTrue(
+                ServerConfig.SECTION_SERVER.equals("Server Settings")
                         && ServerConfig.SECTION_BEHAVIORS.equals("Behaviors")
                         && ServerConfig.SECTION_PICKER.equals("Picker"),
                 "the server config keeps 0.8.2's section names");
-        helper.assertTrue(ClientConfig.SECTION.equals("Client Settings"), "the client config keeps 0.8.2's section name");
+        helper.assertTrue(
+                ClientConfig.SECTION.equals("Client Settings"),
+                "the client config keeps 0.8.2's section name");
         helper.succeed();
     }
 
     /**
-     * {@code /sg spawnall} terraforms and mass-spawns with no undo, so its server-config gate must ship
-     * opt-in. MineColonies and Create entities require spawn context this command does not provide, so
-     * those namespaces must ship excluded, and so must Ice and Fire's dragon egg, which crashes the server on
-     * its first tick when spawned without a dragon color. In game: in a new world, the generated
-     * {@code serverconfig/somegoogly-server.toml} has {@code allowSpawnAll = false},
-     * {@code spawnExcludedMods = ["minecolonies", "create"]} and
-     * {@code spawnExcludedEntities = ["iceandfire:dragon_egg"]}, and {@code /sg spawnall} refuses to run.
+     * {@code /sg spawnall} terraforms and mass-spawns with no undo, so its server-config gate must
+     * ship opt-in. MineColonies and Create entities require spawn context this command does not
+     * provide, so those namespaces must ship excluded, and so must Ice and Fire's dragon egg, which
+     * crashes the server on its first tick when spawned without a dragon color. In game: in a new
+     * world, the generated {@code serverconfig/somegoogly-server.toml} has {@code allowSpawnAll =
+     * false}, {@code spawnExcludedMods = ["minecolonies", "create"]} and {@code
+     * spawnExcludedEntities = ["iceandfire:dragon_egg"]}, and {@code /sg spawnall} refuses to run.
      */
     public static void spawnAllDefaultsOff(GameTestHelper helper) {
-        helper.assertTrue(!ServerConfig.ALLOW_SPAWN_ALL.get(),
+        helper.assertTrue(
+                !ServerConfig.ALLOW_SPAWN_ALL.get(),
                 "allowSpawnAll must default to false (spawnall is opt-in)");
-        helper.assertTrue(ServerConfig.SPAWN_EXCLUDED_MODS.get().equals(List.of("minecolonies", "create")),
+        helper.assertTrue(
+                ServerConfig.SPAWN_EXCLUDED_MODS.get().equals(List.of("minecolonies", "create")),
                 "spawnExcludedMods must default to minecolonies and create");
-        helper.assertTrue(ServerConfig.SPAWN_EXCLUDED_ENTITIES.get().equals(List.of("iceandfire:dragon_egg")),
+        helper.assertTrue(
+                ServerConfig.SPAWN_EXCLUDED_ENTITIES.get().equals(List.of("iceandfire:dragon_egg")),
                 "spawnExcludedEntities must default to iceandfire:dragon_egg");
         helper.succeed();
     }
 
     /**
-     * Every bundled Minecraft eye definition loads and is usable for each age it declares. In game: set
-     * {@code globalPercent = 100}, spawn one of each mob that has a file under {@code data/minecraft/eyes},
-     * and every one of them has eyes; the server log reports no invalid or unsafe eye config.
+     * Every bundled Minecraft eye definition loads and is usable for each age it declares. In game:
+     * set {@code globalPercent = 100}, spawn one of each mob that has a file under {@code
+     * data/minecraft/eyes}, and every one of them has eyes; the server log reports no invalid or
+     * unsafe eye config.
      */
     public static void everyShippedMinecraftDefinitionLoads(GameTestHelper helper) {
-        Map<ResourceLocation, Resource> files = EyeConfigReloadListener.EYE_FILES
-                .listMatchingResources(helper.getLevel().getServer().getResourceManager());
+        Map<ResourceLocation, Resource> files =
+                EyeConfigReloadListener.EYE_FILES.listMatchingResources(
+                        helper.getLevel().getServer().getResourceManager());
         int checked = 0;
         for (ResourceLocation file : files.keySet()) {
             ResourceLocation id = EyeConfigReloadListener.EYE_FILES.fileToId(file);
@@ -114,7 +136,8 @@ public final class ConfigGameTestsLogic {
             RuntimeConfigSet set = ServerEyeConfigs.all().get(id);
             helper.assertTrue(set != null, "shipped eye definition " + id + " failed to load");
             for (RuntimeConfig config : new RuntimeConfig[] {set.adult, set.baby, set.any}) {
-                helper.assertTrue(config == null || usable(config),
+                helper.assertTrue(
+                        config == null || usable(config),
                         "shipped eye definition " + id + " has an unusable entry");
             }
             checked++;
@@ -123,7 +146,10 @@ public final class ConfigGameTestsLogic {
         helper.succeed();
     }
 
-    /** Exposes the protected datapack {@code apply} so a test can feed synthetic files through real selection. */
+    /**
+     * Exposes the protected datapack {@code apply} so a test can feed synthetic files through real
+     * selection.
+     */
     private static final class TestReloadListener extends EyeConfigReloadListener {
         void applyFiles(Map<ResourceLocation, JsonElement> files) {
             apply(files, null, null);
@@ -132,28 +158,31 @@ public final class ConfigGameTestsLogic {
 
     /**
      * Minecraft-version selection, end to end, including paired adult/baby entries. In game: add a
-     * datapack with {@code data/minecraft/eyes/zombie.json} holding an adult entry for
-     * {@code "[1.20,1.21)"} with blue irises and adult and baby entries for the running version with red
-     * irises, run {@code /reload}, and set {@code entityOverrides = ["minecraft:zombie,100"]}; adult and
-     * baby zombies spawn with red irises.
+     * datapack with {@code data/minecraft/eyes/zombie.json} holding an adult entry for {@code
+     * "[1.20,1.21)"} with blue irises and adult and baby entries for the running version with red
+     * irises, run {@code /reload}, and set {@code entityOverrides = ["minecraft:zombie,100"]};
+     * adult and baby zombies spawn with red irises.
      */
     public static void exactMinecraftGenerationIsSelected(GameTestHelper helper) {
         ResourceLocation id = ResourceLocation.fromNamespaceAndPath("minecraft", "zombie");
-        JsonElement json = fileJson(
-                entryJson("[1.20,1.21)", "adult", 1.0),
-                entryJson(running(), "adult", 2.0),
-                entryJson(running(), "baby", 2.0),
-                entryJson("[99.0,100.0)", "adult", 3.0));
+        JsonElement json =
+                fileJson(
+                        entryJson("[1.20,1.21)", "adult", 1.0),
+                        entryJson(running(), "adult", 2.0),
+                        entryJson(running(), "baby", 2.0),
+                        entryJson("[99.0,100.0)", "adult", 3.0));
         Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
         try {
             new TestReloadListener().applyFiles(Map.of(id, json));
             RuntimeConfig adult = ServerEyeConfigs.get(id, false);
             RuntimeConfig baby = ServerEyeConfigs.get(id, true);
             helper.assertTrue(adult != null, "the exact Minecraft generation must be selected");
-            helper.assertTrue(adult.variants.get(0).weight == 2.0,
+            helper.assertTrue(
+                    adult.variants.get(0).weight == 2.0,
                     "exact selection must pick the running version's entry (weight 2), got "
                             + adult.variants.get(0).weight);
-            helper.assertTrue(baby != null && baby.variants.get(0).weight == 2.0,
+            helper.assertTrue(
+                    baby != null && baby.variants.get(0).weight == 2.0,
                     "the baby entry of the exact generation must be selected with it");
         } finally {
             TestEyeConfigs.install(original);
@@ -162,10 +191,10 @@ public final class ConfigGameTestsLogic {
     }
 
     /**
-     * {@code entityOverrides}: an exact id always wins; among wildcards, the first matching list entry
-     * wins. In game: set {@code globalPercent = 2} and
-     * {@code entityOverrides = ["*:*_horse,50", "minecraft:*,10"]}, then spawn mobs from eggs: about half
-     * of the skeleton horses have eyes, about one zombie in ten, and only the occasional modded mob.
+     * {@code entityOverrides}: an exact id always wins; among wildcards, the first matching list
+     * entry wins. In game: set {@code globalPercent = 2} and {@code entityOverrides =
+     * ["*:*_horse,50", "minecraft:*,10"]}, then spawn mobs from eggs: about half of the skeleton
+     * horses have eyes, about one zombie in ten, and only the occasional modded mob.
      */
     public static void percentForResolvesWildcardsInListOrder(GameTestHelper helper) {
         int originalGlobal = ServerConfig.GLOBAL_PERCENT.get();
@@ -174,21 +203,34 @@ public final class ConfigGameTestsLogic {
             ServerConfig.GLOBAL_PERCENT.set(2);
             ServerConfig.ENTITY_OVERRIDES.set(List.of("*:*_horse,50", "minecraft:*,10"));
 
-            int skeletonHorse = ServerConfig.percentFor(
-                    ResourceLocation.fromNamespaceAndPath("minecraft", "skeleton_horse"));
-            int zombie = ServerConfig.percentFor(ResourceLocation.fromNamespaceAndPath("minecraft", "zombie"));
-            int moddedHorse = ServerConfig.percentFor(
-                    ResourceLocation.fromNamespaceAndPath("examplemod", "fancy_horse"));
-            int other = ServerConfig.percentFor(ResourceLocation.fromNamespaceAndPath("examplemod", "thing"));
+            int skeletonHorse =
+                    ServerConfig.percentFor(
+                            ResourceLocation.fromNamespaceAndPath("minecraft", "skeleton_horse"));
+            int zombie =
+                    ServerConfig.percentFor(
+                            ResourceLocation.fromNamespaceAndPath("minecraft", "zombie"));
+            int moddedHorse =
+                    ServerConfig.percentFor(
+                            ResourceLocation.fromNamespaceAndPath("examplemod", "fancy_horse"));
+            int other =
+                    ServerConfig.percentFor(
+                            ResourceLocation.fromNamespaceAndPath("examplemod", "thing"));
 
-            helper.assertTrue(skeletonHorse == 50,
+            helper.assertTrue(
+                    skeletonHorse == 50,
                     "the first matching wildcard wins even when a later one also matches (expected 50, got "
-                            + skeletonHorse + ")");
-            helper.assertTrue(zombie == 10,
-                    "minecraft:* applies where the horse pattern does not (expected 10, got " + zombie + ")");
-            helper.assertTrue(moddedHorse == 50,
+                            + skeletonHorse
+                            + ")");
+            helper.assertTrue(
+                    zombie == 10,
+                    "minecraft:* applies where the horse pattern does not (expected 10, got "
+                            + zombie
+                            + ")");
+            helper.assertTrue(
+                    moddedHorse == 50,
                     "*:*_horse spans namespaces (expected 50, got " + moddedHorse + ")");
-            helper.assertTrue(other == 2,
+            helper.assertTrue(
+                    other == 2,
                     "an unmatched id falls back to globalPercent (expected 2, got " + other + ")");
         } finally {
             ServerConfig.GLOBAL_PERCENT.set(originalGlobal);
@@ -197,20 +239,32 @@ public final class ConfigGameTestsLogic {
         helper.succeed();
     }
 
-    private static final String EYE_JSON = """
+    private static final String EYE_JSON =
+            """
             { "position": [0.0, 0.0, 0.0], "eyeScale": 1.0, "irisScale": 1.0, "depth": 1.0,
               "inclination": 90.0, "azimuth": 270.0, "crossTarget": -1,
-              "corneaColors": [1.0, 1.0, 1.0], "irisColors": [0.0, 0.0, 0.0], "glows": false }""";
+              "corneaColors": [1.0, 1.0, 1.0], "irisColors": [0.0, 0.0, 0.0], "glows": false }\
+            """;
 
-    /** The running Minecraft version, so synthetic entries select exactly rather than by fallback. */
+    /**
+     * The running Minecraft version, so synthetic entries select exactly rather than by fallback.
+     */
     private static String running() {
-        return ModVersionLookup.versionForNamespace(ResourceLocation.DEFAULT_NAMESPACE).orElseThrow();
+        return ModVersionLookup.versionForNamespace(ResourceLocation.DEFAULT_NAMESPACE)
+                .orElseThrow();
     }
 
     private static String entryJson(String version, String age, double weight) {
-        return "{ \"version\": \"" + version + "\", \"age\": \"" + age + "\", \"enabled\": true, \"variants\": [ "
-                + "{ \"weight\": " + weight + ", \"heads\": [ { \"attachPoint\": \"head\", \"eyes\": [ "
-                + EYE_JSON + " ] } ] } ] }";
+        return "{ \"version\": \""
+                + version
+                + "\", \"age\": \""
+                + age
+                + "\", \"enabled\": true, \"variants\": [ "
+                + "{ \"weight\": "
+                + weight
+                + ", \"heads\": [ { \"attachPoint\": \"head\", \"eyes\": [ "
+                + EYE_JSON
+                + " ] } ] } ] }";
     }
 
     private static JsonElement fileJson(String... entries) {
@@ -218,20 +272,26 @@ public final class ConfigGameTestsLogic {
     }
 
     /**
-     * No datapack, from any namespace, may install an eye config for the ender dragon. In game: add a
-     * datapack with {@code data/minecraft/eyes/ender_dragon.json} and run {@code /reload}; the server log
-     * reports the dragon file refused.
+     * No datapack, from any namespace, may install an eye config for the ender dragon. In game: add
+     * a datapack with {@code data/minecraft/eyes/ender_dragon.json} and run {@code /reload}; the
+     * server log reports the dragon file refused.
      */
     public static void reloadHardExcludesEnderDragon(GameTestHelper helper) {
         ResourceLocation zombie = ResourceLocation.fromNamespaceAndPath("minecraft", "zombie");
         Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
         try {
-            new TestReloadListener().applyFiles(Map.of(
-                    ServerEyeConfigs.ENDER_DRAGON, fileJson(entryJson(running(), "adult", 1.0)),
-                    zombie, fileJson(entryJson(running(), "adult", 1.0))));
-            helper.assertTrue(ServerEyeConfigs.get(ServerEyeConfigs.ENDER_DRAGON, false) == null,
+            new TestReloadListener()
+                    .applyFiles(
+                            Map.of(
+                                    ServerEyeConfigs.ENDER_DRAGON,
+                                    fileJson(entryJson(running(), "adult", 1.0)),
+                                    zombie,
+                                    fileJson(entryJson(running(), "adult", 1.0))));
+            helper.assertTrue(
+                    ServerEyeConfigs.get(ServerEyeConfigs.ENDER_DRAGON, false) == null,
                     "the ender dragon config is refused at reload");
-            helper.assertTrue(usable(ServerEyeConfigs.get(zombie, false)),
+            helper.assertTrue(
+                    usable(ServerEyeConfigs.get(zombie, false)),
                     "other entities in the same batch still load");
         } finally {
             TestEyeConfigs.install(original);
@@ -240,10 +300,10 @@ public final class ConfigGameTestsLogic {
     }
 
     /**
-     * A list setting drops its invalid entries, and a list with no valid entry means the default, on every
-     * loader. In game: set {@code ambientBehaviorPool = ["not a behavior"]} in the server config and restart;
-     * eyed mobs still blink, cross their eyes, side-eye, and stare, and on Fabric the log says the key has no
-     * valid entries.
+     * A list setting drops its invalid entries, and a list with no valid entry means the default,
+     * on every loader. In game: set {@code ambientBehaviorPool = ["not a behavior"]} in the server
+     * config and restart; eyed mobs still blink, cross their eyes, side-eye, and stare, and on
+     * Fabric the log says the key has no valid entries.
      */
     public static void listSettingWithNoValidEntryUsesDefault(GameTestHelper helper) {
         ConfigValue.Parsed<?> pool = ServerConfig.AMBIENT_BEHAVIOR_POOL;
@@ -251,9 +311,12 @@ public final class ConfigGameTestsLogic {
         String blink = EyeBehavior.BLINK.id().toString();
         try {
             pool.set(List.of("not a behavior", blink));
-            helper.assertTrue(pool.get().equals(List.of(blink)), "a valid entry is kept and an invalid one dropped");
+            helper.assertTrue(
+                    pool.get().equals(List.of(blink)),
+                    "a valid entry is kept and an invalid one dropped");
             pool.set(List.of("not a behavior"));
-            helper.assertTrue(pool.get().equals(pool.defaultValue()),
+            helper.assertTrue(
+                    pool.get().equals(pool.defaultValue()),
                     "a list with no valid entry must use the default, got " + pool.get());
             pool.set(List.of());
             helper.assertTrue(pool.get().isEmpty(), "an explicitly empty list stays empty");
@@ -264,19 +327,24 @@ public final class ConfigGameTestsLogic {
     }
 
     /**
-     * A file with one entry the codec cannot decode is rejected whole, not loaded without that entry. In
-     * game: add a datapack whose {@code zombie.json} has a valid adult entry for the running version beside
-     * an entry with no {@code "version"} field, and run {@code /reload}; the log names the file as invalid,
-     * the summary counts it as failed to parse, and new zombies spawn without eyes.
+     * A file with one entry the codec cannot decode is rejected whole, not loaded without that
+     * entry. In game: add a datapack whose {@code zombie.json} has a valid adult entry for the
+     * running version beside an entry with no {@code "version"} field, and run {@code /reload}; the
+     * log names the file as invalid, the summary counts it as failed to parse, and new zombies
+     * spawn without eyes.
      */
     public static void reloadRejectsFileWithMalformedEntry(GameTestHelper helper) {
         ResourceLocation zombie = ResourceLocation.fromNamespaceAndPath("minecraft", "zombie");
         String noVersion = "{ \"age\": \"adult\", \"enabled\": true, \"variants\": [] }";
         Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
         try {
-            new TestReloadListener().applyFiles(Map.of(
-                    zombie, fileJson(entryJson(running(), "adult", 1.0), noVersion)));
-            helper.assertTrue(ServerEyeConfigs.get(zombie, false) == null,
+            new TestReloadListener()
+                    .applyFiles(
+                            Map.of(
+                                    zombie,
+                                    fileJson(entryJson(running(), "adult", 1.0), noVersion)));
+            helper.assertTrue(
+                    ServerEyeConfigs.get(zombie, false) == null,
                     "a file with an undecodable entry must not load its other entries");
         } finally {
             TestEyeConfigs.install(original);
@@ -285,11 +353,12 @@ public final class ConfigGameTestsLogic {
     }
 
     /**
-     * One malformed file, a duplicate age/version entry, and an invalid age string never abort the reload.
-     * In game: add a datapack whose {@code zombie.json} has two adult entries for the same version,
-     * whose {@code creeper.json} is {@code { "entries": 5 }}, and whose {@code skeleton.json} has an
-     * {@code "elder"} entry beside a valid adult one; {@code /reload} logs the problems and completes, and
-     * zombies and skeletons still get eyes, the zombies from the first entry.
+     * One malformed file, a duplicate age/version entry, and an invalid age string never abort the
+     * reload. In game: add a datapack whose {@code zombie.json} has two adult entries for the same
+     * version, whose {@code creeper.json} is {@code { "entries": 5 }}, and whose {@code
+     * skeleton.json} has an {@code "elder"} entry beside a valid adult one; {@code /reload} logs
+     * the problems and completes, and zombies and skeletons still get eyes, the zombies from the
+     * first entry.
      */
     public static void reloadToleratesBadFilesAndDuplicates(GameTestHelper helper) {
         ResourceLocation zombie = ResourceLocation.fromNamespaceAndPath("minecraft", "zombie");
@@ -297,18 +366,29 @@ public final class ConfigGameTestsLogic {
         ResourceLocation skeleton = ResourceLocation.fromNamespaceAndPath("minecraft", "skeleton");
         Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
         try {
-            new TestReloadListener().applyFiles(Map.of(
-                    zombie, fileJson(entryJson(running(), "adult", 1.0), entryJson(running(), "adult", 2.0)),
-                    creeper, JsonParser.parseString("{ \"entries\": 5 }"),
-                    skeleton, fileJson(entryJson(running(), "elder", 1.0), entryJson(running(), "adult", 3.0))));
+            new TestReloadListener()
+                    .applyFiles(
+                            Map.of(
+                                    zombie,
+                                            fileJson(
+                                                    entryJson(running(), "adult", 1.0),
+                                                    entryJson(running(), "adult", 2.0)),
+                                    creeper, JsonParser.parseString("{ \"entries\": 5 }"),
+                                    skeleton,
+                                            fileJson(
+                                                    entryJson(running(), "elder", 1.0),
+                                                    entryJson(running(), "adult", 3.0))));
 
             RuntimeConfig z = ServerEyeConfigs.get(zombie, false);
-            helper.assertTrue(z != null && z.variants.get(0).weight == 1.0,
+            helper.assertTrue(
+                    z != null && z.variants.get(0).weight == 1.0,
                     "a duplicate age/version entry keeps the first");
-            helper.assertTrue(ServerEyeConfigs.get(creeper, false) == null,
+            helper.assertTrue(
+                    ServerEyeConfigs.get(creeper, false) == null,
                     "a malformed file is skipped without aborting the batch");
             RuntimeConfig s = ServerEyeConfigs.get(skeleton, false);
-            helper.assertTrue(s != null && s.variants.get(0).weight == 3.0,
+            helper.assertTrue(
+                    s != null && s.variants.get(0).weight == 3.0,
                     "an invalid age is ignored while its file's valid entries still load");
         } finally {
             TestEyeConfigs.install(original);
@@ -318,16 +398,17 @@ public final class ConfigGameTestsLogic {
 
     /**
      * An entry with no range covering the loaded version degrades to its nearest generation, not to
-     * nothing. In game: add a datapack whose {@code zombie.json} has a single entry for
-     * {@code "[1.16,1.17)"}, run {@code /reload}, and zombies still spawn with those eyes.
+     * nothing. In game: add a datapack whose {@code zombie.json} has a single entry for {@code
+     * "[1.16,1.17)"}, run {@code /reload}, and zombies still spawn with those eyes.
      */
     public static void reloadFallsBackToNearestGeneration(GameTestHelper helper) {
         ResourceLocation zombie = ResourceLocation.fromNamespaceAndPath("minecraft", "zombie");
         Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
         try {
-            new TestReloadListener().applyFiles(Map.of(
-                    zombie, fileJson(entryJson("[1.16,1.17)", "adult", 1.0))));
-            helper.assertTrue(usable(ServerEyeConfigs.get(zombie, false)),
+            new TestReloadListener()
+                    .applyFiles(Map.of(zombie, fileJson(entryJson("[1.16,1.17)", "adult", 1.0))));
+            helper.assertTrue(
+                    usable(ServerEyeConfigs.get(zombie, false)),
                     "an entry that matches no loaded version falls back to its nearest generation");
         } finally {
             TestEyeConfigs.install(original);
@@ -336,28 +417,30 @@ public final class ConfigGameTestsLogic {
     }
 
     /**
-     * A reload installs a new config set only when the resolved content changes; server stop clears the
-     * installed set. In game: near some eyed mobs, run {@code /reload} with no datapack changes; their
-     * pupils keep moving without resetting. Change an eye definition and {@code /reload} again, and every
-     * eye resets to the new definition.
+     * A reload installs a new config set only when the resolved content changes; server stop clears
+     * the installed set. In game: near some eyed mobs, run {@code /reload} with no datapack
+     * changes; their pupils keep moving without resetting. Change an eye definition and {@code
+     * /reload} again, and every eye resets to the new definition.
      */
     public static void reloadReplacesConfigsOnlyOnContentChange(GameTestHelper helper) {
         ResourceLocation zombie = ResourceLocation.fromNamespaceAndPath("minecraft", "zombie");
         Map<ResourceLocation, RuntimeConfigSet> original = ServerEyeConfigs.all();
         try {
-            Map<ResourceLocation, JsonElement> files = Map.of(
-                    zombie, fileJson(entryJson(running(), "adult", 1.0)));
+            Map<ResourceLocation, JsonElement> files =
+                    Map.of(zombie, fileJson(entryJson(running(), "adult", 1.0)));
 
             new TestReloadListener().applyFiles(files);
             Map<ResourceLocation, RuntimeConfigSet> afterFirst = ServerEyeConfigs.all();
 
             new TestReloadListener().applyFiles(files);
-            helper.assertTrue(ServerEyeConfigs.all() == afterFirst,
+            helper.assertTrue(
+                    ServerEyeConfigs.all() == afterFirst,
                     "an identical reload does not replace the installed configs");
 
             ServerEyeConfigs.onServerStopping();
             new TestReloadListener().applyFiles(files);
-            helper.assertTrue(ServerEyeConfigs.all() != afterFirst,
+            helper.assertTrue(
+                    ServerEyeConfigs.all() != afterFirst,
                     "server stop clears the installed set, so the next reload installs anew");
         } finally {
             TestEyeConfigs.install(original);

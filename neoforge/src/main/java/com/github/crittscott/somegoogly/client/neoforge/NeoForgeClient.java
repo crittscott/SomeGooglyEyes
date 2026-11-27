@@ -4,14 +4,15 @@ import com.github.crittscott.somegoogly.SomeGooglyCommon;
 import com.github.crittscott.somegoogly.client.ClientEyeRuntime;
 import com.github.crittscott.somegoogly.client.ClientLifecycle;
 import com.github.crittscott.somegoogly.client.ClientRenderLayers;
-import com.github.crittscott.somegoogly.client.render.GooglyEyeItemRenderer;
 import com.github.crittscott.somegoogly.client.SlimyEyeIrisTint;
+import com.github.crittscott.somegoogly.client.command.GooglyClientCommands;
 import com.github.crittscott.somegoogly.client.compat.GeckoCompat;
 import com.github.crittscott.somegoogly.client.picker.PickerHud;
 import com.github.crittscott.somegoogly.client.picker.PickerInput;
-import com.github.crittscott.somegoogly.client.command.GooglyClientCommands;
+import com.github.crittscott.somegoogly.client.render.GooglyEyeItemRenderer;
 import com.github.crittscott.somegoogly.config.neoforge.NeoForgeClientConfig;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
+
 import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.world.entity.EntityType;
 import net.neoforged.bus.api.IEventBus;
@@ -32,8 +33,7 @@ import net.neoforged.neoforge.event.level.LevelEvent;
 /** Physical-client registration for NeoForge client services. */
 public final class NeoForgeClient {
 
-    private NeoForgeClient() {
-    }
+    private NeoForgeClient() {}
 
     private static void addRendererLayers(EntityRenderersEvent.AddLayers event) {
         ClientRenderLayers.clearCaches();

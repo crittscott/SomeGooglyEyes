@@ -91,11 +91,10 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">NetworkProtocol</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">The mod's network version and the one declaration of every payload, its direction, and what handles it on
- arrival; each loader registers from <a href="#CLIENTBOUND"><code>CLIENTBOUND</code></a> and <a href="#SERVERBOUND"><code>SERVERBOUND</code></a> in list order. Clientbound
- handlers reach <a href="../client/ClientNetworkHandler.html" title="class in com.github.crittscott.somegoogly.client"><code>ClientNetworkHandler</code></a> only inside lambda bodies, so a dedicated server never links it.
- Sends go straight through the loader bridges, <a href="../platform/Networking.html" title="class in com.github.crittscott.somegoogly.platform"><code>Networking</code></a> and
- <a href="../client/platform/ClientNetworking.html" title="class in com.github.crittscott.somegoogly.client.platform"><code>ClientNetworking</code></a>.</div>
+<div class="block">The mod's network version and the one declaration of every payload, its direction, and what
+ handles it on arrival; each loader registers from <a href="#CLIENTBOUND"><code>CLIENTBOUND</code></a> and <a href="#SERVERBOUND"><code>SERVERBOUND</code></a>
+ in list order. Clientbound handlers reach <a href="../client/ClientNetworkHandler.html" title="class in com.github.crittscott.somegoogly.client"><code>ClientNetworkHandler</code></a> only inside lambda bodies,
+ so a dedicated server never links it. Sends go straight through the loader bridges, <a href="../platform/Networking.html" title="class in com.github.crittscott.somegoogly.platform"><code>Networking</code></a> and <a href="../client/platform/ClientNetworking.html" title="class in com.github.crittscott.somegoogly.client.platform"><code>ClientNetworking</code></a>.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -143,7 +142,8 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="NetworkProtocol.Serverbound.html" title="class in com.github.crittscott.somegoogly.network">NetworkProtocol.Serverbound</a>&lt;?&gt;&gt;</code></div>
 <div class="col-second even-row-color"><code><a href="#SERVERBOUND" class="member-name-link">SERVERBOUND</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">Every payload a client sends, with its server-thread handler, which re-checks the sender's authority.</div>
+<div class="block">Every payload a client sends, with its server-thread handler, which re-checks the sender's
+ authority.</div>
 </div>
 </div>
 </section>
@@ -192,7 +192,8 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="SERVERBOUND">
 <h3>SERVERBOUND</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="NetworkProtocol.Serverbound.html" title="class in com.github.crittscott.somegoogly.network">NetworkProtocol.Serverbound</a>&lt;?&gt;&gt;</span>&nbsp;<span class="element-name">SERVERBOUND</span></div>
-<div class="block">Every payload a client sends, with its server-thread handler, which re-checks the sender's authority.</div>
+<div class="block">Every payload a client sends, with its server-thread handler, which re-checks the sender's
+ authority.</div>
 </section>
 </li>
 </ul>

@@ -1,57 +1,67 @@
 package com.github.crittscott.somegoogly.eye.behavior;
 
 import com.github.crittscott.somegoogly.eye.HeadInfo;
+
 import net.minecraft.util.RandomSource;
 
 import javax.annotation.Nullable;
 
 /**
- * The mutable runtime state of the one behavior a mob is currently playing. Behaviors themselves are
- * stateless enum constants; all per-play state lives here, on the mob's client
- * tracker, so it's transient and per-mob.
+ * The mutable runtime state of the one behavior a mob is currently playing. Behaviors themselves
+ * are stateless enum constants; all per-play state lives here, on the mob's client tracker, so it's
+ * transient and per-mob.
  *
- * <p>The only animated state is {@link #age}: each behavior derives its {@link EyeInfluence} directly
- * from {@code age/duration} in {@link EyeBehavior#influence}, so there are no prev/current scalar pairs
- * to keep — the smoothing lives one level down, in the pupil's own physics interpolation and in the
- * per-eye overlay state the simulator tracks. The seeded params below are resolved once in
- * {@link EyeBehavior#onStart}; randomness is seeded so every client watching the same mob animates
- * identically.
+ * <p>The only animated state is {@link #age}: each behavior derives its {@link EyeInfluence}
+ * directly from {@code age/duration} in {@link EyeBehavior#influence}, so there are no prev/current
+ * scalar pairs to keep — the smoothing lives one level down, in the pupil's own physics
+ * interpolation and in the per-eye overlay state the simulator tracks. The seeded params below are
+ * resolved once in {@link EyeBehavior#onStart}; randomness is seeded so every client watching the
+ * same mob animates identically.
  */
 public final class BehaviorInstance {
 
     /** Stateless behavior definition being played. */
     public final EyeBehavior behavior;
+
     /**
-     * Placement view whose head and eye indexes define per-eye behavior state, or {@code null} for a lone
-     * eye with no placement (the held Googly Eye), which plays as head 0, eye 0.
+     * Placement view whose head and eye indexes define per-eye behavior state, or {@code null} for
+     * a lone eye with no placement (the held Googly Eye), which plays as head 0, eye 0.
      */
-    @Nullable
-    public final HeadInfo helper;
+    @Nullable public final HeadInfo helper;
+
     /** Positive total play length in ticks, validated before playback. */
     public final int duration;
+
     /** Deterministic random source initialized from the server-supplied seed. */
     public final RandomSource rand;
 
-    /** Completed ticks (1-based after the first tick); {@code age/duration} is the progress fraction. */
+    /**
+     * Completed ticks (1-based after the first tick); {@code age/duration} is the progress
+     * fraction.
+     */
     public int age;
 
     /** Color-change target, or {@code null} until a color-change behavior initializes it. */
-    @Nullable
-    public float[] tintColor;
+    @Nullable public float[] tintColor;
+
     /** Seeded side-eye direction: {@code -1} or {@code +1} after side-eye initialization. */
     public int dirSign;
-    /** Seeded blink participation indexed by {@code [head][eye]}, or {@code null} for other behaviors. */
-    @Nullable
-    public boolean[][] mask;
-    /**
-     * Seeded cross-eye aim indexed by {@code [head][eye]}: the unit pupil-plane anchor toward the eye's partner,
-     * {@code {0, 0}} when the partner sits on the pupil axis, or {@code null} for an eye with no partner. The
-     * whole array is {@code null} for other behaviors and for a lone eye.
-     */
-    @Nullable
-    public float[][][] crossAim;
 
-    private BehaviorInstance(EyeBehavior behavior, @Nullable HeadInfo helper, int duration, long seed) {
+    /**
+     * Seeded blink participation indexed by {@code [head][eye]}, or {@code null} for other
+     * behaviors.
+     */
+    @Nullable public boolean[][] mask;
+
+    /**
+     * Seeded cross-eye aim indexed by {@code [head][eye]}: the unit pupil-plane anchor toward the
+     * eye's partner, {@code {0, 0}} when the partner sits on the pupil axis, or {@code null} for an
+     * eye with no partner. The whole array is {@code null} for other behaviors and for a lone eye.
+     */
+    @Nullable public float[][][] crossAim;
+
+    private BehaviorInstance(
+            EyeBehavior behavior, @Nullable HeadInfo helper, int duration, long seed) {
         this.behavior = behavior;
         this.helper = helper;
         this.duration = duration;
@@ -65,7 +75,8 @@ public final class BehaviorInstance {
     }
 
     /** Create the per-play state of {@code behavior} and run its {@link EyeBehavior#onStart}. */
-    public static BehaviorInstance start(EyeBehavior behavior, @Nullable HeadInfo helper, int duration, long seed) {
+    public static BehaviorInstance start(
+            EyeBehavior behavior, @Nullable HeadInfo helper, int duration, long seed) {
         BehaviorInstance instance = new BehaviorInstance(behavior, helper, duration, seed);
         behavior.onStart(instance);
         return instance;

@@ -6,8 +6,7 @@ import net.minecraft.world.entity.Entity;
 /** NeoForge implementation of the shared entity-persistence boundary. */
 public final class EntityPersistentDataImpl {
 
-    private EntityPersistentDataImpl() {
-    }
+    private EntityPersistentDataImpl() {}
 
     public static CompoundTag find(Entity entity) {
         return entity.getPersistentData();

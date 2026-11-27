@@ -1,19 +1,18 @@
 package com.github.crittscott.somegoogly.item;
 
 import com.github.crittscott.somegoogly.util.LookTarget;
+
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 /**
  * A googly eye bedded in a slimeball: the applicator. Right-clicking a living entity with it sticks
- * eyes on that entity, using the appearance the eye carried into the craft
- * ({@link EyeItemProperties}); sneak + use on air applies it to the player themselves. A Slimy Eye, applied by
- * the player or by another player, is the only way a player gets eyes (players are excluded from the
- * at-spawn roll). It shares the Googly Eye's
- * stored appearance and tooltip.
+ * eyes on that entity, using the appearance the eye carried into the craft ({@link
+ * EyeItemProperties}); sneak + use on air applies it to the player themselves. A Slimy Eye, applied
+ * by the player or by another player, is the only way a player gets eyes (players are excluded from
+ * the at-spawn roll). It shares the Googly Eye's stored appearance and tooltip.
  *
  * <p>The slimy eye carries appearance only, never placement — where the eyes land comes from the
  * target's datapack config, on a placement variant freshly rolled by each application. An
@@ -21,10 +20,11 @@ import net.minecraft.world.level.Level;
  * harvesting its eye, modifying it, and re-applying.
  *
  * <p>One eye in, one eye out: an application consumes a single slimy eye and a harvest yields a
- * single eye item, so a craft-apply-harvest loop costs a slimeball per turn and cannot multiply eyes.
+ * single eye item, so a craft-apply-harvest loop costs a slimeball per turn and cannot multiply
+ * eyes.
  *
- * <p>The application itself is {@link EyeItemService#applySlimyEye}. The mob path is dispatched from
- * each loader's entity-interact adapter — which claims the right-click before the target's own
+ * <p>The application itself is {@link EyeItemService#applySlimyEye}. The mob path is dispatched
+ * from each loader's entity-interact adapter — which claims the right-click before the target's own
  * interaction can consume it — not through {@code Item#interactLivingEntity}; only the sneak
  * self-apply ({@link #use}) is dispatched through this class.
  */
@@ -35,8 +35,9 @@ public class SlimyEyeItem extends GooglyEyeItem {
     }
 
     /**
-     * Sneak + use on air: eye yourself. Without the sneak this would fire on every stray right-click. Vanilla also
-     * reaches here when a click on a mob, head, or block passed, so a use aimed at anything is left alone.
+     * Sneak + use on air: eye yourself. Without the sneak this would fire on every stray
+     * right-click. Vanilla also reaches here when a click on a mob, head, or block passed, so a use
+     * aimed at anything is left alone.
      */
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {

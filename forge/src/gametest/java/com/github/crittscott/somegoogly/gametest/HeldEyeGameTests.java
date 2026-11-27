@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
+
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraftforge.gametest.GameTestHolder;
@@ -14,32 +15,36 @@ public final class HeldEyeGameTests {
 
     private static final String TEMPLATE = "somegoogly:empty";
 
-    private HeldEyeGameTests() {
-    }
+    private HeldEyeGameTests() {}
 
     @GameTest(template = TEMPLATE)
     public static void heldEyeBulgesWhenHurt(GameTestHelper helper) {
-        HeldEyeGameTestsLogic.heldEyeBulgesWhenHurt(helper, SomeGooglyGameTests.survivalPlayer(helper));
+        HeldEyeGameTestsLogic.heldEyeBulgesWhenHurt(
+                helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
 
     @GameTest(template = TEMPLATE)
     public static void heldEyeHonorsServerSettings(GameTestHelper helper) {
-        HeldEyeGameTestsLogic.heldEyeHonorsServerSettings(helper, SomeGooglyGameTests.survivalPlayer(helper));
+        HeldEyeGameTestsLogic.heldEyeHonorsServerSettings(
+                helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
 
     @GameTest(template = TEMPLATE)
     public static void heldEyePlaysIdleBehaviors(GameTestHelper helper) {
-        HeldEyeGameTestsLogic.heldEyePlaysIdleBehaviors(helper, SomeGooglyGameTests.survivalPlayer(helper));
+        HeldEyeGameTestsLogic.heldEyePlaysIdleBehaviors(
+                helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
 
     @GameTest(template = TEMPLATE)
     public static void heldEyeResetsWhenPutAway(GameTestHelper helper) {
-        HeldEyeGameTestsLogic.heldEyeResetsWhenPutAway(helper, SomeGooglyGameTests.survivalPlayer(helper));
+        HeldEyeGameTestsLogic.heldEyeResetsWhenPutAway(
+                helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
 
     @GameTest(template = TEMPLATE, timeoutTicks = 400, batch = "somegoogly_held_heal")
     public static void heldEyeSwirlsWhenHealed(GameTestHelper helper) {
-        HeldEyeGameTestsLogic.heldEyeSwirlsWhenHealed(helper, SomeGooglyGameTests.survivalPlayer(helper));
+        HeldEyeGameTestsLogic.heldEyeSwirlsWhenHealed(
+                helper, SomeGooglyGameTests.survivalPlayer(helper));
     }
 
     @GameTest(template = TEMPLATE)

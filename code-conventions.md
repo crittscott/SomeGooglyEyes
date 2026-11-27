@@ -156,6 +156,11 @@ Read code-review-decisions.md before applying a general rule to accepted behavio
 - Loader-only adapters belong in that loader. Optional integration support may stay in common when it shares the existing pipeline; the accepted Twilight Forest, Heads, and Citadel support is not a placement defect.
 - Use the build layout the toolchain expects. A custom source root needs a reason a build would fail without it.
 
+## Formatting
+
+- Java layout belongs to google-java-format: run `spotlessApply` before committing Java changes, then `python ../reflow-comments.py .` to rewrap line comments the formatter split, and `spotlessApply` again if that changed anything. Write new code close to the formatter's output (4-space indent, 100 columns) and never hand-format against it.
+- Use `// spotless:off` / `// spotless:on` only for hand-laid structure the formatter would obscure, such as a Brigadier command tree.
+
 ## Member ordering
 
 Order members within a class/interface/record alphabetically, **to the extent the

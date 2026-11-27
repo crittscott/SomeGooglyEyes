@@ -8,32 +8,34 @@ import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.state.AppearanceOverride;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+
+import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
-import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
 import java.util.List;
 
 /**
- * GeckoLib render layer that draws googly eyes on named bones (the GeckoLib counterpart of
- * {@code LayerGooglyEyes}). Handles both normal rendering (from synced config,
- * with iris physics) and the picker preview when this entity is the picker's target.
+ * GeckoLib render layer that draws googly eyes on named bones (the GeckoLib counterpart of {@code
+ * LayerGooglyEyes}). Handles both normal rendering (from synced config, with iris physics) and the
+ * picker preview when this entity is the picker's target.
  *
  * <p>The layer works through GeckoLib's <b>per-bone</b> hook, not the whole-model {@link #render}
  * callback: GeckoLib applies the entity's body rotations and model transforms inside its own
- * push/pop and has already popped them by the time {@code render} runs, so only
- * {@link #renderForBone} sees a pose actually positioned at the animated bone. Per-entity gating and
- * bone lookup happen once in {@link #preRender}; {@link #renderForBone} draws on the matching bones;
+ * push/pop and has already popped them by the time {@code render} runs, so only {@link
+ * #renderForBone} sees a pose actually positioned at the animated bone. Per-entity gating and bone
+ * lookup happen once in {@link #preRender}; {@link #renderForBone} draws on the matching bones;
  * {@link #render} (which GeckoLib calls last) just clears the per-render state.
  *
- * <p>GeckoLib's layer event reaches every entity renderer, projectiles and vehicles included, so the layer is
- * typed on any entity and draws nothing on one that isn't living.
+ * <p>GeckoLib's layer event reaches every entity renderer, projectiles and vehicles included, so
+ * the layer is typed on any entity and draws nothing on one that isn't living.
  *
  * <p>Only loaded when GeckoLib is present (referenced via {@code GeckoCompat}).
  */
@@ -41,23 +43,25 @@ public class GooglyGeoLayer<T extends Entity & GeoAnimatable> extends GeoRenderL
 
     /**
      * State computed in {@link #preRender} for the entity currently being rendered, consumed by
-     * {@link #renderForBone}, cleared in {@link #render}. The layer is a per-renderer singleton, but
-     * entity rendering is single-threaded and the preRender → renderForBone → render sequence is not
-     * interleaved between entities, so one transient slot is safe. {@code null} means "draw nothing".
+     * {@link #renderForBone}, cleared in {@link #render}. The layer is a per-renderer singleton,
+     * but entity rendering is single-threaded and the preRender → renderForBone → render sequence
+     * is not interleaved between entities, so one transient slot is safe. {@code null} means "draw
+     * nothing".
      */
     private Frame frame;
 
     /** Either a picker preview ({@code preview} true) or normal synced-config rendering. */
     private static final class Frame {
-        // Normal rendering: config + per-mob state, with each head's attach token resolved to a bone
-        // (null where the token matched no bone in the model currently worn — see Ribbits model swaps).
+        // Normal rendering: config + per-mob state, with each head's attach token resolved to a
+        // bone (null where the token matched no bone in the model currently worn — see Ribbits
+        // model swaps).
         HeadInfo helper;
         AppearanceOverride overrides;
         GooglyTracker tracker;
         GeoBone[] headBones;
 
-        // Picker preview: the edited variant's previewed eyes with the bone each attaches to, plus the
-        // bone carrying the gizmo and the live eye.
+        // Picker preview: the edited variant's previewed eyes with the bone each attaches to, plus
+        // the bone carrying the gizmo and the live eye.
         boolean preview;
         List<PickerState.ListedEye> savedEyes;
         GeoBone[] savedEyeBones;
@@ -69,9 +73,17 @@ public class GooglyGeoLayer<T extends Entity & GeoAnimatable> extends GeoRenderL
     }
 
     @Override
-    public void preRender(PoseStack poseStack, T animatable, BakedGeoModel bakedModel, RenderType renderType,
-                          MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick,
-                          int packedLight, int packedOverlay, int renderColor) {
+    public void preRender(
+            PoseStack poseStack,
+            T animatable,
+            BakedGeoModel bakedModel,
+            RenderType renderType,
+            MultiBufferSource bufferSource,
+            VertexConsumer buffer,
+            float partialTick,
+            int packedLight,
+            int packedOverlay,
+            int renderColor) {
         this.frame = null;
         if (!(animatable instanceof LivingEntity living)) {
             return;
@@ -93,7 +105,8 @@ public class GooglyGeoLayer<T extends Entity & GeoAnimatable> extends GeoRenderL
             return;
         }
 
-        // Shared gate (client disables, has-eyes, invisibility, usable config) — see LayerGooglyEyes.
+        // Shared gate (client disables, has-eyes, invisibility, usable config) — see
+        // LayerGooglyEyes.
         HeadInfo helper = data.helper();
         if (helper == null) {
             return;
@@ -102,8 +115,8 @@ public class GooglyGeoLayer<T extends Entity & GeoAnimatable> extends GeoRenderL
         Frame frame = new Frame();
         frame.helper = helper;
         frame.tracker = data.tracker();
-        // Per-mob appearance overrides (dye / redstone / harvested-eye item / slimy eye) come from the tracker,
-        // which ClientNetworkHandler keeps current.
+        // Per-mob appearance overrides (dye / redstone / harvested-eye item / slimy eye) come from
+        // the tracker, which ClientNetworkHandler keeps current.
         frame.overrides = frame.tracker.overrides;
         frame.headBones = new GeoBone[helper.getHeadCount()];
         for (int h = 0; h < frame.headBones.length; h++) {
@@ -113,56 +126,108 @@ public class GooglyGeoLayer<T extends Entity & GeoAnimatable> extends GeoRenderL
     }
 
     @Override
-    public void renderForBone(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType,
-                              MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick,
-                              int packedLight, int packedOverlay, int renderColor) {
+    public void renderForBone(
+            PoseStack poseStack,
+            T animatable,
+            GeoBone bone,
+            RenderType renderType,
+            MultiBufferSource bufferSource,
+            VertexConsumer buffer,
+            float partialTick,
+            int packedLight,
+            int packedOverlay,
+            int renderColor) {
         Frame frame = this.frame;
         if (frame == null) {
             return;
         }
-        boolean drew = frame.preview
-                ? renderPreviewAt(poseStack, bone, frame, bufferSource, packedLight, packedOverlay)
-                : renderEyesAt(poseStack, bone, frame, bufferSource, packedLight, packedOverlay, partialTick);
+        boolean drew =
+                frame.preview
+                        ? renderPreviewAt(
+                                poseStack, bone, frame, bufferSource, packedLight, packedOverlay)
+                        : renderEyesAt(
+                                poseStack,
+                                bone,
+                                frame,
+                                bufferSource,
+                                packedLight,
+                                packedOverlay,
+                                partialTick);
         if (drew) {
-            // renderForBone contract: we rendered into our own RenderTypes, so restore the model's buffer.
+            // renderForBone contract: we rendered into our own RenderTypes, so restore the model's
+            // buffer.
             bufferSource.getBuffer(renderType);
         }
     }
 
     @Override
-    public void render(PoseStack poseStack, T animatable, BakedGeoModel bakedModel, RenderType renderType,
-                       MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick,
-                       int packedLight, int packedOverlay, int renderColor) {
-        // All bones have rendered; drop the per-render state so no entity/tracker refs outlive the frame.
+    public void render(
+            PoseStack poseStack,
+            T animatable,
+            BakedGeoModel bakedModel,
+            RenderType renderType,
+            MultiBufferSource bufferSource,
+            VertexConsumer buffer,
+            float partialTick,
+            int packedLight,
+            int packedOverlay,
+            int renderColor) {
+        // All bones have rendered; drop the per-render state so no entity/tracker refs outlive the
+        // frame.
         this.frame = null;
     }
 
-    private boolean renderEyesAt(PoseStack poseStack, GeoBone bone, Frame frame, MultiBufferSource bufferSource,
-                                 int packedLight, int packedOverlay, float partialTick) {
+    private boolean renderEyesAt(
+            PoseStack poseStack,
+            GeoBone bone,
+            Frame frame,
+            MultiBufferSource bufferSource,
+            int packedLight,
+            int packedOverlay,
+            float partialTick) {
         boolean drew = false;
         for (int h = 0; h < frame.headBones.length; h++) {
             if (frame.headBones[h] != bone) {
                 continue;
             }
-            drew |= GooglyEyeRenderer.renderHead(poseStack, bufferSource, packedLight, packedOverlay,
-                    frame.tracker.eyes[h], frame.helper, frame.overrides, h, partialTick);
+            drew |=
+                    GooglyEyeRenderer.renderHead(
+                            poseStack,
+                            bufferSource,
+                            packedLight,
+                            packedOverlay,
+                            frame.tracker.eyes[h],
+                            frame.helper,
+                            frame.overrides,
+                            h,
+                            partialTick);
         }
         return drew;
     }
 
-    private boolean renderPreviewAt(PoseStack poseStack, GeoBone bone, Frame frame, MultiBufferSource bufferSource,
-                                    int packedLight, int packedOverlay) {
+    private boolean renderPreviewAt(
+            PoseStack poseStack,
+            GeoBone bone,
+            Frame frame,
+            MultiBufferSource bufferSource,
+            int packedLight,
+            int packedOverlay) {
         boolean drew = false;
         for (int i = 0; i < frame.savedEyeBones.length; i++) {
             if (frame.savedEyeBones[i] != bone) {
                 continue;
             }
-            GooglyEyeRenderer.renderPreviewEye(poseStack, bufferSource, packedLight, packedOverlay,
+            GooglyEyeRenderer.renderPreviewEye(
+                    poseStack,
+                    bufferSource,
+                    packedLight,
+                    packedOverlay,
                     frame.savedEyes.get(i).eye);
             drew = true;
         }
         if (frame.gizmoBone == bone) {
-            GooglyEyeRenderer.renderPreviewPlacement(poseStack, bufferSource, packedLight, packedOverlay);
+            GooglyEyeRenderer.renderPreviewPlacement(
+                    poseStack, bufferSource, packedLight, packedOverlay);
             drew = true;
         }
         return drew;

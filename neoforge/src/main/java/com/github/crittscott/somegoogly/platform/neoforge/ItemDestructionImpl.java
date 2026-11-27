@@ -8,8 +8,7 @@ import net.neoforged.neoforge.event.EventHooks;
 /** NeoForge implementation of the emptied-item reports, through the item-destroyed event. */
 public final class ItemDestructionImpl {
 
-    private ItemDestructionImpl() {
-    }
+    private ItemDestructionImpl() {}
 
     public static void reportBroken(Player player, ItemStack original, InteractionHand hand) {
         EventHooks.onPlayerDestroyItem(player, original, hand);

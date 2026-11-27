@@ -11,10 +11,7 @@ import com.github.crittscott.somegoogly.eye.state.EyeState.Snapshot;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
 import com.github.crittscott.somegoogly.item.EyeItemProperties;
 import com.github.crittscott.somegoogly.registry.ModContent;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.IntStream;
-import javax.annotation.Nullable;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
@@ -22,66 +19,85 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.IntStream;
+
+import javax.annotation.Nullable;
+
 /**
- * One presentation's loose eye or configured eye layout, its ambient expressions, and, for an eye in a hand, the
- * server's reactions. Its identity and supplied clock determine expression age; physics is local and disposable.
- * The renderer supplies gravity.
+ * One presentation's loose eye or configured eye layout, its ambient expressions, and, for an eye
+ * in a hand, the server's reactions. Its identity and supplied clock determine expression age;
+ * physics is local and disposable. The renderer supplies gravity.
  */
 public final class PresentationEyes {
 
-    @Nullable
-    public BehaviorInstance active;
-    @Nullable
-    private BehaviorInstance ambientExpression;
+    @Nullable public BehaviorInstance active;
+    @Nullable private BehaviorInstance ambientExpression;
     private long behaviorSeed;
+
     /** A server-owned hand reaction, which plays over the ambient expression until it ends. */
-    @Nullable
-    private BehaviorInstance reaction;
+    @Nullable private BehaviorInstance reaction;
+
     private long reactionSeed;
-    @Nullable
-    public final ResourceLocation entity;
+    @Nullable public final ResourceLocation entity;
+
     /** Loose-item pupil; configured heads use the shaped arrays in eyes. */
     public final GooglyTracker.EyeInfo eye = new GooglyTracker.EyeInfo();
+
     public final GooglyTracker.EyeInfo[][] eyes;
+
     /**
-     * The placed head's eye-state compound this was built from. A load replaces that compound, so another
-     * reference means the head's state may have changed.
+     * The placed head's eye-state compound this was built from. A load replaces that compound, so
+     * another reference means the head's state may have changed.
      */
-    @Nullable
-    CompoundTag headData;
-    @Nullable
-    public final HeadInfo helper;
+    @Nullable CompoundTag headData;
+
+    @Nullable public final HeadInfo helper;
     private final EyeInfluence influence = new EyeInfluence();
+
     /** A private copy of the presented item; empty for placed heads and boats. */
     private final ItemStack item;
+
     int lastRenderTick;
     private long motionTick = Long.MIN_VALUE;
-    @Nullable
-    private Entity owner;
+    @Nullable private Entity owner;
     public final int[] parts;
     private double prevX, prevY, prevZ;
     private List<EyeBehavior> pool = List.of();
+
     /** The appearance this presentation draws, decoded once. */
     public final AppearanceOverride properties;
+
     private final RandomSource rand;
     private long scheduledSlot = Long.MIN_VALUE;
     private final long seed;
-    @Nullable
-    private BehaviorSettings settings;
-    @Nullable
-    private EyeBehavior slotBehavior;
+    @Nullable private BehaviorSettings settings;
+    @Nullable private EyeBehavior slotBehavior;
     private int slotTicks;
-    @Nullable
-    public final Snapshot snapshot;
+    @Nullable public final Snapshot snapshot;
     private long startsAt;
     private final boolean stationaryHead;
 
     private PresentationEyes(UUID uuid, ItemStack looseEye) {
-        this(BehaviorSettings.presentationSeed(uuid), looseEye.copyWithCount(1), null, null, null, new int[]{0}, false);
+        this(
+                BehaviorSettings.presentationSeed(uuid),
+                looseEye.copyWithCount(1),
+                null,
+                null,
+                null,
+                new int[] {0},
+                false);
     }
 
-    private PresentationEyes(long seed, ItemStack item, @Nullable ResourceLocation entity, @Nullable Snapshot snapshot,
-                             @Nullable HeadInfo helper, int[] parts, boolean stationaryHead) {
+    private PresentationEyes(
+            long seed,
+            ItemStack item,
+            @Nullable ResourceLocation entity,
+            @Nullable Snapshot snapshot,
+            @Nullable HeadInfo helper,
+            int[] parts,
+            boolean stationaryHead) {
         this.seed = seed;
         this.item = item;
         this.properties = snapshot != null ? snapshot.properties() : EyeItemProperties.get(item);
@@ -94,7 +110,7 @@ public final class PresentationEyes {
         eye.itemGravity = true;
         this.parts = parts.clone();
         if (helper == null) {
-            eyes = new GooglyTracker.EyeInfo[][]{{eye}};
+            eyes = new GooglyTracker.EyeInfo[][] {{eye}};
         } else {
             eyes = new GooglyTracker.EyeInfo[helper.getHeadCount()][];
             for (int head = 0; head < eyes.length; head++) {
@@ -111,7 +127,9 @@ public final class PresentationEyes {
         }
     }
 
-    /** The animation a draw uses and that draw's partial tick; {@link #NONE} outside animated draws. */
+    /**
+     * The animation a draw uses and that draw's partial tick; {@link #NONE} outside animated draws.
+     */
     public record Draw(@Nullable PresentationEyes eyes, float partialTick) {
         public static final Draw NONE = new Draw(null, 0F);
 
@@ -121,14 +139,18 @@ public final class PresentationEyes {
         }
     }
 
-    /** Implemented on render states, so an animation chosen at extraction reaches the later draw. */
+    /**
+     * Implemented on render states, so an animation chosen at extraction reaches the later draw.
+     */
     public interface Holder {
         Draw somegoogly$draw();
 
         void somegoogly$setDraw(Draw draw);
     }
 
-    /** Build the item's current layout; plain heads and unsupported definitions have no simulation. */
+    /**
+     * Build the item's current layout; plain heads and unsupported definitions have no simulation.
+     */
     @Nullable
     public static PresentationEyes create(UUID uuid, ItemStack stack) {
         if (stack.is(ModContent.GOOGLY_EYE.get())) {
@@ -144,18 +166,32 @@ public final class PresentationEyes {
         if (parts.length == 0) {
             return null;
         }
-        return new PresentationEyes(BehaviorSettings.presentationSeed(uuid), stack.copyWithCount(1), entity, snapshot, helper, parts, false);
+        return new PresentationEyes(
+                BehaviorSettings.presentationSeed(uuid),
+                stack.copyWithCount(1),
+                entity,
+                snapshot,
+                helper,
+                parts,
+                false);
     }
 
     /** Build a validated, enabled layout without item or skull eligibility assumptions. */
-    public static PresentationEyes create(UUID uuid, ResourceLocation entity, Snapshot snapshot, HeadInfo helper) {
-        return new PresentationEyes(BehaviorSettings.presentationSeed(uuid), ItemStack.EMPTY, entity, snapshot, helper,
-                IntStream.range(0, helper.getHeadCount()).toArray(), false);
+    public static PresentationEyes create(
+            UUID uuid, ResourceLocation entity, Snapshot snapshot, HeadInfo helper) {
+        return new PresentationEyes(
+                BehaviorSettings.presentationSeed(uuid),
+                ItemStack.EMPTY,
+                entity,
+                snapshot,
+                helper,
+                IntStream.range(0, helper.getHeadCount()).toArray(),
+                false);
     }
 
     /** Use the block position's seed and the attached-eye gravity convention for a placed head. */
-    public static PresentationEyes placedHead(long seed, ResourceLocation entity, Snapshot snapshot,
-                                              HeadInfo helper, int[] parts) {
+    public static PresentationEyes placedHead(
+            long seed, ResourceLocation entity, Snapshot snapshot, HeadInfo helper, int[] parts) {
         return new PresentationEyes(seed, ItemStack.EMPTY, entity, snapshot, helper, parts, true);
     }
 
@@ -164,7 +200,9 @@ public final class PresentationEyes {
         lastRenderTick = currentClientTick;
     }
 
-    /** Whether {@code stack} is still the presented item; a different count or stack copy still is. */
+    /**
+     * Whether {@code stack} is still the presented item; a different count or stack copy still is.
+     */
     public boolean matches(ItemStack stack) {
         return ItemStack.isSameItemSameComponents(item, stack);
     }
@@ -177,21 +215,29 @@ public final class PresentationEyes {
 
     /**
      * Step once on the presentation clock. Absolute expression age catches up after time offscreen;
-     * slots are at least the longest expression, so even very short configured intervals cannot overlap.
+     * slots are at least the longest expression, so even very short configured intervals cannot
+     * overlap.
      */
     public void tick(long gameTime, BehaviorSettings behaviors) {
         tick(gameTime, behaviors, null);
     }
 
-    /** Step with the world's actual owner motion; render poses supply gravity and the eye-plane basis. */
+    /**
+     * Step with the world's actual owner motion; render poses supply gravity and the eye-plane
+     * basis.
+     */
     public void tick(long gameTime, BehaviorSettings behaviors, @Nullable Entity owner) {
-        boolean resetMotion = this.owner != owner || motionTick == Long.MIN_VALUE || gameTime != motionTick + 1;
+        boolean resetMotion =
+                this.owner != owner || motionTick == Long.MIN_VALUE || gameTime != motionTick + 1;
         this.owner = owner;
         motionTick = gameTime;
         double mx = owner == null || resetMotion ? 0D : owner.getX() - prevX;
         double my = owner == null || resetMotion ? 0D : owner.getY() - prevY;
         double mz = owner == null || resetMotion ? 0D : owner.getZ() - prevZ;
-        float yaw = owner instanceof LivingEntity living ? living.getYHeadRot() : owner == null ? 0F : owner.getYRot();
+        float yaw =
+                owner instanceof LivingEntity living
+                        ? living.getYHeadRot()
+                        : owner == null ? 0F : owner.getYRot();
         float pitch = owner == null ? 0F : owner.getXRot();
         if (owner != null) {
             prevX = owner.getX();
@@ -222,7 +268,8 @@ public final class PresentationEyes {
             long slot = Math.floorDiv(gameTime, slotTicks);
             if (slot != scheduledSlot) {
                 scheduledSlot = slot;
-                BehaviorSettings.AmbientSlot selected = behaviors.ambientSlot(seed, slot, slotTicks, pool);
+                BehaviorSettings.AmbientSlot selected =
+                        behaviors.ambientSlot(seed, slot, slotTicks, pool);
                 slotBehavior = selected.behavior();
                 startsAt = selected.startsAt();
                 behaviorSeed = selected.seed();
@@ -231,7 +278,12 @@ public final class PresentationEyes {
             long elapsed = gameTime - startsAt;
             if (elapsed >= 0 && elapsed < slotBehavior.defaultDuration()) {
                 if (active == null) {
-                    active = BehaviorInstance.start(slotBehavior, helper, slotBehavior.defaultDuration(), behaviorSeed);
+                    active =
+                            BehaviorInstance.start(
+                                    slotBehavior,
+                                    helper,
+                                    slotBehavior.defaultDuration(),
+                                    behaviorSeed);
                 }
                 active.age = (int) elapsed;
             } else {
@@ -253,7 +305,9 @@ public final class PresentationEyes {
                 if (resetMotion && !stationaryHead) {
                     pupil.resetMotion();
                 }
-                pupil.step(influence, active, part, index, 1F, 1F, 0F, 0F, rand, yaw, pitch, mx, my, mz, 0F);
+                pupil.step(
+                        influence, active, part, index, 1F, 1F, 0F, 0F, rand, yaw, pitch, mx, my,
+                        mz, 0F);
             }
         }
     }

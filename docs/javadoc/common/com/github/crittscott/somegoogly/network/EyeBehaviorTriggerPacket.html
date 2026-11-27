@@ -98,14 +98,15 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public record </span><span class="element-name type-name-label">EyeBehaviorTriggerPacket</span>(int&nbsp;entityId, <a href="EyeBehaviorTriggerPacket.Target.html" title="enum class in com.github.crittscott.somegoogly.network">EyeBehaviorTriggerPacket.Target</a>&nbsp;target, <a href="../eye/behavior/EyeBehavior.html" title="enum class in com.github.crittscott.somegoogly.eye.behavior">EyeBehavior</a>&nbsp;behavior, long&nbsp;seed, int&nbsp;elapsed)
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a>
 implements net.minecraft.network.protocol.common.custom.CustomPacketPayload</span></div>
-<div class="block">Server → client: "play <code>behavior</code> on the eyes of entity <code>entityId</code>, or on the loose Googly Eye in
- one of its hands, seeded with <code>seed</code>." Sent to the viewers of the entity when the server scheduler starts
- an expression, and to a newly tracking player mid-effect with the ticks already <code>elapsed</code>, so every
- viewer animates the same thing in lock-step. Every expression runs for its behavior's
- <a href="../eye/behavior/EyeBehavior.html#defaultDuration()"><code>EyeBehavior.defaultDuration()</code></a>.
+<div class="block">Server → client: "play <code>behavior</code> on the eyes of entity <code>entityId</code>, or on the loose
+ Googly Eye in one of its hands, seeded with <code>seed</code>." Sent to the viewers of the entity when
+ the server scheduler starts an expression, and to a newly tracking player mid-effect with the
+ ticks already <code>elapsed</code>, so every viewer animates the same thing in lock-step. Every
+ expression runs for its behavior's <a href="../eye/behavior/EyeBehavior.html#defaultDuration()"><code>EyeBehavior.defaultDuration()</code></a>.
 
  <p>The client retains the latest report for a known entity or hand independently of its render
- simulation and derives its current age from elapsed simulation time, including when the simulation is rebuilt.</div>
+ simulation and derives its current age from elapsed simulation time, including when the
+ simulation is rebuilt.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -121,7 +122,8 @@ implements net.minecraft.network.protocol.common.custom.CustomPacketPayload</spa
 <div class="col-first even-row-color"><code>static enum&nbsp;</code></div>
 <div class="col-second even-row-color"><code><a href="EyeBehaviorTriggerPacket.Target.html" class="type-name-link" title="enum class in com.github.crittscott.somegoogly.network">EyeBehaviorTriggerPacket.Target</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">Which eyes play the expression: those applied to the entity, or a loose Googly Eye in one of its hands.</div>
+<div class="block">Which eyes play the expression: those applied to the entity, or a loose Googly Eye in one of
+ its hands.</div>
 </div>
 </div>
 <div class="inherited-list">

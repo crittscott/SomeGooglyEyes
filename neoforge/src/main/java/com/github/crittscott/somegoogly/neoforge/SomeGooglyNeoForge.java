@@ -5,11 +5,12 @@ import com.github.crittscott.somegoogly.client.neoforge.NeoForgeClient;
 import com.github.crittscott.somegoogly.config.EyeConfigReloadListener;
 import com.github.crittscott.somegoogly.config.ModVersionLookup;
 import com.github.crittscott.somegoogly.config.neoforge.NeoForgeServerConfig;
-import com.github.crittscott.somegoogly.registry.ModContent;
-import com.github.crittscott.somegoogly.platform.neoforge.RegistrationImpl;
 import com.github.crittscott.somegoogly.network.neoforge.NeoForgeNetworkTransport;
+import com.github.crittscott.somegoogly.platform.neoforge.RegistrationImpl;
+import com.github.crittscott.somegoogly.registry.ModContent;
 import com.github.crittscott.somegoogly.server.neoforge.HeadEyesLootModifier;
 import com.github.crittscott.somegoogly.server.neoforge.NeoForgeServerEvents;
+
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -33,7 +34,9 @@ public final class SomeGooglyNeoForge {
         NeoForgeServerEvents.register(NeoForge.EVENT_BUS);
         NeoForge.EVENT_BUS.addListener(SomeGooglyNeoForge::addReloadListeners);
 
-        SomeGooglyCommon.LOGGER.info("{} {} registered on NeoForge", SomeGooglyCommon.MOD_NAME,
+        SomeGooglyCommon.LOGGER.info(
+                "{} {} registered on NeoForge",
+                SomeGooglyCommon.MOD_NAME,
                 ModVersionLookup.modVersion(SomeGooglyCommon.MOD_ID).orElseThrow());
     }
 

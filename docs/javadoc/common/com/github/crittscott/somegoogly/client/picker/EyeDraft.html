@@ -92,12 +92,13 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">EyeDraft</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Mutable working copy of one eye while authoring in the picker. Mirrors the datapack eye fields
- one-to-one (flat, like the JSON) so the CLI / HUD / preview can read and tweak them in place; it is
- converted to an immutable <a href="../../eye/EyeDefinition.html" title="class in com.github.crittscott.somegoogly.eye"><code>EyeDefinition</code></a> on save/export (<a href="#toDefinition(int)"><code>toDefinition(int)</code></a>). A fresh
- draft starts as <a href="../../eye/EyeDefinition.html#DEFAULT"><code>EyeDefinition.DEFAULT</code></a>, so the defaults live in one place.
+ one-to-one (flat, like the JSON) so the CLI / HUD / preview can read and tweak them in place; it
+ is converted to an immutable <a href="../../eye/EyeDefinition.html" title="class in com.github.crittscott.somegoogly.eye"><code>EyeDefinition</code></a> on save/export (<a href="#toDefinition(int)"><code>toDefinition(int)</code></a>). A
+ fresh draft starts as <a href="../../eye/EyeDefinition.html#DEFAULT"><code>EyeDefinition.DEFAULT</code></a>, so the defaults live in one place.
 
- <p>Everything is <code>float</code>, matching <a href="../../eye/EyePlacement.html" title="class in com.github.crittscott.somegoogly.eye"><code>EyePlacement</code></a>/<a href="../../eye/EyeAppearance.html" title="class in com.github.crittscott.somegoogly.eye"><code>EyeAppearance</code></a> and the config
- codecs — the draft holds exactly what will be written, at the precision it will be written at.</div>
+ <p>Everything is <code>float</code>, matching <a href="../../eye/EyePlacement.html" title="class in com.github.crittscott.somegoogly.eye"><code>EyePlacement</code></a>/<a href="../../eye/EyeAppearance.html" title="class in com.github.crittscott.somegoogly.eye"><code>EyeAppearance</code></a> and the
+ config codecs — the draft holds exactly what will be written, at the precision it will be written
+ at.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -120,7 +121,8 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color"><code><a href="#crossTarget" class="member-name-link">crossTarget</a></code></div>
 <div class="col-last even-row-color">
 <div class="block">Cross-eye partner as a <b>flat</b> index into the current variant's eye list (0-based, or
- <a href="../../eye/EyePlacement.html#NO_CROSS_TARGET"><code>EyePlacement.NO_CROSS_TARGET</code></a>) — authoring space, matching what <code>/sg list eyes</code> shows.</div>
+ <a href="../../eye/EyePlacement.html#NO_CROSS_TARGET"><code>EyePlacement.NO_CROSS_TARGET</code></a>) — authoring space, matching what <code>/sg list eyes</code>
+ shows.</div>
 </div>
 <div class="col-first odd-row-color"><code>float</code></div>
 <div class="col-second odd-row-color"><code><a href="#depth" class="member-name-link">depth</a></code></div>
@@ -185,9 +187,10 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../../eye/EyeDefinition.html" title="class in com.github.crittscott.somegoogly.eye">EyeDefinition</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toDefinition(int)" class="member-name-link">toDefinition</a><wbr>(int&nbsp;resolvedCrossTarget)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Snapshot this draft as the immutable datapack definition, baking in <code>resolvedCrossTarget</code> —
- the on-disk <i>within-head</i> index the caller computed from this draft's flat <a href="#crossTarget"><code>crossTarget</code></a>
- (the draft's own value is authoring-space and never written directly).</div>
+<div class="block">Snapshot this draft as the immutable datapack definition, baking in <code>
+ resolvedCrossTarget</code> — the on-disk <i>within-head</i> index the caller computed from this
+ draft's flat <a href="#crossTarget"><code>crossTarget</code></a> (the draft's own value is authoring-space and never written
+ directly).</div>
 </div>
 </div>
 </div>
@@ -266,9 +269,9 @@ loadScripts(document, 'script');</script>
 <h3>crossTarget</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">crossTarget</span></div>
 <div class="block">Cross-eye partner as a <b>flat</b> index into the current variant's eye list (0-based, or
- <a href="../../eye/EyePlacement.html#NO_CROSS_TARGET"><code>EyePlacement.NO_CROSS_TARGET</code></a>) — authoring space, matching what <code>/sg list eyes</code> shows. It's resolved to the on-disk
- <i>within-head</i> index only at export (<a href="PickerState.html" title="class in com.github.crittscott.somegoogly.client.picker"><code>PickerState</code></a>),
- so this stays valid as eyes move between heads while authoring.</div>
+ <a href="../../eye/EyePlacement.html#NO_CROSS_TARGET"><code>EyePlacement.NO_CROSS_TARGET</code></a>) — authoring space, matching what <code>/sg list eyes</code>
+ shows. It's resolved to the on-disk <i>within-head</i> index only at export (<a href="PickerState.html" title="class in com.github.crittscott.somegoogly.client.picker"><code>PickerState</code></a>), so this stays valid as eyes
+ move between heads while authoring.</div>
 </section>
 </li>
 </ul>
@@ -311,9 +314,10 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="toDefinition(int)">
 <h3>toDefinition</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../../eye/EyeDefinition.html" title="class in com.github.crittscott.somegoogly.eye">EyeDefinition</a></span>&nbsp;<span class="element-name">toDefinition</span><wbr><span class="parameters">(int&nbsp;resolvedCrossTarget)</span></div>
-<div class="block">Snapshot this draft as the immutable datapack definition, baking in <code>resolvedCrossTarget</code> —
- the on-disk <i>within-head</i> index the caller computed from this draft's flat <a href="#crossTarget"><code>crossTarget</code></a>
- (the draft's own value is authoring-space and never written directly).</div>
+<div class="block">Snapshot this draft as the immutable datapack definition, baking in <code>
+ resolvedCrossTarget</code> — the on-disk <i>within-head</i> index the caller computed from this
+ draft's flat <a href="#crossTarget"><code>crossTarget</code></a> (the draft's own value is authoring-space and never written
+ directly).</div>
 </section>
 </li>
 </ul>

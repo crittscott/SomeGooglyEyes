@@ -90,8 +90,8 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">LoaderInteractionGameTestsLogic</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
-<div class="block">Each loader's own use and player-copy hooks, driven through the loader's event or callback rather than the
- shared service behind it. Fabric protection-listener ordering remains a manual check.</div>
+<div class="block">Each loader's own use and player-copy hooks, driven through the loader's event or callback rather
+ than the shared service behind it. Fabric protection-listener ordering remains a manual check.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -112,8 +112,9 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color"><code>static interface&nbsp;</code></div>
 <div class="col-second odd-row-color"><code><a href="LoaderInteractionGameTestsLogic.Use.html" class="type-name-link" title="interface in com.github.crittscott.somegoogly.gametest">LoaderInteractionGameTestsLogic.Use</a></code></div>
 <div class="col-last odd-row-color">
-<div class="block">Fire the loader's use event or callback: on <code>hit</code>'s block when given, else on <code>target</code> when
- given, else the held item alone; with <code>refused</code>, a protection listener refuses it first.</div>
+<div class="block">Fire the loader's use event or callback: on <code>hit</code>'s block when given, else on <code>
+ target</code> when given, else the held item alone; with <code>refused</code>, a protection listener
+ refuses it first.</div>
 </div>
 </div>
 </section>
@@ -134,7 +135,8 @@ loadScripts(document, 'script');</script>
  net.minecraft.server.level.ServerPlayer&nbsp;template,
  <a href="LoaderInteractionGameTestsLogic.Copy.html" title="interface in com.github.crittscott.somegoogly.gametest">LoaderInteractionGameTestsLogic.Copy</a>&nbsp;copy)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Players keep their applied eyes when the game copies them alive (leaving the End) and lose them on death.</div>
+<div class="block">Players keep their applied eyes when the game copies them alive (leaving the End) and lose
+ them on death.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#useHooksHonorResults(net.minecraft.gametest.framework.GameTestHelper,net.minecraft.server.level.ServerPlayer,com.github.crittscott.somegoogly.gametest.LoaderInteractionGameTestsLogic.Use,boolean)" class="member-name-link">useHooksHonorResults</a><wbr>(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
@@ -142,8 +144,9 @@ loadScripts(document, 'script');</script>
  <a href="LoaderInteractionGameTestsLogic.Use.html" title="interface in com.github.crittscott.somegoogly.gametest">LoaderInteractionGameTestsLogic.Use</a>&nbsp;use,
  boolean&nbsp;testRefusal)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">The loader's use hooks apply and harvest eyes on a cow, a boat, an armor stand, a placed head, and the player,
- and with <code>testRefusal</code>, a protection listener's refusal leaves everything as it was.</div>
+<div class="block">The loader's use hooks apply and harvest eyes on a cow, a boat, an armor stand, a placed
+ head, and the player, and with <code>testRefusal</code>, a protection listener's refusal leaves
+ everything as it was.</div>
 </div>
 </div>
 </div>
@@ -168,9 +171,9 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">playerCopiesKeepEyesOnlyWhileAlive</span><wbr><span class="parameters">(net.minecraft.gametest.framework.GameTestHelper&nbsp;helper,
  net.minecraft.server.level.ServerPlayer&nbsp;template,
  <a href="LoaderInteractionGameTestsLogic.Copy.html" title="interface in com.github.crittscott.somegoogly.gametest">LoaderInteractionGameTestsLogic.Copy</a>&nbsp;copy)</span></div>
-<div class="block">Players keep their applied eyes when the game copies them alive (leaving the End) and lose them on death. In
- game: apply a Slimy Eye tinted to glow to yourself, leave the End through its exit portal, and keep the same
- eyes; die and respawn, and the applied eyes are gone.</div>
+<div class="block">Players keep their applied eyes when the game copies them alive (leaving the End) and lose
+ them on death. In game: apply a Slimy Eye tinted to glow to yourself, leave the End through
+ its exit portal, and keep the same eyes; die and respawn, and the applied eyes are gone.</div>
 </section>
 </li>
 <li>
@@ -180,11 +183,12 @@ loadScripts(document, 'script');</script>
  net.minecraft.server.level.ServerPlayer&nbsp;template,
  <a href="LoaderInteractionGameTestsLogic.Use.html" title="interface in com.github.crittscott.somegoogly.gametest">LoaderInteractionGameTestsLogic.Use</a>&nbsp;use,
  boolean&nbsp;testRefusal)</span></div>
-<div class="block">The loader's use hooks apply and harvest eyes on a cow, a boat, an armor stand, a placed head, and the player,
- and with <code>testRefusal</code>, a protection listener's refusal leaves everything as it was. In game: apply and
- harvest eyes on each with a Slimy Eye and Optometrist shears (sneak and use the shears in the air for
- yourself); then repeat inside a claim that refuses the click, and the eyes, items, shears durability, your
- health, and drops stay unchanged. Fabric runs only the registered callbacks here; check its claim ordering by
+<div class="block">The loader's use hooks apply and harvest eyes on a cow, a boat, an armor stand, a placed
+ head, and the player, and with <code>testRefusal</code>, a protection listener's refusal leaves
+ everything as it was. In game: apply and harvest eyes on each with a Slimy Eye and
+ Optometrist shears (sneak and use the shears in the air for yourself); then repeat inside a
+ claim that refuses the click, and the eyes, items, shears durability, your health, and drops
+ stay unchanged. Fabric runs only the registered callbacks here; check its claim ordering by
  hand.</div>
 </section>
 </li>

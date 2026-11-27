@@ -6,40 +6,44 @@ import com.github.crittscott.somegoogly.config.EyeConfigModel.RuntimeConfigSet;
 import com.github.crittscott.somegoogly.eye.HeadInfo;
 import com.github.crittscott.somegoogly.eye.behavior.BehaviorSettings;
 import com.github.crittscott.somegoogly.eye.state.SkullEyeState;
+
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.annotation.Nullable;
 
 /**
  * Client-side store of the resolved server eye state: the per-entity eye geometry configs, from
- * {@code EyeConfigSyncPacket}, and the current {@code googlyEyesEnabled} master switch and the behavior settings
- * clients run behaviors from, from {@code EyeSettingsPacket}. This store also owns the resolved-view cache used
- * by renderers.
+ * {@code EyeConfigSyncPacket}, and the current {@code googlyEyesEnabled} master switch and the
+ * behavior settings clients run behaviors from, from {@code EyeSettingsPacket}. This store also
+ * owns the resolved-view cache used by renderers.
  *
  * <p>Separate from {@link ServerEyeConfigs} to avoid single-player static-state bleed: in SP the
- * integrated server fills the server store and the local sync fills this one independently. Installed
- * maps are immutable snapshots; their mutable model values are owned by this store and must be treated
- * as read-only after installation.
+ * integrated server fills the server store and the local sync fills this one independently.
+ * Installed maps are immutable snapshots; their mutable model values are owned by this store and
+ * must be treated as read-only after installation.
  */
 public final class ClientEyeConfigs {
 
     private static volatile BehaviorSettings behaviors = BehaviorSettings.NONE;
-    private static volatile Map<ResourceLocation, RuntimeConfigSet> configs = Collections.emptyMap();
-    // Defaults to true so a client isn't wrongly suppressed before its first sync from the server lands.
+    private static volatile Map<ResourceLocation, RuntimeConfigSet> configs =
+            Collections.emptyMap();
+    // Defaults to true so a client isn't wrongly suppressed before its first sync from the server
+    // lands.
     private static volatile boolean googlyEyesEnabled = true;
-    // Nested by entity then a packed (variant, baby) key, mirroring ModelMemo's per-frame-allocation-free
-    // pattern: a compound key object would have to be allocated on every call just to probe the cache.
+    // Nested by entity then a packed (variant, baby) key, mirroring ModelMemo's
+    // per-frame-allocation-free pattern: a compound key object would have to be allocated on every
+    // call just to probe the cache.
     private static final Map<ResourceLocation, Map<Integer, HeadInfo>> resolved = new HashMap<>();
 
-    private ClientEyeConfigs() {
-    }
+    private ClientEyeConfigs() {}
 
     /**
-     * The immutable synced map, by entity. Callers may retain the snapshot across replacements but must
-     * not mutate its {@link RuntimeConfigSet} values.
+     * The immutable synced map, by entity. Callers may retain the snapshot across replacements but
+     * must not mutate its {@link RuntimeConfigSet} values.
      */
     public static Map<ResourceLocation, RuntimeConfigSet> all() {
         return configs;
@@ -56,9 +60,11 @@ public final class ClientEyeConfigs {
         return behaviors;
     }
 
-    /** The cached view of {@code config}'s {@code variant} for {@code entity}, created on first use. */
-    private static HeadInfo cached(ResourceLocation entity, boolean baby, @Nullable RuntimeConfig config,
-                                   int variant) {
+    /**
+     * The cached view of {@code config}'s {@code variant} for {@code entity}, created on first use.
+     */
+    private static HeadInfo cached(
+            ResourceLocation entity, boolean baby, @Nullable RuntimeConfig config, int variant) {
         int key = (variant << 1) | (baby ? 1 : 0);
         Map<Integer, HeadInfo> byVariant = resolved.computeIfAbsent(entity, e -> new HashMap<>());
         HeadInfo cached = byVariant.get(key);
@@ -78,12 +84,18 @@ public final class ClientEyeConfigs {
         resolved.clear();
     }
 
-    /** Whether eyes may show on this client at all: the server's master switch and the player's own setting. */
+    /**
+     * Whether eyes may show on this client at all: the server's master switch and the player's own
+     * setting.
+     */
     public static boolean eyesVisible() {
         return googlyEyesEnabled && !ClientConfig.DISABLE_GOOGLY_EYES.get();
     }
 
-    /** Whether eyes may show on this client on {@code entity}'s kind: {@link #eyesVisible()} and not disabled for it. */
+    /**
+     * Whether eyes may show on this client on {@code entity}'s kind: {@link #eyesVisible()} and not
+     * disabled for it.
+     */
     public static boolean eyesVisible(ResourceLocation entity) {
         return eyesVisible() && !ClientConfig.isEntityDisabled(entity);
     }
@@ -107,8 +119,8 @@ public final class ClientEyeConfigs {
     }
 
     /**
-     * Resolve and cache the variant a placed head of {@code entity}'s kind shows
-     * ({@link SkullEyeState#variantIndex}), for client rendering.
+     * Resolve and cache the variant a placed head of {@code entity}'s kind shows ({@link
+     * SkullEyeState#variantIndex}), for client rendering.
      */
     public static HeadInfo resolveHead(ResourceLocation entity, float variantRoll) {
         RuntimeConfig config = get(entity, false);
@@ -116,8 +128,9 @@ public final class ClientEyeConfigs {
     }
 
     /**
-     * Install an immutable top-level snapshot from server synchronization and invalidate every resolved
-     * rendering view. The supplied model values become store-owned and must not be mutated afterward.
+     * Install an immutable top-level snapshot from server synchronization and invalidate every
+     * resolved rendering view. The supplied model values become store-owned and must not be mutated
+     * afterward.
      */
     public static void replaceAll(Map<ResourceLocation, RuntimeConfigSet> next) {
         configs = Map.copyOf(next);

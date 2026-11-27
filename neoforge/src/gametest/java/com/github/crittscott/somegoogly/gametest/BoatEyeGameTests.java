@@ -1,6 +1,7 @@
 package com.github.crittscott.somegoogly.gametest;
 
 import com.github.crittscott.somegoogly.SomeGooglyCommon;
+
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.neoforged.neoforge.common.util.FakePlayerFactory;
@@ -14,8 +15,7 @@ public final class BoatEyeGameTests {
 
     private static final String TEMPLATE = "empty";
 
-    private BoatEyeGameTests() {
-    }
+    private BoatEyeGameTests() {}
 
     @GameTest(template = TEMPLATE)
     public static void boatsBeginEyelessAndSelectGeometry(GameTestHelper helper) {
@@ -39,7 +39,8 @@ public final class BoatEyeGameTests {
 
     @GameTest(template = TEMPLATE)
     public static void boatsHarvestOneEye(GameTestHelper helper) {
-        BoatEyeGameTestsLogic.boatsHarvestOneEye(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+        BoatEyeGameTestsLogic.boatsHarvestOneEye(
+                helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
     }
 
     @GameTest(template = TEMPLATE)
@@ -49,17 +50,20 @@ public final class BoatEyeGameTests {
 
     @GameTest(template = TEMPLATE)
     public static void boatsHonorCreativeConsumption(GameTestHelper helper) {
-        BoatEyeGameTestsLogic.boatsHonorCreativeConsumption(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+        BoatEyeGameTestsLogic.boatsHonorCreativeConsumption(
+                helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
     }
 
     @GameTest(template = TEMPLATE)
     public static void boatsHonorInteractionGates(GameTestHelper helper) {
-        BoatEyeGameTestsLogic.boatsHonorInteractionGates(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+        BoatEyeGameTestsLogic.boatsHonorInteractionGates(
+                helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
     }
 
     @GameTest(template = TEMPLATE)
     public static void boatsReceiveAppearanceAndRefuseRestyling(GameTestHelper helper) {
-        BoatEyeGameTestsLogic.boatsReceiveAppearanceAndRefuseRestyling(helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
+        BoatEyeGameTestsLogic.boatsReceiveAppearanceAndRefuseRestyling(
+                helper, FakePlayerFactory.getMinecraft(helper.getLevel()));
     }
 
     @GameTest(template = TEMPLATE)
