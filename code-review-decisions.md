@@ -15,6 +15,7 @@ These decisions apply across release checkouts where the relevant behavior exist
 
 ## Development and build
 
+- Error Prone stays a routine advisory review alongside Spotless where configured. Keep its findings as warnings, leave `-Werror` off, and do not promote checks to errors. Fix demonstrated problems and document positively justified exceptions locally using the annotation guidance in `code-conventions.md`; automatic source rewriting remains off.
 - Manual play-testing uses MultiMC, not the development runServer environment. The GameTest development world is disposable and may be deleted by the test helper.
 - Keep build environments as close across Minecraft versions as reasonable. Inactive cross-version Gradle branches, plugin declarations, pack-format fields, and separate Mixin Java settings are acceptable consequences.
 - Keep `pack.mcmeta` in common. Each Forge-family module copies it into its own resources and de-duplicates it in `shadowJar`, so no loader module carries a hand-maintained copy. Do not propose moving it into the loader modules.

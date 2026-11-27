@@ -15,6 +15,7 @@ These decisions apply across release checkouts where the relevant behavior exist
 
 ## Development and build
 
+- Error Prone stays a routine advisory review alongside Spotless where configured. Keep its findings as warnings, leave `-Werror` off, and do not promote checks to errors. Fix demonstrated problems and document positively justified exceptions locally using the annotation guidance in `code-conventions.md`; automatic source rewriting remains off.
 - Manual play-testing uses MultiMC, not the development runServer environment. The GameTest development world is disposable and may be deleted by the test helper.
 - Keep build environments as close across Minecraft versions as reasonable. Inactive cross-version Gradle branches, plugin declarations, pack-format fields, and separate Mixin Java settings are acceptable consequences.
 - Keep `pack.mcmeta` in common. Each Forge-family module copies it into its own resources and de-duplicates it in `shadowJar`, so no loader module carries a hand-maintained copy. Do not propose moving it into the loader modules.
@@ -32,6 +33,7 @@ These decisions apply across release checkouts where the relevant behavior exist
 - Code complexity may support a simpler player interface. Visual authoring and /sg admin commands may require a player looking at the target. Selectors, server-console use, command blocks, and datapack execution are not requirements for these visual tools.
 - Held-eye hurt/heal reactions should be visible to every viewer. The existing held-eye grow trigger on any damage is intentional; it need not match mobs' player-caused-damage gate.
 - Preserve the existing protection policy for eye interactions with players; do not invent an additional attack-event/PvP-claim policy.
+- `/sg spawn` keeps its own failure messages when a mob's creation or spawn finalization throws. Do not remove those catches in favor of vanilla's generic command-failure report.
 
 ## Rendering and integration
 
@@ -50,8 +52,9 @@ These decisions apply across release checkouts where the relevant behavior exist
 - Preserve nearest-version fallback selection. This is intentional functionality, not obsolete compatibility.
 - Keep the working Fabric persistent-data representation. A typed-attachment rewrite is not requested.
 - Preserve saved keys and supported numeric color input forms. A reader accepting more in-range numeric types than its writer emits does not itself prove legacy support or a defect.
+- Empty structure in an eye definition is an authoring error. A head with an empty `eyes` list or a variant with an empty `heads` list makes the reload reject that definition with a logged error, and the picker export refuses to write it. Neither path prunes it quietly.
 - Head and self shearing may remove eyes and wear shears even if current definitions provide no eye to drop.
-- Keep the shared vanilla CopyNbtFunction operation for placed-head loot on both loaders. Move shears-on-kill eye drops into the normal loot pipeline; that remains an implementation direction, not a claim that it is complete.
+- Keep the shared vanilla CopyNbtFunction operation for placed-head loot on both loaders. Move shears-on-kill eye drops into the normal loot pipeline, so loot tables, loot modifiers, and the mob-loot game rule govern them. Accept that a pack which replaces or empties a mob's loot table can lose the eye drop. This is the chosen direction, not a claim that it is complete.
 - Do not add required dependencies, including Forge Config API Port.
 - Keep the shared packet-size reserve, including the extra framing byte on Fabric. A separate loader-specific limit is unnecessary.
 - Preserve the present requirement that both endpoints have the mod while multiplayer behavior is verified. Dedicated-server multiplayer testing has not yet happened; Fabric's JOIN-time channel check is unverified, not a proven bug.
