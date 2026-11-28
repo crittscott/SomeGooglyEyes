@@ -280,3 +280,5 @@ tasks.register('cleanDev', Delete) {
         (buildDirectories.collect { it.get().asFile } + runDirectories).collectMany { (it.listFiles() ?: []) as List }
     }
 }
+
+apply from: 'gradle/code-analysis.gradle'

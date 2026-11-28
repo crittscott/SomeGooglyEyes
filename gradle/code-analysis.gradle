@@ -1,0 +1,184 @@
+import groovy.xml.XmlSlurper
+import org.gradle.api.plugins.quality.Pmd
+import org.gradle.api.plugins.quality.TargetJdk
+
+// Register Gradle's PMD task directly: applying the PMD plugin would attach every analysis to check.
+// Tool configurations are separate from the mod's compilation and packaging configurations.
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    cpdTool {
+        canBeConsumed = false
+        canBeResolved = true
+    }
+}
+
+dependencies {
+    cpdTool "net.sourceforge.pmd:pmd-cli:$pmd_version"
+    cpdTool "net.sourceforge.pmd:pmd-java:$pmd_version"
+}
+
+def pmdReview = tasks.register('pmdReview') {
+    group = 'verification'
+    description = 'Reports advisory PMD findings for all modules and source sets.'
+}
+def cpdReview = tasks.register('cpdReview') {
+    group = 'verification'
+    description = 'Reports exact and approximate duplication, separating production and tests.'
+}
+tasks.register('analysisReview') {
+    group = 'verification'
+    description = 'Runs the advisory PMD and CPD review passes.'
+    dependsOn pmdReview, cpdReview
+}
+
+subprojects { analyzedProject ->
+    // Each project resolves its own tool classpath under Gradle's project lock.
+    configurations {
+        pmdTool {
+            canBeConsumed = false
+            canBeResolved = true
+        }
+    }
+    dependencies {
+        pmdTool "net.sourceforge.pmd:pmd-ant:$rootProject.pmd_version"
+        pmdTool "net.sourceforge.pmd:pmd-java:$rootProject.pmd_version"
+    }
+    sourceSets.configureEach { analyzedSources ->
+        def reportBase = rootProject.layout.buildDirectory.file(
+                "reports/pmd/${analyzedProject.name}/${analyzedSources.name}")
+        def summaryFile = reportBase.map { new File(it.asFile.path + '.txt') }
+        def reviewTask = analyzedProject.tasks.register("pmd${analyzedSources.name.capitalize()}", Pmd) {
+            group = 'verification'
+            description = "Reports advisory PMD findings for ${analyzedProject.path}:${analyzedSources.name}."
+            // Include checked-in source roots, including shared GameTests, but no generated build output.
+            source = analyzedSources.allJava.filter { sourceFile ->
+                sourceFile.toPath().startsWith(analyzedProject.file('src').toPath()) ||
+                        sourceFile.toPath().startsWith(rootProject.file('common/src/gametest').toPath())
+            }
+            pmdClasspath = analyzedProject.configurations.pmdTool
+            classpath = analyzedSources.compileClasspath + analyzedSources.output
+            ruleSets = []
+            ruleSetFiles = rootProject.files('config/pmd/trial.xml')
+            // This required legacy Gradle input is ignored by PMD 7; its Java parser handles Java 17.
+            targetJdk = TargetJdk.VERSION_1_7
+            javaLauncher = analyzedProject.javaToolchains.launcherFor {
+                languageVersion = JavaLanguageVersion.of(rootProject.java_version as int)
+            }
+            ignoreFailures = true
+            maxFailures = 0
+            rulesMinimumPriority = 5
+            incrementalAnalysis = false
+            threads = 1
+            consoleOutput = false
+            reports {
+                xml.required = true
+                xml.outputLocation = rootProject.layout.buildDirectory.file(
+                        "reports/pmd/${analyzedProject.name}/${analyzedSources.name}.xml")
+                html.required = true
+                html.outputLocation = rootProject.layout.buildDirectory.file(
+                        "reports/pmd/${analyzedProject.name}/${analyzedSources.name}.html")
+            }
+            outputs.file(summaryFile)
+            outputs.upToDateWhen { false }
+            doFirst {
+                ext.analysisStarted = System.nanoTime()
+                logger.lifecycle("PMD ${rootProject.pmd_version}: ${path}, ${source.files.size()} source files")
+            }
+            doLast {
+                def report = new XmlSlurper().parse(reports.xml.outputLocation.get().asFile)
+                def errors = report.depthFirst().findAll { it.name() in ['error', 'configerror'] }
+                def counts = report.file.violation.collect { it.@rule.text() }.countBy { it }
+                def seconds = (System.nanoTime() - analysisStarted) / 1_000_000_000.0
+                summaryFile.get().setText([
+                        "PMD ${rootProject.pmd_version}; ${analyzedProject.path}:${analyzedSources.name}",
+                        "Sources: ${source.files.size()}; elapsed seconds: ${String.format(Locale.ROOT, '%.3f', seconds)}",
+                        'Rules: config/pmd/trial.xml; default metric thresholds; findings are advisory.',
+                        "Analysis errors: ${errors.size()}",
+                        *counts.sort().collect { rule, count -> "${rule}: ${count}" },
+                        '',
+                        'Source files:',
+                        *source.files.collect { rootProject.relativePath(it) }.sort()
+                ].join('\n') + '\n', 'UTF-8')
+                logger.lifecycle("PMD report: ${reports.html.outputLocation.get().asFile}")
+                if (!errors.isEmpty()) {
+                    throw new GradleException("PMD analysis is incomplete: ${errors.size()} errors in ${reports.xml.outputLocation.get().asFile}")
+                }
+            }
+        }
+        pmdReview.configure { dependsOn reviewTask }
+    }
+}
+
+// CPD compares physical files across modules once, without resolving or compiling the game classpath.
+def sourceGroups = [production: ['main'], tests: ['test', 'gametest']]
+sourceGroups.each { sourceGroup, sourceSetNames ->
+    def selectedSources = files(subprojects.collect { module ->
+        module.fileTree('src') {
+            sourceSetNames.each { sourceSetName -> include "${sourceSetName}/java/**/*.java" }
+        }
+    })
+    [exact: [], approximate: ['--ignore-identifiers', '--ignore-literals']].each { mode, switches ->
+        def reportDirectory = layout.buildDirectory.dir('reports/cpd')
+        def reportFile = reportDirectory.map { it.file("${sourceGroup}-${mode}.xml").asFile }
+        def textFile = reportDirectory.map { it.file("${sourceGroup}-${mode}.txt").asFile }
+        def sourceList = layout.buildDirectory.file("tmp/cpd/${sourceGroup}-${mode}-sources.txt")
+        def reviewTask = tasks.register("cpd${sourceGroup.capitalize()}${mode.capitalize()}", JavaExec) {
+            group = 'verification'
+            description = "Reports ${mode} ${sourceGroup} duplicates using ${rootProject.cpd_minimum_tokens} tokens."
+            classpath = rootProject.configurations.cpdTool
+            mainClass = 'net.sourceforge.pmd.cli.PmdCli'
+            javaLauncher = project(':common').javaToolchains.launcherFor {
+                languageVersion = JavaLanguageVersion.of(rootProject.java_version as int)
+            }
+            workingDir = rootProject.projectDir
+            systemProperty 'file.encoding', 'UTF-8'
+            inputs.files(selectedSources).withPathSensitivity(PathSensitivity.RELATIVE)
+            inputs.property('minimumTokens', rootProject.cpd_minimum_tokens)
+            inputs.property('mode', mode)
+            outputs.files(reportFile, textFile)
+            outputs.upToDateWhen { false }
+            args 'cpd', '--language', 'java', '--encoding', 'UTF-8',
+                    '--minimum-tokens', rootProject.cpd_minimum_tokens,
+                    '--file-list', sourceList.get().asFile.absolutePath,
+                    '--format', 'xml', '--report-file', reportFile.get().absolutePath,
+                    '--no-fail-on-violation', '--fail-on-error'
+            args switches
+            onlyIf { !selectedSources.isEmpty() }
+            doFirst {
+                ext.analysisStarted = System.nanoTime()
+                reportDirectory.get().asFile.mkdirs()
+                sourceList.get().asFile.parentFile.mkdirs()
+                sourceList.get().asFile.setText(
+                        selectedSources.files.collect { it.absolutePath }.sort().join('\n') + '\n', 'UTF-8')
+                logger.lifecycle("CPD ${rootProject.pmd_version}: ${sourceGroup}/${mode}, ${selectedSources.files.size()} source files")
+            }
+            doLast {
+                def report = new XmlSlurper().parse(reportFile.get())
+                def seconds = (System.nanoTime() - analysisStarted) / 1_000_000_000.0
+                def lines = [
+                        "CPD ${rootProject.pmd_version}; ${sourceGroup}; ${mode}",
+                        "Minimum tokens: ${rootProject.cpd_minimum_tokens}; options: ${switches.join(' ')}",
+                        "Sources: ${selectedSources.files.size()}; elapsed seconds: ${String.format(Locale.ROOT, '%.3f', seconds)}",
+                        "Duplicate groups: ${report.duplication.size()}",
+                        'Matches suggest review; shared decisions and repeated wiring require different verdicts.', ''
+                ]
+                report.duplication.eachWithIndex { duplicate, index ->
+                    lines << "Group ${index + 1}: ${duplicate.@tokens} tokens, ${duplicate.@lines} lines"
+                    duplicate.file.each { location ->
+                        lines << "${rootProject.relativePath(location.@path.text())}:${location.@line}"
+                    }
+                    lines << duplicate.codefragment.text()
+                    lines << ''
+                }
+                lines << 'Source files:'
+                lines.addAll(selectedSources.files.collect { rootProject.relativePath(it) }.sort())
+                textFile.get().setText(lines.join('\n') + '\n', 'UTF-8')
+                logger.lifecycle("CPD report: ${textFile.get()}")
+            }
+        }
+        cpdReview.configure { dependsOn reviewTask }
+    }
+}

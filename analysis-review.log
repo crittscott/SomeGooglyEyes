@@ -1,0 +1,166 @@
+Starting a Gradle Daemon, 2 busy and 1 incompatible Daemons could not be reused, use --status for details
+
+> Configure project :
+Architect Plugin: 3.5.170
+Architectury Loom: 1.17.493
+
+> Task :fabric:processResources UP-TO-DATE
+> Task :forge:processResources UP-TO-DATE
+> Task :fabric:processGametestResources UP-TO-DATE
+> Task :fabric:processTestResources NO-SOURCE
+> Task :forge:processGametestResources UP-TO-DATE
+> Task :forge:processTestResources NO-SOURCE
+> Task :common:compileJava UP-TO-DATE
+> Task :common:processResources UP-TO-DATE
+> Task :common:classes UP-TO-DATE
+> Task :common:compileTestJava NO-SOURCE
+> Task :common:processTestResources NO-SOURCE
+> Task :common:testClasses UP-TO-DATE
+> Task :common:jar UP-TO-DATE
+> Task :fabric:compileJava UP-TO-DATE
+> Task :fabric:classes UP-TO-DATE
+> Task :forge:compileJava UP-TO-DATE
+> Task :forge:classes UP-TO-DATE
+> Task :fabric:compileGametestJava UP-TO-DATE
+> Task :fabric:gametestClasses UP-TO-DATE
+> Task :fabric:compileTestJava NO-SOURCE
+> Task :fabric:testClasses UP-TO-DATE
+> Task :forge:compileGametestJava UP-TO-DATE
+> Task :forge:gametestClasses UP-TO-DATE
+> Task :forge:compileTestJava NO-SOURCE
+> Task :forge:testClasses UP-TO-DATE
+
+> Task :cpdProductionApproximate
+CPD 7.24.0: production/approximate, 166 source files
+CPD report: D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\build\reports\cpd\production-approximate.txt
+
+> Task :cpdProductionExact
+CPD 7.24.0: production/exact, 166 source files
+CPD report: D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\build\reports\cpd\production-exact.txt
+
+> Task :cpdTestsApproximate
+CPD 7.24.0: tests/approximate, 74 source files
+CPD report: D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\build\reports\cpd\tests-approximate.txt
+
+> Task :cpdTestsExact
+CPD 7.24.0: tests/exact, 74 source files
+CPD report: D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\build\reports\cpd\tests-exact.txt
+
+> Task :cpdReview
+
+FAILURE: Build completed with 8 failures.
+
+1: Task failed with an exception.
+-----------
+* What went wrong:
+Execution failed for task ':common:pmdMain' (registered in script 'gradle\code-analysis.gradle').
+> Failed to calculate the value of property 'outputLocation'.
+   > Cannot get the value of property 'outputLocation' of type org.gradle.api.file.RegularFile as the provider associated with this property returned a value of type java.io.File.
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+==============================================================================
+
+2: Task failed with an exception.
+-----------
+* What went wrong:
+Execution failed for task ':common:pmdTest' (registered in script 'gradle\code-analysis.gradle').
+> Failed to calculate the value of property 'outputLocation'.
+   > Cannot get the value of property 'outputLocation' of type org.gradle.api.file.RegularFile as the provider associated with this property returned a value of type java.io.File.
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+==============================================================================
+
+3: Task failed with an exception.
+-----------
+* What went wrong:
+Execution failed for task ':fabric:pmdGametest' (registered in script 'gradle\code-analysis.gradle').
+> Failed to calculate the value of property 'outputLocation'.
+   > Cannot get the value of property 'outputLocation' of type org.gradle.api.file.RegularFile as the provider associated with this property returned a value of type java.io.File.
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+==============================================================================
+
+4: Task failed with an exception.
+-----------
+* What went wrong:
+Execution failed for task ':fabric:pmdMain' (registered in script 'gradle\code-analysis.gradle').
+> Failed to calculate the value of property 'outputLocation'.
+   > Cannot get the value of property 'outputLocation' of type org.gradle.api.file.RegularFile as the provider associated with this property returned a value of type java.io.File.
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+==============================================================================
+
+5: Task failed with an exception.
+-----------
+* What went wrong:
+Execution failed for task ':fabric:pmdTest' (registered in script 'gradle\code-analysis.gradle').
+> Failed to calculate the value of property 'outputLocation'.
+   > Cannot get the value of property 'outputLocation' of type org.gradle.api.file.RegularFile as the provider associated with this property returned a value of type java.io.File.
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+==============================================================================
+
+6: Task failed with an exception.
+-----------
+* What went wrong:
+Execution failed for task ':forge:pmdGametest' (registered in script 'gradle\code-analysis.gradle').
+> Failed to calculate the value of property 'outputLocation'.
+15 actionable tasks: 4 executed, 11 up-to-date
+   > Cannot get the value of property 'outputLocation' of type org.gradle.api.file.RegularFile as the provider associated with this property returned a value of type java.io.File.
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+==============================================================================
+
+7: Task failed with an exception.
+-----------
+* What went wrong:
+Execution failed for task ':forge:pmdMain' (registered in script 'gradle\code-analysis.gradle').
+> Failed to calculate the value of property 'outputLocation'.
+   > Cannot get the value of property 'outputLocation' of type org.gradle.api.file.RegularFile as the provider associated with this property returned a value of type java.io.File.
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+==============================================================================
+
+8: Task failed with an exception.
+-----------
+* What went wrong:
+Execution failed for task ':forge:pmdTest' (registered in script 'gradle\code-analysis.gradle').
+> Failed to calculate the value of property 'outputLocation'.
+   > Cannot get the value of property 'outputLocation' of type org.gradle.api.file.RegularFile as the provider associated with this property returned a value of type java.io.File.
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights from a Build Scan (powered by Develocity).
+> Get more help at https://help.gradle.org.
+==============================================================================
+
+BUILD FAILED in 28s

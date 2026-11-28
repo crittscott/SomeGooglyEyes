@@ -1,0 +1,71 @@
+
+> Configure project :
+Architect Plugin: 3.5.170
+Architectury Loom: 1.17.493
+
+> Task :fabric:processResources UP-TO-DATE
+> Task :fabric:processGametestResources UP-TO-DATE
+> Task :fabric:processTestResources NO-SOURCE
+> Task :forge:processResources UP-TO-DATE
+> Task :forge:processGametestResources UP-TO-DATE
+> Task :forge:processTestResources NO-SOURCE
+> Task :common:compileJava UP-TO-DATE
+> Task :common:processResources UP-TO-DATE
+> Task :common:classes UP-TO-DATE
+
+> Task :common:pmdMain
+PMD 7.24.0: :common:pmdMain, 112 source files
+
+> Task :common:compileTestJava NO-SOURCE
+> Task :common:processTestResources NO-SOURCE
+> Task :common:testClasses UP-TO-DATE
+> Task :common:pmdTest NO-SOURCE
+> Task :common:jar UP-TO-DATE
+> Task :forge:compileJava UP-TO-DATE
+> Task :forge:classes UP-TO-DATE
+> Task :fabric:compileJava UP-TO-DATE
+> Task :fabric:classes UP-TO-DATE
+> Task :fabric:compileGametestJava UP-TO-DATE
+> Task :forge:compileGametestJava UP-TO-DATE
+> Task :fabric:gametestClasses UP-TO-DATE
+> Task :forge:gametestClasses UP-TO-DATE
+> Task :fabric:compileTestJava NO-SOURCE
+> Task :fabric:testClasses UP-TO-DATE
+> Task :forge:compileTestJava NO-SOURCE
+> Task :forge:testClasses UP-TO-DATE
+> Task :fabric:pmdTest NO-SOURCE
+> Task :forge:pmdTest NO-SOURCE
+
+> Task :fabric:pmdGametest
+PMD 7.24.0: :fabric:pmdGametest, 50 source files
+
+> Task :forge:pmdMain
+PMD 7.24.0: :forge:pmdMain, 23 source files
+12 PMD rule violations were found. See the report at: file:///D:/Dropbox/Vault/code/minecraft/intellijprojects/SomeGooglyEyes/1.20.1/build/reports/pmd/forge/main.html
+PMD report: D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\build\reports\pmd\forge\main.html
+
+> Task :forge:pmdGametest
+PMD 7.24.0: :forge:pmdGametest, 52 source files
+
+> Task :fabric:pmdMain
+PMD 7.24.0: :fabric:pmdMain, 31 source files
+12 PMD rule violations were found. See the report at: file:///D:/Dropbox/Vault/code/minecraft/intellijprojects/SomeGooglyEyes/1.20.1/build/reports/pmd/fabric/main.html
+PMD report: D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\build\reports\pmd\fabric\main.html
+
+> Task :fabric:pmdGametest
+4 PMD rule violations were found. See the report at: file:///D:/Dropbox/Vault/code/minecraft/intellijprojects/SomeGooglyEyes/1.20.1/build/reports/pmd/fabric/gametest.html
+PMD report: D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\build\reports\pmd\fabric\gametest.html
+
+> Task :forge:pmdGametest
+5 PMD rule violations were found. See the report at: file:///D:/Dropbox/Vault/code/minecraft/intellijprojects/SomeGooglyEyes/1.20.1/build/reports/pmd/forge/gametest.html
+PMD report: D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\build\reports\pmd\forge\gametest.html
+
+> Task :common:pmdMain
+67 PMD rule violations were found. See the report at: file:///D:/Dropbox/Vault/code/minecraft/intellijprojects/SomeGooglyEyes/1.20.1/build/reports/pmd/common/main.html
+PMD report: D:\Dropbox\Vault\code\minecraft\intellijprojects\SomeGooglyEyes\1.20.1\build\reports\pmd\common\main.html
+
+> Task :pmdReview
+
+BUILD SUCCESSFUL in 26s
+16 actionable tasks: 5 executed, 11 up-to-date
+Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.5.1/userguide/configuration_cache_enabling.html

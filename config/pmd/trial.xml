@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="Some Googly Eyes advisory trial"
+         xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
+    <description>
+        Suggestions for agent review, not requirements to rewrite code or reduce metric scores.
+        Review code-conventions.md and code-review-decisions.md before assessing findings.
+        Each finding needs a disposition and a reason; retain rejected and overlapping findings.
+        Framework invocation, coherent deep classes, and repeated wiring can be intentional.
+        Metric properties use the pinned PMD version's defaults.
+    </description>
+    <rule ref="category/java/bestpractices.xml/UnusedAssignment"/>
+    <rule ref="category/java/design.xml/SingularField"/>
+    <rule ref="category/java/design.xml/UselessOverridingMethod"/>
+    <rule ref="category/java/bestpractices.xml/UnusedPrivateMethod"/>
+    <rule ref="category/java/design.xml/CognitiveComplexity"/>
+    <rule ref="category/java/design.xml/GodClass"/>
+    <rule ref="category/java/design.xml/ExcessiveParameterList"/>
+</ruleset>
