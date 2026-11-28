@@ -15,6 +15,7 @@ These decisions apply across release checkouts where the relevant behavior exist
 
 ## Development and build
 
+- Implementation in 1.20.1 follows change-workflow.md autonomously: provisional edits, independent focused review, then staged validation through gradlews.ps1. Batch all known work before each compilation attempt and record a substantive reason for retries. The owner retains manual in-game testing. This authorization is confined to 1.20.1 and overrides older manual-only Gradle instructions here; Git/GitHub restrictions remain.
 - Error Prone stays a routine advisory review alongside Spotless where configured. Keep its findings as warnings, leave `-Werror` off, and do not promote checks to errors. Fix demonstrated problems and document positively justified exceptions locally using the annotation guidance in `code-conventions.md`; automatic source rewriting remains off.
 - Manual play-testing uses MultiMC, not the development runServer environment. The GameTest development world is disposable and may be deleted by the test helper.
 - Keep build environments as close across Minecraft versions as reasonable. Inactive cross-version Gradle branches, plugin declarations, pack-format fields, and separate Mixin Java settings are acceptable consequences.

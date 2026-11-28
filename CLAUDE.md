@@ -10,7 +10,7 @@ Your domain of interest is the project at hand. Only if you cannot answer the qu
 
 Do not decompile Minecraft or the loaders (Forge, NeoForge), and do not read, extract, or search any decompiled/remapped source for them either — this includes Loom-cached "sources" jars, *_mapped_* jars, javap/bytecode inspection, or anything under .gradle/caches or similar. If you need to know a Minecraft or loader API signature, ask me or find it in that library's own published API docs/source (e.g. Fabric API's own sources are fine — Minecraft's, Forge's, and NeoForge's are not).
 
-You are a programmer; you write code. Do not build unless asked. Everything not explicitly a command to build is a discussion.
+Implementation requests in this 1.20.1 checkout authorize provisional edits and autonomous completion of the change workflow in change-workflow.md, including batched compilation, analysis and GameTests. Discussion and read-only review requests do not authorize builds. This checkout-specific authorization supersedes the parent directory's manual-Gradle restriction here only; Git/GitHub authorization remains unchanged.
 
 Without those sources, what you know about a Minecraft or loader API comes from memory, and memory is often wrong. Treat a recalled signature, event order, or call flow as a hypothesis. Do not replace working code on the strength of one, and find out why existing code has its shape before calling it a mistake.
 
@@ -19,6 +19,7 @@ Without those sources, what you know about a Minecraft or loader API comes from 
 - Read code-review-decisions.md before reviewing or implementing review findings. It records accepted non-issues and owner decisions; specific decisions there override general preferences here.
 
 - `code-conventions.md` holds the rules for writing code, organized by what you are doing. Read it before writing or changing code.
+- `change-workflow.md` defines ownership discovery, independent focused review, staged validation, diagnostic assessment, and batched retries. Follow it for implementation requests; do not substitute the periodic seventeen-topic review for this per-change check.
 - `platform-notes.md` records how specific Minecraft versions, loaders, and libraries actually behave. Read the parts that apply before writing a hook, Mixin, packet, or port. When you learn such a fact, add it there, marked with how it is known. This file stays free of version-specific and loader-specific detail.
 
 # Project Principles
@@ -66,7 +67,7 @@ Without those sources, what you know about a Minecraft or loader API comes from 
 - `README.md` is identical in every checkout and covers every release.
 - `docs/curseforge-description.md` describes only this checkout's Minecraft version and links absolutely to this version's branch; `docs/curseforge-description.html` is its HTML rendering. Change them together.
 - A release checkout carries exactly one changelog, `CHANGELOG-<previous release>-<this release>.md` (versions written without the leading `1.`, e.g. `CHANGELOG-21.8-21.11.md`); earlier releases' changelogs live only in their own checkouts.
-- `.gitignore`, `.gitattributes`, `gradlews.ps1`, the wrapper, and the shared agent instructions (`CLAUDE.md`, `AGENTS.md`, `code-review.md`, `code-conventions.md`, `code-review-decisions.md`) are identical in every release checkout. Platform notes and orientation bodies describe their own checkout. Gradle files differ where the Minecraft version, loader, or optional-mod availability requires it; every version number lives in `gradle.properties`, and values derivable from it are derived in the build scripts. Synchronizing instructions does not authorize changing working target versions or integration settings.
+- Normally `.gitignore`, `.gitattributes`, `gradlews.ps1`, the wrapper, and shared agent instructions match release checkouts. The autonomous workflow, runner, and supporting instructions are currently confined to 1.20.1 by owner direction; do not port or synchronize them upward yet. Platform notes and orientation bodies describe their checkout. Gradle files differ where target APIs or optional-mod availability require it; version numbers live in `gradle.properties`, with derivable values computed by scripts.
 - `build-env/` is the snapshot described in `orientation-build.md`; update it whenever a file it covers changes.
 
 # Development and Verification
@@ -75,8 +76,10 @@ Without those sources, what you know about a Minecraft or loader API comes from 
 - Keep build environments as similar across versions as reasonable; inactive shared machinery is acceptable.
 - Recoverable optional-integration failures are isolated to the affected model or attachment so other models can succeed.
 
-- Do not compile, build, or run the project (no `gradlew`, no `runGameTestServer`, etc.) unless I explicitly ask. Your job is to read and write code. Verify your work by reading it and reasoning about it. Do not touch the Loom caches, kill processes, or otherwise rewire the dev environment.
-- I run the builds and tests. If you believe a build or test run is warranted, say so and let me decide.
+- For implementation work, the implementing agent runs `gradlews.ps1` under change-workflow.md after completing the coherent edit batch and focused review. Do not ask the owner to run routine validation. The owner handles in-game play-testing. Read-only reviewers do not run builds or tests.
+- Finish all source-level implementation, affected-reference searches, formatting, known corrections and review findings before compilation. Compiler-analysis tasks count as compilation too. After failure, assess every distinct reported failure, search for related instances, complete the entire correction batch, and obtain the relevant re-review before retrying. Never build unfinished intermediate edits or retry merely to see whether one corrected line worked.
+- Run compilation, analysis, GameTests, documentation generation and jar collection through the staged runner. Noncompiling source formatting precedes focused review under change-workflow.md. Preserve full logs on disk, inspect the compact diagnostics first, and retrieve bounded relevant excerpts only. Each retry needs a recorded correction batch or specific diagnostic hypothesis; never repeat an unchanged failure without new information. Normal expectation is one initial cycle and one complete correction cycle if needed, not a quota that excuses unresolved defects.
+- Do not touch Loom caches, kill unrelated processes, or rewire the dev environment. Infrastructure failures require targeted diagnosis rather than repeated builds or broad cleanup. Use `-Clean` only for an explicit reason.
 - Do not decompile anything (Minecraft or the loaders) without permission.
 
 # Finishing a change

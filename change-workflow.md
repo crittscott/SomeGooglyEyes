@@ -1,0 +1,47 @@
+# Completing a coherent change
+
+Implementation work in this checkout proceeds autonomously through source review, compiler analysis, PMD/CPD, GameTests, documentation generation and jar collection. The owner then play-tests in MultiMC. Provisional edits in the current checkout are authorized. Discussion and read-only reviews do not launch validation. This workflow is confined to 1.20.1 until the owner requests porting.
+
+## Ownership before editing
+
+Read CLAUDE.md, code-conventions.md, code-review-decisions.md and the relevant orientation/platform notes. Identify the owning methods, existing alternatives searched by behavior/API calls/config keys, the consumers and loader paths, the authoritative home of every new decision, obsolete code to remove, and the intended verification. Explain this briefly in the change scope/ownership record, not a new design document for every small edit.
+
+Start `./gradlews.ps1 Begin -Scope 'behavior and verification intent' -Ownership 'owning methods, alternatives inspected, consumers and removals'`. The runner records a hash manifest of the initial inputs in `.validation/change.json`; `Status` lists changed, added and removed inputs. Preserve the actual patch or before/after excerpts while editing and provide them to the reviewer; hashes identify changes but cannot reconstruct old source. Do not start another change to erase failed attempts: finish the active one, or explicitly record why the owner replaced its scope. Archives remain under `.validation/changes`.
+
+Complete the entire coherent batch across callers, loaders, tests, resources and documentation. Remove superseded paths. When changing Java, run the noncompiling formatting procedure in code-conventions.md once the edit batch is complete; capture its output in a log and inspect only a bounded failure excerpt. Formatting precedes Ready and is not a compilation attempt; finish source-only checks and build-environment snapshot updates before focused review. Do not compile an unfinished intermediate state, including through compiler-analysis or PMD tasks.
+
+## Independent focused review
+
+For a substantial change, the implementing agent must delegate to one independent reviewer. For a trivial change, perform a short explicit source check instead; do not create a seventeen-topic audit for a literal correction. Supply the behavioral objective, initial/current excerpts or actual patch, changed-file list, ownership findings, relevant policies and proposed tests. The reviewer reads surrounding callers, existing implementations and both affected loader paths. It does not change production code or run Gradle. Review the actual change, not merely the implementer's explanation.
+
+The reviewer examines correctness and player-visible behavior, duplicated decisions versus repeated mechanics, every new forwarding method/class, magic values or strings and existing constants/facilities, retained-state ownership/lifetime, meaningful tests, and any relevant loader/network/protection implications. Apply accepted decisions before raising findings. A blocking finding names a location, concrete consequence, supported action and evidence. Keep preferences separate. An unverified platform assumption is an evidence gap, not authority to replace working code. A finding-free report states the paths examined and why the change satisfies the applicable rules.
+
+Write `review-Change.md` with the objective/changed paths, examined owners and alternatives, findings and their dispositions, verification required and a standalone `Verdict: Ready`, `Verdict: Changes required`, or `Verdict: Evidence needed`. Preserve original finding numbers and subsequent verdicts. Resolve all actionable findings, then have the reviewer re-examine the affected corrections. For a trivial check, identify the implementer explicitly rather than invent an independent reviewer.
+
+Record `./gradlews.ps1 Ready -Reviewer 'agent identity or implementer, trivial check' -Report review-Change.md` only for a completed source batch with a Ready verdict. The runner binds the review report and current source fingerprint. Any subsequent input edit requires the relevant re-review and another Ready; the runner does not establish the quality or independence of a review merely from its label.
+
+## Validation and diagnostic decisions
+
+Run `./gradlews.ps1 Analyze`. It runs `build compileGametestJava`, then `analysisReview`, always with `-Pquality=nullaway --continue --console=plain`. The compiler mode stays consistent across all stages. Independent task failures within a stage are collected where possible; a failing stage prevents downstream stages. Analysis is advisory and compilation may succeed with warnings. There is no automatic source rewriting.
+
+Full output and an uncapped deduplicated diagnostic index are written under `.validation/runs/<attempt>/`. The console shows stage status, elapsed time, counts, at most six diagnostic previews and paths. Read the index and structured PMD/CPD reports first. Retrieve only relevant log excerpts, not complete logs by default. An empty extracted error list after a nonzero exit is an unclassified failure requiring bounded inspection; it is not a clean run. Fresh JUnit-style failed test names are also indexed where available. Inspect test-server logs for failures that lack structured output.
+
+Assess every new or changed diagnostic against accepted policy and prior assessed reports. Do not count repeated diagnostics or duplicate GameTest loader contexts as new defects. Keep findings with reasons: fix, retain deliberately, false positive, already reported, or evidence needed. Metric scores do not require splitting coherent modules; required framework signatures and callbacks can be intentional. No accepted issue may remain actionable when advancing. Write a separate `review-Analysis.md` with dispositions and `Verdict: Accepted`, then record `./gradlews.ps1 Assess -Report review-Analysis.md -Reason 'summary of all diagnostic dispositions'`. Updating the focused review file would invalidate its Ready receipt; use the separate report.
+
+Run `./gradlews.ps1 Finish` to execute GameTests, generateDocs and collectJars in order. It requires accepted analysis for the same input state. Do not generate docs or collect jars after a failed test stage. Reports, generated Javadoc, logs, run directories, build outputs and build-env copies do not alter the source fingerprint; source, resources, manual docs, instructions, tools, tests and Gradle inputs do. Updating snapshot copies remains mandatory. No separate version-control actions are authorized by validation.
+
+## Failure and retry discipline
+
+After failure, collect the complete distinct failure inventory, group common causes, search for the same mistake elsewhere, fix every actionable occurrence and affected caller/loader/test/resource, and review the complete correction batch. Resolve source-level questions before another compilation. A first corrected diagnostic is not permission to build while other known work remains. Never use Begin to reset the attempt history of the same change.
+
+Re-record Ready after input edits. Retry Analyze or Finish with `-Reason 'all causes found, all corrections made, and what this run will establish'`. For unchanged inputs, the reason must identify a specific new diagnostic hypothesis, not repeat an unchanged command hoping for success. The runner records the reason; the agent remains responsible for its substance. A successful Analyze is reused by default on identical inputs. Finish reuses earlier successful stages only for identical inputs in the same analysis session; changed inputs require Analyze again, allowing Gradle to rebuild prerequisites incrementally. The runner never infers that an earlier pass verifies later edits.
+
+Normal expectation is one initial validation cycle and one complete correction cycle if necessary; hidden later failures can justify more, but there is no automatic retry loop. `Analyze -Clean -Reason 'specific stale-artifact or release-validation reason'` explicitly requests cleaning; ordinary corrections do not clean. Infrastructure failures require targeted diagnosis, never cache rewiring or repeated broad cleanup. Stop and report when meaningful progress genuinely requires owner information or an external change; do not transfer routine builds back to the owner.
+
+## Handoff
+
+The change record retains scope, ownership, baseline inputs, reviewed fingerprint/report, analysis disposition and all attempts with reasons, commands, outcomes and log paths. Check `Status` and report the final reviewed/verified state, attempt count and short retry explanations, useful diagnostic decisions, and remaining manual scenarios. Report successful compilation, automated tests and manual verification separately. A successful Finish means ready for the owner's play-testing, not a claim that visual or multiplayer behavior was observed.
+
+## Runner verification
+
+After changing the runner, use `./tests/validation-runner.tests.ps1` before any actual project build. It copies the scripts into isolated fixtures with a fake gradlew.bat and exercises gating, sequencing, errors, stale reviews, retry reasons, log bounds and output fingerprints. Fixtures stay under ignored `tmp`; no Minecraft process or real Gradle distribution is involved. Only after these checks and focused review pass should the implementing agent run the actual staged workflow.

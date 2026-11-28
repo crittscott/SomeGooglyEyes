@@ -1,5 +1,7 @@
 
-We have done a number of general code review sessions in previous conversations. Now I want to focus on particular topics.
+For routine acceptance of a coherent change, follow change-workflow.md and use one independent focused reviewer. The seventeen-topic procedure below is for a requested periodic project review, not for every implementation batch. Both kinds of reviewer are read-only with respect to production code and never run validation. A focused reviewer may write its assessment report and record Ready through the runner.
+
+## Periodic project review
 
 Main agent: spawn one subagent for each topic, with at most four running at once. Send the entire text after the Prompt marker through the end of this file as the task message. Replace only <topic title> and <topic description> with the exact title and description from the assigned list item. Copy everything else verbatim, including the report format and severity criteria. Do not summarize the prompt, send a reference in its place, or add instructions that change the scope, finding threshold, or deliverable. Check each outgoing task message against the template before sending it.
 
@@ -41,7 +43,7 @@ The mod has grown via evolution, and the review exists to find what that evoluti
 - Assess the project as it is. Do not inspect git history.
 - Do not make any changes to the code. Your only output is the report file.
 - Do not read other review-*.md reports. Read code-review-decisions.md: it is shared review policy, not another agent's report.
-- Do not go off and research. Use what you know and the code you are given. If you are unsure whether something is the expected approach, say so in the finding's confidence rather than investigating further.
+- Establish findings from permitted project source. When a claimed consequence or replacement depends on unverified platform behavior, identify the exact evidence needed separately; lowering a confidence label does not turn a recalled API fact into an actionable verified defect. Do not replace working code on that basis. The implementing agent may seek permitted documentation or owner-supplied evidence to resolve it.
 
 ## Boring code is the goal
 
@@ -55,7 +57,7 @@ A finding is a specific, verified problem in the code that should be acted on. E
 - style nits that no one would act on
 - hypothetical problems you have not confirmed by reading the code
 - accepted non-issues and deliberate exceptions in code-review-decisions.md
-- moved or merged findings: remove the old entry instead of leaving relocation history
+- superseded or merged findings as new duplicates: retain their original entries and add the later verdict or cross-reference, following code-review-decisions.md
 - theoretical edge cases without a realistic player, server, or maintenance consequence
 
 If you have a real concern but cannot pin it down to an action, put it under Open questions only when the owner can answer it. Resolve source questions from permitted source where possible; otherwise label the needed verification without asserting an unverified bug. Do not ask settled questions again.

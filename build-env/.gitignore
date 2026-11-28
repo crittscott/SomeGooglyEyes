@@ -23,8 +23,10 @@
 **/crash-reports/
 
 # other
+/.validation/
 /review-*.md
 /othersource/
 /othersourcecode/
 /tmp/
 /port-*.md
+/handoff*.md

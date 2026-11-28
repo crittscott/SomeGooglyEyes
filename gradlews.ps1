@@ -1,25 +1,23 @@
-$steps = @(
-    'clean build',
-    'runGameTestServer',
-    'generateDocs',
-    'collectJars'
+[CmdletBinding()]
+param(
+    [ValidateSet('Begin', 'Ready', 'Analyze', 'Assess', 'Finish', 'Status')]
+    [string]$Action = 'Status',
+    [string]$Scope,
+    [string]$Ownership,
+    [string]$Reviewer,
+    [string]$Report,
+    [string]$Reason,
+    [switch]$Clean
 )
 
-$results = [System.Collections.Generic.List[object]]::new()
-foreach ($step in $steps) {
-    Write-Host "=== gradlew $step ===" -ForegroundColor Cyan
-    & .\gradlew.bat @($step -split ' ') | Out-Host
-    $results.Add([pscustomobject]@{ Step = $step; ExitCode = $LASTEXITCODE })
-}
+$ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot 'tools/validation.ps1')
 
-Write-Host ''
-Write-Host '=== Summary ===' -ForegroundColor Cyan
-foreach ($r in $results) {
-    if ($r.ExitCode -eq 0) {
-        Write-Host ("PASS  {0}" -f $r.Step) -ForegroundColor Green
-    } else {
-        Write-Host ("FAIL  {0} (exit {1})" -f $r.Step, $r.ExitCode) -ForegroundColor Red
-    }
+try {
+    Invoke-ChangeValidation -Root $PSScriptRoot -Action $Action -Scope $Scope -Ownership $Ownership `
+        -Reviewer $Reviewer -Report $Report -Reason $Reason -Clean:$Clean
+    exit 0
+} catch {
+    Write-Host ('FAIL  ' + $_.Exception.Message) -ForegroundColor Red
+    exit 1
 }
-
-if ($results | Where-Object { $_.ExitCode -ne 0 }) { exit 1 }

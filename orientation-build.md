@@ -4,22 +4,18 @@
 
 # Some Googly Eyes — build orientation
 
-Active build files are authoritative.
-
-`build-env/` mirrors the inputs below at their active relative paths; Gradle reads the active files. Keep it synchronized. Orientation copies contain only fixed headers and headings. Exclude caches, generated output, IDE/run state, dependencies, mod sources/resources, tests, manifests, and release notes; the wrapper JAR is the sole binary.
+`build-env/` mirrors the inputs below at their active relative paths; Gradle reads the active files. Keep it synchronized. Orientation copies contain only fixed headers and headings. Exclude caches, generated output, IDE/run state, dependencies, mod sources/resources, GameTest sources, manifests, and release notes; the wrapper JAR is the sole binary.
 
 ## Snapshot contents
-
-Copies preserve active paths under `build-env/`.
 
 | Kind | Active paths |
 | --- | --- |
 | Gradle build | `settings.gradle`, `build.gradle`, `gradle.properties`, `gradle/code-analysis.gradle`, `common/build.gradle`, `fabric/build.gradle`, `fabric/gradle.properties`, `forge/build.gradle`, `forge/gradle.properties` |
 | Analysis rules | `config/pmd/trial.xml` |
 | Gradle wrapper | `gradlew`, `gradlew.bat`, `gradle/wrapper/gradle-wrapper.properties`, `gradle/wrapper/gradle-wrapper.jar` |
-| Shared agent instructions | `CLAUDE.md`, `AGENTS.md`, `code-review.md`, `code-conventions.md`, `code-review-decisions.md` |
+| Shared agent instructions | `CLAUDE.md`, `AGENTS.md`, `code-review.md`, `code-conventions.md`, `code-review-decisions.md`, `change-workflow.md` |
 | Platform facts | `platform-notes.md` from this checkout |
-| Build runner | `gradlews.ps1` |
+| Build runner | `gradlews.ps1`, `tools/validation.ps1`, `tests/validation-runner.tests.ps1` |
 | Git settings | `.gitignore`, `.gitattributes` |
 | Orientation outlines | `orientation-player.md`, `orientation-code.md`, `orientation-build.md` |
 
@@ -39,7 +35,7 @@ On Windows, use `gradlew.bat`; `gradlew` is the POSIX launcher. The wrapper sele
 
 Each subproject has a production `javadoc` task. Each loader's `gametestJavadoc` includes the shared package-private GameTest assertions. Root `generateDocs` derives loaders from `enabled_platforms` and synchronizes these tasks' HTML into committed `docs/javadoc/<module>/` and `docs/javadoc/<loader>-gametest/` trees, separating overlapping class names. `docs/index.html` is the hand-maintained landing page; `docs/.nojekyll` makes GitHub Pages serve generated files unchanged. Generated docs are not build inputs, are excluded from `build-env/`, and have no Javadoc JARs.
 
-`collectJars` copies enabled loaders' existing `build/libs/<archivesName>-<version>.jar` production files to shared `../jars` for local launchers. It builds nothing, skips missing files, overwrites matching names, and keeps other versions. `gradlews.ps1` runs `clean build`, `runGameTestServer`, `generateDocs`, and `collectJars`, reporting exit codes. `cleanDev` empties each module's `build/` and `run/`; `clean` empties `build/`. Both preserve directories and their `../dropbox-ignore.ps1` marks.
+`collectJars` copies enabled loaders' existing `build/libs/<archivesName>-<version>.jar` production files to shared `../jars` for local launchers. It builds nothing, skips missing files, overwrites matching names, and keeps other versions. `cleanDev` empties each module's `build/` and `run/`; `clean` empties `build/`. Both preserve directories and their `../dropbox-ignore.ps1` marks.
 
 Forge owns its native loot declarations. Native `processResources` copies common's version-specific `pack.mcmeta` into the development resource root; `shadowJar` excludes duplicates only for that metadata. Fabric uses `implementation` plus Loom `include` for NightConfig core and TOML, so development and production both have the parser. Both `pack.mcmeta` files take their formats from `gradle.properties` through `processResources` expansion. The Mixin configs' Java level is expanded the same way: `mixin_java_version` for common's and the Forge-family configs, `java_version` for Fabric's.
 
@@ -47,15 +43,15 @@ The root project applies Spotless to the Java sources under `common/src`, `fabri
 
 Analysis covers all source sets. `-Pquality=compiler` enables javac lint on Java 17; `-Pquality=errorprone` adds Error Prone defaults; `-Pquality=nullaway` also adds NullAway. Checker modes use JDK 21 with `--release 17`; ordinary builds and game runs use Java 17. Checks are advisory, with no `-Werror` or rewriting. Local exceptions follow `code-conventions.md`; unknown modes fail configuration.
 
-Capture with `.\gradlew.bat compileJava compileGametestJava -Pquality=nullaway --rerun-tasks --console=plain *> nullaway.log`. Checker modes add the Error Prone plugin, core processor and compile-only contract annotations. Only NullAway mode adds its processor. Mixin processing and refmaps remain enabled; `test`/`gametest` are marked as test code. Mode changes invalidate compilation. `errorprone_max_warnings` caps diagnostics. Checker dependencies are not bundled.
+Checker modes add Error Prone's processor and compile-only contracts; NullAway mode adds its processor. Mixin processing/refmaps remain enabled; tests are marked as test code. Mode changes invalidate compilation; `errorprone_max_warnings` caps diagnostics. Checker dependencies are not bundled.
 
 NullAway checks `com.github.crittscott.somegoogly` with non-null defaults and existing `javax.annotation.Nullable`. It honors dependency nullability and verifies JetBrains predicate `@Contract` annotations with `CheckContracts`; unannotated APIs remain optimistic. JSpecify mode is off.
 
 Root `analysisReview` runs standalone advisory `pmdReview`/`cpdReview` from `gradle/code-analysis.gradle`, outside `check`/`build`. PMD uses Gradle's `Pmd` task, `config/pmd/trial.xml`, each source set's compile classpath/output, and Java 17; dependencies may compile, but no game launches. Shared GameTests retain each loader context. HTML/XML and count/timing/source summaries go to `build/reports/pmd/<module>/<sourceSet>.*`; empty sets skip. Seven rules use default metric thresholds. Findings are advisory; XML processing/configuration errors fail. Type-resolution diagnostics remain in the log.
 
-CPD scans physical module `src/main/java` files once, separately from `src/test/java`/`src/gametest/java`. Exact and approximate passes use `cpd_minimum_tokens`; approximate ignores identifiers/literals. Java 17 runs CPD without compilation. XML/text reports with counts, timing, options, and sources go to `build/reports/cpd/<production|tests>-<exact|approximate>.*`. Findings do not fail; tool errors do. Explicit reviews rerun. Capture `.\gradlew.bat analysisReview --continue --console=plain *> analysis-review.log`; assess completed tasks only and retain diagnostics. Tool dependencies stay in analysis-only configurations.
+CPD scans physical module `src/main/java` files once, separately from `src/test/java`/`src/gametest/java`. Exact and approximate passes use `cpd_minimum_tokens`; approximate ignores identifiers/literals. Java 17 runs CPD without compilation. XML/text reports with counts, timing, options, and sources go to `build/reports/cpd/<production|tests>-<exact|approximate>.*`. Findings do not fail; tool errors do. Explicit reviews rerun. Tool dependencies stay in analysis-only configurations.
 
-Agent review applies conventions/accepted decisions and compares compiler/NullAway reviews. Retain each finding and reason: change justified, retain deliberately, false positive, already reported, or needs more evidence. Group findings with loader context. Scores alone do not justify splitting classes; wiring may repeat. Record proposed changes, rule/CPD recommendations, runtimes, and limitations before edits.
+`change-workflow.md` defines autonomous batched implementation and focused review in 1.20.1. `gradlews.ps1` defaults to Status; Begin records scope/ownership, Ready binds reviewed inputs, Analyze runs `build compileGametestJava` then `analysisReview`, Assess records diagnostic decisions, and Finish runs GameTests, docs and jars. All stages use NullAway mode, stop at failure, and keep full logs with bounded console summaries. Retries require reasons; clean is explicit. `tools/validation.ps1` owns fingerprints (`Get-ValidationSnapshot`), diagnostic extraction (`Get-ValidationDiagnostics`) and sequencing (`Invoke-ValidationStages`). Receipts/history live in ignored `.validation/`; source edits invalidate review and verification. Successful Finish stages can be reused for identical inputs within one analysis session. `tests/validation-runner.tests.ps1` exercises fake Gradle. The owner play-tests in-game.
 
 ## Exact build versions
 
@@ -85,11 +81,11 @@ Agent review applies conventions/accepted decisions and compares compiler/NullAw
 | NightConfig | `com.electronwill.night-config:{core,toml}:3.8.3` (`nightconfig_version`) | Fabric TOML parser, nested in its production JAR |
 | JSR 305 annotations | `com.google.code.findbugs:jsr305:3.0.2` | Compile-only nullability annotations, declared once for every module because Loom does not expose Minecraft's copy to common |
 
-The Java setting is exact only at the language/toolchain-major level. The repository does not pin a JDK vendor, distribution, or patch release, and it does not pin the host JVM that runs Gradle. Gradle core plugins such as `base` and `java` use Gradle `9.5.1` and therefore have no separate declared version.
+Java is pinned by major level only, without a vendor or patch version; the host JVM is unpinned. Core plugins use the wrapper Gradle version.
 
 ## Artifact and runtime version declarations
 
-These values do not select build tools, but they are versioned inputs consumed by resource expansion and are relevant when reproducing the produced artifacts.
+These versioned resource-expansion inputs describe produced artifacts.
 
 Each loader expands its metadata (`fabric.mod.json`, `META-INF/mods.toml`) from the root `sharedModProperties`, which include `mod_homepage` and the source (`<homepage>/tree/<minecraft_version>`) and issue-tracker (`<homepage>/issues`) URLs derived from it.
 
